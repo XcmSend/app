@@ -1,0 +1,51 @@
+{
+  "name": "my-react-flow-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build       ",
+    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@tippyjs/react": "^4.2.6",
+    "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
+    "draft-js": "^0.11.7",
+    "jwt-decode": "^3.1.2",
+    "quill": "^1.3.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.14.2",
+    "reactflow": "^11.7.4",
+    "sass": "^1.66.1",
+    "slate": "^0.94.1",
+    "slate-react": "^0.97.2",
+    "socket.io-client": "^4.7.1",
+    "styled-components": "^6.0.5",
+    "typescript": "^5.1.6",
+    "uuid": "^9.0.0",
+    "zukeeper": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@types/uuid": "^9.0.2",
+    "@vitejs/plugin-react": "^4.0.1",
+    "autoprefixer": "^10.4.14",
+    "eslint": "^8.44.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.1",
+    "postcss": "^8.4.26",
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.4.0"
+  }
+}
