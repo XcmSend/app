@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @sub-wallet/sub-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button } from 'antd';
