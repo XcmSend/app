@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @sub-wallet/sub-connect authors & contributors
+// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // Some code of this file refer to https://github.com/MetaMask/test-dapp/blob/main/src/index.js

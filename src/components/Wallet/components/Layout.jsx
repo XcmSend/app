@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @sub-wallet/sub-connect authors & contributors
+// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import React, { useCallback, useContext, useEffect } from 'react';
@@ -41,7 +41,7 @@ function Layout () {
         onChange={_onChangeTheme}
         unCheckedChildren='Dark'
       />
-      <WalletHeader visible={!!walletContext.wallet || !!walletContext.evmWallet} />
+      <WalletHeader visible={!!walletContext.wallet || !!walletContext.evmWallet} theme={theme} />
       <Outlet />
       <SelectWalletModal theme={theme} />
     </div>

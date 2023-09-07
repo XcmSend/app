@@ -1,4 +1,4 @@
-// Copyright 2019-2022 @sub-wallet/sub-connect authors & contributors
+// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 import { Button } from 'antd';
@@ -11,15 +11,20 @@ import { OpenSelectWallet, WalletContext } from '../contexts';
 import'./styles/WalletHeader.scss';
 
 interface Props {
-  visible?: boolean
+  visible?: boolean;
+  theme: string;
+
 }
 
-function WalletHeader ({ visible }: Props): React.ReactElement<Props> {
+
+
+function WalletHeader ({ visible, theme }: Props): React.ReactElement<Props> {
   const navigate = useNavigate();  // Add this line to get the navigate function
   const walletContext = useContext(WalletContext);
   const selectWallet = useContext(OpenSelectWallet);
 
   const wallet = walletContext.wallet || walletContext.evmWallet;
+  const logoSrc = theme === 'dark' ? '/logo-white.svg' : '/logo.svg';
 
   if (!visible) {
     return (<></>);
@@ -38,6 +43,12 @@ function WalletHeader ({ visible }: Props): React.ReactElement<Props> {
   return (<header className={'wallet-header-wrapper'}>
     <div className={'boxed-container'}>
       <div className={'wallet-header-content'}>
+        <div>
+          <img 
+            src={logoSrc} 
+            className='bagpipe-logo' 
+          />
+        </div>
       <div className='spacer' />
         <Button
           className='xcm-send-btn xcm-send-btn-small-size'
