@@ -2,15 +2,24 @@
   border-bottom: 1px solid #151A30;
 }
 
+
 .wallet-header-content {
-  overflow: auto;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 20px 0;
+
+  .xcm-send-btn, .xcm-send-btn-wallet {
+    margin-left: 10px; 
+  }
 
   .wallet-logo {
     margin-right: 8px;
     height: 40px !important;
+  }
+
+  div > .xcm-send-btn, .xcm-send-btn-wallet {
+    margin-left: 10px; // Add space between the buttons.
   }
 
   .wallet-title {
@@ -20,9 +29,9 @@
     line-height: 32px;
   }
 
-  .spacer {
-    flex: 1 1 100px;
-  }
+  // .spacer {
+  //   flex: 1 1 100px;
+  // }
 
   .select-wallet {
     margin: 8px;

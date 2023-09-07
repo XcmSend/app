@@ -40,41 +40,28 @@ function WalletHeader ({ visible, theme }: Props): React.ReactElement<Props> {
       };
   
 
-  return (<header className={'wallet-header-wrapper'}>
-    <div className={'boxed-container'}>
-      <div className={'wallet-header-content'}>
-        <div>
-          <img 
-            src={logoSrc} 
-            className='bagpipe-logo' 
-          />
-        </div>
-      <div className='spacer' />
-        <Button
-          className='xcm-send-btn xcm-send-btn-small-size'
-          onClick={goToBuilder}  
-          type={'primary'}
-        >Builder</Button>
-        <div className='spacer' />
-        {/* <Button
-          className='xcm-send-btn xcm-send-btn-small-size'
-          onClick={goToBagpipes}  
-          type={'primary'}
-        >Bagpipes</Button>
-        <div className='spacer' />
-         */}
-  
-
-        <div className='spacer' />
-        <Button
-          className='xcm-send-btn-wallet xcm-send-btn-small-size'
-          onClick={selectWallet.open}
-          type={'primary'}
-        >Select Wallet</Button>
-      </div>
+      return (
+        <header className={'wallet-header-wrapper'}>
+          <div className={'boxed-container'}>
+            <div className={'wallet-header-content'}>
+              <img src={logoSrc} className='bagpipe-logo' alt="Bagpipe Logo" />
       
-    </div>
-  </header>);
+                <Button
+                  className='xcm-send-btn xcm-send-btn-small-size'
+                  onClick={goToBuilder}
+                  type={'primary'}
+                >Builder</Button>
+      
+                <Button
+                  className='xcm-send-btn-wallet xcm-send-btn-small-size'
+                  onClick={selectWallet.open}
+                  type={'primary'}
+                >Select Wallet</Button>
+            </div>
+          </div>
+        </header>
+      );
+      
 }
 
 export default WalletHeader;
