@@ -114,7 +114,7 @@ export function WalletContextProvider ({ children }: Props) {
     [ afterSelectWallet, walletKey, walletType]
   );
 
-  return <WalletContext.Provider value={walletContext as WalletContextInterface}>
+  return <WalletContext.Provider value={walletContext as unknown as WalletContextInterface}>
     <OpenSelectWallet.Provider value={selectWalletContext}>
       {children}
     </OpenSelectWallet.Provider>
