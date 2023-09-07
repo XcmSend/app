@@ -1,0 +1,14 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": "..",
+    "outDir": "./build",
+    "rootDir": "./src",
+    "allowJs": true
+  },
+  "references": [
+    // { "path": "../sub-connect" },
+    { "path": "../wallet-connect" },
+  ]
+}

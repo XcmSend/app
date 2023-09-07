@@ -1,0 +1,113 @@
+.App {
+  height: 100vh;
+}
+
+.main-layout {
+  height: 100%;
+}
+
+.main-content {
+  height: 100%;
+  position: relative;
+  overflow: auto;
+}
+
+.main-content.-dark {
+  background-color: #020412;
+  color: #fff;
+
+  .ant-input {
+    background-color: #262C4A;
+    border-color: rgba(128, 128, 128, 0.2);
+    color: #ddd;
+  }
+
+}
+
+.dark-theme {
+  .ant-select .ant-select-selector, .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    background-color: #262C4A;
+    border-color: rgba(128, 128, 128, 0.2)!important;
+    color: #ddd;
+  }
+
+  .ant-select-dropdown {
+    background-color: #262C4A;
+    color: #fff;
+    border-color: rgba(128, 128, 128, 0.2);
+
+    .ant-select-item {
+      color: #fff;
+      background-color: #262C4A;
+
+      &.ant-select-item-option-selected, &:hover {
+        background-color: rgba(128,128,128,0.2);
+      }
+    }
+  }
+
+  .ant-select-arrow {
+    color: #ddd;
+  }
+}
+
+.main-content.-light {
+  background-color: #FFF;
+  color: #444;
+
+  .welcome-content__text, .wallet-title, .wallet-info-page__text, .account-item__title, .metadata-item__title {
+    color: #020412;
+  }
+
+  .account-item__content, .metadata-item__content {
+    color: #888;
+  }
+
+  .select-wallet-modal .ant-modal-content {
+    background-color: #FFF;
+  }
+
+  .account-item, .metadata-item, .wallet-header-wrapper {
+    border-color: #EEE;
+  }
+
+  .sub-wallet-sign-btn {
+    background-color: #F0F4FF;
+  }
+
+  .sub-wallet-sign-btn > span {
+    color: #004BFF;
+  }
+}
+
+.boxed-container {
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: auto;
+  max-width: 618px;
+}
+
+.select-wallet-modal.-light {
+  .ant-modal-content, .ant-modal-header {
+    background-color: #FFF;
+  }
+
+  .ant-modal-header {
+    border-bottom-color: #EEE;
+  }
+
+  .ant-modal-title, .ant-modal-close, .wallet-title {
+    color: #020412;
+  }
+
+  .wallet-item {
+    border-color: #EEE;
+  }
+
+  .wallet-item:hover {
+    background-color: #EEE;
+  }
+
+}

@@ -1,18 +1,73 @@
+// Copyright 2019-2023 @bagpipes/xcm-send authors & contributors
+// SPDX-License-Identifier: Apache-2.0
 import React from 'react';
 import ReactFlow from 'reactflow';
 
-import 'reactflow/dist/style.css';
+// import EvmWalletInfo from './components/Wallet/pages/EvmWalletInfo';
+import { WalletContextProvider } from './components/Wallet/providers/WalletContextProvider';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
-const initialNodes = [
-  { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-  { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
+import Layout from './components/Wallet/components/Layout';
+import Welcome from './components/Wallet/components/Welcome';
+import Builder from './components/Wallet/components/Builder';
+import ReactTestFlow from './ReactTestFlow';
+// import BagpipesFlow from './components/Bagpipes/BagpipesFlow';
 
-export default function App() {
+import WalletInfo from './components/Wallet/pages/WalletInfo';
+
+import './App.scss';
+
+// Add new example wallet
+// doAddWallet();
+
+
+
+
+export function App () {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-      <ReactFlow nodes={initialNodes} edges={initialEdges} />
+
+    <WalletContextProvider>
+      <HashRouter>
+        <Routes>
+          <Route
+            element={<Layout />}
+            path='/'
+          >
+          
+            <Route
+              element={<Welcome />}
+              index
+            />
+            <Route
+              element={<Welcome />}
+              path='/welcome'
+            />
+          
+            <Route
+              element={<WalletInfo />}
+              path='/wallet-info'
+            />
+                <Route
+              element={<Builder />}
+              path='/builder'
+            />
+               {/* <Route
+              element={<BagpipesFlow />}
+              path='/bagpipes'
+            /> */}
+              <Route
+              element={<ReactTestFlow />}
+              path='/test-flow'
+            />
+            {/* <Route
+              element={<EvmWalletInfo />}
+              path='/evm-wallet-info'
+            /> */}
+          </Route>
+        </Routes>
+      </HashRouter>
+    </WalletContextProvider>
     </div>
   );
 }

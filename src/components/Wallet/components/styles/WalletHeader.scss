@@ -1,0 +1,47 @@
+.wallet-header-wrapper {
+  border-bottom: 1px solid #151A30;
+}
+
+.wallet-header-content {
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+
+  .wallet-logo {
+    margin-right: 8px;
+    height: 40px;
+  }
+
+  .wallet-title {
+    padding-left: 0;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 32px;
+  }
+
+  .spacer {
+    flex: 1 1 100px;
+  }
+
+  .select-wallet {
+    margin: 8px;
+  }
+}
+
+@media (max-width: 501px) {
+  .wallet-header-content {
+    .wallet-title {
+      font-size: 18px;
+    }
+
+    .spacer {
+      flex: 1 1 10px;
+    }
+
+    .xcm-send-btn {
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+  }
+}

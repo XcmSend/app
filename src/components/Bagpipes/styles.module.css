@@ -1,0 +1,75 @@
+.node {
+    font-size: 21px;
+    border: 2px solid #ff0071;
+    font-weight: bold;
+    color: #ff0071;
+    border-radius: 5px;
+  }
+  
+  .node :global .react-flow__handle {
+    background-color: #ff0071;
+    width: 40px;
+    height: 16px;
+    border-radius: 3px;
+    top: -8px;
+  }
+  
+  .node :global .react-flow__handle-bottom {
+    top: auto;
+    bottom: -8px;
+  }
+  
+  .node:global.selectable.selected {
+    box-shadow: 0 0 2px 1px #ff0071;
+  }
+  
+  .buttonGroup {
+    display: flex;
+  }
+  
+  .button {
+    display: flex;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 21px;
+    border: 2px solid #0041d0;
+    background: #ccd9f6;
+    margin: 0 10px;
+    border-radius: 10px;
+    color: #0041d0;
+  }
+  
+  .button:hover {
+    background: #0041d0;
+    /* color: white; */
+  }
+  
+  .button:disabled {
+    background: #ddd;
+    color: #9ca8b3;
+    border-color: #9ca8b3;
+    cursor: not-allowed;
+  }
+  
+  .buttonIcon {
+    transform: rotate(-90deg);
+    display: block;
+    margin-right: 5px;
+  }
+  
+  .buttonIcon:last-child {
+    margin-left: 5px;
+  }
+  
+  .instructions {
+    font-size: 21px;
+    font-weight: bold;
+    color: #ff0071;
+    user-select: none;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
