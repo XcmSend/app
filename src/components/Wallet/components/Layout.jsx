@@ -36,7 +36,7 @@ function Layout () {
     <div className={`main-content ${theme === 'dark' ? '-dark' : '-light'}`}>
       <Switch
         checkedChildren='Light'
-        className={(!!walletContext.wallet || !!walletContext.evmWallet) ? 'sub-wallet-switch-theme with-header' : 'sub-wallet-switch-theme'}
+        className={(!!walletContext.wallet || !!walletContext.evmWallet) ? 'bagpipe-switch-theme with-header' : 'bagpipe-switch-theme'}
         defaultChecked={theme === 'light'}
         onChange={_onChangeTheme}
         unCheckedChildren='Dark'

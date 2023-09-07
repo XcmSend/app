@@ -15,11 +15,28 @@ code {
   monospace;
 }
 
-.xcm-send-btn {
+.xcm-send-btn-wallet {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #004BFF;
+  background-color: #0059ff;
+  border: none;
+  border-radius: 8px;
+  height: auto;
+  outline: 0;
+  box-shadow: none;
+
+  &:hover, &:focus, &:active {
+    background-color: #226fff;
+  }
+}
+
+.xcm-send-btn {
+  color: rgb(0, 0, 0) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
   border: none;
   border-radius: 8px;
   height: auto;
@@ -27,15 +44,23 @@ code {
   box-shadow: none;
 }
 
-.xcm-send-btn > span {
+.xcm-send-btn-wallet > span {
   font-size: 15px;
   line-height: 26px;
   font-weight: 500;
   color: #fff;
 }
 
+.xcm-send-btn > span {
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 500;
+  color: #000000;
+}
+
 .xcm-send-btn:hover, .xcm-send-btn:focus, .xcm-send-btn:active {
-  background-color: #004BFF;
+  background-color: #ffffff;
+  color: #00266c;
 }
 
 .xcm-send-btn-normal-size {

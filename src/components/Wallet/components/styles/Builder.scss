@@ -1,8 +1,8 @@
-.ant-switch.xcm-send-switch-theme {
+.ant-switch.bagpipe-switch-theme {
   position: absolute;
 }
 
-.xcm-send-switch-theme {
+.bagpipe-switch-theme {
   position: absolute;
   top: 30px;
   right: 30px;
@@ -11,19 +11,19 @@
 }
 
 @media (max-width: 840px) {
-  .xcm-send-switch-theme.with-header {
+  .bagpipe-switch-theme.with-header {
     right: calc((100% - 620px)/2 + 186px);
   }
 }
 
 @media (max-width: 600px) {
-  .xcm-send-switch-theme.with-header {
+  .bagpipe-switch-theme.with-header {
     right: 185px;
   }
 }
 
 @media (max-width: 501px) {
-  .xcm-send-switch-theme.with-header {
+  .bagpipe-switch-theme.with-header {
     top: 100px;
     right: 30px;
   }

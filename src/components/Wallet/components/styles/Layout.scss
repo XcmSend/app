@@ -1,29 +1,29 @@
-.ant-switch.sub-wallet-switch-theme {
+.ant-switch.bagpipe-switch-theme {
   position: absolute;
 }
 
-.sub-wallet-switch-theme {
-  position: absolute;
-  top: 30px;
-  right: 30px;
+.bagpipe-switch-theme {
+  // position: absolute;
+  top: 10px;
+  right: 10px;
   z-index: 1000;
   background-color: #004BFF;
 }
 
 @media (max-width: 840px) {
-  .sub-wallet-switch-theme.with-header {
+  .bagpipe-switch-theme.with-header {
     right: calc((100% - 620px)/2 + 186px);
   }
 }
 
 @media (max-width: 600px) {
-  .sub-wallet-switch-theme.with-header {
+  .bagpipe-switch-theme.with-header {
     right: 185px;
   }
 }
 
 @media (max-width: 501px) {
-  .sub-wallet-switch-theme.with-header {
+  .bagpipe-switch-theme.with-header {
     top: 100px;
     right: 30px;
   }

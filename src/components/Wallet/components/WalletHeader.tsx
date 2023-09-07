@@ -45,31 +45,23 @@ function WalletHeader ({ visible }: Props): React.ReactElement<Props> {
           type={'primary'}
         >Builder</Button>
         <div className='spacer' />
-        <Button
+        {/* <Button
           className='xcm-send-btn xcm-send-btn-small-size'
           onClick={goToBagpipes}  
           type={'primary'}
         >Bagpipes</Button>
         <div className='spacer' />
-        
-        <div>
-          <img
-            alt={wallet?.logo?.alt}
-            className={'wallet-logo'}
-            src={wallet?.logo?.src}
-          />
-        </div>
-        <div className={'wallet-title'}>
-          {wallet?.title}
-        </div>
+         */}
+  
+
         <div className='spacer' />
         <Button
-          className='xcm-send-btn xcm-send-btn-small-size'
+          className='xcm-send-btn-wallet xcm-send-btn-small-size'
           onClick={selectWallet.open}
           type={'primary'}
         >Select Wallet</Button>
-       
       </div>
+      
     </div>
   </header>);
 }

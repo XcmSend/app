@@ -16,15 +16,6 @@ import NovaWalletLogo from './NovaWalletLogo.svg';
 
 export const PREDEFINED_WALLETS: WalletInfo[] = [
   {
-    extensionName: 'subwallet-js',
-    title: 'SubWallet',
-    installUrl: 'https://chrome.google.com/webstore/detail/subwallet/onhogfjeacnfoofkfgppdlbmlmnplgbn',
-    logo: {
-      src: SubWalletLogo as string,
-      alt: 'SubWallet'
-    }
-  },
-  {
     extensionName: 'polkadot-js',
     title: 'Polkadot{.js}',
     installUrl: 'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
@@ -43,6 +34,15 @@ export const PREDEFINED_WALLETS: WalletInfo[] = [
     }
   },
   {
+    extensionName: 'subwallet-js',
+    title: 'SubWallet',
+    installUrl: 'https://chrome.google.com/webstore/detail/subwallet/onhogfjeacnfoofkfgppdlbmlmnplgbn',
+    logo: {
+      src: SubWalletLogo as string,
+      alt: 'SubWallet'
+    }
+  },
+  {
     extensionName: 'fearless-wallet',
     title: 'Fearless Wallet',
     installUrl: 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc',
@@ -52,7 +52,7 @@ export const PREDEFINED_WALLETS: WalletInfo[] = [
     }
   },
   {
-    extensionName: 'polkadot-js',
+    extensionName: 'nova-wallet',
     title: 'Nova Wallet',
     installUrl: 'https://novawallet.io',
     logo: {
