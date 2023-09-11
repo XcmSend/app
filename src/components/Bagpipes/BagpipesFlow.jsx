@@ -6,7 +6,7 @@
 import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactFlow, { Panel, ReactFlowProvider, MiniMap, Controls, Background,   BackgroundVariant, useNodesState, useEdgesState, addEdge, applyNodeChanges, applyEdgeChanges, Handle, Position, NodeToolbar, useStoreApi, useNodeId } from 'reactflow';
-import AuthService from '../../services/AuthService';
+// import AuthService from '../../services/AuthService';
 import { useExecuteScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
 import TextUpdaterNode from './TextupdaterNode';
@@ -14,6 +14,7 @@ import Sidebar from './Sidebar';
 import '../../index.css';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
+import ChainNode from './CustomNodes/ChainNode/ChainNode';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './PlayButton';
@@ -56,6 +57,7 @@ const nodeTypes = {
   textUpdater: TextUpdaterNode, 
   formGroup: FormGroupNode,
   openAi: OpenAINode,
+  chain: ChainNode,
 
 };
 
@@ -66,7 +68,7 @@ const nodeTypes = {
 
 const getId = (nodeType) => `${nodeType}_${uuidv4().substr(0, 6)}`;
 
-const Bagpipes = () => {
+const BagpipesFlow = () => {
 
   const reactFlowWrapper = useRef(null);
 
@@ -122,7 +124,7 @@ const Bagpipes = () => {
     // const [tempEdges, setTempEdges] = useState([]);
   const combinedEdges = [...currentScenarioEdges, tempEdge].filter(Boolean);
 
-    const { cut, copy, paste, bufferedNodes } = useCopyPaste();
+    // const { cut, copy, paste, bufferedNodes } = useCopyPaste(); // causing paste to not work at all
     useSaveDiagramState(currentScenarioNodes, currentScenarioEdges);
 
     // console.log('before can copy', currentScenarioNodes);
@@ -131,7 +133,7 @@ const Bagpipes = () => {
       // currentScenarioNodes = [];
     }
     const canCopy = currentScenarioNodes.some(({ selected }) => selected);
-    const canPaste = bufferedNodes.length > 0;
+    // const canPaste = bufferedNodes.length > 0;
       const toggleMode = () => {
         setMode((m) => (m === 'light' ? 'dark' : 'light'));
       };
@@ -489,6 +491,31 @@ const Bagpipes = () => {
             // setNodes((nds) => nds.concat(newNode));
             // Call the action to add the node to the current scenario
             addNodeToScenario(activeScenarioId, newNode);
+            } else if (type === 'chain') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'Chain',
+                  image: './chain.svg',
+                  name: "Chain",
+                  fields: [
+                  { label: "Field 1", type: "text" },
+                  { label: "Field 2", type: "number" },
+                  ]
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
+                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
             } else {
             // other node creation
             const newNode = {
@@ -500,11 +527,7 @@ const Bagpipes = () => {
             setNodes((nds) => nds.concat(newNode));
             // Call the action to add the node to the current scenario
             addNodeToScenario(activeScenarioId, newNode);
-        };
- 
-
-      
-        },
+        }},
         [reactFlowInstance, takeSnapshot, activeScenarioId, addNodeToScenario]
     );
 
@@ -570,7 +593,7 @@ const Bagpipes = () => {
       const connectedNodes = getAllConnectedNodes(currentScenarioNodes.id, currentScenarioEdges);
       console.log('All connected nodes:', connectedNodes);
   
-      if (['openAi', 'formGroup'].includes(node.type)) {
+      if (['openAi', 'formGroup', 'chain'].includes(node.type)) {
           setModalNodeId(node.id);
           console.log('modalNodeId:', node.id); 
       }
@@ -584,9 +607,9 @@ const Bagpipes = () => {
             <Panel position="top-center">          
                 <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button>
             </Panel>
-            <div className="orgsflow">
+            <div className="bagpipe">
         
-            <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+            <div style={{ height: 800 }} className="reactflow-wrapper" ref={reactFlowWrapper}>
               <ReactFlowStyled
                   nodes={currentScenarioNodes}
                   edges={combinedEdges}
@@ -630,7 +653,7 @@ const Bagpipes = () => {
            
             </div>
             <Sidebar />
-            {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
+            {/* {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
                 <OpenAINodeForm
                   nodeId={modalNodeId}
                   nodes={currentScenarioNodes}
@@ -642,12 +665,12 @@ const Bagpipes = () => {
                   setModalNodeId={setModalNodeId}
                 />
        
-              )}
+              )} */}
             </div>
     </ThemeProvider>
   
     );
   }
   
-  export default Bagpipes;
+  export default BagpipesFlow;
   

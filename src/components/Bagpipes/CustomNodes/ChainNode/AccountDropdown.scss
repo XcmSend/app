@@ -1,0 +1,23 @@
+.account-dropdown {
+    position: relative;
+  
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      border: 1px solid #ccc;
+      background-color: #fff;
+      max-height: 300px;
+      overflow-y: auto;
+      width: 250px !important;  // Adjust width as needed
+  
+      .dropdown-item {
+        padding: 5px 10px;
+        cursor: pointer;
+        &:hover {
+          background-color: #f7f7f7;
+        }
+      }
+    }
+  }
+  

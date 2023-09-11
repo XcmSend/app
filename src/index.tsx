@@ -6,13 +6,17 @@ import ReactDOM from 'react-dom/client'
 
 import { App } from './App';
 import reportWebVitals from './reportWebVitals';
+import { HashRouter } from 'react-router-dom';
 
 import 'antd/dist/antd.min.css' ;
 import './index.scss' ;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+        <HashRouter>
+
     <App />
+    </HashRouter>
   </React.StrictMode>,
 );
 

@@ -27,8 +27,8 @@ function WalletInfo (): React.ReactElement {
         <div className={'wallet-title'}>
           {wallet?.title}
         </div>
-      <div className='wallet-info-page__text'>Version: {(walletContext?.wallet as Wallet)?.extension?.version}</div>
-      <div className='wallet-info-page__text'>Account List</div>
+      <div className='wallet-info-page__title'>Version: {(walletContext?.wallet as Wallet)?.extension?.version}</div>
+      <div className='wallet-info-page__text wallet-info-page__account-list'>Account List</div>
       <AccountList />
       <div className='wallet-info-page__text'>Metadata</div>
       <WalletMetadata />

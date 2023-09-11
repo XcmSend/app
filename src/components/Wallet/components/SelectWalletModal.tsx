@@ -43,7 +43,7 @@ function SelectWalletModal ({ theme }: Props): React.ReactElement<Props> {
     maskStyle={{ backgroundColor: theme === 'dark' ? '#262C4A' : '#EEE' }}
     onCancel={openSelectWalletContext.close}
     title='Select Wallet'
-    visible={openSelectWalletContext.isOpen}
+    open={openSelectWalletContext.isOpen}
     wrapClassName={'sub-wallet-modal-wrapper'}
   >
     <SelectWallet onSelectWallet={onSelectWallet} />

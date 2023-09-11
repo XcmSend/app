@@ -8,7 +8,7 @@ import 'tippy.js/dist/tippy.css';
 import '../../../index.css'
 import '../node.styles.css'
 
-export default function CustomNode({ nodeId, data, isConnectable }) {
+export default function CustomNode({ children, nodeId, data, isConnectable, isModalVisible }) {
    
   const [isOpen, setIsOpen] = useState(false);
   const [newNodeId, setNewNodeId] = useState(nodeId);
@@ -23,15 +23,24 @@ export default function CustomNode({ nodeId, data, isConnectable }) {
   }
 
   useEffect(() => {
-    const handleRightClick = (event) => {
-      event.preventDefault(); // Prevent the default context menu from appearing
+    console.log("isModalVisible in CustomNode", isModalVisible);
+ // If modal is open, do not prevent the default action
+ if (!isModalVisible) {
+  
+    const handleRightClick = (event) => { 
+      event.stopPropagation();
+      event.preventDefault();
     };
     window.addEventListener('contextmenu', handleRightClick);
     // Cleanup function to remove the event listener
     return () => {
-      window.removeEventListener('contextmenu', handleRightClick);
+        window.removeEventListener('contextmenu', handleRightClick);
     };
-  }, []);
+  }
+  return ;
+}, [isModalVisible]); // Use isModalVisible as a dependency
+
+
 
   
 
@@ -108,7 +117,15 @@ const handleNicknameSubmit = (event) => {
             </ul>
           )}
         </div>
+
+        <div className="">
+        {children}
       </div>
+
+      </div>
+
+ 
+
       <div className="space-y-2">
         {data.children}
         

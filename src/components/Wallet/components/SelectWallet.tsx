@@ -11,7 +11,8 @@ import { Wallet } from '@subwallet/wallet-connect/types';
 import './styles/SelectWallet.scss';
 
 interface Props {
-  onSelectWallet: (walletKey: string, walletType?: 'substrate' | 'evm') => void
+  onSelectWallet: (walletKey: string, walletType?: 'substrate' | 'evm') => void,
+
 }
 
 function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {

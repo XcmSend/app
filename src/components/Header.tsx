@@ -6,19 +6,19 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-import { OpenSelectWallet, WalletContext } from '../contexts';
+import { OpenSelectWallet, WalletContext } from './Wallet/contexts';
 
-import'./styles/WalletHeader.scss';
+import'./styles/Header.scss';
 
 interface Props {
-  visible?: boolean;
+  open?: boolean;
   theme: string;
 
 }
 
 
 
-function WalletHeader ({ visible, theme }: Props): React.ReactElement<Props> {
+function Header ({ open, theme }: Props): React.ReactElement<Props> {
   const navigate = useNavigate();  // Add this line to get the navigate function
   const walletContext = useContext(WalletContext);
   const selectWallet = useContext(OpenSelectWallet);
@@ -26,7 +26,7 @@ function WalletHeader ({ visible, theme }: Props): React.ReactElement<Props> {
   const wallet = walletContext.wallet || walletContext.evmWallet;
   const logoSrc = theme === 'dark' ? '/logo-white.svg' : '/logo.svg';
 
-  if (!visible) {
+  if (!open) {
     return (<></>);
   }
 
@@ -51,6 +51,11 @@ function WalletHeader ({ visible, theme }: Props): React.ReactElement<Props> {
                   onClick={goToBuilder}
                   type={'primary'}
                 >Builder</Button>
+                   <Button
+                  className='xcm-send-btn xcm-send-btn-small-size'
+                  onClick={goToBagpipes}
+                  type={'primary'}
+                >Bagpipes</Button>
       
                 <Button
                   className='xcm-send-btn-wallet xcm-send-btn-small-size'
@@ -64,4 +69,4 @@ function WalletHeader ({ visible, theme }: Props): React.ReactElement<Props> {
       
 }
 
-export default WalletHeader;
+export default Header;

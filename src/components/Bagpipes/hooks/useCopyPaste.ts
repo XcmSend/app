@@ -1,11 +1,13 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Node, useKeyPress, useReactFlow, getConnectedEdges, KeyCode, Edge, XYPosition, useStore } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
+import useAppStore from '../../../store/useAppStore';
 
 
 export function useCopyPaste<NodeData, EdgeData>() {
   const mousePosRef = useRef<XYPosition>({ x: 0, y: 0 });
   const rfDomNode = useStore((state) => state.domNode);
+  const { isModalVisible } = useAppStore();
 
   const { getNodes, setNodes, getEdges, setEdges, project } = useReactFlow<NodeData, EdgeData>();
 
@@ -20,8 +22,12 @@ export function useCopyPaste<NodeData, EdgeData>() {
     const events = ['cut', 'copy', 'paste'];
 
     if (rfDomNode) {
-      const preventDefault = (e: Event) => e.preventDefault();
-
+      const preventDefault = (e: Event) => {
+        // Allow the paste event to propagate if the modal is open
+        if (e.type === "paste" && isModalVisible) return;
+        e.preventDefault();
+    };
+    
       const onMouseMove = (event: MouseEvent) => {
         const bounds = rfDomNode.getBoundingClientRect();
         mousePosRef.current = {

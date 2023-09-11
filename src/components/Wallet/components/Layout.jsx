@@ -7,7 +7,7 @@ import { Switch } from 'antd';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { WalletContext } from '../contexts';
 import SelectWalletModal from './SelectWalletModal';
-import WalletHeader from './WalletHeader';
+import Header from '../../Header';
 
 import './styles/Layout.scss';
 
@@ -41,7 +41,7 @@ function Layout () {
         onChange={_onChangeTheme}
         unCheckedChildren='Dark'
       />
-      <WalletHeader visible={!!walletContext.wallet || !!walletContext.evmWallet} theme={theme} />
+      <Header open={!!walletContext.wallet || !!walletContext.evmWallet} theme={theme} />
       <Outlet />
       <SelectWalletModal theme={theme} />
     </div>

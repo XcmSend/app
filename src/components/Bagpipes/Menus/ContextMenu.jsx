@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 const ContextMenu = ({ items, triggerEvent }) => {
-  const [visible, setVisible] = useState(false);
+  const [open, setVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   
@@ -35,7 +35,7 @@ const ContextMenu = ({ items, triggerEvent }) => {
     settings: "./settings-outline.svg"
   }
 
-  const menu = visible ? (
+  const menu = open ? (
     <div
         className=" bg-white text-black p-2 rounded shadow-lg divide-y divide-gray-300 main-font"
         style={{ top: `${position.y}px`, left: `${position.x}px`, position: 'fixed', zIndex: 1000 }}

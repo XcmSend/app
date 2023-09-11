@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @sub-wallet/xcm-send authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
 // eslint-disable-next-line header/header
@@ -67,7 +67,7 @@ function AccountList (): React.ReactElement {
             onClick={onSignClicked(acc.address)}
             type={'primary'}
           >
-            Sign Dummy
+            Sign In (Dummy)
           </Button>
         </div>
       </div>

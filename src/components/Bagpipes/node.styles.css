@@ -12,6 +12,17 @@
     font-size: xx-small;
     min-width:200px !important;
     box-shadow: 5px 10px #888888 !important;
+  }
+
+  .react-flow__node-chainNode {
+    background-color: #ffffff !important;
+    border-color: #e2e2e2;
+    color: #333;
+    border-radius: 10px !important;
+    font-family: monospace, sans-serif;
+    font-size: xx-small;
+    min-width:200px !important;
+    box-shadow: 5px 10px #888888 !important;
   
   
   }
