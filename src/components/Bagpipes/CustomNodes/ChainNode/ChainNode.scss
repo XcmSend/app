@@ -1,0 +1,83 @@
+@import "../../../../variables";
+
+.section {
+    border-radius: 8px;
+    // padding: 16px;
+    // background-color: #f4f4f4; /* A light gray background */
+    // margin-bottom: 16px;
+}
+
+.section-heading {
+    margin-bottom: 8px;
+    font-size: 16px;
+    min-width: 150px;
+    font-weight: bold;
+}
+
+.address-selection,
+.contact-selection {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Space between elements inside the section */
+}
+
+// select {
+//     border-radius: 4px;
+//     padding: 8px 12px;
+//     border: 1px solid #ccc;
+//     appearance: none; /* This can remove the default browser styling */
+//     background-color: #fff;
+//     cursor: pointer;
+// }
+
+.chain-selector {
+    width: 150px !important;
+}
+
+.asset-selector {
+    width: 150px !important;
+}
+
+.contact-selector {
+    width: 150px !important;
+}
+
+.asset-amount-input {
+    border-radius: 5px;
+    margin-top: 5px;
+    width: 150px;
+    height: 25px;
+}
+
+
+
+.address-button {
+    background-color: #ccc;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.contact-option {
+    font-size: 12px !important;
+}
+
+.unbounded-black {
+    font-family:  $unbounded-font !important;
+    font-weight: 700;
+}
+
+.unbounded {
+    font-family:  $unbounded-font, sans-serif;
+    font-weight: 400;
+}
+
+.unbounded-medium {
+    font-family:  $unbounded-font;
+    font-weight: 500;
+}
+
+.unbounded-bold {
+    font-family: $unbounded-font, sans-serif;
+    font-weight: 600;
+}

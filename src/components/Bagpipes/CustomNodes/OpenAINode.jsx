@@ -6,7 +6,7 @@ import CustomNode from './CustomNode';
 import OpenAINodeFields from './OpenAINodeFields';
 import useExecuteScenario from '../hooks/useExecuteScenario';
 import '../../../index.css';
-import '../node.styles.css';
+import '../node.styles.scss';
 import useAppStore from '../../../store/useAppStore';
 
 

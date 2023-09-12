@@ -1,19 +1,23 @@
 // @ts-nocheck
 import React, { useState, useContext, useEffect, useMemo, useRef } from 'react';
-import { Select, Modal, Button } from 'antd';
-import { useNodeId, } from 'reactflow';
+import {  Handle, Position, useNodeId } from 'reactflow';
+
 import SocketContext from '../../../../contexts/SocketContext';
 import CustomNode from '../CustomNode';
 import { useAddressBook } from '../../../../contexts/AddressBookContext';
 import useExecuteScenario from '../../hooks/useExecuteScenario';
 import AccountDropdown from './AccountDropdown';
 import '../../../../index.css';
-import '../../node.styles.css';
+import './ChainNode.scss';
+import 'antd/dist/antd.css';
+import '../../node.styles.scss';
+import '../../../../main.scss';
 import useAppStore from '../../../../store/useAppStore';
 import AddContacts from './AddContacts'
 import { chainOptions, assetOptions } from './options';
+import '/plus.svg'
 
-const ChainNode = ({ data, isConnectable }) => {
+const ChainNode = ({ children, data, isConnectable }) => {
   const { nodeContent } = data;
   const socket = useContext(SocketContext);
   const { nodeContentMap, executeScenario } = useExecuteScenario();
@@ -36,37 +40,23 @@ const ChainNode = ({ data, isConnectable }) => {
   const inputRef = useRef(null);
 
 
-    // Mock function to fetch addresses from extension.
-    const fetchAddressesFromExtension = () => {
-      // Return a mock list of addresses for simplicity.
-      return ["0xAddress1", "0xAddress2"];
-    };
+  const fetchAddressesFromExtension = () => {
+    // Return a mock list of addresses for simplicity.
+    return [];
+  };
   
   // Assuming we have some function to fetch addresses from the extension
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
-
-
 
   // Filtered assets based on the selected chain
   const filteredAssets = selectedChain
   ? assetOptions.find(option => option.chain === selectedChain)?.assets
   : [];
 
-  const addressesFromExtension = fetchAddressesFromExtension();
-
-
-
-  const allOptions = [
-    ...contacts.map(contact => ({ label: `${contact.name} (${contact.address})`, value: contact.address })),
-    ...extensionAddresses.map(addr => ({ label: addr, value: addr }))
-];
-
-
-
-useEffect(() => {
-  console.log('contacts', contacts)
-  setAllAddresses([...extensionAddresses, ...contacts.map(contact => contact.address)]);
-}, [extensionAddresses, contacts]);
+  useEffect(() => {
+    console.log('contacts', contacts)
+    setAllAddresses([...extensionAddresses, ...contacts.map(contact => contact.address)]);
+  }, [extensionAddresses, contacts]);
 
 
   useEffect(() => {
@@ -85,15 +75,6 @@ useEffect(() => {
     } else {
       setSelectedAsset(null);
     }
-}
-
-  const handleSaveAddress = async () => {
-    const success = await addContact({ address: newAddress, name: newName });
-
-    if (success) {
-      setIsModalVisible(false);
-      setSelectedContact(newAddress); // After successfully adding the contact, set it as the selected contact
-    }
   }
 
   const handleAssetChange = (e) => {
@@ -105,83 +86,104 @@ useEffect(() => {
         setContent(""); // Clear the content
     } else {
       setContent(nodeContentMap[nodeId] || '');
-      console.log(`Setting content for node ${nodeId}:`, nodeContentMap[nodeId]);  // Debugging info
-      console.log(`Full node content map:`, nodeContentMap);  // Debugging info
+      console.log(`Setting content for node ${nodeId}:`, nodeContentMap[nodeId]); 
+      console.log(`Full node content map:`, nodeContentMap); 
 
     }
   }, [nodeContentMap, nodeId]);
 
-return (
-  <CustomNode nodeId={nodeId} isConnectable={isConnectable} data={data} isModalVisible={isModalVisible}>
-    <div className="chain-selection">
-      <select onChange={handleChainChange}>
-          <option value="" disabled selected>
-              Select a chain
-          </option>
-          {chainOptions.map(chain => (
+  return (
+    <div className="custom-node rounded-lg shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
+      <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
+      <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
+  
+      <div className="border p-2 rounded mb-2 ">
+        <div className="chain-selection mb-2">
+          <h3 className="text-xxs text-gray-400 primary-font mb-1">Chain</h3> {/* Title */}
+          <select className="chain-selector unbounded-black  text-black border border-gray-300 p-2 rounded" onChange={handleChainChange}>
+            <option value="" disabled selected>
+              Select chain
+            </option>
+            {chainOptions.map(chain => (
               <option key={chain.value} value={chain.value}>
-                  {chain.label}
+                {chain.label}
               </option>
-          ))}
-      </select>
-    </div>
-
-    {selectedChain && (
-      <div className="asset-selection">
-          <select onChange={handleAssetChange} value={selectedAsset}>
+            ))}
+          </select>
+        </div>
+  
+        {selectedChain && (
+          <div className="asset-selection mb-2">
+            <h3 className="text-xxs text-gray-400 primary-font mb-1">Asset</h3>
+            <select className="asset-selector unbounded-black text-black border border-gray-300 p-2  rounded" onChange={handleAssetChange} value={selectedAsset}>
               <option value="" disabled>Select an asset</option>
               {filteredAssets.map(asset => (
-                  <option key={asset.value} value={asset.value}>
-                     {asset.ticker} {asset.description}
-                  </option>
+                <option key={asset.value} value={asset.value}>
+                 <div className='unbounded-black'>{asset.ticker}</div> <div className='unbounded'>{asset.description}</div>
+                </option>
               ))}
-          </select>
+            </select>
+          </div>
+        )}
       </div>
-    )}
-
-
-{selectedChain && (
-    <div className="address-selection">
-        <AccountDropdown onSelect={(address) => setSelectedAddress(address)} />
-        <button onClick={() => setIsModalVisible(true)}>+ Address</button>
-    </div>
-)}
-
-        {/* Assuming some condition here, we can display the contacts dropdown */}
-      {selectedChain && contacts.length > 0 && (
-        <div className="contact-selection">
-          <Select 
-              options={contacts.map(contact => ({ label: `${contact.name} (${contact.address})`, value: contact.address }))}
-              value={selectedContact}
-              onChange={(option) => setSelectedContact(option.value)}
-          />
+  
+      {selectedChain && (
+        <div className="flex flex-col items-start mb-2 border p-2 rounded">
+          <h3 className="text-xxs text-gray-400 primary-font mb-2 ">Addresses</h3>
+          <div className="flex items-center text-black">
+            <AccountDropdown onSelect={(address) => setSelectedAddress(address)} />
+          
+          </div>
+          <AddContacts />
         </div>
       )}
-
-
-<AddContacts />
-
-      {selectedChain && (
-          <div>
-              <input 
-                  type="number" 
-                  placeholder="Enter asset amount" 
-                  value={assetAmount}
-                  onChange={(e) => setAssetAmount(e.target.value)}
-              />
+  
+      {selectedChain && contacts.length > 0 && (
+        <div className="contact-selection  mb-2 border p-2 rounded">
+          <h3 className="text-xxs text-gray-400 primary-font mb-1">Contacts</h3>
+          <select 
+            className="contact-selector unbounded-black font-semibold text-black border border-gray-300 p-2 rounded"
+            value={selectedContact || ""}
+            onChange={(e) => setSelectedContact(e.target.value)}
+          >
+            <option value="" disabled>Select Contact</option>
+            {contacts.map(contact => (
+              <option key={contact.address} value={contact.address}>
+                {`${contact.name} (${contact.address})`}
+              </option>
+            ))}
+          </select>
+          <button className="ml-2 border rounded p-2">
+              <img className="h-3 w-3" src="/plus.svg" alt="Add contact" />
+            </button>
           </div>
       )}
-
-    {loading ? (
-      <div className="loading-indicator">Loading...</div>
-    ) : null}
-
-    <div className={nodeContent && 'typing-effect absolute px-1 pt-2 pb-2 rounded-b-lg bg-white -z-50 pt-3 px-2 pb-2 '}>
-      {nodeContent}
+  
+      {selectedChain && (
+        <div className="mb-2 border p-2 rounded">
+          <h3 className="text-xxs text-gray-400 primary-font mb-1">Amount</h3>
+          <div className="unbounded-black">
+          <input 
+            className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded'
+            type="number" 
+            placeholder="0.0000" 
+            value={assetAmount}
+            onChange={(e) => setAssetAmount(e.target.value)}
+          />
+          </div>
+        </div>
+      )}
+  
+      {loading ? (
+        <div className="loading-indicator mb-2">Loading...</div>
+      ) : null}
+      
+      <div className={nodeContent && 'typing-effect absolute px-1 pt-2 pb-2 rounded-b-lg bg-white -z-50 pt-3 px-2 pb-2 '}>
+        {nodeContent}
+      </div>
     </div>
-    </CustomNode>
-
-);
+  );
+  
 };
 
 export default ChainNode;

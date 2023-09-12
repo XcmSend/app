@@ -1,6 +1,7 @@
+@import "variables";
 body {
   margin: 0;
-  font-family: 'Lexend', serif !important;
+  font-family: $primary-font;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #020412;
@@ -117,6 +118,6 @@ code {
   background-color: #5485fc;
 }
 
-.font-mono {
-  font-family: monospace;
+.font-prim  {
+  font-family: $primary-font;
 }

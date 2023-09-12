@@ -1,5 +1,7 @@
 .account-dropdown {
     position: relative;
+
+
   
     .dropdown-menu {
       position: absolute;
@@ -20,4 +22,8 @@
       }
     }
   }
+
+  .select-container select {
+    width: 150px; /* Adjust this value as needed */
+}
   

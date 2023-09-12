@@ -5,7 +5,7 @@
 
 import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReactFlow, { Panel, ReactFlowProvider, MiniMap, Controls, Background,   BackgroundVariant, useNodesState, useEdgesState, addEdge, applyNodeChanges, applyEdgeChanges, Handle, Position, NodeToolbar, useStoreApi, useNodeId } from 'reactflow';
+import ReactFlow, { Panel, ReactFlowProvider, MiniMap, Controls, Background,   BackgroundVariant, useNodesState, useEdgesState, addEdge, applyNodeChanges, applyEdgeChanges, Handle, Position, NodeToolbar, useStoreApi, useNodeId, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
 import { useExecuteScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
@@ -15,6 +15,8 @@ import '../../index.css';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
 import ChainNode from './CustomNodes/ChainNode/ChainNode';
+import ActionNode from './CustomNodes/ActionNode';
+import CustomEdge from './CustomEdges/CustomEdge';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './PlayButton';
@@ -25,10 +27,11 @@ import styled, { ThemeProvider } from 'styled-components';
 import { lightTheme, darkTheme } from './theme';
 import styles from './styles.module.css';
 import { node } from 'stylis';
-import './node.styles.css';
+import './node.styles.scss';
 
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
+import Edges from './edges';
 
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};
@@ -58,13 +61,13 @@ const nodeTypes = {
   formGroup: FormGroupNode,
   openAi: OpenAINode,
   chain: ChainNode,
-
+  action: ActionNode,
 };
 
-// const edgeTypes = {
-//     custom: CustomEdge,
-//     'start-end': CustomEdgeStartEnd,
-//   };
+const edgeTypes = {
+    custom: CustomEdge,
+    // 'start-end': CustomEdgeStartEnd,
+  };
 
 const getId = (nodeType) => `${nodeType}_${uuidv4().substr(0, 6)}`;
 
@@ -205,7 +208,13 @@ const BagpipesFlow = () => {
         );
       }, [nodeContentMap]);
       
-
+      useEffect(() => {
+        const maxIdInNodes = Math.max(...currentScenarioNodes.map(node => parseInt(node.id)), maxNodeId);
+        if(maxIdInNodes > maxNodeId) {
+          setMaxNodeId(maxIdInNodes);
+        }
+      }, [currentScenarioNodes]);
+      
     
     
     // Load the scenario data when the component mounts
@@ -397,13 +406,7 @@ const BagpipesFlow = () => {
       
     
     
-    useEffect(() => {
-        const maxIdInNodes = Math.max(...currentScenarioNodes.map(node => parseInt(node.id)), maxNodeId);
-        if(maxIdInNodes > maxNodeId) {
-          setMaxNodeId(maxIdInNodes);
-        }
-      }, [currentScenarioNodes]);
-      
+
       /**
      * Function to prevent default behavior when something is being dragged over the drop area.
      * @param event {object} - The event data.
@@ -443,9 +446,9 @@ const BagpipesFlow = () => {
             if (type === 'formGroup') {
             // formGroup node data
             const data = {
-                label: 'Open AI',
-                image: './openai.svg',
-                name: "OpenAI",
+                label: 'Form Group',
+                image: './.svg',
+                name: "Form Group Example",
                 fields: [
                 { label: "Field 1", type: "text" },
                 { label: "Field 2", type: "number" },
@@ -516,7 +519,33 @@ const BagpipesFlow = () => {
               // setNodes((nds) => nds.concat(newNode));
               // Call the action to add the node to the current scenario
               addNodeToScenario(activeScenarioId, newNode);
-            } else {
+            } else if (type === 'action') {
+
+              
+              // Chain node data
+              const data = {
+                  label: 'Action',
+                  image: './action.svg',
+                  name: "Action",
+                  fields: [
+                  { label: "Field 1", type: "text" },
+                  { label: "Field 2", type: "number" },
+                  ]
+              };
+              // Chain node creation
+              const nodeId = getId();
+              const newNode = {
+                  id: getId(nodeType),          
+                  type,
+                  position,
+                  data,
+                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
+              };
+              // setNodes((nds) => nds.concat(newNode));
+              // Call the action to add the node to the current scenario
+              addNodeToScenario(activeScenarioId, newNode);
+            }
+            else {
             // other node creation
             const newNode = {
             id: getId(nodeType),          
@@ -603,6 +632,8 @@ const BagpipesFlow = () => {
         
     return (
 
+      <div className="bagpipe-flow-canvass" style={{ width: '100vw', height: '1000px' }}>
+
         <ThemeProvider theme={theme}>
             <Panel position="top-center">          
                 <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button>
@@ -624,6 +655,7 @@ const BagpipesFlow = () => {
                   onNodesDelete={onNodesDelete}
                   onEdgesDelete={onEdgesDelete}
                   nodeTypes={nodeTypes}
+                  edgeTypes={edgeTypes}
                   attributionPosition="top-right"
                   onNodeClick={onNodeClick} 
                   onEdgeClick={onEdgeClick}
@@ -634,9 +666,10 @@ const BagpipesFlow = () => {
               <MiniMap />
               {/* <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Lines} /> 
              <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Lines} />  */}
-              <Background color='f2f2f2' className="bg-gray-300" variant={BackgroundVariant.Dots} />
+              <Background color='fff' className="" variant={BackgroundVariant.Dots} />
               <ControlsStyled />
-              <Panel position="bottom-center">
+              <EdgeLabelRenderer type='' />
+              {/* <Panel position="bottom-center">
                 <div className={styles.buttonGroup}>
                 <button disabled={canUndo} className={styles.button} onClick={undo}>
                     <span className={styles.buttonIcon}>⤴️</span> undo
@@ -646,7 +679,7 @@ const BagpipesFlow = () => {
                 </button>
                 </div>
 
-            </Panel>
+            </Panel> */}
             </ReactFlowStyled>
             <PlayButton executeScenario={executeScenario} stopExecution={stopExecution} disabled={loading} />
              
@@ -668,6 +701,7 @@ const BagpipesFlow = () => {
               )} */}
             </div>
     </ThemeProvider>
+    </div>
   
     );
   }

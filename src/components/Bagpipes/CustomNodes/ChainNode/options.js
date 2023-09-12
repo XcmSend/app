@@ -2,22 +2,29 @@ export const chainOptions = [
     {
       value: 'polkadot',
       label: 'Polkadot',
-      logo: './polkadot-logo.svg',
+      logo: '/polkadot-logo.svg',
+      addressId: 0
     },
     {
       value: 'rococo',
       label: 'Rococo',
-      logo: './polkadot-logo.svg'
+      logo: '/polkadot-logo.svg',
+      addressId: 0
+
     },
     {
       value: 'hydraDx',
       label: 'Hydra',
-      logo: './hydra-logo.svg'
+      logo: '/hydra-logo.svg',
+      addressId: 0
+
     },
     {
       value: 'assetHub',
       label: 'Asset Hub',
-      logo: './assethub-logo.svg'
+      logo: '/assethub-logo.svg',
+      addressId: 0
+
     },
   ];
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '../../../../index.css';
+import '../../node.styles.scss';
 
 export default function Dropdown({ options, renderOption, onOptionSelected, placeholder = 'Select' }) {
   const [isOpen, setOpen] = useState(false);

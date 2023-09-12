@@ -1,6 +1,7 @@
 // @ts-nocheck
 import React from 'react';
 import './nodes.jsx';
+import '../../index.css'
 
 export default () => {
   const onDragStart = (event, nodeType) => {
@@ -18,17 +19,18 @@ export default () => {
     api: 'API',
     gmail: 'Gmail',
     vectorDb: 'Vector DB',
-    chain: 'Chain'
+    chain: 'Chain',
+    action: 'Action',
 
   }
 
   return (
-    <aside className='fixed top-100 left-0'>
+    <aside className='fixed top-100 right-0'>
       <div className="description">You can drag these nodes to the canvass. Be sure to add Start and End nodes to beginning and end of each workflow, respectfully. </div>
-      <div className="dndnode input" onDragStart={(event) => onDragStart(event, `input` )} draggable>
+      <div className="dndnode" onDragStart={(event) => onDragStart(event, `input` )} draggable>
         {nodeNames.inputPrompt}
       </div>
-      <div className="dndnode output" onDragStart={(event) => onDragStart(event, 'output')} draggable>
+      <div className="dndnode" onDragStart={(event) => onDragStart(event, 'output')} draggable>
         {nodeNames.output}
       </div>
       {/* <div className="dndnode " onDragStart={(event) => onDragStart(event, 'gmail')} draggable>
@@ -51,6 +53,9 @@ export default () => {
       </div> */}
       <div className="dndnode chain" onDragStart={(event) => onDragStart(event, 'chain')} draggable>
         {nodeNames.chain}
+      </div>
+      <div className="dndnode action" onDragStart={(event) => onDragStart(event, 'action')} draggable>
+        {nodeNames.action}
       </div>
     </aside>
   );

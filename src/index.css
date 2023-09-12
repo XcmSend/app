@@ -79,7 +79,7 @@ button:focus-visible {
   flex-direction: column;
   display: flex;
   flex-grow: 1;
-  height: 100vh; 
+  height: 1000vh !important; 
 }
 
 .reactflowcomponent {
@@ -101,11 +101,11 @@ button:focus-visible {
 
 .bagpipe aside .description {
   margin-bottom: 10px;
-  min-width:10rem !important;
+  min-width:5rem !important;
 }
 
 .bagpipe .dndnode {
-  height: 20px;
+  height: 20px !important;
   padding: 20px;
   border: 1px solid #250303;
   border-radius: 8px;
@@ -114,7 +114,6 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
   cursor: grab;
-  min-width: 50px !important;
 }
 
 .bagpipe .dndnode.input {
@@ -129,6 +128,11 @@ button:focus-visible {
   flex-grow: 1;
   height: 100%;
 }
+
+/* .reactflow-wrapper {
+  height: 1000vh !important;
+} */
+
 
 .bagpipe .selectall {
   margin-top: 10px;
@@ -220,3 +224,13 @@ border: 1px solid rgb(184, 184, 184);
   border: 3px solid rgba(252, 158, 58, 0.528) !important;
   }
 
+
+.bagpipe-flow-canvass {
+  height: 1000px !important;
+  content: " ";
+  overflow: scroll !important;
+}
+
+.react-flow__background {
+  height: 10 !important;
+}

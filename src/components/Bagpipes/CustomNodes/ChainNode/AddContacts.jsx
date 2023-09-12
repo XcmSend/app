@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Modal } from 'antd';
 import useAppStore from '../../../../store/useAppStore';
 import { useAddressBook } from '../../../../contexts/AddressBookContext';
+import '../../../../index.css';
+import '../../node.styles.scss';
 
 export default function AddContacts() {
     const [newAddress, setNewAddress] = useState(''); // To capture address in modal
