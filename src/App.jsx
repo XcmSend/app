@@ -79,15 +79,15 @@ export function App () {
                 element={<WalletInfo />}
                 path='/wallet-info'
               />
-                  <Route
+                  {/* <Route
                 element={<Builder />}
                 path='/builder'
-              />
+              /> */}
                 <Route
                 element={<BagpipesFlowRoute />}
-                path='/bagpipes'
+                path='/builder'
               />
-                          <Route element={<Lab />} path='/lab' />
+                          {/* <Route element={<Lab />} path='/lab' /> */}
 
                 <Route
                 element={<ReactTestFlow />}

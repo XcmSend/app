@@ -636,7 +636,7 @@ const BagpipesFlow = () => {
 
         <ThemeProvider theme={theme}>
             <Panel position="top-center">          
-                <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button>
+                {/* <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button> */}
             </Panel>
             <div className="bagpipe">
         

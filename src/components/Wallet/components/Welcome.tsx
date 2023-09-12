@@ -16,7 +16,7 @@ function Welcome (): React.ReactElement {
 
   useEffect(() => {
     if (walletContext.wallet && walletContext.walletType === 'substrate') {
-      navigate('/wallet-info');
+      navigate('/builder');
     } else if (walletContext.evmWallet && walletContext.walletType === 'evm') {
       navigate('/evm-wallet-info');
     }

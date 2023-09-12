@@ -36,7 +36,7 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
     };
        // Function to navigate to /builder
        const goToBagpipes = () => {
-        navigate('/bagpipes') ;
+        navigate('/builder') ;
       };
   
 
@@ -46,22 +46,22 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
             <div className={'wallet-header-content'}>
               <img src={logoSrc} className='bagpipe-logo' alt="Bagpipe Logo" />
       
-                <Button
+                {/* <Button
                   className='xcm-send-btn xcm-send-btn-small-size'
                   onClick={goToBuilder}
                   type={'primary'}
-                >Builder</Button>
+                >Builder</Button> */}
                    <Button
                   className='xcm-send-btn xcm-send-btn-small-size'
                   onClick={goToBagpipes}
                   type={'primary'}
-                >Bagpipes</Button>
-      
+                >Builder</Button>
+{/*       
                 <Button
                   className='xcm-send-btn-wallet xcm-send-btn-small-size'
                   onClick={selectWallet.open}
                   type={'primary'}
-                >Select Wallet</Button>
+                >Select Wallet</Button> */}
             </div>
           </div>
         </header>
