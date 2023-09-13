@@ -27,7 +27,7 @@ export default function ActionNode({ children, nodeId, data, isConnectable }) {
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
 
-      <div className="node-title mb-2">{data.name}</div>
+      <div className="text-gray-400 mb-2 text-xxs">{data.name}</div>
 
       {/* Custom dropdown */}
       <div className="relative w-28">
