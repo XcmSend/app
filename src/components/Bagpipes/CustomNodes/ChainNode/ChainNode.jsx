@@ -14,7 +14,9 @@ import '../../node.styles.scss';
 import '../../../../main.scss';
 import useAppStore from '../../../../store/useAppStore';
 import AddContacts from './AddContacts'
-import { chainOptions, assetOptions } from './options';
+import {  getAssetOptions } from './options';
+import { listChains } from './../../../Chains/ChainsInfo';
+
 import '/plus.svg'
 
 const ChainNode = ({ children, data, isConnectable }) => {
@@ -29,29 +31,81 @@ const ChainNode = ({ children, data, isConnectable }) => {
     setIsModalVisible: state.setIsModalVisible
   }));
   const { addContact, contacts, error, setError } = useAddressBook();
-  const [selectedChain, setSelectedChain] = useState(null);
-  const [selectedAsset, setSelectedAsset] = useState(null);
+  const [selectedChain, setSelectedChain] = useState("");
+  const [selectedAsset, setSelectedAsset] = useState("");
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [selectedContact, setSelectedContact] = useState(null);
   const [newAddress, setNewAddress] = useState(''); // To capture address in modal
   const [newName, setNewName] = useState('');
   const [allAddresses, setAllAddresses] = useState([]);
   const [assetAmount, setAssetAmount] = useState("");
+  const [chainList, setChainList] = useState({});
+  const [assetOptions, setAssetOptions] = useState([]);
+  const [assetsForChain, setAssetsForChain] = useState([]);
+  const [assets, setAssets] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
-
+  const ChainInfoList = Object.values(chainList);
 
   const fetchAddressesFromExtension = () => {
     // Return a mock list of addresses for simplicity.
     return [];
   };
   
-  // Assuming we have some function to fetch addresses from the extension
-  const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
 
-  // Filtered assets based on the selected chain
-  const filteredAssets = selectedChain
-  ? assetOptions.find(option => option.chain === selectedChain)?.assets
-  : [];
+    // Assuming we have some function to fetch addresses from the extension
+    const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
+
+    // Filtered assets based on the selected chain
+    const assetsForSelectedChain = assetOptions.find(option => option.chain === selectedChain)?.assets || [];
+    const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
+    
+
+
+
+    const handleChainChange = async (e) => {
+      const selectedChainName = e.target.value;
+      setSelectedChain(selectedChainName);
+      setIsLoading(true); 
+      
+      // Fetch assets for the selected chain
+      const assetsData = await getAssetOptions(selectedChainName);
+      setAssetsForChain(assetsData.assets);
+      setIsLoading(false); 
+      
+      // Set the first asset as the selected asset, if available
+      if (assetsData.assets?.length) {
+          setSelectedAsset(assetsData.assets[0].name);  // Assuming name is the desired value for the asset
+      } else {
+          setSelectedAsset(null);
+      }
+  };
+  
+
+  const handleAssetChange = (e) => {
+    setSelectedAsset(e.target.value);
+  };
+
+
+
+  useEffect(() => {
+    console.log('selectedChain', selectedChain)
+    if (selectedChain) {
+        setIsLoading(true);
+        getAssetOptions(selectedChain).then(fetchedAssets => {
+            setAssets(fetchedAssets.assets); // we're setting only the assets part
+            setIsLoading(false);
+        }).catch(error => {
+            console.error("Failed to fetch assets:", error);
+            setIsLoading(false);
+            // Handle the error appropriately for user feedback
+        });
+    }
+}, [selectedChain]);
+
+
+
+
 
   useEffect(() => {
     console.log('contacts', contacts)
@@ -67,20 +121,8 @@ const ChainNode = ({ children, data, isConnectable }) => {
   }, [isModalVisible]);
 
 
-  const handleChainChange = (e) => {
-    setSelectedChain(e.target.value);
-    const assetsForSelectedChain = assetOptions.find(option => option.chain === e.target.value)?.assets;
-    if (assetsForSelectedChain?.length) {
-      setSelectedAsset(assetsForSelectedChain[0].value);
-    } else {
-      setSelectedAsset(null);
-    }
-  }
 
-  const handleAssetChange = (e) => {
-    setSelectedAsset(e.target.value);
-  };
-
+ 
     useEffect(() => {
       if (loading) { // If a new execution is starting...
         setContent(""); // Clear the content
@@ -92,6 +134,17 @@ const ChainNode = ({ children, data, isConnectable }) => {
     }
   }, [nodeContentMap, nodeId]);
 
+  useEffect(() => {
+    const fetchChains = async () => {
+        const chains = listChains();
+        setChainList(chains);
+    };
+
+    fetchChains();
+}, []);
+
+
+
   return (
     <div className="custom-node rounded-lg shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
@@ -100,29 +153,37 @@ const ChainNode = ({ children, data, isConnectable }) => {
       <div className="border p-2 rounded mb-2 ">
         <div className="chain-selection mb-2">
           <h3 className="text-xxs text-gray-400 primary-font mb-1">Chain</h3> {/* Title */}
-          <select className="chain-selector unbounded-bold text-black border border-gray-300 p-2 rounded" onChange={handleChainChange}>
-            <option value="" disabled selected>
+          <select className="chain-selector font-semibold text-black border border-gray-300 p-2 rounded" onChange={handleChainChange}>
+            <option value="" disabled>
               Select chain
             </option>
-            {chainOptions.map(chain => (
-              <option key={chain.value} value={chain.value}>
-                {chain.label}
-              </option>
+            {ChainInfoList.map((ChainInfo, index) => (
+          <option key={ChainInfo.name} value={ChainInfo.name}>
+          {ChainInfo.display}
+      </option>
             ))}
           </select>
         </div>
-  
+        </div>
+        <div className="border p-2 rounded mb-2 ">
+
+
+
         {selectedChain && (
           <div className="asset-selection mb-2">
             <h3 className="text-xxs text-gray-400 primary-font mb-1">Asset</h3>
-            <select className="asset-selector unbounded-bold text-black border border-gray-300 p-2 rounded" onChange={handleAssetChange} value={selectedAsset}>
+            {isLoading ? (
+          <span>Loading assets...</span>
+          ) : (
+            <select className="asset-selector text-black border border-gray-300 p-2 rounded font-semibold" onChange={handleAssetChange} value={selectedAsset}>
               <option value="" disabled>Select an asset</option>
-              {filteredAssets.map(asset => (
-                <option key={asset.value} value={asset.value}>
-                 <div className='unbounded-black'>{asset.ticker}</div> <div className='unbounded'>{asset.description}</div>
-                </option>
-              ))}
+               {assetsForChain.map(asset => (
+                   <option key={asset.assetId} value={asset.name}>
+                     {asset.asset.name} | AssetId: {asset.assetId}
+                   </option>
+               ))}
             </select>
+          )}
           </div>
         )}
       </div>
@@ -142,7 +203,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
     <div className="mb-2 border p-2 rounded flex flex-col items-start justify-start">
         <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start">Contacts</h3>
         <select 
-            className="contact-selector unbounded-bold font-semibold text-black border border-gray-300 p-2 rounded"
+            className="contact-selector font-semibold text-black border border-gray-300 p-2 rounded"
             value={selectedContact || ""}
             onChange={(e) => {
                 if(e.target.value === 'create_new_contact') {

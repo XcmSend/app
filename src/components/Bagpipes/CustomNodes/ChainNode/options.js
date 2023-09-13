@@ -1,91 +1,66 @@
-export const chainOptions = [
+import { listAssetHubAssets, listHydraDxAssets } from './../../../Chains/DraftTx';
+
+const dotAssets = {
+  asset: {
+    name: 'polkadotDot',
+    ticker: 'DOT',
+    description: 'Polkadot',
+  },
+  assetId: 0,
+};
+
+const rococoAssets = {
+  asset: {
+    name: 'rococoRoc',
+    ticker: 'ROC',
+    description: 'Rococo',
+  },
+  assetId: 0,
+};
+
+export const assetOptions = [
     {
-      value: 'polkadot',
-      label: 'Polkadot',
-      logo: '/polkadot-logo.svg',
-      addressId: 0
+        chain: 'polkadot',
+        assets: [dotAssets], 
     },
     {
-      value: 'rococo',
-      label: 'Rococo',
-      logo: '/polkadot-logo.svg',
-      addressId: 0
-
+        chain: 'rococo',
+        assets: [rococoAssets], 
     },
     {
-      value: 'hydraDx',
-      label: 'Hydra',
-      logo: '/hydra-logo.svg',
-      addressId: 0
-
+        chain: 'hydraDx',
+        assets: [],  // We'll fetch and populate this later
     },
     {
-      value: 'assetHub',
-      label: 'Asset Hub',
-      logo: '/assethub-logo.svg',
-      addressId: 0
-
-    },
-  ];
-
-
-  export const assetOptions = [
-    {
-      chain: 'polkadot',
-      assets: [
-        {
-          value: 'polkadotDot',
-          ticker: 'DOT',
-          description: 'Polkadot'
-        }
-      ]
-    },
-    {
-      chain: 'rococo',
-      assets: [
-        {
-          value: 'rococoRoc',
-          ticker: 'ROC',
-          description: 'Rococo'
-        }
-      ]
-    },
-    {
-      chain: 'hydraDx',
-      assets: [
-        {
-          value: 'hydraHdx',
-          ticker: 'HDX',
-          description: 'HDX',
-
-        },
-        {
-          value: 'hydraUsdt',
-          ticker: 'USDt',
-          description: 'Polkadot Asset Hub'
-
-        },
-        {
-          value: 'hydraDot',
-          ticker: 'DOT',
-          description: 'Polkadot'
-        }
-      ]
-    },
-    {
-      chain: 'assetHub',
-      assets: [
-        {
-          value: 'assetHubUsdt',
-          ticker: 'USDt',
-          description: 'Tether'
-        },
-        {
-          value: 'assetHubDot',
-          ticker: 'DOT',
-          description: 'Asset Hub\'s DOT'
-        }
-      ]
+        chain: 'assetHub',
+        assets: [],  // We'll fetch and populate this later
     }
-  ];
+];
+
+export const getAssetOptions = async (selectedChain) => {
+  console.log("Inside getAssetOptions for chain:", selectedChain);
+  
+  let assets;
+  switch(selectedChain) {
+      case 'hydraDx':
+          assets = await listHydraDxAssets();
+          break;
+      case 'assetHub':
+          assets = await listAssetHubAssets();
+          break;
+      case 'polkadot':
+          assets = [dotAssets];
+          break;
+      case 'rococo':
+          assets = [rococoAssets];
+          break;
+      default:
+          assets = [];
+  }
+
+  return {
+      chain: selectedChain,
+      assets: assets
+  };
+};
 
