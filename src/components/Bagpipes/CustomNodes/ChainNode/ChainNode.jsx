@@ -59,7 +59,8 @@ const ChainNode = ({ children, data, isConnectable }) => {
     // Filtered assets based on the selected chain
     const assetsForSelectedChain = assetOptions.find(option => option.chain === selectedChain)?.assets || [];
     const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
-    
+    const selectedChainLogo = ChainInfoList.find(chain => chain.name === selectedChain)?.logo;
+
 
 
 
@@ -147,6 +148,13 @@ const ChainNode = ({ children, data, isConnectable }) => {
 
   return (
     <div className="custom-node rounded-lg shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
+
+        {selectedChainLogo && (
+            <div className="chain-logo-container mb-2 mt-2 flex justify-center">
+              <img src={selectedChainLogo} alt={`${selectedChain} Logo`} className="chain-logo w-12 h-12" /> {/* Adjust w-16 and h-16 as necessary */}
+            </div>
+          )}
+
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
     <div className="m-2">
