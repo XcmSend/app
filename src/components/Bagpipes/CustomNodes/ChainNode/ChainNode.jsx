@@ -192,7 +192,10 @@ const ChainNode = ({ children, data, isConnectable }) => {
         <div className="flex flex-col items-start mb-2 border p-2 rounded">
           <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start ">Addresses</h3>
           <div className="flex items-center text-black justify-start  w-full">
-            <AccountDropdown onSelect={(address) => setSelectedAddress(address)} />
+          <AccountDropdown 
+              selectedChainName={selectedChain} 
+              onSelect={(address) => setSelectedAddress(address)} 
+          />
           
           </div>
           <AddContacts />
