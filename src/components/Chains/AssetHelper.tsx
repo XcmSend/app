@@ -54,6 +54,19 @@ async function check_hydradx_raw_asset_balance(assetid:number, accountid32: stri
 
 }
 
+/// returns the raw balance of the native dot token
+async function polkadot_dot_raw_native_balance(accountid: string) {
+  const api = await connectToWsEndpoint(endpoints.polkadot.default);
+  const bal = await api.query.system.account(accountid);
+  const bal3 = await bal.toHuman();
+  if (isAssetResponseObject(bal3)) {
+      const bal2: AssetResponseObject = bal3;
+
+      return bal2.data.free;/ / 
+  }
+  return 0
+}
+
 /*
 assetRegistry.assetMetadataMap(5)
 {
