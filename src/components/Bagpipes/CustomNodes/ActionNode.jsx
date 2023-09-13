@@ -23,7 +23,7 @@ export default function ActionNode({ children, nodeId, data, isConnectable }) {
   };
 
   return (
-    <div className="react-flow__node-actionNode custom-node rounded-lg shadow-lg font-mono text-xs flex flex-col items-center justify-start p-2">
+    <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2">
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
 
@@ -31,23 +31,23 @@ export default function ActionNode({ children, nodeId, data, isConnectable }) {
 
       {/* Custom dropdown */}
       <div className="relative w-28">
-        <div className="flex justify-between items-center border py-1 px-2 rounded cursor-pointer text-xs" onClick={() => setDropdownVisible(!dropdownVisible)}>
+        <div className="flex justify-between items-center border py-1 px-2 rounded cursor-pointer text-xs ml-3 mr-3" onClick={() => setDropdownVisible(!dropdownVisible)}>
           {selectedAction ? (
             <>
               <img src={getActionImage()} alt={selectedAction} className="w-12 h-12 p-1 mx-auto" />
             </>
           ) : (
-            <div className="text-gray-500 mx-auto text-xs">Select Action</div>
+            <div className="text-gray-500 mx-auto text-xs unbounded-bold">Select Action</div>
           )}
           <div className="pl-2">⌄</div> {/* This is the dropdown arrow symbol */}
         </div>
         
         {dropdownVisible && (
-          <div className="absolute z-10 min-w-full border mt-1 rounded bg-white whitespace-nowrap">
+          <div className="absolute z-10 min-w-full border mt-1 rounded bg-white whitespace-nowrap primary-font">
             <div className="flex flex-col">
               <div onClick={() => handleDropdownClick('swap')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
-                <div className='text-xs'>Swap</div>
+                <div className='text-xs bold'>Swap</div>
               </div>
               <div onClick={() => handleDropdownClick('teleport')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={TeleportSVG} alt="Teleport" className="w-5 h-4 mr-2" />

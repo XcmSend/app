@@ -25,15 +25,15 @@ function AccountDropdown() {
   };
 
   return (
-    <div className="select-container unbounded-black">
+    <div className="select-container unbounded-bold">
       <select 
         value={selectedAccount || ""}
         onChange={handleChange}
         className='border border-gray-300 p-2 rounded-md w-full'
       >
-        <option className="unbounded-black" value="" disabled>Select Address</option>
+        <option className="unbounded-bold" value="" disabled>Select Address</option>
         {walletContext.accounts.map(acc => (
-          <option className="unbounded-black" key={acc.address} value={acc.address}>
+          <option className="unbounded-bold" key={acc.address} value={acc.address}>
             {`${acc.name} (${displayAddress(acc.address)})`}
           </option>
         ))}

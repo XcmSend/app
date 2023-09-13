@@ -74,7 +74,6 @@ export function App () {
                 element={<Welcome />}
                 path='/welcome'
               />
-            
               <Route
                 element={<WalletInfo />}
                 path='/wallet-info'

@@ -96,11 +96,11 @@ const ChainNode = ({ children, data, isConnectable }) => {
     <div className="custom-node rounded-lg shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
-  
+    <div className="m-2">
       <div className="border p-2 rounded mb-2 ">
         <div className="chain-selection mb-2">
           <h3 className="text-xxs text-gray-400 primary-font mb-1">Chain</h3> {/* Title */}
-          <select className="chain-selector unbounded-black  text-black border border-gray-300 p-2 rounded" onChange={handleChainChange}>
+          <select className="chain-selector unbounded-bold text-black border border-gray-300 p-2 rounded" onChange={handleChainChange}>
             <option value="" disabled selected>
               Select chain
             </option>
@@ -115,7 +115,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
         {selectedChain && (
           <div className="asset-selection mb-2">
             <h3 className="text-xxs text-gray-400 primary-font mb-1">Asset</h3>
-            <select className="asset-selector unbounded-black text-black border border-gray-300 p-2  rounded" onChange={handleAssetChange} value={selectedAsset}>
+            <select className="asset-selector unbounded-bold text-black border border-gray-300 p-2 rounded" onChange={handleAssetChange} value={selectedAsset}>
               <option value="" disabled>Select an asset</option>
               {filteredAssets.map(asset => (
                 <option key={asset.value} value={asset.value}>
@@ -129,8 +129,8 @@ const ChainNode = ({ children, data, isConnectable }) => {
   
       {selectedChain && (
         <div className="flex flex-col items-start mb-2 border p-2 rounded">
-          <h3 className="text-xxs text-gray-400 primary-font mb-2 ">Addresses</h3>
-          <div className="flex items-center text-black">
+          <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start ">Addresses</h3>
+          <div className="flex items-center text-black justify-start  w-full">
             <AccountDropdown onSelect={(address) => setSelectedAddress(address)} />
           
           </div>
@@ -138,33 +138,39 @@ const ChainNode = ({ children, data, isConnectable }) => {
         </div>
       )}
   
-      {selectedChain && contacts.length > 0 && (
-        <div className="contact-selection  mb-2 border p-2 rounded">
-          <h3 className="text-xxs text-gray-400 primary-font mb-1">Contacts</h3>
-          <select 
-            className="contact-selector unbounded-black font-semibold text-black border border-gray-300 p-2 rounded"
+  {selectedChain && contacts.length > 0 && (
+    <div className="mb-2 border p-2 rounded flex flex-col items-start justify-start">
+        <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start">Contacts</h3>
+        <select 
+            className="contact-selector unbounded-bold font-semibold text-black border border-gray-300 p-2 rounded"
             value={selectedContact || ""}
-            onChange={(e) => setSelectedContact(e.target.value)}
-          >
+            onChange={(e) => {
+                if(e.target.value === 'create_new_contact') {
+                   <AddContacts />
+                   setIsModalVisible(true)
+                  } else {
+                    setSelectedContact(e.target.value);
+                }
+            }}
+        >
+            <option value="create_new_contact" style={{ borderBottom: '1px solid #ccc', fontWeight: 500 }}>Create New Contact</option> {/* Added style for borderBottom */}
             <option value="" disabled>Select Contact</option>
             {contacts.map(contact => (
-              <option key={contact.address} value={contact.address}>
-                {`${contact.name} (${contact.address})`}
-              </option>
+                <option key={contact.address} value={contact.address}>
+                    {`${contact.name} (${contact.address})`}
+                </option>
             ))}
-          </select>
-          <button className="ml-2 border rounded p-2">
-              <img className="h-3 w-3" src="/plus.svg" alt="Add contact" />
-            </button>
-          </div>
-      )}
-  
+        </select>
+    </div>
+)}
+
+
       {selectedChain && (
         <div className="mb-2 border p-2 rounded">
           <h3 className="text-xxs text-gray-400 primary-font mb-1">Amount</h3>
           <div className="unbounded-black">
           <input 
-            className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded'
+            className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded amount-selector'
             type="number" 
             placeholder="0.0000" 
             value={assetAmount}
@@ -181,6 +187,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
       <div className={nodeContent && 'typing-effect absolute px-1 pt-2 pb-2 rounded-b-lg bg-white -z-50 pt-3 px-2 pb-2 '}>
         {nodeContent}
       </div>
+    </div>
     </div>
   );
   
