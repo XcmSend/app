@@ -29,6 +29,43 @@ function isAssetResponseObject(obj: any): obj is AssetResponseObject {
     );
   }
 
+/// convert assethub's asset balance response
+interface assethub_asset_balance {
+  balance: number;
+  status: string;
+  reason: string,
+  extra: string
+
+}
+
+function isassethub_asset_balance(obj: any): obj is assethub_asset_balance {
+return (
+typeof obj === 'object' &&
+obj !== null &&
+'balance' in obj &&
+'status' in obj &&
+'reason' in obj &&
+'extra' in obj
+);
+}
+
+
+// check asset balance on polkadot assethub
+async function check_assethub_asset_balance(assetid:number, accountid32: string) {
+    await cryptoWaitReady();
+    const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+    const balance = await api.query.assets.account(assetid, accountid32);
+    const b3 = balance.toHuman();
+    if (isassethub_asset_balance(b3)) {
+        const bal_obj: assethub_asset_balance = b3;
+        return bal_obj.balance;
+    } 
+    return 0;// cant find, return 0
+   // console.log(balance.registry.);
+//    console.log(`check_assethub_asset_balance done`);
+}
+
+
 // returns the raw asset balance number, if not it returns 0
 async function check_hydradx_raw_asset_balance(assetid:number, accountid32: string) {
     await cryptoWaitReady();
@@ -62,7 +99,7 @@ async function polkadot_dot_raw_native_balance(accountid: string) {
   if (isAssetResponseObject(bal3)) {
       const bal2: AssetResponseObject = bal3;
 
-      return bal2.data.free;/ / 
+      return bal2.data.free;
   }
   return 0
 }
