@@ -69,7 +69,7 @@ async function check_assethub_asset_balance(assetid:number, accountid32: string)
 // returns the raw asset balance number, if not it returns 0
 async function check_hydradx_raw_asset_balance(assetid:number, accountid32: string) {
     await cryptoWaitReady();
-    const api = await connectToWsEndpoint(endpoints.polkadot.hydradx);
+    const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
 
     const omnipoolAccountId = accountid32;//"7L53bUTBbfuj14UpdCNPwmgzzHSsrsTWBHX5pys32mVWM3C1";
     const hdxBalance = await api.query.system.account(omnipoolAccountId)
@@ -112,7 +112,7 @@ assetRegistry.assetMetadataMap(5)
 }
 */
 async function get_hydradx_asset_symbol_decimals(assetid: number){
-    const api = await connectToWsEndpoint(endpoints.polkadot.hydradx);
+    const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
     const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
     return resp;
 }

@@ -1,29 +1,76 @@
-import React, { useState } from 'react';
-import { Handle, Position } from 'reactflow';
+import React, { useState, useEffect } from 'react';
+import { Handle, Position, useNodeId } from 'reactflow';
 import SwapSVG from '/swap.svg';
 import TeleportSVG from '/teleport.svg';
+import useAppStore from '../../../store/useAppStore';
 
 import '../../../index.css';
-import '../../../main.scss';
 import '../node.styles.scss';
+import '../../../main.scss';
 
-export default function ActionNode({ children, nodeId, data, isConnectable }) {
-  const [selectedAction, setSelectedAction] = useState(null);
+export default function ActionNode({ children, data, isConnectable }) {
+  const nodeId = useNodeId();
+  const { scenarios, activeScenarioId, loading, saveNodeFormData  } = useAppStore(state => ({ 
+    scenarios: state.scenarios,
+    activeScenarioId: state.activeScenarioId,
+    loading: state.loading,
+    saveNodeFormData: state.saveNodeFormData,
+
+  }));
+
+  const initialAction = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.action || null;
+
+  const [formState, setFormState] = useState({
+      action: initialAction
+  });
+  
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const getActionImage = () => {
-    if (selectedAction === 'swap') return SwapSVG;
-    if (selectedAction === 'teleport') return TeleportSVG;
+    if (formState.action === 'swap') return SwapSVG;
+    if (formState.action === 'teleport') return TeleportSVG;
     return null;
   };
+  
 
   const handleDropdownClick = (value) => {
-    setSelectedAction(value);
     setDropdownVisible(false);
+    setFormState(prev => ({
+      ...prev,
+      action: value
+    }));
   };
 
+  // This effect will only run once when the component mounts
+useEffect(() => {
+  const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+  if (currentNodeFormData) {
+    setFormState(currentNodeFormData);
+  }
+}, []);
+
+  
+
+  useEffect(() => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    if (currentNodeFormData && JSON.stringify(currentNodeFormData) !== JSON.stringify(formState)) {
+      setFormState(currentNodeFormData);
+    }
+  }, [nodeId, activeScenarioId]);
+  
+  
+  useEffect(() => {
+    console.log("Attempting to save form state:", formState);
+    if (!activeScenarioId || !nodeId) {
+      console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
+      return;
+    }
+    const formData = { ...formState };
+    saveNodeFormData(activeScenarioId, nodeId, formData);
+  }, [formState, nodeId, activeScenarioId]);
+  
   return (
-    <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2">
+    <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2 bg-gray-100 primary-font">
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
 
@@ -31,14 +78,15 @@ export default function ActionNode({ children, nodeId, data, isConnectable }) {
 
       {/* Custom dropdown */}
       <div className="relative w-28">
-        <div className="flex justify-between items-center border py-1 px-2 rounded cursor-pointer text-xs ml-3 mr-3 font-semibold" onClick={() => setDropdownVisible(!dropdownVisible)}>
-          {selectedAction ? (
-            <>
-              <img src={getActionImage()} alt={selectedAction} className="w-12 h-12 p-1 mx-auto" />
-            </>
-          ) : (
-            <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
-          )}
+        <div className="flex justify-between items-center border py-1 px-2 rounded cursor-pointer text-xs ml-3 mr-3 font-semibold  bg-white" onClick={() => setDropdownVisible(!dropdownVisible)}>
+        {formState.action ? (
+          <>
+            <img src={getActionImage()} alt={formState.action} className="w-12 h-12 p-1 mx-auto" />
+          </>
+        ) : (
+          <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
+        )}
+
           <div className="pl-2">⌄</div> {/* This is the dropdown arrow symbol */}
         </div>
         
@@ -59,8 +107,9 @@ export default function ActionNode({ children, nodeId, data, isConnectable }) {
       </div>
 
       <div className="mt-2 text-center text-xs">
-        {selectedAction && selectedAction.charAt(0).toUpperCase() + selectedAction.slice(1)}
+        {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
       </div>
+
 
       <div className="space-y-2 mt-2">
         {data.children}

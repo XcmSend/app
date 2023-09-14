@@ -1,23 +1,22 @@
 // @ts-nocheck
 import React, { useState, useContext, useEffect, useMemo, useRef } from 'react';
 import {  Handle, Position, useNodeId } from 'reactflow';
-
 import SocketContext from '../../../../contexts/SocketContext';
 import CustomNode from '../CustomNode';
 import { useAddressBook } from '../../../../contexts/AddressBookContext';
 import useExecuteScenario from '../../hooks/useExecuteScenario';
 import AccountDropdown from './AccountDropdown';
-import '../../../../index.css';
-import './ChainNode.scss';
-import 'antd/dist/antd.css';
-import '../../node.styles.scss';
-import '../../../../main.scss';
 import useAppStore from '../../../../store/useAppStore';
 import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
 import { listChains } from '../../../Chains/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
 
+import '../../../../index.css';
+import './ChainNode.scss';
+import 'antd/dist/antd.css';
+import '../../node.styles.scss';
+import '../../../../main.scss';
 
 import '/plus.svg'
 
@@ -43,11 +42,10 @@ const ChainNode = ({ children, data, isConnectable }) => {
   const [newAddress, setNewAddress] = useState(''); // To capture address in modal
   const [newName, setNewName] = useState('');
   const [allAddresses, setAllAddresses] = useState([]);
-  const [assetAmount, setAssetAmount] = useState("");
+
   const [chainList, setChainList] = useState({});
   const [assetOptions, setAssetOptions] = useState([]);
   const [assetsForChain, setAssetsForChain] = useState([]);
-  const [assets, setAssets] = useState([]);
   const initialState = savedState || {
     chain: "",
       asset: {
@@ -59,75 +57,38 @@ const ChainNode = ({ children, data, isConnectable }) => {
       contact: null
   };
   const [formState, setFormState] = useState(savedState || initialState);
-
   const [isLoading, setIsLoading] = useState(true);
   const inputRef = useRef(null);
   const ChainInfoList = Object.values(chainList);
-
 
   const fetchAddressesFromExtension = () => {
     // Return a mock list of addresses for simplicity.
     return [];
   };
   
-
   // Assuming we have some function to fetch addresses from the extension
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
 
- // Filtered assets based on the selected chain
-const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
-const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
-  console.log('ChainInfoList', ChainInfoList)
-  const selectedChainLogo = ChainInfoList.find(chain => chain.name === formState.chain)?.logo;
+  // Filtered assets based on the selected chain
+  const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
+  const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
+    console.log('ChainInfoList', ChainInfoList)
+    const selectedChainLogo = ChainInfoList.find(chain => chain.name === formState.chain)?.logo;
 
-  const handleFormChange = (field, value) => {
-    setFormState(prev => ({
-        ...prev,
-        [field]: value
-    }));
-};
+    const handleFormChange = (field, value) => {
+      setFormState(prev => ({
+          ...prev,
+          [field]: value
+      }));
+  };
 
-
-
-const handleChainChange = async (e) => {
-  const selectedChainName = e.target.value;
-  
-  // Update the chain in the form state
-  handleFormChange("chain", selectedChainName);
-  setIsLoading(true);
-};
-
-
-useEffect(() => {
-  if (formState.chain) {
-    const fetchAssets = async () => {
-      try {
-        const assetsData = await getAssetOptions(formState.chain);
-        setAssetsForChain(assetsData.assets);
-        console.log('Fetched assets:', assetsData);
-
-        // Check if there's an existing asset in the formState
-        if (!formState.asset && assetsData.assets?.length) {
-          handleFormChange("asset", assetsData.assets[0]);  // Assuming name is the desired value for the asset
-        }
-      } catch (error) {
-        console.error("Failed to fetch assets for chain", formState.chain, error);
-        // Handle this error as needed, maybe show a user-friendly message
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchAssets();
-  }
-}, [formState.chain]);
-
-
-useEffect(() => {
-  console.log('Updated formState:', formState);
-}, [formState]);
-
-
+  const handleChainChange = async (e) => {
+    const selectedChainName = e.target.value;
+    
+    // Update the chain in the form state
+    handleFormChange("chain", selectedChainName);
+    setIsLoading(true);
+  };
 
   const handleAssetChange = (e) => {
     const selectedAssetName = e.target.value;
@@ -142,6 +103,35 @@ useEffect(() => {
     }));
   };
   
+  useEffect(() => {
+    if (formState.chain) {
+      const fetchAssets = async () => {
+        try {
+          const assetsData = await getAssetOptions(formState.chain);
+          setAssetsForChain(assetsData.assets);
+          console.log('Fetched assets:', assetsData);
+
+          // Check if there's an existing asset in the formState
+          if (!formState.asset && assetsData.assets?.length) {
+            handleFormChange("asset", assetsData.assets[0]);  // Assuming name is the desired value for the asset
+          }
+        } catch (error) {
+          console.error("Failed to fetch assets for chain", formState.chain, error);
+          // Handle this error as needed, maybe show a user-friendly message
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      fetchAssets();
+    }
+  }, [formState.chain]);
+
+
+  useEffect(() => {
+    console.log('Updated formState:', formState);
+  }, [formState]);
+
 
   useEffect(() => {
     setFormState(initialState);
@@ -159,46 +149,45 @@ useEffect(() => {
             // ... Add other fields
         });
     }
-}, [ nodeId, activeScenarioId]);
+  }, [ nodeId, activeScenarioId]);
 
-useEffect(() => {
-  // The formData structure remains the same.
-  const formData = { ...formState };
-  
-  console.log('saving nodeFormData', formData, nodeId);
+  useEffect(() => {
+    // The formData structure remains the same.
+    const formData = { ...formState };
+    
+    console.log('saving nodeFormData', formData, nodeId);
 
-  saveNodeFormData(activeScenarioId, nodeId, formData);
-  setSavedFormState(nodeId, formData); // save to local storage
-}, [formState]);
+    saveNodeFormData(activeScenarioId, nodeId, formData);
+    setSavedFormState(nodeId, formData); // save to local storage
+  }, [formState]);
 
-useEffect(() => {
-  const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-  if (currentNodeFormData) {
-      setFormState(currentNodeFormData);
-  }
-}, [ nodeId, activeScenarioId]);
-
-
+  useEffect(() => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    
+    if (currentNodeFormData) {
+        setFormState(currentNodeFormData);
+    }
+  }, [ nodeId, activeScenarioId]);
 
   useEffect(() => {
     console.log('contacts', contacts)
+
     setAllAddresses([...extensionAddresses, ...contacts.map(contact => contact.address)]);
   }, [extensionAddresses, contacts]);
 
 
   useEffect(() => {
     console.log("isModalVisible", isModalVisible);
+
     if (isModalVisible && inputRef.current) {
         inputRef.current.focus();
     }
   }, [isModalVisible]);
 
 
-
- 
-    useEffect(() => {
-      if (loading) { // If a new execution is starting...
-        setContent(""); // Clear the content
+  useEffect(() => {
+    if (loading) { // If a new execution is starting...
+      setContent(""); // Clear the content
     } else {
       setContent(nodeContentMap[nodeId] || '');
       console.log(`Setting content for node ${nodeId}:`, nodeContentMap[nodeId]); 
@@ -214,13 +203,13 @@ useEffect(() => {
     };
 
     fetchChains();
-}, []);
+  }, []);
 
 console.log('Component re-rendered', formState.address);
 
 
   return (
-    <div className="custom-node rounded-lg shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
+    <div className="custom-node  shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
 
         {selectedChainLogo && (
             <div className="chain-logo-container mb-2 mt-2 flex justify-center">
@@ -275,20 +264,20 @@ console.log('Component re-rendered', formState.address);
         )}
       </div>
   
-      {formState.chain && (
-        <div className="flex flex-col items-start mb-2 border p-2 rounded">
-          <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start ">Addresses</h3>
-          <div className="flex items-center text-black justify-start  w-full">
-                    <AccountDropdown 
-              selectedChainName={formState.chain}
-              selectedAddress={formState.address}  // Pass address value from state
-              onSelect={(address) => handleFormChange("address", address)} 
-          />
-          
-          </div>
-          <AddContacts />
-        </div>
-      )}
+  {formState.chain && (
+    <div className="flex flex-col items-start mb-2 border p-2 rounded">
+      <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start ">Addresses</h3>
+      <div className="flex items-center text-black justify-start  w-full">
+                <AccountDropdown 
+          selectedChainName={formState.chain}
+          selectedAddress={formState.address}  // Pass address value from state
+          onSelect={(address) => handleFormChange("address", address)} 
+      />
+      
+      </div>
+      <AddContacts />
+    </div>
+  )}
   
   {formState.chain && contacts.length > 0 && (
     <div className="mb-2 border p-2 rounded flex flex-col items-start justify-start">
@@ -314,23 +303,22 @@ console.log('Component re-rendered', formState.address);
             ))}
         </select>
     </div>
-)}
+  )}
 
-
-      {formState.chain && (
-        <div className="mb-2 border p-2 rounded">
-          <h3 className="text-xxs text-gray-400 primary-font mb-1">Amount</h3>
-          <div className="unbounded-black">
-          <input 
-            className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded amount-selector'
-            type="number" 
-            placeholder="0.0000" 
-            value={formState.amount}
-            onChange={(e) => handleFormChange('amount', e.target.value)}
-          />
-          </div>
-        </div>
-      )}
+  {formState.chain && (
+    <div className="mb-2 border p-2 rounded">
+      <h3 className="text-xxs text-gray-400 primary-font mb-1">Amount</h3>
+      <div className="unbounded-black">
+      <input 
+        className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded amount-selector'
+        type="number" 
+        placeholder="0.0000" 
+        value={formState.amount}
+        onChange={(e) => handleFormChange('amount', e.target.value)}
+      />
+      </div>
+    </div>
+  )}
   
       {loading ? (
         <div className="loading-indicator mb-2">Loading...</div>

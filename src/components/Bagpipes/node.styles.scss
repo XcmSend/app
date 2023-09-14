@@ -19,7 +19,7 @@
     background-color: #ffffff !important;
     border-color: #e2e2e2;
     color: #333;
-    border-radius: 8px !important;
+    border-radius: 12px !important;
     font-family: $primary-font, sans-serif;
     font-size: x-small;
     width:fit-content !important;
@@ -41,7 +41,7 @@
 
   .react-flow__node  {
     outline: 1px solid rgba(195, 195, 195, 0.535) !important;
-    border-radius: 8px !important;
+    border-radius: 12px !important;
     background: white;
     box-shadow: 8px 8px 10px 5px #bdbdbd44 !important;
     font-family: $primary-font, sans-serif;
@@ -49,10 +49,18 @@
   }
   .react-flow__node.selected  {
     outline: 2px solid rgba(20, 255, 51, 0.535) !important;
-    border-radius: 8px !important;
+    border-radius: 12px !important;
 
     /* border: 3px solid black !important; */
   }
+
+  .react-flow__node:focus  {
+    outline: 2px solid rgba(20, 255, 51, 0.535) !important;
+    border-radius: 12px !important;
+
+    /* border: 3px solid black !important; */
+  }
+
 
   // .react-flow__node  {
   //   border-radius: 10px !important;
@@ -60,15 +68,16 @@
   //   /* border: 3px solid black !important; */
   // }
 
-  // .react-flow__node:target {
-  //   outline: 3px solid rgba(20, 255, 51, 0.535)  !important;
-  //   /* border: 3px solid black !important; */
-  // }
+  .react-flow__node:target {
+    outline: 3px solid rgba(20, 255, 51, 0.535)  !important;
+    /* border: 3px solid black !important; */
+  }
 
-  // .react-flow__node:hover {
-  //   outline: 3px solid rgba(255, 141, 251, 0.535);
-  //   /* border: 3px solid black !important; */
-  // }
+  .react-flow__node:hover {
+    // outline: 3px solid rgba(255, 141, 251, 0.535) !important;
+    /* border: 3px solid black !important; */
+    box-shadow: 10px 10px 10px 10px #bdbdbd44 !important;
+  }
 
   .react-flow__handle {
     position: absolute;
