@@ -408,7 +408,7 @@ const useAppStore = create(
                 [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
             };
 
-            console.log("[saveNodeFormData] Updated scenarios:", updatedScenarios);
+            console.log("[saveNodeFormData] Updated scenarios:", updatedScenarios, scenarioId);
             return { scenarios: updatedScenarios };
         });
     },

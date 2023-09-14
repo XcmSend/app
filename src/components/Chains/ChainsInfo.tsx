@@ -6,6 +6,7 @@ interface ChainInfo {
 	ws_endpoint: string,
 	paraid: number,
   prefix: number,
+  token_decimals: number,
   logo?: string,
   }
 
@@ -26,8 +27,9 @@ export function listChains() {
         name: 'polkadot',
         display: 'Polkadot',
         ws_endpoint: endpoints.polkadot.default,
-        paraid: null,
+        paraid: 0,
         prefix: 0,
+        token_decimals: 10,
         logo: '/chains/polkadot.svg'
       };
       chainList[0] = Polkadot;
@@ -38,6 +40,7 @@ export function listChains() {
         ws_endpoint: endpoints.polkadot.hydraDx,
         paraid: 2034,
         prefix: 0,
+        token_decimals: 12,
         logo: '/chains/hydradx.svg'
       };
       chainList[2034] = HydraDX;
@@ -48,6 +51,7 @@ export function listChains() {
         ws_endpoint: endpoints.polkadot.assetHub,
         paraid: 2034,
         prefix: 63,
+        token_decimals: 10,
         logo: '/chains/assethub.svg'
       };
       chainList[1000] = assethub;
@@ -58,6 +62,7 @@ export function listChains() {
         ws_endpoint: endpoints.polkadot.assetHub,
         paraid: 0,
         prefix: 0,
+        token_decimals: 12,
         logo: '/chains/rococo.jpeg'
       };
       chainList[10000] = rococo;

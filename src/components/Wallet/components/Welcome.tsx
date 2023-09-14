@@ -26,7 +26,7 @@ function Welcome (): React.ReactElement {
 
   return (<div className={'welcome-wrapper'}>
     <div className={'welcome-content'}>
-      <div className='welcome-content__text'>Do you pipe?</div>
+      <div className='welcome-content__text'>Wanna bagpipe?</div>
       <Button
         className='xcm-send-btn xcm-send-btn-normal-size'
         onClick={

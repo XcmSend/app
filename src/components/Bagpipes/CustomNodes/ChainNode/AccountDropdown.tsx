@@ -7,10 +7,14 @@ import { WalletAccount } from '@subwallet/wallet-connect/types';
 import { listChains } from '../../../../components/Chains/ChainsInfo';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 
-function AccountDropdown({ selectedChainName, onSelect }: { selectedChainName: string, onSelect: (address: string) => void }) {
+function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: { 
+  selectedChainName: string, 
+  onSelect: (address: string) => void,
+  selectedAddress: string | null // New prop
+}) {
   const walletContext = useContext(WalletContext);
   const chains = listChains(); 
-  const [selectedAccount, setSelectedAccount] = useState<string | null>(null); 
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(selectedAddress);
 
   console.log("WalletContext:", walletContext);
 
@@ -18,8 +22,16 @@ function AccountDropdown({ selectedChainName, onSelect }: { selectedChainName: s
     const selectedAccAddress = event.target.value;
     const matchedAccount = walletContext.accounts.find(acc => acc.address === selectedAccAddress);
     setSelectedAccount(matchedAccount ? matchedAccount.address : null);
+
+    // This is where you inform the parent component about the selected account/address change
+    if (matchedAccount) {
+        onSelect(matchedAccount.address);
+    }
+    
     console.log("Selected:", matchedAccount);
-  };
+    console.log("Selected Address:", selectedAccount);
+};
+
 
   const displayAddress = (address: string, prefix: number) => {
     const encodedAddress = encodeAddress(decodeAddress(address), prefix);
@@ -31,7 +43,6 @@ function AccountDropdown({ selectedChainName, onSelect }: { selectedChainName: s
   const getPrefixForAddress = (address: string) => {
     // Using the passed chain name to fetch the correct prefix
     const chainInfo = Object.values(chains).find(chain => chain.name === selectedChainName);
-    console.log("ChainInfo:", chainInfo);
     return chainInfo ? chainInfo.prefix : 42; // Default to 42 if not found
   };
 

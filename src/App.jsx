@@ -86,7 +86,7 @@ export function App () {
                 element={<BagpipesFlowRoute />}
                 path='/builder'
               />
-                          {/* <Route element={<Lab />} path='/lab' /> */}
+                <Route element={<Lab />} path='/lab' />
 
                 <Route
                 element={<ReactTestFlow />}

@@ -57,7 +57,7 @@ function Lab() {
           useAppStore.getState().addScenario(scenarioId, initialData);
   
           // Navigate to the builder
-          navigate('/bagpipes');
+          navigate('/builder');
       } catch (error) {
           console.error(`Failed to create scenario`, error);
       }
