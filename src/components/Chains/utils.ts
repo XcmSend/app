@@ -1,3 +1,6 @@
+import { hexToNumber, bnToHex, hexToBigInt, u8aToHex } from "@polkadot/util";
+
+
 export function adjustBalance(balance: number, tokenDecimals: number): string {
   if (typeof balance === 'undefined' || balance === null) {
     return "0"; // or whatever default value you wish to return for undefined balances
@@ -17,11 +20,12 @@ export function adjustBalance(balance: number, tokenDecimals: number): string {
 }
 
 export function parseBalanceString(balance: number): number {
+  const balanceStr = balance.toString();
   // Remove commas and parse to integer.
-  return parseInt(balance.replace(/,/g, ''), 10);
+  return parseInt(balanceStr, 10);
 }
 
-export function formatToFourDecimals(value) {
+export function formatToFourDecimals(value: string) {
   // Convert to string and split by decimal
   const parts = value.toString().split(".");
   
@@ -34,4 +38,18 @@ export function formatToFourDecimals(value) {
 
 
 
+export function toUnit(balance: string | number, token_decimals: number): number {
+  let balanceStr = typeof balance === "number" ? balance.toString() : balance;
+  balanceStr = balanceStr.replace(/,/g, ''); 
 
+  const base = 10n;
+  const exponent = BigInt(token_decimals);
+  console.log('[toUnit] exponent', exponent);
+  const mod = base ** exponent;
+  console.log('[toUnit] mod', mod);
+  let bi = BigInt(balanceStr);
+  console.log('toUnit bi', bi);
+  var div = bi / mod;
+  console.log('toUnit div', div);
+  return parseFloat(div.toString()) + parseFloat((bi - div * mod).toString()) / parseFloat(mod.toString());
+}

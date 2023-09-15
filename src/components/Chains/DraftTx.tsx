@@ -2,7 +2,7 @@
 import endpoints from "./WsEndpoints";
 import { ApiPromise, WsProvider, SubmittableResult } from "@polkadot/api";
 
-export async function connectToWsEndpoint(ws_endpoint: string) {
+export async function connectToWsEndpoint(ws_endpoint: string, signal?: AbortSignal) {
 
 	const provider = new WsProvider(ws_endpoint);
 	const api = await ApiPromise.create({
@@ -12,8 +12,8 @@ export async function connectToWsEndpoint(ws_endpoint: string) {
 	return api;
 }
 
-export async function listAssetHubAssets() {
-	const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+export async function listAssetHubAssets(signal: AbortSignal) {
+	const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
 	console.log(`Connected to assethub`);
 	
 	const dictionary = new Map<number, any>();
@@ -33,8 +33,8 @@ export async function listAssetHubAssets() {
 }
 
 
-export async function listPolkadexAssets() {
-	const api = await connectToWsEndpoint(endpoints.polkadot.polkadex);
+export async function listPolkadexAssets(signal: AbortSignal) {
+	const api = await connectToWsEndpoint(endpoints.polkadot.polkadex, signal);
 	console.log(`Connected to Polkadex`);
 	
 	const dictionary = new Map<number, any>();
@@ -52,9 +52,9 @@ export async function listPolkadexAssets() {
 
 
 
-export async function listHydraDxAssets() {
+export async function listHydraDxAssets(signal: AbortSignal) {
 	console.log(`[listHydraDxAssets] listing assets on hydradx`);
-	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
     console.log(`[listHydraDxAssets] Assets onhydradx`, api);
 	const dictionary = new Map<number, any>();
 

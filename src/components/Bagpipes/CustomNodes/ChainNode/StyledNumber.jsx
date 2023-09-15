@@ -6,8 +6,8 @@ export default function StyledNumber({ value }) {
 
     return (
        <>
-            <span className="text-sm unbounded-medium text-gray-600">{whole}</span>
-            <span className="text-xs text-gray-400">.{decimal}</span>
+            <span className="text-xs unbounded-bold text-gray-800">{whole}</span>
+            <span className="text-xxs text-gray-500">.{decimal}</span>
   </>
     );
 }

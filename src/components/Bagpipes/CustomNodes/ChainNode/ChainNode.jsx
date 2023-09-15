@@ -110,6 +110,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
     }));
   };
   
+
   useEffect(() => {
     if (formState.chain) {
       const controller = new AbortController();
@@ -117,7 +118,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
   
       const fetchAssets = async () => {
         try {
-          const assetsData = await getAssetOptions(formState.chain, signal); // You need to adjust your fetching function to take signal as a parameter
+          const assetsData = await getAssetOptions(formState.chain, signal); 
           if (!signal.aborted) {
             setAssetsForChain(assetsData.assets);
             console.log('Fetched assets:', assetsData);
@@ -129,6 +130,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
         } catch (error) {
           if (!signal.aborted) {
             console.error("Failed to fetch assets for chain", formState.chain, error);
+            // Handle this error as needed, maybe show a user-friendly message
           }
         } finally {
           if (!signal.aborted) {
@@ -222,27 +224,34 @@ const ChainNode = ({ children, data, isConnectable }) => {
     fetchChains();
   }, []);
 
-  const fetchBalance = async () => {
-
+  const fetchBalance = async (signal) => {
     try {
       console.log('[fetchBalance] [raw] Fetching balance for', formState.chain, formState.asset.assetId, formState.address);
-        setIsFetchingBalance(true);
-        const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address);
+      setIsFetchingBalance(true);
+      const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address, signal); 
+      if (!signal.aborted) {
         console.log('[fetchBalance] Fetched balance:', fetchedBalance);
         setBalance(fetchedBalance);
+      }
     } catch (error) {
+      if (!signal.aborted) {
         console.error("Failed to fetch balance", error);
+      }
     } finally {
+      if (!signal.aborted) {
         setIsFetchingBalance(false);
+      }
     }
 };
 
-  useEffect(() => {
-  
- 
-    fetchBalance();
- }, [formState.chain, formState.asset, formState.address]);
- 
+useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetchBalance(signal);
+
+    return () => controller.abort();
+}, [formState.chain, formState.asset, formState.address]);
 
 console.log('Component re-rendered', formState.address);
 

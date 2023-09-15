@@ -37,7 +37,7 @@ export const assetOptions = [
     }
 ];
 
-export const getAssetOptions = async (selectedChain) => {
+export const getAssetOptions = async (selectedChain, signal) => {
   console.log("Inside getAssetOptions for chain:", selectedChain);
   
   let assets;

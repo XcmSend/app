@@ -3,7 +3,7 @@ import { cryptoWaitReady } from '@polkadot/util-crypto';
 
 import { connectToWsEndpoint } from './DraftTx';
 import { ChainInfo, listChains } from './ChainsInfo'; 
-import { adjustBalance, parseBalanceString, formatToFourDecimals} from './utils'
+import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils'
 
 import endpoints  from './WsEndpoints';
 
@@ -55,10 +55,11 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 
 // check asset balance on polkadot assethub
-async function checkAssetHubAssetBalance(assetid: number, account_id_32: string): Promise<{ free: number, reserved: number, total: number }> {
+async function checkAssetHubAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
   await cryptoWaitReady();
-  const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+  const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
   const balance = await api.query.assets.account(assetid, account_id_32);
+  console.log(`checkAssetHubAssetBalance: ${JSON.stringify(balance)}`);
   const b3 = balance.toHuman();
   if (isAssetHubAssetBalance(b3)) {
       const bal_obj: AssetHubAssetBalance = b3;
@@ -75,9 +76,9 @@ async function checkAssetHubAssetBalance(assetid: number, account_id_32: string)
 
 
 // returns the raw asset balance number, if not it returns 0
-async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string): Promise<{ free: number, reserved: number, total: number }> {
+async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
   await cryptoWaitReady();
-  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
   const hdxBalance = await api.query.system.account(account_id_32);
   const fluff = hdxBalance.toHuman();
 
@@ -97,8 +98,8 @@ async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: strin
 }
 
 /// returns the raw balance of the native dot token
-async function checkPolkadotDotRawNativeBalance(accountid: string): Promise<{ free: number, reserved: number, total: number }> {
-  const api = await connectToWsEndpoint(endpoints.polkadot.default);
+async function checkPolkadotDotRawNativeBalance(accountid: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+  const api = await connectToWsEndpoint(endpoints.polkadot.default, signal);
   const bal = await api.query.system.account(accountid);
   const bal3 = bal.toHuman();
   if (isAssetResponseObject(bal3)) {
@@ -113,8 +114,8 @@ async function checkPolkadotDotRawNativeBalance(accountid: string): Promise<{ fr
 }
 
 /// returns the raw balance of the native dot token
-async function checkRococoRocRawNativeBalance(accountid: string): Promise<{ free: number, reserved: number, total: number }> {
-  const api = await connectToWsEndpoint(endpoints.rococo.default);
+async function checkRococoRocRawNativeBalance(accountid: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+  const api = await connectToWsEndpoint(endpoints.rococo.default, signal);
   const bal = await api.query.system.account(accountid);
   const bal3 = bal.toHuman();
   if (isAssetResponseObject(bal3)) {
@@ -151,36 +152,46 @@ function getTokenDecimalsByChainName(chainName: string): number {
 }
 
 
-export async function getAssetBalanceForChain(chain: string, assetId: number, accountId: string): Promise<{ free: string, reserved: string, total: string }> {
+export async function getAssetBalanceForChain(chain: string, assetId: number, accountId: string, signal?: AbortSignal): Promise<{ free: string, reserved: string, total: string }> {
   let balances: { free: number, reserved: number, total: number };
+
+  if (signal && signal.aborted) {
+    throw new Error('Operation was aborted');
+  }
+
+
+
     if (chain === "polkadot") {
-        balances = await checkPolkadotDotRawNativeBalance(accountId);
-    } else if (chain === "hydradx") {
-        balances = await checkHydraDxRawAssetBalance(assetId, accountId);
+        balances = await checkPolkadotDotRawNativeBalance(accountId, signal);
+    } else if (chain === "hydraDx") {
+        balances = await checkHydraDxRawAssetBalance(assetId, accountId, signal);
     } else if (chain === "assetHub") {
-        balances = await checkAssetHubAssetBalance(assetId, accountId);
+        balances = await checkAssetHubAssetBalance(assetId, accountId, signal);
     } else if (chain === "rococo") {
-        balances = await checkRococoRocRawNativeBalance(accountId);
+        balances = await checkRococoRocRawNativeBalance(accountId, signal);
     } else {
         throw new Error(`Unsupported chain: ${chain}`);
     }
-    console.log(`rawBalances: ${JSON.stringify(balances)}`);
-    const freeBalance = parseBalanceString(balances.free);
-    const reservedBalance = parseBalanceString(balances.reserved);
-    
-    const totalBalance = freeBalance + reservedBalance;
-    
-    console.log(`Total Balance: ${totalBalance}`);
+
+    const tokenDecimals = getTokenDecimalsByChainName(chain);
+    const freeInUnits = toUnit(balances.free, tokenDecimals);
+    const reservedInUnits = toUnit(balances.reserved, tokenDecimals);
+
+    console.log(`Free Balance in units: ${freeInUnits}`);
+    console.log(`Reserved Balance in units: ${reservedInUnits}`);
+
+    const totalInUnits = freeInUnits + reservedInUnits;
+    console.log(`totalInUnits: ${totalInUnits}`);
+
     const totalRawBalances = Number(balances.free) + Number(balances.reserved);
     console.log(`totalRawBalances: ${JSON.stringify(totalRawBalances)}`);
 
     console.log(`rawBalances: ${JSON.stringify(balances)}`);
-    const tokenDecimals = getTokenDecimalsByChainName(chain);
     const adjustedBalances = {
-        free: adjustBalance(balances.free, tokenDecimals),
-        reserved: adjustBalance(balances.reserved, tokenDecimals),
-        total: adjustBalance(totalBalance, tokenDecimals),
-    };
+      free: freeInUnits.toString(),
+      reserved: reservedInUnits.toString(),
+      total:totalInUnits.toString(),
+  };
     const adjustedTrimmedBalances = {
       free: formatToFourDecimals(adjustedBalances.free),
       reserved: formatToFourDecimals(adjustedBalances.reserved),
