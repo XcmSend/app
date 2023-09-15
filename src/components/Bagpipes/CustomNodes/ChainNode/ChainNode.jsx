@@ -112,27 +112,37 @@ const ChainNode = ({ children, data, isConnectable }) => {
   
   useEffect(() => {
     if (formState.chain) {
+      const controller = new AbortController();
+      const signal = controller.signal;
+  
       const fetchAssets = async () => {
         try {
-          const assetsData = await getAssetOptions(formState.chain);
-          setAssetsForChain(assetsData.assets);
-          console.log('Fetched assets:', assetsData);
-
-          // Check if there's an existing asset in the formState
-          if (!formState.asset && assetsData.assets?.length) {
-            handleFormChange("asset", assetsData.assets[0]);  // Assuming name is the desired value for the asset
+          const assetsData = await getAssetOptions(formState.chain, signal); // You need to adjust your fetching function to take signal as a parameter
+          if (!signal.aborted) {
+            setAssetsForChain(assetsData.assets);
+            console.log('Fetched assets:', assetsData);
+  
+            if (!formState.asset && assetsData.assets?.length) {
+              handleFormChange("asset", assetsData.assets[0]);
+            }
           }
         } catch (error) {
-          console.error("Failed to fetch assets for chain", formState.chain, error);
-          // Handle this error as needed, maybe show a user-friendly message
+          if (!signal.aborted) {
+            console.error("Failed to fetch assets for chain", formState.chain, error);
+          }
         } finally {
-          setIsLoading(false);
+          if (!signal.aborted) {
+            setIsLoading(false);
+          }
         }
       };
-
+  
       fetchAssets();
+  
+      return () => controller.abort();  // Cleanup function
     }
   }, [formState.chain]);
+  
 
 
   useEffect(() => {

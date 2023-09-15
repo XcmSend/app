@@ -22,7 +22,7 @@ const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance }) => {
             content={
                 <div className="bg-white text-xss tippy-chain flex flex-wrap p-1">
                     <div className="w-1/2 font-semibold">Available:</div> 
-                    <div className="w-1/2">{balance.free}</div>
+                    <div className="w-1/2 font-semibold">{balance.free}</div>
                     <div className="w-1/2 font-semibold">Reserved:</div> 
                     <div className="w-1/2">{balance.reserved}</div>
                     <div className="w-1/2 font-semibold">Total:</div> 
@@ -32,7 +32,7 @@ const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance }) => {
             arrow={false}
             placement="right"
         >
-            <span className="cursor-pointer text-gray-600">
+            <span className="cursor-pointer text-gray-600 unbounded">
                 <StyledNumber value={balance.total} />
             </span>
         </Tippy>
