@@ -19,6 +19,7 @@
   display: flex;
   align-items: center;
   gap: 16px; /* Space between elements inside the section */
+  
 }
 
 // select {
@@ -30,21 +31,25 @@
 //     cursor: pointer;
 // }
 
-.chain-selector {
-    width: 150px !important;
+.chain-selector  {
+    width: 200px !important;
+
 }
 
 .asset-selector {
-    width: 150px !important;
+    width: 200px !important;
+
 }
 
 .contact-selector {
-    width: 150px !important;
+    width: 200px !important;
 }
 
 .amount-selector {
-    width: 150px !important;
+    width: 200px !important;
 }
+
+
 
 .asset-amount-input {
     border-radius: 5px;
@@ -84,4 +89,12 @@
 .unbounded-bold {
     font-family: $unbounded-font, sans-serif;
     font-weight: 600;
+}
+
+.tippy-chain {
+    font-size: 12px !important;
+    font-family: $primary-font, sans-serif;
+    color:rgb(33, 33, 33);
+    border-radius: 10px;
+ 
 }

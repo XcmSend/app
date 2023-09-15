@@ -11,6 +11,10 @@ import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
 import { listChains } from '../../../Chains/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
+import { getAssetBalanceForChain } from '../../../Chains/AssetHelper';
+import BalanceTippy from './BalanceTippy';
+
+
 
 import '../../../../index.css';
 import './ChainNode.scss';
@@ -58,6 +62,9 @@ const ChainNode = ({ children, data, isConnectable }) => {
   };
   const [formState, setFormState] = useState(savedState || initialState);
   const [isLoading, setIsLoading] = useState(true);
+  const [balance, setBalance] = useState(null);
+  const [isFetchingBalance, setIsFetchingBalance] = useState(false);
+
   const inputRef = useRef(null);
   const ChainInfoList = Object.values(chainList);
 
@@ -205,7 +212,30 @@ const ChainNode = ({ children, data, isConnectable }) => {
     fetchChains();
   }, []);
 
+  const fetchBalance = async () => {
+
+    try {
+      console.log('[fetchBalance] [raw] Fetching balance for', formState.chain, formState.asset.assetId, formState.address);
+        setIsFetchingBalance(true);
+        const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address);
+        console.log('[fetchBalance] Fetched balance:', fetchedBalance);
+        setBalance(fetchedBalance);
+    } catch (error) {
+        console.error("Failed to fetch balance", error);
+    } finally {
+        setIsFetchingBalance(false);
+    }
+};
+
+  useEffect(() => {
+  
+ 
+    fetchBalance();
+ }, [formState.chain, formState.asset, formState.address]);
+ 
+
 console.log('Component re-rendered', formState.address);
+
 
 
   return (
@@ -305,21 +335,38 @@ console.log('Component re-rendered', formState.address);
     </div>
   )}
 
-  {formState.chain && (
-    <div className="mb-2 border p-2 rounded">
-      <h3 className="text-xxs text-gray-400 primary-font mb-1">Amount</h3>
-      <div className="unbounded-black">
-      <input 
-        className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded amount-selector'
-        type="number" 
-        placeholder="0.0000" 
-        value={formState.amount}
-        onChange={(e) => handleFormChange('amount', e.target.value)}
-      />
+{formState.chain && (
+   <div className="mb-2 border p-2 rounded">
+     <h3 className="text-xxs text-gray-400 primary-font mb-1 flex items-center justify-between">
+       Amount 
+       <div className="flex items-center">
+
+        {isFetchingBalance ? (
+          <div className="small-spinner"></div>
+        ) : (
+          balance !== null && (
+            <BalanceTippy balance={balance} />
+          )
+        )}
+        <button onClick={fetchBalance} className="text-xs m-1 p-0 rounded">
+          🔄
+        </button>
+        
       </div>
-    </div>
-  )}
-  
+     </h3>
+     <div className="unbounded-black">
+       <input 
+         className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded amount-selector'
+         type="number" 
+         placeholder="0.0000" 
+         value={formState.amount}
+         onChange={(e) => handleFormChange('amount', e.target.value)}
+       />
+     </div>
+   </div>
+)}
+
+
       {loading ? (
         <div className="loading-indicator mb-2">Loading...</div>
       ) : null}

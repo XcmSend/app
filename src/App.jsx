@@ -27,6 +27,7 @@ import WalletInfo from './components/Wallet/pages/WalletInfo';
 import initializeKeyring from './services/initializeKeyring';
 
 import './App.scss';
+import 'tippy.js/dist/tippy.css';
 import { Socket } from 'socket.io-client';
 
 

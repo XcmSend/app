@@ -79,7 +79,7 @@ export async function listHydraDxAssets() {
 export async function genericPolkadotToParachain(paraid: number, amount: number, address: string) {
 	const api = await connectToWsEndpoint(endpoints.polkadot.default);
 	//const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
-	const accountId = api.createType("AccountId32", address).toHex();
+	const accountId = api.createType("account_id_32", address).toHex();
 
 	const destination = {
 	  parents: 0,
@@ -89,7 +89,7 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
 
 	const account = {
 	  parents: 0,
-	  interior: { X1: { AccountId32: { id: accountId} } },
+	  interior: { X1: { account_id_32: { id: accountId} } },
 	};
 
 
@@ -119,7 +119,7 @@ export async function dotToHydraDx(amount: number){
 	const api = await connectToWsEndpoint(endpoints.polkadot.default);
 	console.log(`sending dot to hydradx`);
 	const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
-	const accountId = api.createType("AccountId32", address).toHex();
+	const accountId = api.createType("account_id_32", address).toHex();
 
 	const destination = {
 	  parents: 0,
@@ -129,7 +129,7 @@ export async function dotToHydraDx(amount: number){
 
 	const account = {
 	  parents: 0,
-	  interior: { X1: { AccountId32: { id: accountId} } },
+	  interior: { X1: { account_id_32: { id: accountId} } },
 	};
 
 

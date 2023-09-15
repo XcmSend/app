@@ -22,6 +22,7 @@
     border-radius: 12px !important;
     font-family: $primary-font, sans-serif;
     font-size: x-small;
+
     width:fit-content !important;
     height:fit-content !important;
 
@@ -62,11 +63,6 @@
   }
 
 
-  // .react-flow__node  {
-  //   border-radius: 10px !important;
-  //   padding: 8px !important;
-  //   /* border: 3px solid black !important; */
-  // }
 
   .react-flow__node:target {
     outline: 3px solid rgba(20, 255, 51, 0.535)  !important;
@@ -251,9 +247,6 @@ background-color: white !important;
 
   .text-xxs {
     font-size: 9px;
-  }
-
-  .chain-logo-container {
   }
 
   .chain-logo {
