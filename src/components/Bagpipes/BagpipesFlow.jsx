@@ -11,7 +11,6 @@ import { useExecuteScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } fr
 import useAppStore from '../../store/useAppStore';
 import TextUpdaterNode from './TextupdaterNode';
 import Sidebar from './Sidebar';
-import '../../index.css';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
 import ChainNode from './CustomNodes/ChainNode/ChainNode';
@@ -20,18 +19,21 @@ import CustomEdge from './CustomEdges/CustomEdge';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './PlayButton';
-import 'reactflow/dist/style.css';
+
 import './utils/getAllConnectedNodes';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
 import { lightTheme, darkTheme } from './theme';
-import styles from './styles.module.css';
 import { node } from 'stylis';
-import './node.styles.scss';
+
 
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
+
+// import 'reactflow/dist/style.css';
+// import './node.styles.scss';
+// import '../../index.css';
 
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};

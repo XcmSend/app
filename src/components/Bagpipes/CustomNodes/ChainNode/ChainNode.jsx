@@ -13,12 +13,9 @@ import { listChains } from '../../../Chains/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
 import { getAssetBalanceForChain } from '../../../Chains/AssetHelper';
 import BalanceTippy from './BalanceTippy';
-
-
-
+import 'antd/dist/antd.css';
 import '../../../../index.css';
 import './ChainNode.scss';
-import 'antd/dist/antd.css';
 import '../../node.styles.scss';
 import '../../../../main.scss';
 
@@ -318,10 +315,10 @@ console.log('Component re-rendered', formState.address);
       <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start ">Addresses</h3>
       <div className="flex items-center text-black justify-start  w-full">
                 <AccountDropdown 
-          selectedChainName={formState.chain}
-          selectedAddress={formState.address}  // Pass address value from state
-          onSelect={(address) => handleFormChange("address", address)} 
-      />
+                    selectedChainName={formState.chain}
+                    selectedAddress={formState.address}  // Pass address value from state
+                    onSelect={(address) => handleFormChange("address", address)} 
+                />
       
       </div>
       <AddContacts />
@@ -358,7 +355,7 @@ console.log('Component re-rendered', formState.address);
    <div className="mb-2 border p-2 rounded">
      <h3 className="text-xxs text-gray-400 primary-font mb-1 flex items-center justify-between">
        Amount 
-       <div className="flex items-center">
+       <div className="flex items-center primary-font">
 
         {isFetchingBalance ? (
           <div className="small-spinner"></div>
@@ -367,8 +364,8 @@ console.log('Component re-rendered', formState.address);
             <BalanceTippy balance={balance} />
           )
         )}
-        <button onClick={fetchBalance} className="text-xs m-1 p-0 rounded">
-          🔄
+        <button onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
+          <img className="h-3 w-3" src="/refresh.svg" />
         </button>
         
       </div>

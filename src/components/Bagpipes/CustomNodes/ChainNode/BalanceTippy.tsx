@@ -1,10 +1,13 @@
+// Copyright 2017-2022 @bagpipes/xcm-send authors & contributors
+// SPDX-License-Identifier: Apache-2.0
+
 // BalanceTippy.tsx
 import React from 'react';
 import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css'; // optional if you've imported elsewhere
-import 'tippy.js/themes/light.css'; // optional if you've imported elsewhere
+import 'tippy.js/dist/tippy.css'; 
+import 'tippy.js/themes/light.css';
 
-import  StyledNumber from './StyledNumber'; // adjust the path accordingly if your component is located elsewhere
+import  StyledNumber from './StyledNumber'; 
 
 interface BalanceTippyProps {
     balance: {

@@ -1,7 +1,9 @@
 {
-  "name": "bagpipes",
+  "name": "@bagpipes/xcm-send",
+  "author": "Bagpipes",
+  "maintainers": ["Ramsey Ajram <ramsey@decentration.org>", "Filip Kalebo <social@firosolutions.com>"],
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
