@@ -1,12 +1,13 @@
 
 import endpoints from "./WsEndpoints";
+import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { ChainInfo, listChains } from "./ChainsInfo";
 import { ApiPromise, WsProvider, SubmittableResult } from "@polkadot/api";
 
 const HydraDx = listChains();
 
 export async function connectToWsEndpoint(ws_endpoint: string, signal?: AbortSignal) {
-
+    await cryptoWaitReady();
 	const provider = new WsProvider(ws_endpoint);
 	const api = await ApiPromise.create({
 		provider: provider

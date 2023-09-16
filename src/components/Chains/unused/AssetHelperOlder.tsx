@@ -1,8 +1,8 @@
-import connectToWsEndpoint from '../connect';
-import { ChainInfo, listChains } from '../ChainsInfo'; 
-import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from '../utils'
-import { ApiPromise } from "@polkadot/api";
-import { string } from 'slate';
+import { connectToWsEndpoint } from './DraftTx';
+import { ChainInfo, listChains } from './ChainsInfo'; 
+import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils' 
+
+import endpoints  from './WsEndpoints';
 
 interface AssetResponseObject {
     nonce: number;
@@ -52,9 +52,7 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 // check asset balance on polkadot assethub
 async function checkAssetHubAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  console.log(`checkAssetHubAssetBalance accountId`, account_id_32)
-  // below, signal is used to abort the request
-  const api = await connectToWsEndpoint('assetHub', signal);
+  const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
   const balance = await api.query.assets.account(assetid, account_id_32);
   const b3 = balance.toHuman();
   console.log(`checkAssetHubAssetBalance balance`, balance)
@@ -90,19 +88,22 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
 
 
 // returns the raw asset balance number, if not it returns 0
-async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, frozen: number } > {
-  console.log(`checkHydraDxRawAssetBalance accountId`, account_id_32)
-  console.log(`checkHydraDxRawAssetBalance assetId`, assetid)
-  let api: any;
-  let hdxBalance: any;
-  let bal_obj: OrmlTokensAccountData;
-    console.log(`checkHydraDxRawAssetBalance trying to connect`)
-    try {
-      api = await connectToWsEndpoint('hydraDx', signal);
-      hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
-  } catch (error) {
-      console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
-      return { free: 0, reserved: 0, frozen: 0 };
+async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
+  const hdxBalance = await api.query.system.account(account_id_32);
+  const fluff = hdxBalance.toHuman();
+
+  if (isAssetResponseObject(fluff)) {
+      const balance_object: AssetResponseObject = fluff;
+      if (balance_object !== null && balance_object !== undefined) {
+          const free = balance_object.data.free;
+          const reserved = balance_object.data.reserved;
+          return {
+              free,
+              reserved,
+              total: free + reserved
+          };
+      }
   }
     const stringBalance = hdxBalance.toHuman();
     console.log(`checkHydraDxRawAssetBalance Raw HDX Balance:`, stringBalance);
