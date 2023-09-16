@@ -71,6 +71,8 @@ useEffect(() => {
   
   return (
     <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col items-center justify-start p-2 bg-gray-100 primary-font">
+          <h1 className="text-xxs text-gray-400 primary-font mb-1">{nodeId}</h1>
+
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
 

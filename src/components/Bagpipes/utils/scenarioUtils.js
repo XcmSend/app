@@ -27,7 +27,7 @@ export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
 export function getOrderedList(edges) {
     let orderedList = [];
 
-    console.log('[getOrderedList] Received edges:', edges); // Log the input edges
+    console.log('[getOrderedList] Received edges:', edges);
 
     // Find the Start Node
     let startEdge = edges.find(edge => 
@@ -37,7 +37,7 @@ export function getOrderedList(edges) {
         console.error('[getOrderedList] Failed at finding the start node.');
         throw new Error('Start node not found.');
     }
-    console.log('[getOrderedList] Start node found:', startEdge);  // Log the start node
+    console.log('[getOrderedList] Start node found:', startEdge); 
 
     // Find the End Node
     let endEdge = edges.find(edge => 
@@ -47,7 +47,7 @@ export function getOrderedList(edges) {
         console.error('[getOrderedList] Failed at finding the end node.');
         throw new Error('End node not found.');
     }
-    console.log('[getOrderedList] End node found:', endEdge);  // Log the end node
+    console.log('[getOrderedList] End node found:', endEdge); 
 
     let currentEdge = startEdge;
     orderedList.push(currentEdge.source);
@@ -56,12 +56,14 @@ export function getOrderedList(edges) {
     while (currentEdge && currentEdge !== endEdge) {
         currentEdge = edges.find(edge => edge.source === currentEdge.target);
         if (currentEdge) {
-            console.log('[getOrderedList] Current edge being processed:', currentEdge);  // Log the current edge
+            console.log('[getOrderedList] Current edge being processed:', currentEdge); 
             orderedList.push(currentEdge.source);
         }
     }
+    orderedList.push(endEdge.target);
 
-    console.log('[getOrderedList] Final ordered list:', orderedList);  // Log the final list
+
+    console.log('[getOrderedList] Final ordered list:', orderedList);  
     return orderedList;
 }
 

@@ -256,6 +256,7 @@ console.log('Component re-rendered', formState.address);
 
   return (
     <div className="custom-node  shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
+    <h1 className="text-xxs text-gray-400 primary-font mb-1">{nodeId}</h1>
 
         {selectedChainLogo && (
             <div className="chain-logo-container mb-2 mt-2 flex justify-center">

@@ -55,7 +55,6 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 async function checkAssetHubAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
   const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
   const balance = await api.query.assets.account(assetid, account_id_32);
-  console.log(`checkAssetHubAssetBalance: ${JSON.stringify(balance)}`);
   const b3 = balance.toHuman();
   if (isAssetHubAssetBalance(b3)) {
       const bal_obj: AssetHubAssetBalance = b3;
@@ -97,18 +96,14 @@ async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: strin
 
 /// returns the raw balance of the native dot token
 async function checkPolkadotDotRawNativeBalance(accountId: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  console.log('[checkPolkadotDotRawNativeBalance] accountId', accountId)
   let bal: any;
   let bal3: any;
   if (accountId) {
     const api = await connectToWsEndpoint(endpoints.polkadot.default, signal);
-    console.log('[checkPolkadotDotRawNativeBalance] Connected to Polkadot', api)
     bal = await api.query.system.account(accountId);
-    console.log('[checkPolkadotDotRawNativeBalance] balance', bal)
   }
   bal3 = bal.toHuman();
 
-  console.log('[checkPolkadotDotRawNativeBalance] bal3 balance human', bal3)
   if (isAssetResponseObject(bal3)) {
       const bal2: AssetResponseObject = bal3;
       return {
