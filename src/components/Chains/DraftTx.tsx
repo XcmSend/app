@@ -1,6 +1,9 @@
 
 import endpoints from "./WsEndpoints";
+import { ChainInfo, listChains } from "./ChainsInfo";
 import { ApiPromise, WsProvider, SubmittableResult } from "@polkadot/api";
+
+const HydraDx = listChains();
 
 export async function connectToWsEndpoint(ws_endpoint: string, signal?: AbortSignal) {
 
@@ -114,11 +117,11 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
 
 
 // working: https://hydradx.subscan.io/xcm_message/polkadot-047344414db62b7c424c8de9037c5a99edd0794c
-export async function dotToHydraDx(amount: number){
+export async function dotToHydraDx(amount: number,  address: string){
 	const paraid = 2034;
 	const api = await connectToWsEndpoint(endpoints.polkadot.default);
 	console.log(`sending dot to hydradx`);
-	const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
+	// const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
 	const accountId = api.createType("account_id_32", address).toHex();
 
 	const destination = {
@@ -140,7 +143,6 @@ export async function dotToHydraDx(amount: number){
 	  },
 	];
 
-
 	const tx = api.tx.xcmPallet.reserveTransferAssets(
         { V3: destination },
         { V3: account },
@@ -153,42 +155,39 @@ export async function dotToHydraDx(amount: number){
 }
 
 
-
-
-
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
 // dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
 // HYDRADX > parachain
-async function hydradx_to_parachain(amount: number, assetid: number, destaccount: string, parachainid: number) {
+async function hydraDxToParachain(amount: number, asset_id: number, dest_account: string, para_id: number) {
 	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
 
 	
-	const asset = {
-		fun: {
-		  Fungible: amount, 
-		},
-		id: {
-		  Concrete: {
-			interior: {
-			  X3: [
-				{ Parachain: parachainid, PalletInstance: 50, GeneralIndex: assetid }],
-			  parents: 1, 
-			},
-		  },
-		},
-	  };
+    const asset = {
+        fun: {
+            Fungible: amount, 
+        },
+        id: {
+            Concrete: {
+            interior: {
+                X3: [
+                { Parachain: para_id, PalletInstance: 50, GeneralIndex: asset_id }],
+                parents: 1, 
+            },
+            },
+        },
+    };
 
-	const destination = {
-		parents: 1,
-		interior: { X2: [{ Parachain: parachainid, AccountId32: destaccount, network: null }] },
-	};
+    const destination = {
+        parents: 1,
+        interior: { X2: [{ Parachain: para_id, AccountId32: dest_account, network: null }] },
+    };
 
-	const tx = await api.tx.xTokens.transferMultiasset(
-		{ V3: asset },
-		{ V2: destination },
-		{ Unlimited: 0 },
+    const tx = api.tx.xTokens.transferMultiasset(
+        { V3: asset },
+        { V2: destination },
+        { Unlimited: 0 },
 
-	);
+    );
 
 	return tx;
 }
