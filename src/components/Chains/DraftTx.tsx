@@ -1,8 +1,8 @@
 
 import endpoints from "./WsEndpoints";
-import { cryptoWaitReady } from '@polkadot/util-crypto';
 import { ChainInfo, listChains } from "./ChainsInfo";
 import { ApiPromise, WsProvider, SubmittableResult } from "@polkadot/api";
+import { cryptoWaitReady } from "@polkadot/util-crypto";
 
 const HydraDx = listChains();
 
