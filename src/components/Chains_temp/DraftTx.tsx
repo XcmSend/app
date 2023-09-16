@@ -1,6 +1,9 @@
 
 import endpoints from "./WsEndpoints";
+import { ChainInfo, listChains } from "./ChainsInfo";
 import { ApiPromise, WsProvider, SubmittableResult } from "@polkadot/api";
+
+const HydraDx = listChains();
 
 export async function connectToWsEndpoint(ws_endpoint: string, signal?: AbortSignal) {
 
@@ -114,11 +117,11 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
 
 
 // working: https://hydradx.subscan.io/xcm_message/polkadot-047344414db62b7c424c8de9037c5a99edd0794c
-export async function dotToHydraDx(amount: number){
+export async function dotToHydraDx(amount: number,  address: string){
 	const paraid = 2034;
 	const api = await connectToWsEndpoint(endpoints.polkadot.default);
 	console.log(`sending dot to hydradx`);
-	const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
+	// const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
 	const accountId = api.createType("account_id_32", address).toHex();
 
 	const destination = {
@@ -140,7 +143,6 @@ export async function dotToHydraDx(amount: number){
 	  },
 	];
 
-
 	const tx = api.tx.xcmPallet.reserveTransferAssets(
         { V3: destination },
         { V3: account },
@@ -151,9 +153,6 @@ export async function dotToHydraDx(amount: number){
 	console.log(tx.toHex());
 	return tx;
 }
-
-
-
 
 
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
@@ -183,12 +182,12 @@ async function hydraDxToParachain(amount: number, assetId: number, destAccount: 
         interior: { X2: [{ Parachain: paraId, AccountId32: destAccount, network: null }] },
     };
 
-	const tx = await api.tx.xTokens.transferMultiasset(
-		{ V3: asset },
-		{ V2: destination },
-		{ Unlimited: 0 },
+    const tx = api.tx.xTokens.transferMultiasset(
+        { V3: asset },
+        { V2: destination },
+        { Unlimited: 0 },
 
-	);
+    );
 
 	return tx;
 }
