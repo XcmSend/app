@@ -151,3 +151,44 @@ export async function dotToHydraDx(amount: number){
 	console.log(tx.toHex());
 	return tx;
 }
+
+
+
+
+
+// ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
+// dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
+// HYDRADX > parachain
+async function hydradx_to_parachain(amount: number, assetid: number, destaccount: string, parachainid: number) {
+	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+
+	
+	const asset = {
+		fun: {
+		  Fungible: amount, 
+		},
+		id: {
+		  Concrete: {
+			interior: {
+			  X3: [
+				{ Parachain: parachainid, PalletInstance: 50, GeneralIndex: assetid }],
+			  parents: 1, 
+			},
+		  },
+		},
+	  };
+
+	const destination = {
+		parents: 1,
+		interior: { X2: [{ Parachain: parachainid, AccountId32: destaccount, network: null }] },
+	};
+
+	const tx = await api.tx.xTokens.transferMultiasset(
+		{ V3: asset },
+		{ V2: destination },
+		{ Unlimited: 0 },
+
+	);
+
+	return tx;
+}
