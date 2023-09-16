@@ -158,7 +158,7 @@ export async function dotToHydraDx(amount: number,  address: string){
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
 // dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
 // HYDRADX > parachain
-async function hydraDxToParachain(amount: number, asset_id: number, dest_account: string, para_id: number) {
+async function hydraDxToParachain(amount: number, assetId: number, destAccount: string, paraId: number) {
 	const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
 
 	
@@ -170,7 +170,7 @@ async function hydraDxToParachain(amount: number, asset_id: number, dest_account
             Concrete: {
             interior: {
                 X3: [
-                { Parachain: para_id, PalletInstance: 50, GeneralIndex: asset_id }],
+                { Parachain: paraId, PalletInstance: 50, GeneralIndex: assetId }],
                 parents: 1, 
             },
             },
@@ -179,7 +179,7 @@ async function hydraDxToParachain(amount: number, asset_id: number, dest_account
 
     const destination = {
         parents: 1,
-        interior: { X2: [{ Parachain: para_id, AccountId32: dest_account, network: null }] },
+        interior: { X2: [{ Parachain: paraId, AccountId32: destAccount, network: null }] },
     };
 
     const tx = api.tx.xTokens.transferMultiasset(
@@ -191,3 +191,5 @@ async function hydraDxToParachain(amount: number, asset_id: number, dest_account
 
 	return tx;
 }
+
+// Swap functionality 
