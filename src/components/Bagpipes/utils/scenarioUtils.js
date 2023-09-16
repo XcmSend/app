@@ -29,50 +29,42 @@ export function getOrderedList(edges) {
 
     console.log('[getOrderedList] Received edges:', edges); // Log the input edges
 
-    // Step 1: Find the starting node (i.e., an edge whose source is never a target for any other edge)
+    // Find the Start Node
     let startEdge = edges.find(edge => 
         !edges.some(e => e.target === edge.source)
     );
     if (!startEdge) {
-        console.error('[getOrderedList] Failed at step 1: Finding start node.');
-        throw new Error('Starting node not found. Ensure the scenario is properly constructed.');
+        console.error('[getOrderedList] Failed at finding the start node.');
+        throw new Error('Start node not found.');
     }
-    console.log('[getOrderedList] Start edge found:', startEdge); 
+    console.log('[getOrderedList] Start node found:', startEdge);  // Log the start node
 
-    // Step 2: Find the end node (i.e., an edge whose target is never a source for any other edge)
+    // Find the End Node
     let endEdge = edges.find(edge => 
         !edges.some(e => e.source === edge.target)
     );
     if (!endEdge) {
-        console.error('[getOrderedList] Failed at step 2: Finding end node.');
-        throw new Error('Ending node not found. Ensure the scenario is properly constructed.');
+        console.error('[getOrderedList] Failed at finding the end node.');
+        throw new Error('End node not found.');
     }
-    console.log('[getOrderedList] End edge found:', endEdge);
+    console.log('[getOrderedList] End node found:', endEdge);  // Log the end node
 
-    // Step 3: Build the ordered list
     let currentEdge = startEdge;
     orderedList.push(currentEdge.source);
 
-    const seenEdges = new Set();
-    while (currentEdge && currentEdge.target !== endEdge.target) {
-        if (seenEdges.has(currentEdge.id)) {
-            console.error('[getOrderedList] Failed: Circular reference detected.');
-            throw new Error('Circular reference detected. Ensure that the nodes are connected properly, in one single path.');
-        }
-        seenEdges.add(currentEdge.id);
-
+    // Loop through edges to build the ordered list
+    while (currentEdge && currentEdge !== endEdge) {
         currentEdge = edges.find(edge => edge.source === currentEdge.target);
         if (currentEdge) {
+            console.log('[getOrderedList] Current edge being processed:', currentEdge);  // Log the current edge
             orderedList.push(currentEdge.source);
         }
     }
 
-    // Include the end node in the list
-    orderedList.push(endEdge.target);
-    
-    console.log('[getOrderedList] Final ordered list:', orderedList);
+    console.log('[getOrderedList] Final ordered list:', orderedList);  // Log the final list
     return orderedList;
 }
+
 
 
 

@@ -124,14 +124,15 @@ button:focus-visible {
   border-color: #ff0072;
 }
 
-.bagpipe .reactflow-wrapper {
+.bagpipe {
   flex-grow: 1;
-  height: 100%;
+  height: 100% !important;
 }
 
-/* .reactflow-wrapper {
-  height: 1000vh !important;
-} */
+.reactflow-wrapper {
+  flex-grow: 1;
+  height: 100% !important;
+}
 
 
 .bagpipe .selectall {
@@ -226,13 +227,13 @@ border: 1px solid rgb(184, 184, 184);
 
 
 .bagpipe-flow-canvass {
-  height: 1000px !important;
+  height: 100% !important;
   content: " ";
   overflow: scroll !important;
 }
 
 .react-flow__background {
-  height: 10 !important;
+  height: 100% !important;
 }
 
 @keyframes spin {
@@ -265,4 +266,8 @@ border: 1px solid rgb(184, 184, 184);
   height: 8px;
   animation: spin 1s linear infinite;
   margin: 0 auto;
+}
+
+.react-flow {
+  height: 90% !important;
 }
