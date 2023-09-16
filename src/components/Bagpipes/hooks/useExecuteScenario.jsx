@@ -30,103 +30,103 @@ const useExecuteScenario = (nodes, setNodes) => {
     
     const prevExecutionIdRef = useRef(null);  
 
-    useEffect(() => {
-      if (socket == null) return; // Make sure the socket object is available
+    // useEffect(() => {
+    //   if (socket == null) return; // Make sure the socket object is available
 
 
-        if (executionId === prevExecutionIdRef.current) {
-          return;
-      }
+    //     if (executionId === prevExecutionIdRef.current) {
+    //       return;
+    //   }
 
-      console.log("Client-side Execution ID before emitting joinRoom: ", executionId);
+    //   console.log("Client-side Execution ID before emitting joinRoom: ", executionId);
 
-      socket.emit('joinRoom', executionId);
-      prevExecutionIdRef.current = executionId; // Update the ref to the new executionId
+    //   socket.emit('joinRoom', executionId);
+    //   prevExecutionIdRef.current = executionId; // Update the ref to the new executionId
   
      
-      // Listen for 'message' events (real-time updates during processing)
-      socket.on('message', ({ content, nodeId }) => {
-        // console.log('[socket] Message event received', content, nodeId);
+    //   // Listen for 'message' events (real-time updates during processing)
+    //   socket.on('message', ({ content, nodeId }) => {
+    //     // console.log('[socket] Message event received', content, nodeId);
 
 
-        if (!executionId) return;
+    //     if (!executionId) return;
       
-        console.log(`Received update for node ${nodeId}:`, content);
+    //     console.log(`Received update for node ${nodeId}:`, content);
       
-        // Update nodeContentMap with the new content for the nodeId
-        setNodeContentMap(prevNodeContentMap => {
-          const existingContent = prevNodeContentMap[nodeId] || '';
-          const updatedContent = existingContent + content;
+    //     // Update nodeContentMap with the new content for the nodeId
+    //     setNodeContentMap(prevNodeContentMap => {
+    //       const existingContent = prevNodeContentMap[nodeId] || '';
+    //       const updatedContent = existingContent + content;
 
-          updateNodeContent(executionId, nodeId, updatedContent);
+    //       updateNodeContent(executionId, nodeId, updatedContent);
 
-          return { ...prevNodeContentMap, [nodeId]: updatedContent };
-        });
+    //       return { ...prevNodeContentMap, [nodeId]: updatedContent };
+    //     });
 
-        // Set up a timer to periodically check the last received message:
-        setLastReceived(prev => ({ ...prev, [nodeId]: Date.now() }));
+    //     // Set up a timer to periodically check the last received message:
+    //     setLastReceived(prev => ({ ...prev, [nodeId]: Date.now() }));
 
 
-      });
+    //   });
       
-        // Listen for 'nodeOutput' events (final output for each node)
-        socket.on('nodeOutput', ({ nodeId, content }) => {
-          console.log(`[socket] Received final output for node ${nodeId}:`, content);
-          if (!executionId) return;
-          updateNodeContent(executionId, nodeId, content);
-          // Add logic to update the corresponding node in the UI with its final output
-          socket.emit('messageAcknowledged', { messageId: nodeId });
+    //     // Listen for 'nodeOutput' events (final output for each node)
+    //     socket.on('nodeOutput', ({ nodeId, content }) => {
+    //       console.log(`[socket] Received final output for node ${nodeId}:`, content);
+    //       if (!executionId) return;
+    //       updateNodeContent(executionId, nodeId, content);
+    //       // Add logic to update the corresponding node in the UI with its final output
+    //       socket.emit('messageAcknowledged', { messageId: nodeId });
 
 
-        });
+    //     });
       
-        // Listen for 'processingCompleted' event
-        socket.on('processingCompleted', (data) => {
-          if (!executionId) return;
-          console.log('[socket] processingCompleted', data.message);  
-          // Update the nodes state
-          // setNodes([...nodes]);
-          saveExecution(executionId);
-          setLoading(false);  
+    //     // Listen for 'processingCompleted' event
+    //     socket.on('processingCompleted', (data) => {
+    //       if (!executionId) return;
+    //       console.log('[socket] processingCompleted', data.message);  
+    //       // Update the nodes state
+    //       // setNodes([...nodes]);
+    //       saveExecution(executionId);
+    //       setLoading(false);  
 
-        });
+    //     });
 
-        // Listen for 'status' events
-        socket.on('status', (data) => {
-          if (!executionId) return;
-          console.log('[socket] Received status:', data);
+    //     // Listen for 'status' events
+    //     socket.on('status', (data) => {
+    //       if (!executionId) return;
+    //       console.log('[socket] Received status:', data);
 
-          if (data.message === 'Workflow execution started') {
-            // Handle the start of workflow execution
-          } else if (data.message === 'Workflow execution failed') {
-            console.log('Error:', data.error);
-            // Handle the failure of workflow execution
-          }
-        });
+    //       if (data.message === 'Workflow execution started') {
+    //         // Handle the start of workflow execution
+    //       } else if (data.message === 'Workflow execution failed') {
+    //         console.log('Error:', data.error);
+    //         // Handle the failure of workflow execution
+    //       }
+    //     });
 
 
-        socket.on('updateClient', ({ nodeId, concatenatedContent }) => {
-          if (!executionId) return;
+    //     socket.on('updateClient', ({ nodeId, concatenatedContent }) => {
+    //       if (!executionId) return;
 
-          console.log(`[socket] Final content for node ${nodeId}:`, concatenatedContent);
+    //       console.log(`[socket] Final content for node ${nodeId}:`, concatenatedContent);
 
-          // You can update the UI here with the final concatenated content.
-          setNodeContentMap(prevNodeContentMap => ({
-            ...prevNodeContentMap,
-            [nodeId]: concatenatedContent
-          }));
+    //       // You can update the UI here with the final concatenated content.
+    //       setNodeContentMap(prevNodeContentMap => ({
+    //         ...prevNodeContentMap,
+    //         [nodeId]: concatenatedContent
+    //       }));
 
-        });
+    //     });
 
-        return () => {
-          socket.off('message');
-          socket.off('nodeOutput');
-          socket.off('processingCompleted');
-          socket.off('updateClient');
-          socket.off('status');
+    //     return () => {
+    //       socket.off('message');
+    //       socket.off('nodeOutput');
+    //       socket.off('processingCompleted');
+    //       socket.off('updateClient');
+    //       socket.off('status');
 
-        };
-      }, [executionId, socket]);
+    //     };
+    //   }, [executionId, socket]);
       
       // useEffect(() => {
       //     const timer = setInterval(() => {

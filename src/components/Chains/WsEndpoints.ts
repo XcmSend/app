@@ -7,7 +7,7 @@ const endpoints = {
         sora2: "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
     },
     polkadot: {
-        default: "wss://rpc.ibp.network/polkadot",
+        default: "wss://polkadot.api.onfinality.io/public-ws", 
         assetHub: "wss://statemint.api.onfinality.io/public-ws",
         hydraDx: "wss://hydradx-rpc.dwellir.com",
         polkadex: "wss://polkadex-parachain.public.curie.radiumblock.co/ws",

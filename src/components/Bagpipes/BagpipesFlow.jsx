@@ -7,7 +7,7 @@ import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactFlow, { Panel, ReactFlowProvider, MiniMap, Controls, Background,   BackgroundVariant, useNodesState, useEdgesState, addEdge, applyNodeChanges, applyEdgeChanges, Handle, Position, NodeToolbar, useStoreApi, useNodeId, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
-import { useExecuteScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
+import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
 import TextUpdaterNode from './TextupdaterNode';
 import Sidebar from './Sidebar';
@@ -121,7 +121,7 @@ const BagpipesFlow = () => {
     const [selectedNodeId, setSelectedNodeId] = useState(null);
     const [selectedEdgeId, setSelectedEdgeId] = useState(null);
 
-    const { executeScenario, nodeContentMap, stopExecution } = useExecuteScenario(currentScenarioNodes, setNodes);
+    const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteChainScenario(currentScenarioNodes, setNodes);
 
 
 
@@ -683,7 +683,7 @@ const BagpipesFlow = () => {
 
             </Panel> */}
             </ReactFlowStyled>
-            <PlayButton executeScenario={executeScenario} stopExecution={stopExecution} disabled={loading} />
+            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
              
            
             </div>

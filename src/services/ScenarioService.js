@@ -180,6 +180,47 @@ class ScenarioService {
             }
         }
     }
+
+    async runChainScenarioOnce(scenarioData) {
+        try {
+            console.log('this.csrfToken in execute', this.csrfToken)
+            
+            const response = await axios.post('/api/scenario/execute', {scenarioData, _csrf: this.csrfToken}, { withCredentials: true });
+            if (response) {
+                console.log('[runOnce]scenario succesfully executed', response)
+            } else if (response.status === 500 ) {
+                console.error(`[runOnce] response.status`, response.status);
+                toast.error(`[runOnce] response.status`, response.status);
+
+            }
+            console.log(`[runOnce] response.data`, response.data);
+
+            console.log(`[runOnce] about to send scenarioData to handleSaveScenario`, scenarioData);
+            await this.handleSaveScenario(scenarioData); 
+    
+            // if (response.data.executionId) {
+            //     const executionId = response.data.executionId; // Changed from _id to executionId
+            //     const otherData = { ...response.data, executionId: undefined };
+            //     return { executionId, ...otherData };
+            // }
+
+            return response.data;
+    
+        } catch (error) {
+            console.error('Error during scenario execution:', error);
+            if (error.response) {
+                console.error('Status:', error.response.status);
+                console.error('Data:', error.response.data);
+                if (error.response.status === 400) {
+                    const errorMessage = error.response.data.message;
+                    console.error(`[runOnce]: Error from server: ${errorMessage}`);
+                    // Here you can show the message to the user
+                }
+            } else {
+                console.error('No response object in error');
+            }
+        }
+    }
     
     
  
