@@ -9,23 +9,19 @@ import 'antd/dist/antd.css'; // Import Ant Design styles
 // import EvmWalletInfo from './components/Wallet/pages/EvmWalletInfo';
 import { WalletContextProvider } from './components/Wallet/providers/WalletContextProvider';
 import { HashRouter, Route, Routes, useNavigate } from 'react-router-dom';
-
 import BagpipesFlowRoute from './routes/BagpipesFlowRoute';
 import Lab from './pages/Lab/Lab';
 import SocketContext from './contexts/SocketContext';
 import { AddressBookProvider } from './contexts/AddressBookContext';
 import { io } from "socket.io-client";
-
 import Layout from './components/Wallet/components/Layout';
 import Welcome from './components/Wallet/components/Welcome';
 import Builder from './components/Builder';
 import ReactTestFlow from './ReactTestFlow';
-
-
 import WalletInfo from './components/Wallet/pages/WalletInfo';
-
 import initializeKeyring from './services/initializeKeyring';
-
+import Notifications from './components/Notifications';
+import toast, { Toaster, ToastBar } from 'react-hot-toast';
 import './App.scss';
 import 'tippy.js/dist/tippy.css';
 import { Socket } from 'socket.io-client';
@@ -47,24 +43,39 @@ export function App () {
 
 
 
-  useEffect(() => {
-    const newSocket = io("http://localhost:5001");
-    setSocket(newSocket);
-    console.log("[socket] Socket initialized");
+  // useEffect(() => {
+  //   const newSocket = io("http://localhost:5001");
+  //   setSocket(newSocket);
+  //   console.log("[socket] Socket initialized");
 
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
+  //   return () => {
+  //     newSocket.disconnect();
+  //   };
+  // }, []);
 
 
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
-
     <WalletContextProvider>
       <SocketContext.Provider value={socket}>
       <ConfigProvider>
-      <AddressBookProvider>
+        <Toaster>
+          {(t) => (
+            <ToastBar toast={t}>
+              {({ icon, message }) => (
+                <>
+                  {icon}
+                  {message}
+                  {t.type !== 'loading' && (
+                    <button onClick={() => toast.dismiss(t.id)}>dismiss</button>
+                  )}
+                </>
+              )}
+            </ToastBar>
+          )}
+        </Toaster>      
+        {/* <Notifications /> */}
+        <AddressBookProvider>
           <Routes>
             <Route element={<Layout />} path='/' >
             <Route

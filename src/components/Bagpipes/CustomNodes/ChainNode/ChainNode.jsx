@@ -96,8 +96,10 @@ const ChainNode = ({ children, data, isConnectable }) => {
 
   const handleAssetChange = (e) => {
     const selectedAssetName = e.target.value;
-    const selectedAssetInfo = assetsForChain.find(asset => asset.asset.name === selectedAssetName);
-    
+    if (selectedAssetName !== 'Select an asset'){
+      const selectedAssetInfo = assetsForChain.find(asset => asset.asset.name === selectedAssetName);
+      return selectedAssetInfo;
+    }     
     setFormState(prevState => ({
       ...prevState,
       asset: {
@@ -274,7 +276,7 @@ console.log('Component re-rendered', formState.address);
               onChange={handleChainChange}
               value={formState.chain}  // This sets the value for the dropdown from the state
           >
-              <option value="" selected disabled>Select chain</option>
+              <option value="" selected>Select chain</option>
               {ChainInfoList.map((ChainInfo, index) => (
                   <option key={ChainInfo.name} value={ChainInfo.name}>
                       {ChainInfo.display}
@@ -299,7 +301,7 @@ console.log('Component re-rendered', formState.address);
              </div>
           ) : (
             <select className="asset-selector text-black border border-gray-300 p-2 rounded font-semibold" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
-              <option value="" disabled>Select an asset</option>
+              <option value="">Select an asset</option>
                {assetsForChain.map(asset => (
                    <option key={asset.assetId} value={asset.asset.name}>
                      {asset.asset.name} | AssetId: {asset.assetId}
@@ -342,7 +344,7 @@ console.log('Component re-rendered', formState.address);
             }}
         >
             <option value="create_new_contact" style={{ borderBottom: '1px solid #ccc', fontWeight: 500 }}>Create New Contact</option> {/* Added style for borderBottom */}
-            <option value="" disabled>Select Contact</option>
+            <option value="">Select Contact</option>
             {contacts.map(contact => (
                 <option key={contact.address} value={contact.address}>
                     {`${contact.name} (${contact.address})`}

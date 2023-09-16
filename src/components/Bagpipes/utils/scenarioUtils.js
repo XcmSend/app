@@ -1,5 +1,7 @@
 // @ts-nocheck
 
+import { toast } from "react-hot-toast";
+
 
 export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
     let newText = text;
@@ -100,7 +102,7 @@ export function validateDiagramData(diagramData) {
 
     // Ensure action nodes are not at the start or end
     if (startingNodes[0]?.type === 'action' || endingNodes[0]?.type === 'action') {
-        throw new Error("Scenarios cannot start or end with an action node.");
+        toast.error("Scenarios cannot start or end with an action node.");
     }
 
     // Ensure that chain nodes or action nodes are not connected directly 
@@ -110,6 +112,7 @@ export function validateDiagramData(diagramData) {
 
         if ((sourceType === 'chain' && targetType === 'chain') || 
             (sourceType === 'action' && targetType === 'action')) {
+            toast.error("Chain nodes or action nodes are connected to each other directly. They should be connected as ChainNode > ActionNode > ChainNode.");
             throw new Error("Chain nodes or action nodes are connected to each other directly. They should be connected as ChainNode > ActionNode > ChainNode.");
         }
     });

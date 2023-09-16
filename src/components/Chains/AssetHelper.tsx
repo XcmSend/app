@@ -88,10 +88,26 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
 
 // returns the raw asset balance number, if not it returns 0
 async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+  let hdxBalance: any;
+  if (account_id_32) {
   const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
-  const hdxBalance = await api.query.system.account(account_id_32);
-  const fluff = hdxBalance.toHuman();
+  hdxBalance = await api.query.system.account(account_id_32);
+  }
+  const balance = hdxBalance.toHuman();
 
+  if (isAssetResponseObject(balance)) {
+      const balance_object: AssetResponseObject = balance;
+      if (balance_object !== null && balance_object !== undefined) {
+          const free = balance_object.data.free;
+          const reserved = balance_object.data.reserved;
+          return {
+              free,
+              reserved,
+              total: free + reserved
+          };
+      }
+  }
+  return { free: 0, reserved: 0, total: 0 };
 }
 
 /// returns the raw balance of the native dot token

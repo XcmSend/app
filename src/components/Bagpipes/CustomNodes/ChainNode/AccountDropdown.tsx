@@ -53,7 +53,7 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
         onChange={handleChange}
         className='border border-gray-300 p-2 rounded-md w-full'
       >
-        <option className="" value="" disabled>Select Address</option>
+        <option className="" value="">Select Address</option>
         {walletContext.accounts.map(acc => (
           <option className="" key={acc.address} value={acc.address}>
             {`${acc.name} (${displayAddress(acc.address, getPrefixForAddress(acc.address))})`}

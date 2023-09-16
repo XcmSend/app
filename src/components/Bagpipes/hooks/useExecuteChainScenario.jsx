@@ -6,6 +6,7 @@ import ScenarioService from '../../../services/ScenarioService';
 import { processScenarioData, validateDiagramData, getOrderedList } from '../utils/scenarioUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import useAppStore from '../../../store/useAppStore';
+import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-hot-toast';
 
 
@@ -65,6 +66,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
   }
 
   async function executeChainScenario() {
+    toast.success('Starting Workflow Execution...');
     console.log('[executeChainScenario] Starting Workflow Execution...');
     setLoading(true);
 
@@ -87,6 +89,10 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         };
         
         console.log('[executeChainScenario] Retrieved diagramData from state:', diagramData);
+
+        const executionId = uuidv4();
+        setExecutionId(executionId);
+       
         
         // Get the ordered list of nodes
         const orderedList = getOrderedList(diagramData.edges);
@@ -100,33 +106,49 @@ const useExecuteChainScenario = (nodes, setNodes) => {
 
         // Validate the diagramData
         diagramData = validateDiagramData(diagramData);
-        
-        // Process the diagram data
-        diagramData = processScenarioData(diagramData);
-        console.log('[executeChainScenario] Processed diagramData:', diagramData);
-        
+                
         console.log("[executeChainScenario] About to run the scenario with the following data:", { diagramData: diagramData, scenario: activeScenarioId });
-        
-        const response = await ScenarioService.runChainScenarioOnce({ 
-            diagramData: diagramData,
-            scenario: activeScenarioId,
-        });
+        toast.success('Running Scenario...');
 
-        // TODO: Use uuid v4 to create executionId
-        setExecutionId(response.executionId);
-        
-        if (response.executionId) {
-            const currentDateTime = new Date().toISOString();
-            const executionData = {
-                timestamp: currentDateTime,
-                nodeContentMap: { ...nodeContentMap },
-            };
-            console.log('Saving execution data...');
-            saveExecution(response.executionId, executionData);
-        } else {
-            console.error('No executionId received from the server. Cannot save execution.');
-            toast.error('Execution ID not received. Unable to save execution.');
-        }
+        let nodeContents = {};
+        let executionCycleFinished = false;
+
+        // Iterate over the nodes based on the order from orderedList
+        for(let nodeId of orderedList) {
+            let currentNode = diagramData.nodes.find(node => node.id === nodeId);
+            if (!currentNode) {
+                toast.error('The execution has ended due to an unknown node.');
+                return;
+            }
+
+
+            switch(currentNode.type) {
+              case 'openAi':
+                  // Handle the openAi node execution
+                  break;
+
+              case 'chain':
+                toast.success('Executing Chain Node...');
+                  // Handle the chain node execution
+          
+                  break;
+
+              case 'action':
+                toast.success('Executing Action Node...');
+
+                  // Handle the action node execution
+                  break;
+          }
+      }
+
+      if (executionCycleFinished) {
+          // Handle the end of the execution
+      }
+
+              // Here we have the logic from handleSaveScenario (from runChainScenarioOnce)
+
+
+
 
     } catch (error) {
         console.error('An error occurred while executing the workflow:', error);
