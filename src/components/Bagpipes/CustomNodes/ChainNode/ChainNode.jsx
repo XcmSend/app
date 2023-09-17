@@ -96,18 +96,28 @@ const ChainNode = ({ children, data, isConnectable }) => {
 
   const handleAssetChange = (e) => {
     const selectedAssetName = e.target.value;
-    if (selectedAssetName !== 'Select an asset'){
-      const selectedAssetInfo = assetsForChain.find(asset => asset.asset.name === selectedAssetName);
-      return selectedAssetInfo;
-    }     
-    setFormState(prevState => ({
-      ...prevState,
-      asset: {
-        name: selectedAssetInfo.asset.name,
-        assetId: selectedAssetInfo.assetId
-      }
-    }));
-  };
+    let selectedAssetInfo;
+
+    if (selectedAssetName !== 'Select an asset') {
+      selectedAssetInfo = assetsForChain.find(asset => asset.asset.name === selectedAssetName);
+      console.log('selectedAssetInfo', selectedAssetInfo);
+    }
+    if (selectedAssetInfo) {
+      setFormState(prevState => ({
+        ...prevState,
+        asset: {
+          name: selectedAssetInfo.asset.name,
+          assetId: selectedAssetInfo.assetId
+        }
+      }));
+    } else {
+      setFormState(prevState => ({
+        ...prevState,
+        asset: null
+      }));
+    }
+};
+
   
 
   useEffect(() => {

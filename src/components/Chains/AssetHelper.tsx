@@ -3,6 +3,7 @@ import { ChainInfo, listChains } from './ChainsInfo';
 import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils'
 
 import endpoints  from './WsEndpoints';
+import { string } from 'slate';
 
 interface AssetResponseObject {
     nonce: number;
@@ -36,7 +37,6 @@ interface  AssetHubAssetBalance {
   status: string;
   reason: string,
   extra: string
-
 }
 
 function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
@@ -53,11 +53,15 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 // check asset balance on polkadot assethub
 async function checkAssetHubAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+  console.log(`checkAssetHubAssetBalance accountId`, account_id_32)
+  // below, signal is used to abort the request
   const api = await connectToWsEndpoint(endpoints.polkadot.assetHub, signal);
   const balance = await api.query.assets.account(assetid, account_id_32);
   const b3 = balance.toHuman();
+  console.log(`checkAssetHubAssetBalance balance`, balance)
   if (isAssetHubAssetBalance(b3)) {
       const bal_obj: AssetHubAssetBalance = b3;
+      console.log(`checkAssetHubAssetBalance balance object`, bal_obj)
       return {
           free: bal_obj.balance,
           reserved: 0, 
@@ -87,27 +91,37 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
 
 
 // returns the raw asset balance number, if not it returns 0
-async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, frozen: number } > {
+  console.log(`checkHydraDxRawAssetBalance accountId`, account_id_32)
+  console.log(`checkHydraDxRawAssetBalance assetId`, assetid)
+  let api: any;
   let hdxBalance: any;
-  if (account_id_32) {
-  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
-  hdxBalance = await api.query.system.account(account_id_32);
+  let bal_obj: OrmlTokensAccountData;
+    console.log(`checkHydraDxRawAssetBalance trying to connect`)
+    try {
+      api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
+      hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
+  } catch (error) {
+      console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
+      return { free: 0, reserved: 0, frozen: 0 };
   }
-  const balance = hdxBalance.toHuman();
+    const stringBalance = hdxBalance.toHuman();
+    console.log(`checkHydraDxRawAssetBalance Raw HDX Balance:`, stringBalance);
 
-  if (isAssetResponseObject(balance)) {
-      const balance_object: AssetResponseObject = balance;
-      if (balance_object !== null && balance_object !== undefined) {
-          const free = balance_object.data.free;
-          const reserved = balance_object.data.reserved;
-          return {
-              free,
-              reserved,
-              total: free + reserved
-          };
-      }
-  }
-  return { free: 0, reserved: 0, total: 0 };
+
+    // convert asset balance type to parsable type 
+    if (isOrmlTokensAccountData(hdxBalance)){
+      bal_obj = hdxBalance
+      console.log(`checkHydraDxRawAssetBalance bal obj`, bal_obj)
+      return {
+        free: bal_obj.free, 
+        reserved: bal_obj.reserved, 
+        frozen: bal_obj.frozen
+      };
+    }
+
+
+    return { free: 0, reserved: 0, frozen: 0 };
 }
 
 /// returns the raw balance of the native dot token
@@ -171,18 +185,24 @@ function getTokenDecimalsByChainName(chainName: string): number {
 
 
 export async function getAssetBalanceForChain(chain: string, assetId: number, accountId: string, signal?: AbortSignal): Promise<{ free: string, reserved: string, total: string }> {
-  let balances: { free: number, reserved: number, total: number };
+  let balances: { free: number, reserved: number, total?: number, frozen?: number };
+
+
+  const sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ''), 10);
 
   if (signal && signal.aborted) {
     throw new Error('Operation was aborted');
   }
 
+  console.log(`getAssetBalanceForChain checking chain: ${chain}, ${assetId}, ${accountId}`);
+
     if (chain === "polkadot") {
         balances = await checkPolkadotDotRawNativeBalance(accountId, signal);
     } else if (chain === "hydraDx") {
+      console.log(`getAssetBalanceForChain checking hydradx asset id`, assetId);
         balances = await checkHydraDxRawAssetBalance(assetId, accountId, signal);
     } else if (chain === "assetHub") {
-        balances = await checkAssetHubAssetBalance(assetId, accountId, signal);
+        balances = await checkAssetHubAssetBalance(sanitizedAssetId, accountId, signal);
     } else if (chain === "rococo") {
         balances = await checkRococoRocRawNativeBalance(accountId, signal);
     } else {
@@ -190,7 +210,9 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
     }
 
     const tokenDecimals = getTokenDecimalsByChainName(chain);
+    console.log(`checkAssetBalance balances.free: ${balances.free}`);
     const freeInUnits = toUnit(balances.free, tokenDecimals);
+    console.log(`checkAssetBalance freeInUnits: ${freeInUnits}`);
     const reservedInUnits = toUnit(balances.reserved, tokenDecimals);
 
     console.log(`Free Balance in units: ${freeInUnits}`);
@@ -199,7 +221,7 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
     const totalInUnits = freeInUnits + reservedInUnits;
     console.log(`totalInUnits: ${totalInUnits}`);
 
-    const totalRawBalances = Number(balances.free) + Number(balances.reserved);
+    const totalRawBalances = Number(balances.free) + Number(balances.reserved) + Number(balances.frozen);
     console.log(`totalRawBalances: ${JSON.stringify(totalRawBalances)}`);
 
     console.log(`rawBalances: ${JSON.stringify(balances)}`);

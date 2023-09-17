@@ -39,7 +39,14 @@ export function formatToFourDecimals(value: string) {
 
 
 export function toUnit(balance: string | number, token_decimals: number): number {
+  if (balance === null || balance === undefined) {
+    throw new Error('Received invalid balance: null or undefined');
+  }
+
+  // Initialize balanceStr based on balance type
   let balanceStr = typeof balance === "number" ? balance.toString() : balance;
+
+  // Remove commas
   balanceStr = balanceStr.replace(/,/g, ''); 
 
   const base = 10n;
@@ -53,3 +60,4 @@ export function toUnit(balance: string | number, token_decimals: number): number
   console.log('toUnit div', div);
   return parseFloat(div.toString()) + parseFloat((bi - div * mod).toString()) / parseFloat(mod.toString());
 }
+
