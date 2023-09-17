@@ -74,27 +74,41 @@ async function checkAssetHubAssetBalance(assetid: number, account_id_32: string,
 //    console.log(`checkAssetHubAssetBalance done`);
 }
 
+interface OrmlTokensAccountData {
+  free: number;
+  reserved: number;
+  frozen: number;
+}
+
+function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    'free' in obj &&
+    'reserved' in obj &&
+    'frozen' in obj
+        );
+}
+
 
 // returns the raw asset balance number, if not it returns 0
-async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  await cryptoWaitReady();
-  const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
-  const hdxBalance = await api.query.system.account(account_id_32);
-  const fluff = hdxBalance.toHuman();
+async function checkHydraDxRawAssetBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<number> {
 
-  if (isAssetResponseObject(fluff)) {
-      const balance_object: AssetResponseObject = fluff;
-      if (balance_object !== null && balance_object !== undefined) {
-          const free = balance_object.data.free;
-          const reserved = balance_object.data.reserved;
-          return {
-              free,
-              reserved,
-              total: free + reserved
-          };
-      }
-  }
-  return { free: 0, reserved: 0, total: 0 };
+    await cryptoWaitReady();
+    const api = await connectToWsEndpoint(endpoints.polkadot.hydraDx, signal);
+
+    const hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
+    // convert asset balance type to parsable type 
+    const fluff = hdxBalance.toHuman();
+    if (isOrmlTokensAccountData(fluff)){
+      const data: OrmlTokensAccountData = fluff
+      return data.free;
+    }
+    
+
+
+    return 0;
+
 }
 
 /// returns the raw balance of the native dot token
