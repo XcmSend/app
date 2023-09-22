@@ -76,7 +76,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
   // Filtered assets based on the selected chain
   const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
   const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
-    console.log('ChainInfoList', ChainInfoList)
+    // console.log('ChainInfoList', ChainInfoList)
     const selectedChainLogo = ChainInfoList.find(chain => chain.name === formState.chain)?.logo;
 
     const handleFormChange = (field, value) => {
@@ -100,7 +100,7 @@ const ChainNode = ({ children, data, isConnectable }) => {
 
     if (selectedAssetName !== 'Select an asset') {
       selectedAssetInfo = assetsForChain.find(asset => asset.asset.name === selectedAssetName);
-      console.log('selectedAssetInfo', selectedAssetInfo);
+      // console.log('selectedAssetInfo', selectedAssetInfo);
     }
     if (selectedAssetInfo) {
       setFormState(prevState => ({

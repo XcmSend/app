@@ -16,7 +16,7 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
   const chains = listChains(); 
   const [selectedAccount, setSelectedAccount] = useState<string | null>(selectedAddress);
 
-  console.log("WalletContext:", walletContext);
+  // console.log("WalletContext:", walletContext);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedAccAddress = event.target.value;
