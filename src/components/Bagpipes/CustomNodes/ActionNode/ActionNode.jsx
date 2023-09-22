@@ -66,11 +66,11 @@ export default function ActionNode({ children, data, isConnectable }) {
     }));
   };
 
-  useEffect(() => {
-    // logic to generate new orderedList
-    const newList = getOrderedList();  // Assuming this is your function to generate the list
-    setOrderedList(newList);
-  }, [edges]);
+  // useEffect(() => {
+  //   // logic to generate new orderedList
+  //   const newList = getOrderedList();  // Assuming this is your function to generate the list
+  //   setOrderedList(newList);
+  // }, [edges]);
 
 
 
@@ -99,8 +99,8 @@ export default function ActionNode({ children, data, isConnectable }) {
   };
 
   useEffect(() => {
-    fetchPriceInfo();
-  }, [assetInNodeId, assetOutNodeId, assetInFormData?.amount, assetInFormData?.address, assetOutFormData?.amount, assetOutFormData?.address]);
+    fetchPriceInfo(assetInFormData, assetOutFormData)
+    }, [assetInNodeId, assetOutNodeId, assetInFormData?.amount, assetInFormData?.address, assetOutFormData?.amount, assetOutFormData?.address]);
 
 
     useEffect(() => {
@@ -108,6 +108,7 @@ export default function ActionNode({ children, data, isConnectable }) {
       console.log('[ActionNode] active node:', selectedNodeId);
 
       const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
+      console.log('ActionNode scenario edges:', scenarios[activeScenarioId]?.diagramData?.edges);
       console.log('ActionNode Ordered List:', orderedList);
 
       const currentIndex = orderedList.indexOf(selectedNodeId);

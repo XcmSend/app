@@ -11,8 +11,9 @@ const PriceInfo = ({ sourceInfo, targetInfo, priceInfo }) => {
 
     return (
         <div className="sell-price-info mt-4 bg-gray-100 p-2 rounded border border-gray-300 text-gray-700 mt-1 p-3 m-2" style={{ maxWidth: '300px' }}>
-            <InfoDivider label="Source" value={`${priceInfo.amountIn} (${sourceInfo.asset.name})`} />
-            <InfoDivider label="Target" value={`${priceInfo.amountOut} (${targetInfo.asset.name})`} />
+            <InfoDivider label="Amount" value={`${priceInfo.amountIn} ${sourceInfo.asset.name}`} />
+            <InfoDivider label="From" value={`${priceInfo.amountIn} (${sourceInfo.asset.name})`} />
+            <InfoDivider label="To" value={`${priceInfo.amountOut} (${targetInfo.asset.name})`} />
             <InfoDivider label="Type" value={priceInfo.type} />
             <InfoDivider label="Spot Price" value={priceInfo.spotPrice} />
 
