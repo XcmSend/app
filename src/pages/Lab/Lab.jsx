@@ -97,6 +97,8 @@ function Lab() {
         if (loadSuccess) {
           console.log("[editScenario] active scenario id in edit scenario", activeScenarioId);
           loadScenario(scenarioId);
+          setActiveScenarioId(scenarioId);
+
 
           navigate('/builder');
         } else {

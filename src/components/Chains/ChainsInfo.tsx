@@ -18,12 +18,6 @@ interface AssetInfo {
     isFrozen: boolean;
     }
   
-    export enum supported_Polkadot_Chains {
-      polkadot,
-      hydradx,
-      assethub,
-    }
-    
 
 export function listChains() {
     // dict[paraid] = ChainInfo
@@ -76,10 +70,12 @@ export function listChains() {
     return chainList;
 }
 
-
-
-/// place a hydradx omnipool order
-
+// handle matching chains easier
+export enum supported_Polkadot_Chains {
+  polkadot,
+  hydradx,
+  assethub,
+}
 
 /// send the 90% of the dot to be converted to USDT, the rest will be sent 
 /// directly to assethub 
