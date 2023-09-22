@@ -79,7 +79,44 @@ export async function dotToHydraDx(amount: number,  address: string){
 	return tx;
 }
 
-// call await signAndSend()
+
+export async function dotToParachain(amount: number,  address: string, paraid: number){
+	const api = await connectToWsEndpoint('polkadot');
+	console.log(`sending dot to parachain`);
+	// const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
+	const accountId = api.createType("account_id_32", address).toHex(); // convert account to public key
+
+	const destination = {
+	  parents: 0,
+	  interior: { X1: { Parachain: paraid } },
+	};
+
+
+	const account = {
+	  parents: 0,
+	  interior: { X1: { account_id_32: { id: accountId} } },
+	};
+
+
+	const asset = [
+	  {
+		id: { Concrete: { parents: 0, interior: "Here" } },
+		fun: { Fungible: amount },
+	  },
+	];
+
+	const tx = api.tx.xcmPallet.reserveTransferAssets(
+        { V3: destination },
+        { V3: account },
+        { V3: asset },
+        0,
+      );
+//	console.log(`tx created!`);
+//	console.log(tx.toHex());
+	return tx;
+}
+
+
 
 
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
@@ -121,7 +158,7 @@ export async function hydraDxToParachain(amount: number, assetId: number, destAc
 
 /// tested on assethub > hydradx
 /// assethub > parachain, send an asset on assethub to receiving parachain
-async function assethub_to_parachain(assetid: string, amount: number, accountid: string, paraid: number) {
+export async function assethub_to_parachain(assetid: string, amount: number, accountid: string, paraid: number) {
 	//console.log(`[assethub_to_hydra]`);
 	const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
 	//const paraid = 2034;//hydradx
