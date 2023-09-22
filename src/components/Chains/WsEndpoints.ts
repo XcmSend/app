@@ -12,6 +12,12 @@ const endpoints = {
         hydraDx: "wss://hydradx-rpc.dwellir.com",
         polkadex: "wss://polkadex-parachain.public.curie.radiumblock.co/ws",
     },
+    hydradx: {
+
+    },
+    assetHub: {
+    
+    }
 };
 
 // Function to update endpoints if needed (placeholder for now)

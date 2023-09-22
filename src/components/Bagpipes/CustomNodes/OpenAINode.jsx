@@ -22,12 +22,12 @@ const OpenAINode = ({ data, isConnectable }) => {
   const { loading } = useAppStore(state => ({ loading: state.loading }));
 
   useEffect(() => {
-    if (loading) { // If a new execution is starting...
-      setContent(""); // Clear the content
+    if (loading) { 
+      setContent(""); 
   } else {
     setContent(nodeContentMap[nodeId] || '');
-    console.log(`Setting content for node ${nodeId}:`, nodeContentMap[nodeId]);  // Debugging info
-    console.log(`Full node content map:`, nodeContentMap);  // Debugging info
+    // console.log(`Setting content for node ${nodeId}:`, nodeContentMap[nodeId]);  
+    // console.log(`Full node content map:`, nodeContentMap);  
 
   }
 }, [nodeContentMap, nodeId]);

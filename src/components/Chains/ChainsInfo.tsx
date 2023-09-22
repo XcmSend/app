@@ -18,6 +18,12 @@ interface AssetInfo {
     isFrozen: boolean;
     }
   
+    export enum supported_Polkadot_Chains {
+      polkadot,
+      hydradx,
+      assethub,
+    }
+    
 
 export function listChains() {
     // dict[paraid] = ChainInfo
