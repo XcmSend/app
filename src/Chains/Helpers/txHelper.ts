@@ -34,13 +34,13 @@ async function spawn_native_balance_check(chain: supported_Polkadot_Chains, acco
 		if (new_balance.free != original_balance.free) {
 			console.log(`Balance has changed`);
 			unsubscribe();
-			process.exit(0); // change to die nicer?	
+		//	process.exit(0); // change to die nicer?	
 		}
 
 		if (++count === block_limit) {
 		  console.log(`block limit reached, exit...`);
 		  unsubscribe();
-		  process.exit(0); // change to die nicer?	
+		//  process.exit(0); // change to die nicer?	
 		}
 	  });
 

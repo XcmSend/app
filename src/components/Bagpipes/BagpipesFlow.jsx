@@ -28,6 +28,7 @@ import toast from 'react-hot-toast';
 
 
 
+import GitInfo from './git_tag'
 import './utils/getAllConnectedNodes';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
@@ -46,6 +47,9 @@ import Edges from './edges';
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};
 `;
+
+
+
 // Make the dark theme a bg-slate-900 style similar to Tailwind website
 const ControlsStyled = styled(Controls)`
   button {
@@ -639,7 +643,6 @@ const BagpipesFlow = () => {
 
       
     }, [selectedEdgeId, setSelectedEdgeInScenario, activeScenarioId]);
-    
     const onNodeClick = useCallback((event, node) => {
       console.log("onNodeClick Clicked on:", node);
 
@@ -765,6 +768,8 @@ const BagpipesFlow = () => {
 
             {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
+            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
+            <GitInfo />
            
             </div>
             <Sidebar />
