@@ -31,6 +31,7 @@ export async function getHydraDxSpotPrice(assetIn: string, assetOut: string) {
 }
 
 export async function getHydraDxSellPrice(assetIn: string, assetOut: string, amount: number) {
+  console.log(`getHydraDx Getting selling details...`);
   if (!tradeRouter) {
     console.log(`getHydraDx Initializing TradeRouter in teh getHydraDxSell function...`);
     await initializeTradeRouter();
@@ -39,7 +40,7 @@ export async function getHydraDxSellPrice(assetIn: string, assetOut: string, amo
   console.log(`getHydraDx Getting selling details...`);
 
   const tradeDetails = await tradeRouter.getBestSell(assetIn, assetOut, amount);
-  console.log(`getHydraDx trade details:`, tradeDetails);
+  console.log(`getHydraDx trade details:`, tradeDetails.toHuman());
 
   return tradeDetails.toHuman();
 }

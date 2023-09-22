@@ -37,7 +37,6 @@ const ChainNode = ({ children, data, isConnectable }) => {
     saveNodeFormData: state.saveNodeFormData,
 
   }));
-  // const [formState, setFormState] = useState(savedState || initialState);
   const { addContact, contacts, error, setError } = useAddressBook();
   const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
   const [newAddress, setNewAddress] = useState(''); // To capture address in modal
@@ -174,14 +173,14 @@ const ChainNode = ({ children, data, isConnectable }) => {
                 name: currentNodeFormData?.asset?.name || "",
                 assetId: currentNodeFormData?.asset?.assetId || null
             },
-            // ... Add other fields
+            // address, amount...
         });
     }
   }, [ nodeId, activeScenarioId]);
 
   useEffect(() => {
-    // The formData structure remains the same.
     const formData = { ...formState };
+
     
     console.log('saving nodeFormData', formData, nodeId);
 
@@ -377,9 +376,9 @@ console.log('Component re-rendered', formState.address);
             <BalanceTippy balance={balance} />
           )
         )}
-        <button onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
+        <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
           <img className="h-3 w-3" src="/refresh.svg" />
-        </button>
+        </span>
         
       </div>
      </h3>

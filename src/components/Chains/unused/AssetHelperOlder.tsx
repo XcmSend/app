@@ -1,6 +1,6 @@
-import connectToWsEndpoint from './connect';
-import { ChainInfo, listChains } from './ChainsInfo'; 
-import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils'
+import connectToWsEndpoint from '../connect';
+import { ChainInfo, listChains } from '../ChainsInfo'; 
+import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from '../utils'
 import { ApiPromise } from "@polkadot/api";
 import { string } from 'slate';
 

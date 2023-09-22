@@ -1,26 +1,8 @@
 // onConnect.js
 import { addEdge } from 'reactflow';
-import useAppStore from '../useAppStore';
 
-const DEFAULT_EDGE_STYLE = {
-  style: {
-    stroke: '#ff0000',
-    strokeWidth: 5
-  },
-  animated: true,
-  markerEnd: 'arrow'
-};
-
-const onConnect = (currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario) => (params) => {
+const onConnect = (edges, setEdges, activeScenarioId, addEdgeToScenario) => (params) => {
   console.log("onConnect called with params:", params);
-  console.log("onConnect called with setEddge:", setEdges);
-
-  // const {  activeScenarioId, addEdgeToScenario,  setEdges, edges } = useAppStore(state => ({
-  //   activeScenarioId: state.activeScenarioId,
-  //   addEdgeToScenario: state.addEdgeToScenario,
-  //   setEdges: state.setEdges,
-  //   edges: state.edges,
-  // }));
 
   if (params.source === params.target) {
     console.log('Cannot connect to the same node:', params.source);
@@ -32,13 +14,10 @@ const onConnect = (currentScenarioEdges, nodeConnections, setEdges, setNodeConne
   const newEdge = {
     ...params,
     id: newEdgeId,
-    ...DEFAULT_EDGE_STYLE
   };
-  console.log('onConnect Constructing new edge:', newEdge);
 
-
-  const newEdges = addEdge(newEdge, currentScenarioEdges); 
-  // setEdges(newEdges); // Update edges using explicit setter
+  const newEdges = addEdge(newEdge, edges); 
+  setEdges(newEdges); // Update edges using explicit setter
 
   // // Logic to update nodeConnections
   // const newNodeConnections = {

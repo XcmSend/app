@@ -9,4 +9,11 @@ export function getSavedFormState(nodeId) {
   export const setSavedFormState = (nodeId, state) => {
     window.localStorage.setItem(`node-form-state-${nodeId}`, JSON.stringify(state));
   };
+
+
+  export function generateEdgeId(source, target) {
+    // Ensure the smallest string comes first (or use any other deterministic ordering criterion)
+    console.log(`[generateEdgeId] source: ${source}, target: ${target}`);
+    return `${source}-${target}`;
+  }
   

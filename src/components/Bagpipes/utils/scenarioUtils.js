@@ -31,6 +31,9 @@ export function getOrderedList(edges) {
 
     console.log('[getOrderedList] Received edges:', edges);
 
+    if (!edges || edges.length === 0) {
+        console.error('[getOrderedList] No edges received.');
+    } else {
     // Find the Start Node
     let startEdge = edges.find(edge => 
         !edges.some(e => e.target === edge.source)
@@ -66,6 +69,7 @@ export function getOrderedList(edges) {
 
 
     console.log('[getOrderedList] Final ordered list:', orderedList);  
+}
     return orderedList;
 }
 

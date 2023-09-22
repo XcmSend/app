@@ -5,16 +5,17 @@
 
 import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReactFlow, { Panel, ReactFlowProvider, MiniMap, Controls, Background,   BackgroundVariant, useNodesState, useEdgesState, addEdge, applyNodeChanges, applyEdgeChanges, Handle, Position, NodeToolbar, useStoreApi, useNodeId, EdgeLabelRenderer } from 'reactflow';
+import ReactFlow, { Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
 import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
+import { generateEdgeId } from './utils/storageUtils';
 import TextUpdaterNode from './TextupdaterNode';
 import Sidebar from './Sidebar';
 import FormGroupNode from './FormGroupNode';
 import OpenAINode from './CustomNodes/OpenAINode';
 import ChainNode from './CustomNodes/ChainNode/ChainNode';
-import ActionNode from './CustomNodes/ActionNode';
+import ActionNode from './CustomNodes/ActionNode/ActionNode';
 import CustomEdge from './CustomEdges/CustomEdge';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
@@ -100,8 +101,6 @@ const BagpipesFlow = () => {
       tempEdge: state.tempEdge,
       loading: state.loading,
     }));
-
-
     const store = useStoreApi();
     const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
     const currentScenarioEdges = scenarios[activeScenarioId]?.diagramData?.edges || [];
@@ -284,7 +283,6 @@ const BagpipesFlow = () => {
     const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios, takeSnapshot);
     // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId, takeSnapshot);
 
-
     const handleConnect = (params) => {
       onConnect(currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario)(params);
     };
@@ -390,7 +388,12 @@ const BagpipesFlow = () => {
                 (ne.source === closeEdge.source && ne.target === closeEdge.target) ||
                 (ne.source === closeEdge.target && ne.target === closeEdge.source)
               )) {
-              const connectedEdge = { ...closeEdge, className: undefined }; // Remove the 'temp' className
+              const connectedEdge = { 
+                ...closeEdge, 
+                id: generateEdgeId(closeEdge.source, closeEdge.target), // Ensure consistent id
+                className: undefined // Remove the 'temp' className
+              }; 
+              console.log("Connected edge added:", connectedEdge);
               connectedEdges.push(connectedEdge);
               
               // console.log("Connected edge added:", connectedEdge);
@@ -635,7 +638,7 @@ const BagpipesFlow = () => {
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
   
-
+        
     return (
 
       <div className="bagpipe-flow-canvass" style={{ width: '100vw', height: '1000px' }}>
