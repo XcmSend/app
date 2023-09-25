@@ -51,5 +51,4 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
-
 }

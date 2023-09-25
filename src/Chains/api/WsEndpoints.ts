@@ -5,7 +5,6 @@ const endpoints = {
         basilisk: "wss://basilisk-rococo-rpc.play.hydration.cloud",
         hydradx: "wss://hydradx-rococo-rpc.play.hydration.cloud",
         sora: "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
-        sora2: "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
     },
     polkadot: {
         default: "wss://polkadot.api.onfinality.io/public-ws", 
