@@ -52,31 +52,23 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 // check asset balance on polkadot assethub
 async function checkAssetHubBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, assetDecimals?: number }> {
-
   let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ''), 10);
-
-  
   console.log(`checkAssetHubBalance accountId`, account_id_32);
-  
   if (cleanAssetId === 3) {
       // If assetId is 3, then we need to check assetHubNativeBalance
       const nativeBal = await assetHubNativeBalance(account_id_32);
       console.log(`AssetHub Native Balance:`, nativeBal);
-
       // Assuming native balance is provided in the same format, return it
       return {
           free: nativeBal.free,
           reserved: nativeBal.reserved,
-          total: nativeBal.total,
-          
+          total: nativeBal.total,   
       };
   }
 
   // For other assetIds, continue checking balance as before
   const api = await connectToWsEndpoint('assetHub', signal);
-
   const assetDecimals = await api.query.assets.metadata(cleanAssetId).then((meta: { decimals: any; }) => meta.decimals.toNumber());
-
   const balance = await api.query.assets.account(cleanAssetId, account_id_32);
   const b3 = balance.toHuman();
 
@@ -92,18 +84,14 @@ async function checkAssetHubBalance(assetid: number, account_id_32: string, sign
           assetDecimals
       };
   } 
-
   return { free: 0, reserved: 0, total: 0, assetDecimals };
 }
 
 async function assetHubNativeBalance(accountid: string): Promise<{ free: number, reserved: number, total: number }> {
   const api = await connectToWsEndpoint('assetHub');
   const result = await generic_check_native_balance(api, accountid);
-
-      // Compute total by aggregating all balance types
-      const total = result.free + result.reserved + result.miscFrozen + result.feeFrozen;
-    
-
+  // Compute total by aggregating all balance types
+  const total = result.free + result.reserved + result.miscFrozen + result.feeFrozen;
   // Assuming generic_check_native_balance returns the balance object as { free, reserved, total }
   console.log(`assetHubNativeBalance:`, result);
   
@@ -130,12 +118,10 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
         );
 }
 
-
 async function checkHydraDxAssetBalance(assetid: number | string, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, frozen?: number, assetDecimals?: number }> {
   console.log(`checkHydraDxAssetBalance accountId`, account_id_32);
   console.log(`checkHydraDxAssetBalance assetId`, assetid);
   console.log('checkHydraDxAssetBalance typeof asset id',typeof assetid);
-
 
   // If assetId is 0, fetch the native balance.
   if (assetid === 0 || assetid === "0") {
@@ -168,7 +154,6 @@ async function checkHydraDxAssetBalance(assetid: number | string, account_id_32:
       } else {
         throw new Error('Decimals not found in metadata');
       }
-
       console.log(`checkHydraDxAssetBalance metadata`, metadata);
       console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
@@ -188,7 +173,6 @@ async function checkHydraDxAssetBalance(assetid: number | string, account_id_32:
           assetDecimals
       };
   }
-
   return { free: 0, reserved: 0, total: 0 };
 }
 
@@ -230,9 +214,6 @@ async function checkRococoRocRawNativeBalance(accountid: string, signal?: AbortS
   return { free: 0, reserved: 0, total: 0 };
 }
 
-
-
-
 /*
 assetRegistry.assetMetadataMap(5)
 {
@@ -254,9 +235,6 @@ function getTokenDecimalsByChainName(chainName: string): number {
   }
   return selectedChain.token_decimals;
 }
-
-
-
 
 // generic function to check native account balance
 async function generic_check_native_balance(api: ApiPromise, address: string) {
@@ -287,11 +265,6 @@ async function hydraDxNativeBalance(address: string): Promise<{ free: number, re
       // can include miscFrozen and feeFrozen if they are relevant for hydraDx
   };
 }
-
-
-
-
-
 
 /// check asset decimals and metadata
 interface AssethubAssetMetadata {

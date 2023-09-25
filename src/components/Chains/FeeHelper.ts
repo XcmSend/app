@@ -5,12 +5,11 @@ import connectToWsEndpoint from './connect';
 
 let apiInstance: ApiPromise | null = null;
 
-async function initializeApi() {
-  if (!apiInstance) {
-    apiInstance = await connectToWsEndpoint('polkadot'); 
-  }
+async function initializeApi(chain: string) {
+    if (!apiInstance) {
+      apiInstance = await connectToWsEndpoint(chain); 
+    }
 }
-
 interface PaymentInfo {
   partialFee: string;
   weight: u64;
@@ -22,8 +21,8 @@ interface PaymentInfo {
  * @param {string} sender - the sender's address
  * @returns {Promise<PaymentInfo>} - Promise that resolves with the payment information
  */
-export async function getPaymentInfo(extrinsic: IExtrinsic, sender: string): Promise<PaymentInfo> {
-  await initializeApi();
+export async function getPaymentInfo(extrinsic: IExtrinsic, sender: string, chain: string): Promise<PaymentInfo> {
+    await initializeApi(chain);
   
   if (!apiInstance) {
     throw new Error('API instance is not initialized');

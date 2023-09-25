@@ -3,8 +3,8 @@ export function processAction(action: ActionType) {
       case 'swap':
         // Here, TypeScript knows that "action" has the shape of "SwapAction"
         break;
-      case 'teleport':
-        // Here, TypeScript knows that "action" has the shape of "TeleportAction"
+      case 'reserveX':
+        // Here, TypeScript knows that "action" has the shape of "ReserveXAction"
         break;
       case 'transfer':
         // Here, TypeScript knows that "action" has the shape of "TransferAction"

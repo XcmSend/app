@@ -7,8 +7,6 @@ import { supported_Polkadot_Chains } from "./ChainsInfo";
 import endpoints from "./WsEndpoints";
 
 
-
-
 /// spawn a subscription and wait until balance on destination 
 /// account has been updated
 async function spawn_native_balance_check(chain: supported_Polkadot_Chains, account: string, block_limit: number) {

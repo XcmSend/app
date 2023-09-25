@@ -1,4 +1,4 @@
-import { ActionData, SwapAction, TeleportAction, TransferAction, ActionType }  from './ActionInterface';
+import { ActionData, SwapAction, ReserveXAction, TransferAction, ActionType }  from './ActionInterface';
 
 export function convertFormStateToActionType(formState: any, assetIn: any, assetOut: any): ActionType | null {
   if (!formState.action) return null;
@@ -23,9 +23,9 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
         source: actionDataIn,
         target: actionDataOut
       };
-    case 'teleport':
+    case 'reserveX':
       return {
-        actionType: 'teleport',
+        actionType: 'reserveX',
         source: actionDataIn,
         target: actionDataOut
       };

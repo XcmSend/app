@@ -16,6 +16,7 @@ const defaultState = {
   csrfToken: null,
   chainAddresses: [],
   isModaVisible: false,
+  transactions: [],
 };
 
 const useAppStore = create(
@@ -31,7 +32,7 @@ const useAppStore = create(
           return { activeExecutionId: executionId };
         });
       },
-
+      setTransactions: (transactions) => set({ transactions }),
       setExecutionId: (id) => set( { executionId: id }),
       setTempEdge: (tempEdge) => set({ tempEdge }),
       setIsModalVisible: (visibility) => set({ isModalVisible: visibility }),
@@ -494,7 +495,7 @@ const useAppStore = create(
           const currentScenario = state.scenarios[scenarioId];
           if (!currentScenario) {
               console.error(`[deleteNodeFromScenario] Scenario with ID ${scenarioId} not found. Action aborted.`);
-              return; // Handle error if needed
+              return; 
           }
 
           // Filter out the nodes that are not in the delete list

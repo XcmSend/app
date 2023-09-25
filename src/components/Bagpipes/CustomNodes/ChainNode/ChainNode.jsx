@@ -106,7 +106,8 @@ const ChainNode = ({ children, data, isConnectable }) => {
         ...prevState,
         asset: {
           name: selectedAssetInfo.asset.name,
-          assetId: selectedAssetInfo.assetId
+          assetId: selectedAssetInfo.assetId,
+          symbol: selectedAssetInfo.asset.symbol
         }
       }));
     } else {
@@ -256,7 +257,11 @@ useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
+    if (formState.chain && formState.asset && formState.address) {
+
     fetchBalance(signal);
+
+    }
 
     return () => controller.abort();
 }, [formState.chain, formState.asset, formState.address]);
@@ -313,7 +318,7 @@ console.log('Component re-rendered', formState.address);
               <option value="">Select an asset</option>
                {assetsForChain.map(asset => (
                    <option key={asset.assetId} value={asset.asset.name}>
-                     {asset.asset.name} | AssetId: {asset.assetId}
+                    {asset.asset.symbol} | {asset.asset.name} | AssetId: {asset.assetId}
                    </option>
                ))}
             </select>

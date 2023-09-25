@@ -1,9 +1,13 @@
 
 export interface ActionData {
+  target: any;
+  source: any;
+  actionType: ActionType | null | undefined;
   chain: string;
   assetId: number;
   address: string; 
   amount?: number; 
+  nodeId?: string;
 }
 
 export interface SwapAction {
@@ -12,8 +16,8 @@ export interface SwapAction {
   target: ActionData;
 }
 
-export interface TeleportAction {
-  actionType: 'teleport';
+export interface ReserveXAction {
+  actionType: 'reserveX';
   source: ActionData;
   target: ActionData;
 }
@@ -24,4 +28,4 @@ export interface TransferAction {
   target: ActionData;
 }
 
-export type ActionType = SwapAction | TeleportAction | TransferAction;
+export type ActionType = SwapAction | ReserveXAction | TransferAction;

@@ -61,7 +61,7 @@ export function getOrderedList(edges) {
     while (currentEdge && currentEdge !== endEdge) {
         currentEdge = edges.find(edge => edge.source === currentEdge.target);
         if (currentEdge) {
-            console.log('[getOrderedList] Current edge being processed:', currentEdge);
+            // console.log('[getOrderedList] Current edge being processed:', currentEdge);
             orderedList.push(currentEdge.source);
         }
     }

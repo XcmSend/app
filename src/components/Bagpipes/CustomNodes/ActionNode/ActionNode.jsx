@@ -3,7 +3,7 @@ import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../Chains/PriceHelper';
 import SwapSVG from '/swap.svg';
-import TeleportSVG from '/teleport.svg';
+import ReserveXSVG from '/reserveX.svg';
 import { getOrderedList } from '../../utils/scenarioUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
@@ -54,7 +54,7 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
-    if (formState.action === 'teleport') return TeleportSVG;
+    if (formState.action === 'reserveX') return ReserveXSVG;
     return null;
   };
 
@@ -99,6 +99,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   };
 
   useEffect(() => {
+    console.log('[ActionNode] assetInFormData:', assetInFormData);
     fetchPriceInfo(assetInFormData, assetOutFormData)
     }, [assetInNodeId, assetOutNodeId, assetInFormData?.amount, assetInFormData?.address, assetOutFormData?.amount, assetOutFormData?.address]);
 
@@ -141,7 +142,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     }, []);
     
     useEffect(() => {
-      if (formState.action === 'teleport') {
+      if (formState.action === 'reserveX') {
           setPriceInfo(null);
       }
     }, [formState.action]);
@@ -206,9 +207,9 @@ export default function ActionNode({ children, data, isConnectable }) {
                 <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
                 <div className='text-xs bold font-semibold'>Swap</div>
               </div>
-              <div onClick={() => handleDropdownClick('teleport')} className="flex items-center p-2 hover:bg-gray-200">
-                <img src={TeleportSVG} alt="Teleport" className="w-5 h-4 mr-2" />
-                <div className='text-xs font-semibold'>Teleport</div>
+              <div onClick={() => handleDropdownClick('reserveX')} className="flex items-center p-2 hover:bg-gray-200">
+                <img src={ReserveXSVG} alt="ReserveX" className="w-5 h-4 mr-2" />
+                <div className='text-xs font-semibold'>ReserveX</div>
               </div>
             </div>
           </div>
@@ -238,7 +239,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         </span>
 
         {sellPriceInfoMap ? (
-        lastUpdated && <span>Last updated: {formatTime(lastUpdated)}</span>
+        lastUpdated && <span className='text-gray-400 text-xss'>Last updated: {formatTime(lastUpdated)}</span>
         ):( null)
         }
       <div className="space-y-2 mt-2">

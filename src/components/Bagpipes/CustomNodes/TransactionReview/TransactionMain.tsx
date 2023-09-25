@@ -9,16 +9,20 @@ import { SubmittableExtrinsic } from '@polkadot/api/types';
 
 
 
-export function TransactionMain() {
-  const { scenarios, activeScenarioId } = useAppStore(state => ({
+export default function TransactionMain() {
+  const { scenarios, activeScenarioId, transactions, setTransactions } = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
+    transactions: state.transactions,
+    setTransactions: state.setTransactions,
   }));
+  const [isLoading, setIsLoading] = useState(true);
   const walletContext = useContext(WalletContext);
 
   const [isReviewingTransactions, setIsReviewingTransactions] = useState(false);
-  const [transactions, setTransactions] = useState([]);
   const [signedExtrinsics, setSignedExtrinsics] = useState([]);
+
+
 
   useEffect(() => {
     if (activeScenarioId && scenarios[activeScenarioId]?.diagramData) {
@@ -26,21 +30,26 @@ export function TransactionMain() {
         const orderedList = getOrderedList(diagramData.edges);
         const preparedActions = prepareTransactionsForReview(diagramData, orderedList);
 
-        // Transform the prepared actions into drafted extrinsics
-        const fetchDraftedExtrinsics = async () => {
-            const draftedExtrinsics = [];
-            for (const action of preparedActions) {
-                const draftExtrinsic = await extrinsicHandler(action.type, action.data);
-                draftedExtrinsics.push(draftExtrinsic);
+        // Transform the prepared actions into drafted extrinsics with data
+        const fetchDraftedExtrinsicsWithData = async () => {
+            const draftedExtrinsicsWithData = [];
+            for (const formData of preparedActions) {
+                const draftExtrinsic = await extrinsicHandler(formData.actionType, formData);
+                const transactionData = {
+                    formData: formData,
+                    draftedExtrinsic: draftExtrinsic
+                };
+                draftedExtrinsicsWithData.push(transactionData);
             }
-            return draftedExtrinsics;
+            return draftedExtrinsicsWithData;
         }
 
-        fetchDraftedExtrinsics().then((extrinsics) => {
-            setTransactions(extrinsics);
+        fetchDraftedExtrinsicsWithData().then((extrinsicsWithData) => {
+            setTransactions(extrinsicsWithData);
         });
     }
 }, [activeScenarioId, scenarios]);
+
 
   const signExtrinsic = async (draftExtrinsic: SubmittableExtrinsic<'promise'>, address: string) => {
     const signer = walletContext.wallet?.signer;
@@ -65,13 +74,14 @@ export function TransactionMain() {
 
   const startReview = () => {
     setIsReviewingTransactions(true);
+    // display drafted extrinsics plus information about the extrinsics
   }
 
 
   const handleAcceptTransactions = async () => {
     setIsReviewingTransactions(false);
 
-    const allSignedExtrinsics = [];
+    const allSignedExtrinsics: any = [];
 
     // Loop through the draft extrinsics and sign each
     for (const draftExtrinsic of transactions) { 
@@ -86,7 +96,7 @@ export function TransactionMain() {
 };
 
 
-const broadcastExtrinsic = async (signedExtrinsic) => {
+const broadcastExtrinsic = async (signedExtrinsic: any) => {
     // TODO: Implement broadcasting logic here
 };
 
@@ -98,13 +108,17 @@ const broadcastExtrinsic = async (signedExtrinsic) => {
 
   return (
     <div>
-      <button onClick={startReview}>Start Execution</button>
+      
+      <button className='button' onClick={startReview}>Start Review</button>
       {isReviewingTransactions && (
-        <TransactionReview
-          transactions={transactions}
-          onAccept={handleAcceptTransactions}
-          onDecline={handleDeclineTransactions}
-        />
+       <TransactionReview
+       transactions={transactions}
+       onAccept={handleAcceptTransactions}
+       onDecline={handleDeclineTransactions}
+       signExtrinsic={signExtrinsic}
+       setSignedExtrinsics={setSignedExtrinsics}
+     />
+     
       )}
     </div>
   );

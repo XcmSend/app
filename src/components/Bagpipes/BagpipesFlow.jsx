@@ -20,6 +20,11 @@ import CustomEdge from './CustomEdges/CustomEdge';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './PlayButton';
+import StartButton from './StartButton';
+import { startDraftingProcess } from './utils/startDraftingProcess';
+import {  MarkerType } from 'reactflow';
+
+
 
 import './utils/getAllConnectedNodes';
 import { v4 as uuidv4 } from 'uuid';
@@ -78,7 +83,7 @@ const BagpipesFlow = () => {
 
   const reactFlowWrapper = useRef(null);
 
-    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       addScenario: state.addScenario,
@@ -100,6 +105,8 @@ const BagpipesFlow = () => {
       setTempEdge: state.setTempEdge,
       tempEdge: state.tempEdge,
       loading: state.loading,
+      transactions: state.transactions,
+      setTransactions: state.setTransactions,
     }));
     const store = useStoreApi();
     const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
@@ -372,7 +379,22 @@ const BagpipesFlow = () => {
       
       
       
-      
+      const DEFAULT_EDGE_STYLE = {
+        style: {
+          stroke: '#000',
+          strokeWidth: 2
+        },
+        animated: true,
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: 'gray',
+          strokeWidth: 1
+        },
+        // type: 'arrow',
+        // label: 'Edge Label',
+        focusable: true,
+
+      };
   
       const onNodeDragStop = useCallback(
         (_, node) => {
@@ -391,7 +413,8 @@ const BagpipesFlow = () => {
               const connectedEdge = { 
                 ...closeEdge, 
                 id: generateEdgeId(closeEdge.source, closeEdge.target), // Ensure consistent id
-                className: undefined // Remove the 'temp' className
+                className: undefined, // Remove the 'temp' className
+                ...DEFAULT_EDGE_STYLE
               }; 
               console.log("Connected edge added:", connectedEdge);
               connectedEdges.push(connectedEdge);
@@ -637,7 +660,14 @@ const BagpipesFlow = () => {
       }
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
-  
+    const handleDraftTransactions = async () => {
+
+      const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
+      console.log('Drafted transactions:', draftedTransactions);
+      setTransactions(draftedTransactions);
+      navigate('/transaction/review');
+
+  };
         
     return (
 
@@ -691,6 +721,7 @@ const BagpipesFlow = () => {
             </Panel> */}
             </ReactFlowStyled>
             <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
+            <StartButton draftTransactions={handleDraftTransactions} />
              
            
             </div>

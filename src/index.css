@@ -165,8 +165,8 @@ button:focus-visible {
 }
 
 .react-flow__edge-path {
-  stroke: #333;
-  stroke-width: 10;
+  stroke: #000;
+  stroke-width: 7 !important;
 }
 
 .temp .react-flow__edge-path {
