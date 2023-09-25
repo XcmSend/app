@@ -238,3 +238,39 @@ export async function assethub_to_parachain(assetid: string, amount: number, acc
 }
 
 
+// rococo to parachain
+// sends native ROC to parachain
+export async function genericRococoToParachain(paraid: number, amount: number, accountId: string) {
+	const api = await connectToWsEndpoint('rococo');
+	//const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
+	//const accountId = api.createType("account_id_32", address).toHex();
+
+	const destination = {
+	  parents: 0,
+	  interior: { X1: { Parachain: paraid } },
+	};
+
+
+	const account = {
+	  parents: 0,
+	  interior: { X1: { account_id_32: { id: accountId} } },
+	};
+
+
+	const asset = [
+	  {
+		id: { Concrete: { parents: 0, interior: "Here" } },
+		fun: { Fungible: amount },
+	  },
+	];
+
+
+	const tx = api.tx.xcmPallet.reserveTransferAssets(
+        { V3: destination },
+        { V3: account },
+        { V3: asset },
+        0,
+      );
+
+	return tx;
+}

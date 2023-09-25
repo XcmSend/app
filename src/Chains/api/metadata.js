@@ -34,5 +34,22 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account", "assets.account"],
         nativeAccount: true,
 
+    },
+    // rococo
+    sora: {
+        chain: "Sora",
+        endpoints: [
+                "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
+    rococo: {
+        chain: "Rococo",
+        endpoints: [
+                "wss://rococo-rpc.polkadot.io",
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
     }
 }

@@ -67,6 +67,17 @@ export function listChains() {
       };
       chainList[10000] = rococo;
 
+      const sora_roc: ChainInfo = {
+        name: 'sora',
+        display: 'Sora (Rococo)',
+        paraid: 2011,
+        prefix: 0, //change me
+        token_decimals: 10,
+        logo: '/chains/sora.svg'
+      };
+
+      chainList[2011] = sora_roc;
+
     return chainList;
 }
 
