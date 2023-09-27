@@ -175,7 +175,7 @@ const useExecuteScenario = (nodes, setNodes) => {
 
     async function executeScenario() {
         console.log('[executeScenario] Starting Workflow Execution...');
-        setLoading(true);
+        // setLoading(true);
 
         if (!socket.connected) {
             console.error('Unable to execute scenario: socket is not connected');

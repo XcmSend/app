@@ -4,8 +4,6 @@
 import { Button } from 'antd';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-
 import { OpenSelectWallet, WalletContext } from './Wallet/contexts';
 
 import'./styles/Header.scss';

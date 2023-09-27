@@ -10,7 +10,7 @@ async function initializeApi(chain: string) {
       apiInstance = await connectToWsEndpoint(chain); 
     }
 }
-interface PaymentInfo {
+export interface PaymentInfo {
   partialFee: string;
   weight: u64;
 }

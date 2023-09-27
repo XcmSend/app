@@ -237,10 +237,10 @@ export default function ActionNode({ children, data, isConnectable }) {
         {dropdownVisible && (
           <div className="absolute z-10 min-w-full border mt-1 rounded bg-white whitespace-nowrap ">
             <div className="flex flex-col">
-              <div onClick={() => handleDropdownClick('swap')} className="flex items-center p-2 hover:bg-gray-200">
+              {/* <div onClick={() => handleDropdownClick('swap')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
                 <div className='text-xs bold font-semibold'>Swap</div>
-              </div>
+              </div> */}
               <div onClick={() => handleDropdownClick('reserveX')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={ReserveXSVG} alt="ReserveX" className="w-5 h-4 mr-2" />
                 <div className='text-xs font-semibold'>ReserveX</div>
@@ -269,9 +269,13 @@ export default function ActionNode({ children, data, isConnectable }) {
       )}
       </div>
 
-        <span onClick={() => fetchActionInfo(assetInFormData, assetOutFormData)} className="text-xs m-1 p-0 rounded refresh-button flex justify-center">
-          <img className="h-3 w-3" src="/refresh.svg" />
-        </span>
+      <button 
+    onClick={() => fetchActionInfo(assetInFormData, assetOutFormData)} 
+    className=" flex justify-center align-center font-bold py-1 px-1 border-gray-300 hover:border-green rounded" 
+    >
+    <span className=" font-semibold mr-1">fetch</span>
+    <img className="h-4 w-4 ml-2" src="/refresh.svg" alt="refresh icon" />
+</button>
 
         {sellPriceInfoMap ? (
         lastUpdated && <span className='text-gray-400 text-xss'>Last updated: {formatTime(lastUpdated)}</span>

@@ -181,7 +181,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
   async function executeChainScenario() {
     toast('Starting Workflow Execution...');
     console.log('[executeChainScenario] Starting Workflow Execution...');
-    setLoading(true);
+    // setLoading(true);
 
     // Clear the nodeContentMap before starting a new execution
     setNodeContentMap({});
@@ -271,6 +271,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
 
       if (executionCycleFinished) {
          toast.success('Workflow Execution Completed! The execution cycle has finished.');
+         setLoading(false); 
       }
 
             if (executionId) {

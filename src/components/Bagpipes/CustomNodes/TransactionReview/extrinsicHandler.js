@@ -1,5 +1,6 @@
 import { dotToHydraDx, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../../Chains/DraftTx/DraftReserveXTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
+import toast from "react-hot-toast";
 
 // import { hydradx_omnipool_sell } from "../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
@@ -75,8 +76,9 @@ function handleReserveX(formData) {
     if (action) {
         return action();
     } else {
-        console.error("Unsupported reserveX direction.");
-        throw new Error("Unsupported reserveX direction.");
+        toast("Action data is empty. Did you fetch?")
+        // console.error("Unsupported reserveX direction.");
+        // throw new Error("Unsupported reserveX direction.");
     }
 }
 

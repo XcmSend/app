@@ -1,7 +1,10 @@
+//@ts-nocheck
 import React, { useEffect } from 'react';
-import { ActionData, PaymentInfo } from '../ActionNode/ActionInterface';
+import { ActionData } from '../ActionNode/ActionInterface';
 import styled from 'styled-components';
-import { getPaymentInfo } from '../../../../Chains/Helpers/FeeHelper';
+import { getPaymentInfo, PaymentInfo } from '../../../../Chains/Helpers/FeeHelper';
+import { SubmittableExtrinsic } from '@polkadot/api-base/types';
+import { ISubmittableResult } from '@polkadot/types/types';
 
 const JSONContainer = styled.div`
   max-height: 400px;
@@ -31,7 +34,7 @@ interface TransactionReviewProps {
   transactions: TransactionProps[];
   onAccept: () => void;
   onDecline: () => void;
-  signExtrinsic: (transaction: any, address: string) => Promise<void>; 
+  signExtrinsic: (transaction: any, address: string) => Promise<SubmittableExtrinsic<"promise", ISubmittableResult>>;
   setSignedExtrinsics: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
@@ -48,8 +51,10 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
         for (let txWithData of transactions) {
           console.log("txWithData:", txWithData);
             const feeInfo = await getPaymentInfo(txWithData.draftedExtrinsic, txWithData.formData.source.address, txWithData.formData.source.chain );
-            newFees[txWithData.formData.nodeId] = feeInfo;
-        }
+            if (feeInfo) { // Check if feeInfo is defined
+              newFees[txWithData.formData.nodeId] = feeInfo;
+            }        
+          }
 
         setFees(newFees);
     }

@@ -96,7 +96,7 @@ export function App () {
                   {icon}
                   {message}
                   {t.type !== 'loading' && (
-                    <button onClick={() => toast.dismiss(t.id)}>dismiss</button>
+                    <button className="text-black"onClick={() => toast.dismiss(t.id)}>dismiss</button>
                   )}
                 </>
               )}

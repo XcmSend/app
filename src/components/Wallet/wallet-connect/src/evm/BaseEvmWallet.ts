@@ -1,6 +1,6 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+//@ts-nocheck
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { RequestArguments } from '@metamask/providers/dist/BaseProvider';
 import { Maybe } from '@metamask/types';

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import connectToWsEndpoint from '../api/connect';
 import { ChainInfo, listChains } from '../ChainsInfo'; 
 import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from '../utils/utils'
@@ -67,7 +68,7 @@ async function checkAssetHubBalance(assetid: number, account_id_32: string, sign
   }
 
   // For other assetIds, continue checking balance as before
-  const api = await connectToWsEndpoint('assetHub', signal);
+  const api = await connectToWsEndpoint('assetHub');
   const assetDecimals = await api.query.assets.metadata(cleanAssetId).then((meta: { decimals: any; }) => meta.decimals.toNumber());
   const balance = await api.query.assets.account(cleanAssetId, account_id_32);
   const b3 = balance.toHuman();

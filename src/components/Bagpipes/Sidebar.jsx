@@ -1,13 +1,17 @@
 // @ts-nocheck
 import React from 'react';
 import './nodes.jsx';
-import '../../index.css'
+import '../../index.css';
+import { CreateButton } from './CreateButton';
+import { useCreateScenario } from './hooks/useCreateScenario';
 
 export default () => {
   const onDragStart = (event, nodeType) => {
     event.dataTransfer.setData('application/reactflow', nodeType);
     event.dataTransfer.effectAllowed = 'move';
   };
+  const createScenario = useCreateScenario();
+
 
   const nodeNames = {
     inputPrompt: 'Start',
@@ -26,7 +30,10 @@ export default () => {
 
   return (
     <aside className='fixed top-100 right-0'>
+        <CreateButton createScenario={createScenario} />
       <div className="description">Drag thes nodes to the canvass, connect them up and build a workflow. </div>
+    
+
       {/* <div className="dndnode" onDragStart={(event) => onDragStart(event, `input` )} draggable>
         {nodeNames.inputPrompt}
       </div>
@@ -39,9 +46,9 @@ export default () => {
       {/* <div className="dndnode " onDragStart={(event) => onDragStart(event, 'vectorDb')} draggable>
         {nodeNames.vectorDb}
       </div> */}
-      <div className="dndnode " onDragStart={(event) => onDragStart(event, 'api')} draggable>
+      {/* <div className="dndnode " onDragStart={(event) => onDragStart(event, 'api')} draggable>
         {nodeNames.api}
-      </div>
+      </div> */}
       {/* <div className="dndnode " onDragStart={(event) => onDragStart(event, 'openAi')} draggable>
         {nodeNames.openAi}
       </div>     */}

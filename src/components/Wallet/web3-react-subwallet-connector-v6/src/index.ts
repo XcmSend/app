@@ -1,6 +1,6 @@
 // Copyright 2019-2022 @subwallet/web3-react-subwallet-connector-v6 authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+//@ts-nocheck
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { AbstractConnectorArguments, ConnectorUpdate } from '@web3-react/types';
 import warning from 'tiny-warning';

@@ -7,13 +7,19 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
     chain: assetIn?.chain,
     assetId: assetIn?.asset?.assetId,
     address: assetIn?.address,
-    amount: assetIn?.amount
+    amount: assetIn?.amount,
+    target: assetIn?.target,
+    source: assetIn?.source,
+    actionType: assetIn?.actionType
   };
   
   const actionDataOut: ActionData = {
     chain: assetOut?.chain,
     assetId: assetOut?.asset?.assetId,
     address: assetOut?.address,
+    target: assetOut?.target,
+    source: assetOut?.source,
+    actionType: assetOut?.actionType
   };
 
   switch(formState.action) {

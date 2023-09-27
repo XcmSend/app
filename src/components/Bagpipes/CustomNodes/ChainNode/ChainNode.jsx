@@ -400,9 +400,9 @@ console.log('Component re-rendered', formState.address);
 )}
 
 
-      {loading ? (
+      {/* {loading ? (
         <div className="loading-indicator mb-2">Loading...</div>
-      ) : null}
+      ) : null} */}
       
       <div className={nodeContent && 'typing-effect absolute px-1 pt-2 pb-2 rounded-b-lg bg-white -z-50 pt-3 px-2 pb-2 '}>
         {nodeContent}

@@ -23,6 +23,7 @@ import PlayButton from './PlayButton';
 import StartButton from './StartButton';
 import { startDraftingProcess } from './utils/startDraftingProcess';
 import {  MarkerType } from 'reactflow';
+import { useCreateScenario } from './hooks/useCreateScenario';
 import toast from 'react-hot-toast';
 
 
@@ -187,9 +188,6 @@ const BagpipesFlow = () => {
         }
       }, []);
 
-
-
-
       useEffect(() => {
         // console.log("Active Scenario ID in Bagpipes:", activeScenarioId);
       }, [activeScenarioId]);
@@ -198,7 +196,7 @@ const BagpipesFlow = () => {
         // Check if there's an active scenario when the component mounts
         if (activeScenarioId === null) {
           // console.log('No active scenario. Redirecting to Lab.');
-          navigate('/lab'); // Redirect to Lab page
+          navigate('/builder');
         }
       }, []); 
     
@@ -663,6 +661,16 @@ const BagpipesFlow = () => {
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
     const handleDraftTransactions = async () => {
+      const actionNodes = scenarios[activeScenarioId].diagramData.nodes.filter(node => node.type === 'action');
+   
+      // Check if any action node has empty or missing actionData
+      const hasEmptyActionData = actionNodes.some(node => !node.formState?.actionData);
+   
+      if (hasEmptyActionData) {
+         toast('you need to fetch data from your action nodes');
+         return;  // Stop the function here if there's missing actionData
+      }
+   
       try {
          const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
          console.log('Drafted transactions:', draftedTransactions);
@@ -675,6 +683,7 @@ const BagpipesFlow = () => {
          toast.error('An error occurred during transaction drafting.');
       }
    };
+   
 
   useEffect(() => {
     if (location.state && location.state.executeScenario) {
@@ -754,7 +763,7 @@ const BagpipesFlow = () => {
             </ReactFlowStyled>
             <StartButton draftTransactions={handleDraftTransactions} />
 
-            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
+            {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
            
             </div>

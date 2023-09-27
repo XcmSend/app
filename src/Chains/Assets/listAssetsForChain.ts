@@ -75,7 +75,7 @@ export function listHydraDxAssets() {
 
 
 export async function listPolkadexAssets(signal: AbortSignal) {
-	const api = await connectToWsEndpoint('polkadex', signal);
+	const api = await connectToWsEndpoint('polkadex');
 	console.log(`Connected to Polkadex`);
 	
 	const dictionary = new Map<number, any>();

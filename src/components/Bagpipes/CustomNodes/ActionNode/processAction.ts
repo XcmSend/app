@@ -1,3 +1,5 @@
+import { ActionType } from "./ActionInterface";
+
 export function processAction(action: ActionType) {
     switch (action.actionType) {
       case 'swap':

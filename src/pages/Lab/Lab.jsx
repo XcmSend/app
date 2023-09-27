@@ -11,6 +11,7 @@ import { deleteScenarioAsync, loadScenarioAsync } from '../../store/AsyncHelpers
 import ScenarioService from '../../services/ScenarioService';
 import toast, { Toaster } from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
+import { useCreateScenario } from '../../components/Bagpipes/hooks/useCreateScenario';
 
 function Lab() {
     const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, activeExecutionId, setActiveExecutionId, loadScenario } = useAppStore((state) => ({
@@ -23,6 +24,8 @@ function Lab() {
         loadScenario: state.loadScenario,
     }));
     const navigate = useNavigate();
+    const createScenario = useCreateScenario();
+
 
     // const saveScenario = (scenarioId) => {
     //     const scenarioToSave = scenarios[scenarioId];
@@ -33,62 +36,6 @@ function Lab() {
     //       console.error('Scenario ID is missing or incorrect. Cannot save scenario.');
     //     }
     //   };
-
-    const createScenario = () => {
- 
-  
-      const initialData = {
-        name: "Bagpipe XCM Flow", 
-        timestamp: new Date().toISOString(),
-        diagramData: {
-          nodes: [], // Empty nodes
-          edges: [], // Empty edges
-        },
-      };
-  
-      try {
-          // Generate a unique ID for the new scenario
-          const newScenarioId = uuidv4();
-
-          if (newScenarioId) {
-                      // Add the new scenario to the zustand store
-                    useAppStore.getState().addScenario(newScenarioId, initialData);
-                    // Set the new scenario as the active one
-                    setActiveScenarioId(newScenarioId);
-                    console.log(`Scenario ${newScenarioId} created successfully`);
-                  
-                    console.log("Navigating to /builder");
-                  
-                    // Navigate to the /builder route
-                    navigate('/builder');
-                  } else {
-                    // Handle error, scenario not created
-                    console.error("Scenario not created. Invalid ID:", newScenarioId);
-                    toast.error("Failed to create a new scenario due to an invalid ID.");
-                  }
-            
-      } catch (error) {
-          console.error(`Failed to create scenario`, error);
-      }
-      
-    //     createScenarioAsync(initialData)
-    //     .then((newScenarioId) => {
-    //       if (newScenarioId && typeof newScenarioId === 'string' && newScenarioId.match(/^[a-f\d]{24}$/i)) {
-    //         // Set the new scenario as the active one
-    //         setActiveScenarioId(newScenarioId);
-          
-    //         console.log("Navigating to /builder");
-          
-    //         // Navigate to the /builder route
-    //         navigate('/builder');
-    //       } else {
-    //         // Handle error, scenario not created
-    //         console.error("Scenario not created. Invalid ID:", newScenarioId);
-    //         toast.error("Failed to create a new scenario due to an invalid ID.");
-    //       }
-    //     })
-    // };
-    };
     
     
       const editScenario = async (scenarioId) => {

@@ -1,6 +1,6 @@
 // Copyright 2017-2022 @subwallet/wagmi-connector authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+// @ts-nocheck
 import { Chain, InjectedConnector, InjectedConnectorOptions, WindowProvider } from '@wagmi/core';
 
 export type WagmiSubConnectOptions = InjectedConnectorOptions

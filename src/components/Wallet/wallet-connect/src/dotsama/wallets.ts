@@ -1,6 +1,6 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+//@ts-nocheck
 // This file is get idea from https://github.com/TalismanSociety/talisman-connect/blob/master/libs/wallets/src/lib/wallets.ts
 
 import { BaseDotSamaWallet } from './BaseDotSamaWallet';

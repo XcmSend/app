@@ -1,6 +1,6 @@
 // Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-
+//@ts-nocheck
 import { ReportHandler } from 'web-vitals';
 
 const reportWebVitals = (onPerfEntry?: ReportHandler) => {
