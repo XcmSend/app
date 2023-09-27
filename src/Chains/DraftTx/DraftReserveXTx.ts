@@ -237,6 +237,8 @@ export async function assethub_to_parachain(assetid: string, amount: number, acc
 	return tx;
 }
 
+// rococo to parachain
+// sends native ROC to parachain
 
 // rococo to parachain
 // sends native ROC to parachain
