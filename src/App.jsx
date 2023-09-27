@@ -17,7 +17,7 @@ import { io } from "socket.io-client";
 import Layout from './components/Wallet/components/Layout';
 import Welcome from './components/Wallet/components/Welcome';
 import Builder from './components/Builder';
-import TransactionMain  from './components/Bagpipes/CustomNodes/transactionReview/TransactionMain';
+import TransactionMain  from './components/Bagpipes/CustomNodes/TransactionReview/TransactionMain';
 import ReactTestFlow from './ReactTestFlow';
 import WalletInfo from './components/Wallet/pages/WalletInfo';
 import initializeKeyring from './services/initializeKeyring';

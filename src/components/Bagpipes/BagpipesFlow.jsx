@@ -10,6 +10,7 @@ import ReactFlow, { Panel, MiniMap, Controls, Background, BackgroundVariant, app
 import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
 import { generateEdgeId } from './utils/storageUtils';
+import GitInfo from './git_tag';
 import TextUpdaterNode from './TextupdaterNode';
 import Sidebar from './Sidebar';
 import FormGroupNode from './FormGroupNode';
@@ -764,9 +765,10 @@ const BagpipesFlow = () => {
             </ReactFlowStyled>
             <StartButton draftTransactions={handleDraftTransactions} />
 
-            {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
-                         
-           
+            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
+             
+            <GitInfo />
+
             </div>
             <Sidebar />
             {/* {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
