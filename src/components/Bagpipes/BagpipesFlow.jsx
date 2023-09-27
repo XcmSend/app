@@ -47,9 +47,6 @@ import Edges from './edges';
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};
 `;
-
-
-
 // Make the dark theme a bg-slate-900 style similar to Tailwind website
 const ControlsStyled = styled(Controls)`
   button {
@@ -643,6 +640,7 @@ const BagpipesFlow = () => {
 
       
     }, [selectedEdgeId, setSelectedEdgeInScenario, activeScenarioId]);
+    
     const onNodeClick = useCallback((event, node) => {
       console.log("onNodeClick Clicked on:", node);
 
@@ -767,9 +765,7 @@ const BagpipesFlow = () => {
             <StartButton draftTransactions={handleDraftTransactions} />
 
             {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
-             
-            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
-            <GitInfo />
+                         
            
             </div>
             <Sidebar />

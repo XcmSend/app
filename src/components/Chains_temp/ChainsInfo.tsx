@@ -59,7 +59,7 @@ export function listChains() {
       const rococo: ChainInfo = {
         name: 'rococo',
         display: 'Rococo',
-        ws_endpoint: endpoints.rococo.default,
+        ws_endpoint: endpoints.polkadot.assetHub,
         paraid: 0,
         prefix: 0,
         token_decimals: 12,
@@ -70,7 +70,6 @@ export function listChains() {
       const sora_roc: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
-        ws_endpoint: endpoints.rococo.sora,
         paraid: 2011,
         prefix: 0, //change me
         token_decimals: 10,
