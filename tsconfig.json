@@ -11,5 +11,13 @@
     "skipLibCheck": true,
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.js"],
-  "exclude": ["vite.config.js", "node_modules"]
+
+  "exclude": [
+    "vite.config.js",
+    "node_modules"
+  ],
+  "references": [
+    // { "path": "../sub-connect" },
+    { "path": "./src/components/Wallet/wallet-connect" },
+  ]
 }

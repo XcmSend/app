@@ -13,4 +13,3 @@ export function processAction(action: ActionType) {
         break;
     }
   }
-}
