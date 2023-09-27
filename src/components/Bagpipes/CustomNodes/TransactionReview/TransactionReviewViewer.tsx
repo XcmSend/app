@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { ActionData } from '../ActionNode/ActionInterface';
+import { ActionData, PaymentInfo } from '../ActionNode/ActionInterface';
 import styled from 'styled-components';
-import { getPaymentInfo } from '../../../Chains/FeeHelper';
+import { getPaymentInfo } from '../../../../Chains/Helpers/FeeHelper';
 
 const JSONContainer = styled.div`
   max-height: 400px;
@@ -23,6 +23,7 @@ interface TransactionProps {
   formData: ActionData; 
   summary: any; 
   draftedExtrinsic: any; 
+  status: any;
 }
 
 
@@ -37,6 +38,8 @@ interface TransactionReviewProps {
 
 export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactions, onAccept, onDecline }) => {
   const [fees, setFees] = React.useState<{ [key: string]: PaymentInfo }>({});
+
+  console.log('transactions', transactions);
 
   useEffect(() => {
     const fetchFees = async () => {
@@ -63,6 +66,7 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
               <pre>{JSON.stringify(txWithData.draftedExtrinsic.toHuman(), null, 2)}</pre>
             </JSONContainer>
             <div className='mt-3 mb-3'>
+            <p>Status: {txWithData.status}</p>
             <p>Action Type: {txWithData.formData.actionType}</p>
             <p>Source Chain: {txWithData.formData.source.chain}</p>
             <p>Source Asset: {txWithData.formData.source.assetId}</p>

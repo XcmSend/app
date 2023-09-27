@@ -9,9 +9,9 @@ import AccountDropdown from './AccountDropdown';
 import useAppStore from '../../../../store/useAppStore';
 import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
-import { listChains } from '../../../Chains/ChainsInfo';
+import { listChains } from '../../../../Chains/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
-import { getAssetBalanceForChain } from '../../../Chains/AssetHelper';
+import { getAssetBalanceForChain } from '../../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 import 'antd/dist/antd.css';
 import '../../../../index.css';

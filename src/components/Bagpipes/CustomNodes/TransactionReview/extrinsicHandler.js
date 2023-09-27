@@ -1,12 +1,14 @@
-import { dotToHydraDx, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../Chains/DraftTx/DraftReserveXTx";
+import { dotToHydraDx, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../../Chains/DraftTx/DraftReserveXTx";
+import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
+
 // import { hydradx_omnipool_sell } from "../../../Chains/DraftTx/DraftSwapTx";
-import { listChains } from "../../../Chains/ChainsInfo";
+import { listChains } from "../../../../Chains/ChainsInfo";
 
 export async function extrinsicHandler(actionType, formData) {
     
     switch(actionType) {
         case 'reserveX':
-            console.log("Inside extrinsicHandler for reserveX");
+            console.log("Inside extrinsicHandler for reserveX formData:", formData);
             return handleReserveX(formData);
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
@@ -18,47 +20,53 @@ export async function extrinsicHandler(actionType, formData) {
 
 
 function handleReserveX(formData) {
-    console.log("Handling reserveX...");
+    console.log("handleReserveX Handling reserveX...");
     const chains = listChains();
     const source = formData.source;
     const target = formData.target;
 
-    console.log(`Source chain: ${source.chain}`);
-    console.log(`Target chain: ${target.chain}`);
-    console.log(`Source amount: ${source.amount}`);
-    console.log(`Target address: ${target.address}`);
+    // Retrieve token decimals for the source chain
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+
+    // Adjust the source amount according to the token decimals
+    const submittableAmount = source.amount * (10 ** tokenDecimals);
+
+    console.log(`handleReserveX Source chain: ${source.chain}`);
+    console.log(`handleReserveX Target chain: ${target.chain}`);
+    console.log(`handleReserveX Source amount: ${source.amount}`);
+    console.log(`handleReserveX Target address: ${target.address}`);
 
     // Define a map for each reserveX action
     const reserverTransferActions = {
         'polkadot:hydraDx': () => {
             console.log("handleReserveX for Polkadot to HydraDx...");
-            return dotToHydraDx(source.amount, target.address);
+            return dotToHydraDx(submittableAmount, target.address);
         },
         'hydradx:assethub': () => {
             console.log("handleReserveX for HydraDx to AssetHub...");
             const paraid = chains.find(chain => chain.name === 'assethub').paraid;
-            return hydraDxToParachain(source.amount, source.assetId, "not set", paraid);
+            return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
         'polkadot:assethub': () => {
             console.log("handleReserveX for Polkadot to AssetHub...");
             const paraid = chains.find(chain => chain.name === 'assethub').paraid;
-            return dotToParachain(source.amount, target.address, paraid);
+            return dotToParachain(submittableAmount, target.address, paraid);
         },
         'hydradx:polkadot': () => {
             console.log("handleReserveX for HydraDx to Polkadot...");
             const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
-            return hydraDxToParachain(source.amount, source.assetId, "not set", paraid);
+            return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
         'assethub:polkadot': () => {
             console.log("handleReserveX for AssetHub to Polkadot...");
             const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
-            return assethub_to_parachain(formData.assetId.toString(), source.amount, "not set", paraid);
+            return assethub_to_parachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
         },
         'assethub:hydradx': () => {
             console.log("handleReserveX forAssetHub to HydraDx...");
             const paraid = chains.find(chain => chain.name === 'hydraDx').paraid;
-            return assethub_to_parachain(formData.assetId.toString(), source.amount, "not set", paraid);
+            return assethub_to_parachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
         }
     };
 
@@ -77,6 +85,15 @@ function handleReserveX(formData) {
 function handleSwap(formData) {
     const source = formData.source;
     const target = formData.target;
+
+      // Retrieve token decimals for the source chain
+      const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+
+      // Adjust the source amount according to the token decimals
+      const submittableAmount = source.amount * (10 ** tokenDecimals);
+
+
+      // TODO: handle swaps
     if (source.chain === 'hydraDx' && target.chain === 'hydraDx') {
         // hydradx_omnipool_sell hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
         return true;

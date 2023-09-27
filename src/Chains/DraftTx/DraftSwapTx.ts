@@ -1,5 +1,5 @@
-import connectToWsEndpoint from "../connect";
-import endpoints from "../WsEndpoints";
+import connectToWsEndpoint from "../api/connect";
+import endpoints from "../api/WsEndpoints";
 
 
 // Swap functionality 

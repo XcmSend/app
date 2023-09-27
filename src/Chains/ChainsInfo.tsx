@@ -1,4 +1,4 @@
-import endpoints from './WsEndpoints';
+import endpoints from './api/WsEndpoints';
 
 interface ChainInfo {
 	name: string,

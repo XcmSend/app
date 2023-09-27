@@ -1,7 +1,7 @@
-import endpoints from "./WsEndpoints";
-import { ChainInfo, listChains } from "./ChainsInfo";
-import connectToWsEndpoint from "./connect";
-import { CHAIN_METADATA } from "./metadata";
+import endpoints from "../api/WsEndpoints";
+import { ChainInfo, listChains } from "../ChainsInfo";
+import connectToWsEndpoint from "../api/connect";
+import { CHAIN_METADATA } from "../api/metadata";
 import { CHAIN_ASSETS } from "./chainAssets";
 
 const HydraDx = listChains();

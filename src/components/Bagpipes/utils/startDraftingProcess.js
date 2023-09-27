@@ -14,13 +14,13 @@ export const startDraftingProcess = async (activeScenarioId, scenarios) => {
         const draftedExtrinsicsWithData = []; // Note the name change for clarity
         for (const formData of preparedActions) {
             console.log('[startDraftingProcess] Drafting extrinsic for action:', formData);
-            const draftExtrinsic = await extrinsicHandler(formData.actionType, formData);
+            const draftedExtrinsic = await extrinsicHandler(formData.actionType, formData);
             // Here we're packaging the extrinsic with its corresponding form data
             draftedExtrinsicsWithData.push({ 
                 formData: formData, 
-                draftExtrinsic: draftExtrinsic 
+                draftedExtrinsic: draftedExtrinsic 
             });
-            console.log('[startDraftingProcess] Drafted extrinsic:', draftExtrinsic);
+            console.log('[startDraftingProcess] Drafted extrinsic:', draftedExtrinsic);
         }
         console.log('[startDraftingProcess] Drafted extrinsics with data:', draftedExtrinsicsWithData);
 

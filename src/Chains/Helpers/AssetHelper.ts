@@ -1,6 +1,6 @@
-import connectToWsEndpoint from './connect';
-import { ChainInfo, listChains } from './ChainsInfo'; 
-import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from './utils'
+import connectToWsEndpoint from '../api/connect';
+import { ChainInfo, listChains } from '../ChainsInfo'; 
+import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from '../utils/utils'
 import { ApiPromise } from "@polkadot/api";
 import { string } from 'slate';
 
@@ -227,7 +227,7 @@ async function getHydradxAssetSymbolDecimals(assetid: number){
     return resp;
 }
 
-function getTokenDecimalsByChainName(chainName: string): number {
+export function getTokenDecimalsByChainName(chainName: string): number {
   const chainList = listChains();
   const selectedChain = Object.values(chainList).find(chain => chain.name === chainName);
   if (!selectedChain) {

@@ -1,9 +1,9 @@
 
 import { decodeAddress } from '@polkadot/util-crypto';
-import endpoints from "../WsEndpoints";
+import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
-import connectToWsEndpoint from "../connect";
-import { CHAIN_METADATA } from "../metadata";
+import connectToWsEndpoint from "../api/connect";
+import { CHAIN_METADATA } from "../api/metadata";
 import toast, { Toaster } from 'react-hot-toast';
 
 
@@ -159,7 +159,6 @@ export async function dotToParachain(amount: number,  address: string, paraid: n
 export async function hydraDxToParachain(amount: number, assetId: number, destAccount: string, paraId: number) {
 	const api = await connectToWsEndpoint('hydraDx');
 
-	
     const asset = {
         fun: {
             Fungible: amount, 

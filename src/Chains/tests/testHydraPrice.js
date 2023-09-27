@@ -1,4 +1,4 @@
-import { getHydraDxSpotPrice, getHydraDxSellPrice } from './PriceHelper.ts';  
+import { getHydraDxSpotPrice, getHydraDxSellPrice } from '../Helpers/PriceHelper.js';  
 
 export async function testFunctions() {
     const assetIn = "5"; 

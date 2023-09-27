@@ -2,9 +2,9 @@
 
 import { ApiPromise } from "@polkadot/api";
 import { genericRawNativeBalance } from "./AssetHelper";
-import connectToWsEndpoint from "./connect";
-import { supported_Polkadot_Chains } from "./ChainsInfo";
-import endpoints from "./WsEndpoints";
+import connectToWsEndpoint from "../api/connect";
+import { supported_Polkadot_Chains } from "../ChainsInfo";
+import endpoints from "../api/WsEndpoints";
 
 
 /// spawn a subscription and wait until balance on destination 

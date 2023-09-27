@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { IExtrinsic } from '@polkadot/types/types';
 import { u64 } from '@polkadot/types/primitive';
-import connectToWsEndpoint from './connect';
+import connectToWsEndpoint from '../api/connect';
 
 let apiInstance: ApiPromise | null = null;
 

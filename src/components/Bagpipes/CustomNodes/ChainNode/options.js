@@ -1,4 +1,4 @@
-import { listAssetHubAssets, listHydraDxAssets } from './../../../Chains/listAssetsForChain';
+import { listAssetHubAssets, listHydraDxAssets } from '../../../../Chains/Assets/listAssetsForChain';
 
 const dotAssets = {
   asset: {

@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import ReactFlow, { Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
 import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
@@ -23,6 +23,7 @@ import PlayButton from './PlayButton';
 import StartButton from './StartButton';
 import { startDraftingProcess } from './utils/startDraftingProcess';
 import {  MarkerType } from 'reactflow';
+import toast from 'react-hot-toast';
 
 
 
@@ -113,7 +114,8 @@ const BagpipesFlow = () => {
     const currentScenarioEdges = scenarios[activeScenarioId]?.diagramData?.edges || [];
 
 
-    const navigate = useNavigate(); // Using `useNavigate` hook from `react-router-dom`
+    const navigate = useNavigate(); 
+    const location = useLocation();
     const [mode, setMode] = useState('light');
     const { undo, redo, canUndo, canRedo, takeSnapshot } = useUndoRedo();
     // console.log("takeSnapshot from useUndoRedo:", takeSnapshot);
@@ -414,7 +416,7 @@ const BagpipesFlow = () => {
                 ...closeEdge, 
                 id: generateEdgeId(closeEdge.source, closeEdge.target), // Ensure consistent id
                 className: undefined, // Remove the 'temp' className
-                ...DEFAULT_EDGE_STYLE
+                // ...DEFAULT_EDGE_STYLE
               }; 
               console.log("Connected edge added:", connectedEdge);
               connectedEdges.push(connectedEdge);
@@ -661,13 +663,43 @@ const BagpipesFlow = () => {
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
     const handleDraftTransactions = async () => {
+      try {
+         const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
+         console.log('Drafted transactions:', draftedTransactions);
+   
+         // Now navigate the user to TransactionMain for review
+         setTransactions(draftedTransactions);
+         navigate('/transaction/review');
+      } catch (error) {
+         console.error("Error during transaction drafting:", error);
+         toast.error('An error occurred during transaction drafting.');
+      }
+   };
 
-      const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
-      console.log('Drafted transactions:', draftedTransactions);
-      setTransactions(draftedTransactions);
-      navigate('/transaction/review');
+  useEffect(() => {
+    if (location.state && location.state.executeScenario) {
+      const executeMyScenario = executeChainScenario();
 
-  };
+      toast.promise(executeMyScenario,
+         {
+           loading: 'Processing workflow...',
+           success: <b>Workflow success!</b>,
+           error: <b>Could not save.</b>,
+         },
+         {
+         success: {
+          duration: 30000,
+          icon: '🔥',
+        },
+      }
+       );
+      
+      // Reset the executeScenario flag in the location state
+      navigate('/builder', { state: { ...location.state, executeScenario: false } });
+    }
+  }, [location]);
+
+   
         
     return (
 

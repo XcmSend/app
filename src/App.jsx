@@ -60,7 +60,35 @@ export function App () {
     <WalletContextProvider>
       <SocketContext.Provider value={socket}>
       <ConfigProvider>
-        <Toaster>
+       
+        {/* <Notifications /> */}
+        <AddressBookProvider>
+        <Toaster
+        
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Define default options
+          className: '',
+          duration: 5000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 20000,
+            theme: {
+              primary: 'green',
+              secondary: 'black',
+            },
+          },
+        }}
+        >
           {(t) => (
             <ToastBar toast={t}>
               {({ icon, message }) => (
@@ -74,9 +102,7 @@ export function App () {
               )}
             </ToastBar>
           )}
-        </Toaster>      
-        {/* <Notifications /> */}
-        <AddressBookProvider>
+        </Toaster> 
           <Routes>
             <Route element={<Layout />} path='/' >
             <Route
