@@ -113,11 +113,15 @@ export async function dotToHydraDx(amount: number, targetAddress: string){
 
 
 
-export async function dotToParachain(amount: number,  address: string, paraid: number){
+export async function dotToParachain(amount: number,  targetAddress: string){
+  const paraid = 1000;
 	const api = await connectToWsEndpoint('polkadot');
 	console.log(`sending dot to parachain`);
+
+  const rawTargetAddress = getRawAddress(targetAddress);
+
 	// const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
-	const accountId = api.createType("account_id_32", address).toHex(); // convert account to public key
+	// const accountId = api.createType("account_id_32", address).toHex(); // convert account to public key
 
 	const destination = {
 	  parents: 0,
@@ -125,9 +129,9 @@ export async function dotToParachain(amount: number,  address: string, paraid: n
 	};
 
 
-	const account = {
+	const targetAccount = {
 	  parents: 0,
-	  interior: { X1: { account_id_32: { id: accountId} } },
+	  interior: { X1: { AccountId32: { id: rawTargetAddress} } },
 	};
 
 
@@ -138,13 +142,13 @@ export async function dotToParachain(amount: number,  address: string, paraid: n
 	  },
 	];
 
-	const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
-        { V3: destination },
-        { V3: account },
-        { V3: asset },
-        0,
-		0
-      );
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+    { V3: destination },
+    { V3: targetAccount },
+    { V3: asset },
+    0,
+{ Unlimited: null }  // weight_limit
+  );
 //	console.log(`tx created!`);
 //	console.log(tx.toHex());
 	return tx;

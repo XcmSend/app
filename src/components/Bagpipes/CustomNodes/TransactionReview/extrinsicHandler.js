@@ -42,15 +42,15 @@ function handleReserveX(formData) {
             console.log("handleReserveX for Polkadot to HydraDx...");
             return dotToHydraDx(submittableAmount, target.address);
         },
-        'hydradx:assethub': () => {
+        'hydradx:assetHub': () => {
             console.log("handleReserveX for HydraDx to AssetHub...");
-            const paraid = chains.find(chain => chain.name === 'assethub').paraid;
+            const paraid = chains.find(chain => chain.name === 'assetHub').paraid;
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
-        'polkadot:assethub': () => {
+        'polkadot:assetHub': () => {
             console.log("handleReserveX for Polkadot to AssetHub...");
-            const paraid = chains.find(chain => chain.name === 'assethub').paraid;
-            return dotToParachain(submittableAmount, target.address, paraid);
+            // const paraid = chains.find(chain => chain.name === 'assethub').paraid;
+            return dotToParachain(submittableAmount, target.address);
         },
         'hydradx:polkadot': () => {
             console.log("handleReserveX for HydraDx to Polkadot...");
