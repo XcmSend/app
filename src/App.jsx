@@ -44,97 +44,107 @@ export function App () {
 
 
 
-    return (
-      <div style={{ width: '100vw', height: '100vh' }}>
-      <WalletContextProvider>
-        <SocketContext.Provider value={socket}>
-        <ConfigProvider>
-         
-          {/* <Notifications /> */}
-          <AddressBookProvider>
-          <Toaster
-          
-          position="top-center"
-          reverseOrder={false}
-          gutter={8}
-          containerClassName=""
-          containerStyle={{}}
-          toastOptions={{
-            // Define default options
-            className: '',
-            duration: 5000,
-            style: {
-              background: '#363636',
-              color: '#fff',
+  // useEffect(() => {
+  //   const newSocket = io("http://localhost:5001");
+  //   setSocket(newSocket);
+  //   console.log("[socket] Socket initialized");
+
+  //   return () => {
+  //     newSocket.disconnect();
+  //   };
+  // }, []);
+
+
+  return (
+    <div style={{ width: '100vw', height: '100vh' }}>
+    <WalletContextProvider>
+      <SocketContext.Provider value={socket}>
+      <ConfigProvider>
+       
+        {/* <Notifications /> */}
+        <AddressBookProvider>
+        <Toaster
+        
+        position="top-center"
+        reverseOrder={false}
+        gutter={8}
+        containerClassName=""
+        containerStyle={{}}
+        toastOptions={{
+          // Define default options
+          className: '',
+          duration: 5000,
+          style: {
+            background: '#363636',
+            color: '#fff',
+          },
+
+          // Default options for specific types
+          success: {
+            duration: 20000,
+            theme: {
+              primary: 'green',
+              secondary: 'black',
             },
-  
-            // Default options for specific types
-            success: {
-              duration: 20000,
-              theme: {
-                primary: 'green',
-                secondary: 'black',
-              },
-            },
-          }}
-          >
-            {(t) => (
-              <ToastBar toast={t}>
-                {({ icon, message }) => (
-                  <>
-                    {icon}
-                    {message}
-                    {t.type !== 'loading' && (
-                      <button onClick={() => toast.dismiss(t.id)}>dismiss</button>
-                    )}
-                  </>
-                )}
-              </ToastBar>
-            )}
-          </Toaster> 
-            <Routes>
-              <Route element={<Layout />} path='/' >
+          },
+        }}
+        >
+          {(t) => (
+            <ToastBar toast={t}>
+              {({ icon, message }) => (
+                <>
+                  {icon}
+                  {message}
+                  {t.type !== 'loading' && (
+                    <button onClick={() => toast.dismiss(t.id)}>dismiss</button>
+                  )}
+                </>
+              )}
+            </ToastBar>
+          )}
+        </Toaster> 
+          <Routes>
+            <Route element={<Layout />} path='/' >
+            <Route
+                element={<Welcome />}
+                index
+              />
               <Route
-                  element={<Welcome />}
-                  index
-                />
+                element={<Welcome />}
+                path='/welcome'
+              />
+              <Route
+                element={<WalletInfo />}
+                path='/wallet-info'
+              />
+                  {/* <Route
+                element={<Builder />}
+                path='/builder'
+              /> */}
                 <Route
-                  element={<Welcome />}
-                  path='/welcome'
-                />
+                element={<BagpipesFlowRoute />}
+                path='/builder'
+              />
+               <Route
+                element={<TransactionMain />}
+                path='/transaction/review'
+              />
+                <Route element={<Lab />} path='/lab' />
+
                 <Route
-                  element={<WalletInfo />}
-                  path='/wallet-info'
-                />
-                    {/* <Route
-                  element={<Builder />}
-                  path='/builder'
-                /> */}
-                  <Route
-                  element={<BagpipesFlowRoute />}
-                  path='/builder'
-                />
-                 <Route
-                  element={<TransactionMain />}
-                  path='/transaction/review'
-                />
-                  <Route element={<Lab />} path='/lab' />
-  
-                  <Route
-                  element={<ReactTestFlow />}
-                  path='/test-flow'
-                />
-                {/* <Route
-                  element={<EvmWalletInfo />}
-                  path='/evm-wallet-info'
-                /> */}
-              </Route>
-            </Routes>
-            </AddressBookProvider>
-            </ConfigProvider>
-          </SocketContext.Provider>
-      </WalletContextProvider>
-      </div>
-    );
-  }
-  
+                element={<ReactTestFlow />}
+                path='/test-flow'
+              />
+              {/* <Route
+                element={<EvmWalletInfo />}
+                path='/evm-wallet-info'
+              /> */}
+            </Route>
+          </Routes>
+          </AddressBookProvider>
+          </ConfigProvider>
+        </SocketContext.Provider>
+    </WalletContextProvider>
+    </div>
+  );
+}
