@@ -684,7 +684,7 @@ const BagpipesFlow = () => {
          {
            loading: 'Processing workflow...',
            success: <b>Workflow success!</b>,
-           error: <b>Could not save.</b>,
+           error: <b>Could notexecute.</b>,
          },
          {
          success: {
@@ -752,8 +752,9 @@ const BagpipesFlow = () => {
 
             </Panel> */}
             </ReactFlowStyled>
-            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
             <StartButton draftTransactions={handleDraftTransactions} />
+
+            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
              
            
             </div>

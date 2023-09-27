@@ -27,13 +27,23 @@ export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
 }
 
 export function getOrderedList(edges) {
-    let orderedList = [];
-
     console.log('[getOrderedList] Received edges:', edges);
 
+    // Handle no edges case
     if (!edges || edges.length === 0) {
-        console.error('[getOrderedList] No edges received.');
-    } else {
+        console.log('[getOrderedList] No edges received.');
+        return [];
+    }
+
+    // Handle single edge case
+    if (edges.length === 1) {
+        console.log('[getOrderedList] Only one edge received:', edges[0]);
+        return [edges[0].source, edges[0].target];
+    }
+
+    // Below is your original logic
+    let orderedList = [];
+    
     // Find the Start Node
     let startEdge = edges.find(edge => 
         !edges.some(e => e.target === edge.source)
@@ -71,7 +81,6 @@ export function getOrderedList(edges) {
     
     console.log('[getOrderedList] Final ordered list:', orderedList);
     return orderedList;
-}
 }
 
 
