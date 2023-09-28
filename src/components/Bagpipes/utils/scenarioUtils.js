@@ -82,7 +82,6 @@ export function getOrderedList(edges) {
     console.log('[getOrderedList] Final ordered list:', orderedList);
     return orderedList;
 }
-}
 
 
 
