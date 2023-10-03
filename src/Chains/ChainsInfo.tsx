@@ -66,7 +66,6 @@ export function listChains() {
       const sora_roc: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
-        ws_endpoint: endpoints.rococo.sora,
         paraid: 2011,
         prefix: 0, //change me
         token_decimals: 10,
