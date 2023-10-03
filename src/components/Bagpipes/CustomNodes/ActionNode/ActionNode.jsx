@@ -240,7 +240,7 @@ export default function ActionNode({ children, data, isConnectable }) {
               <div onClick={() => handleDropdownClick('swap')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
                 <div className='text-xs bold font-semibold'>Swap</div>
-              </div> */}
+              </div> 
               <div onClick={() => handleDropdownClick('xTransfer')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={xTransferSVG} alt="Transfer" className="w-5 h-4 mr-2" />
                 <div className='text-xs font-semibold'>xTransfer</div>

@@ -66,9 +66,8 @@ export function App () {
             style: {
               background: '#363636',
               color: '#fff',
-            },
-          },
-        }
+            }}}
+          
         >
           {(t) => (
             <ToastBar toast={t}>

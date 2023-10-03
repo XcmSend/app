@@ -17,7 +17,7 @@ interface BalanceTippyProps {
     }
 }
 
-const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance }) => {
+const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance, symbol }) => {
     return (
         <Tippy 
             theme="light" 
@@ -36,7 +36,7 @@ const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance }) => {
             placement="right"
         >
             <span className="cursor-pointer text-gray-600 unbounded">
-                <StyledNumber value={balance.total} />
+                <StyledNumber value={balance.total} symbol={symbol} />
             </span>
         </Tippy>
     );
