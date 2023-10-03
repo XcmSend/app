@@ -3,7 +3,7 @@ import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
-import ReserveXSVG from '/reserveX.svg';
+import xTransferSVG from '/xTransfer.svg';
 import { getOrderedList } from '../../utils/scenarioUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
@@ -54,7 +54,7 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
-    if (formState.action === 'reserveX') return ReserveXSVG;
+    if (formState.action === 'xTransfer') return xTransferSVG;
     return null;
   };
 
@@ -110,9 +110,9 @@ export default function ActionNode({ children, data, isConnectable }) {
         } 
     }
 
-    if(formState.action === 'reserveX') {
-        // Handle fetching for reserveX if needed
-        console.log('Fetching for reserveX');
+    if(formState.action === 'xTransfer') {
+        // Handle fetching for xTransfer if needed
+        console.log('Fetching for xTransfer');
     }
 
       // Set actionData outside of the action-specific blocks
@@ -177,7 +177,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     }, []);
     
     // useEffect(() => {
-    //   if (formState.action === 'reserveX') {
+    //   if (formState.action === 'xTransfer') {
     //       setPriceInfo(null);
     //   }
     // }, [formState.action]);
@@ -240,10 +240,10 @@ export default function ActionNode({ children, data, isConnectable }) {
               <div onClick={() => handleDropdownClick('swap')} className="flex items-center p-2 hover:bg-gray-200">
                 <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
                 <div className='text-xs bold font-semibold'>Swap</div>
-              </div>
-              <div onClick={() => handleDropdownClick('reserveX')} className="flex items-center p-2 hover:bg-gray-200">
-                <img src={ReserveXSVG} alt="ReserveX" className="w-5 h-4 mr-2" />
-                <div className='text-xs font-semibold'>ReserveX</div>
+              </div> */}
+              <div onClick={() => handleDropdownClick('xTransfer')} className="flex items-center p-2 hover:bg-gray-200">
+                <img src={xTransferSVG} alt="Transfer" className="w-5 h-4 mr-2" />
+                <div className='text-xs font-semibold'>xTransfer</div>
               </div>
             </div>
           </div>

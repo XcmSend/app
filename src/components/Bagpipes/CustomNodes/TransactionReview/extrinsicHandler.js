@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../../Chains/DraftTx/DraftReserveXTx";
+import { dotToHydraDx, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -8,9 +8,9 @@ import { listChains } from "../../../../Chains/ChainsInfo";
 export async function extrinsicHandler(actionType, formData) {
     
     switch(actionType) {
-        case 'reserveX':
-            console.log("Inside extrinsicHandler for reserveX formData:", formData);
-            return handleReserveX(formData);
+        case 'xTransfer':
+            console.log("Inside extrinsicHandler for xTransfer formData:", formData);
+            return handlexTransfer(formData);
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
             return handleSwap(formData);
@@ -20,8 +20,8 @@ export async function extrinsicHandler(actionType, formData) {
 };
 
 
-function handleReserveX(formData) {
-    console.log("handleReserveX Handling reserveX...");
+function handlexTransfer(formData) {
+    console.log("handlexTransfer Handling xTransfer...");
     const chains = listChains();
     const source = formData.source;
     const target = formData.target;
@@ -32,40 +32,40 @@ function handleReserveX(formData) {
     // Adjust the source amount according to the token decimals
     const submittableAmount = source.amount * (10 ** tokenDecimals);
 
-    console.log(`handleReserveX Source chain: ${source.chain}`);
-    console.log(`handleReserveX Target chain: ${target.chain}`);
-    console.log(`handleReserveX Source amount: ${source.amount}`);
-    console.log(`handleReserveX Target address: ${target.address}`);
+    console.log(`handlexTransfer Source chain: ${source.chain}`);
+    console.log(`handlexTransfer Target chain: ${target.chain}`);
+    console.log(`handlexTransfer Source amount: ${source.amount}`);
+    console.log(`handlexTransfer Target address: ${target.address}`);
 
-    // Define a map for each reserveX action
+    // Define a map for each xTransfer action
     const reserverTransferActions = {
         'polkadot:hydraDx': () => {
-            console.log("handleReserveX for Polkadot to HydraDx...");
+            console.log("handlexTransfer for Polkadot to HydraDx...");
             return dotToHydraDx(submittableAmount, target.address);
         },
         'hydradx:assetHub': () => {
-            console.log("handleReserveX for HydraDx to AssetHub...");
+            console.log("handlexTransfer for HydraDx to AssetHub...");
             const paraid = chains.find(chain => chain.name === 'assetHub').paraid;
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
         'polkadot:assetHub': () => {
-            console.log("handleReserveX for Polkadot to AssetHub...");
+            console.log("handlexTransfer for Polkadot to AssetHub...");
             // const paraid = chains.find(chain => chain.name === 'assethub').paraid;
             return dotToParachain(submittableAmount, target.address);
         },
         'hydradx:polkadot': () => {
-            console.log("handleReserveX for HydraDx to Polkadot...");
+            console.log("handlexTransfer for HydraDx to Polkadot...");
             const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
         'assethub:polkadot': () => {
-            console.log("handleReserveX for AssetHub to Polkadot...");
+            console.log("handlexTransfer for AssetHub to Polkadot...");
             const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
             return assethub_to_parachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
         },
         'assethub:hydradx': () => {
-            console.log("handleReserveX forAssetHub to HydraDx...");
+            console.log("handlexTransfer forAssetHub to HydraDx...");
             const paraid = chains.find(chain => chain.name === 'hydraDx').paraid;
             return assethub_to_parachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
         }
@@ -77,8 +77,8 @@ function handleReserveX(formData) {
         return action();
     } else {
         toast("Action data is empty. Did you fetch?")
-        // console.error("Unsupported reserveX direction.");
-        // throw new Error("Unsupported reserveX direction.");
+        // console.error("Unsupported xTransfer direction.");
+        // throw new Error("Unsupported xTransfer direction.");
     }
 }
 

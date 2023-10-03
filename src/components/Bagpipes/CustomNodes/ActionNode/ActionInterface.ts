@@ -16,8 +16,8 @@ export interface SwapAction {
   target: ActionData;
 }
 
-export interface ReserveXAction {
-  actionType: 'reserveX';
+export interface xTransferAction {
+  actionType: 'xTransfer';
   source: ActionData;
   target: ActionData;
 }
@@ -28,4 +28,4 @@ export interface TransferAction {
   target: ActionData;
 }
 
-export type ActionType = SwapAction | ReserveXAction | TransferAction;
+export type ActionType = SwapAction | xTransferAction | TransferAction;

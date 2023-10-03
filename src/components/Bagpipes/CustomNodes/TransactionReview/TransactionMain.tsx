@@ -106,6 +106,10 @@ const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", I
   const executeAndNavigate = async () => {
     navigate('/builder', { state: { executeScenario: true } });
   }
+
+  const backToBuilder = () => {
+    navigate('/builder');
+  }
   
 
 
@@ -140,7 +144,7 @@ const handleDeclineTransactions = () => {
   return (
     <div>
       
-      <button className='button' onClick={startReview}>Start Review</button>
+      <button className='button' onClick={backToBuilder}>Back</button>
       {isReviewingTransactions && (
        <TransactionReview
         transactions={transactions}
