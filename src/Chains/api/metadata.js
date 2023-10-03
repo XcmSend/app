@@ -1,13 +1,12 @@
 export const CHAIN_METADATA = {
-    polkadot: {
-        chain: "Polkadot",
+    assetHub: {
+        chain: "AssetHub",
         endpoints: [
-            "wss://polkadot-rpc.dwellir.com",
-            "wss://rpc.polkadot.io",
-            "wss://polkadot.api.onfinality.io/public-ws",
+            "wss://polkadot-asset-hub-rpc.polkadot.io",
+            "wss://statemint.api.onfinality.io/public-ws",
         ],
-        queryBalancePaths: ["system.account"],
-        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        queryAssetPaths: ["assets.metadata"],  
+        queryBalancePaths: ["system.account", "assets.account"],
         nativeAccount: true,
 
     },
@@ -24,25 +23,17 @@ export const CHAIN_METADATA = {
         nativeAccount: true,
 
     },
-    assetHub: {
-        chain: "AssetHub",
+    polkadot: {
+        chain: "Polkadot",
         endpoints: [
-            "wss://polkadot-asset-hub-rpc.polkadot.io",
-            "wss://statemint.api.onfinality.io/public-ws",
-        ],
-        queryAssetPaths: ["assets.metadata"],  
-        queryBalancePaths: ["system.account", "assets.account"],
-        nativeAccount: true,
-
-    },
-    // rococo
-    sora: {
-        chain: "Sora",
-        endpoints: [
-                "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
+            "wss://polkadot-rpc.dwellir.com",
+            "wss://rpc.polkadot.io",
+            "wss://polkadot.api.onfinality.io/public-ws",
         ],
         queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
         nativeAccount: true,
+
     },
     rococo: {
         chain: "Rococo",
@@ -51,5 +42,14 @@ export const CHAIN_METADATA = {
         ],
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
-    }
+    },
+    sora: {
+        chain: "Sora",
+        endpoints: [
+                "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
+
 }

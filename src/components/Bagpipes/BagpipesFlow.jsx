@@ -26,10 +26,6 @@ import { startDraftingProcess } from './utils/startDraftingProcess';
 import {  MarkerType } from 'reactflow';
 import { useCreateScenario } from './hooks/useCreateScenario';
 import toast from 'react-hot-toast';
-
-
-
-import GitInfo from './git_tag'
 import './utils/getAllConnectedNodes';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
@@ -765,7 +761,7 @@ const BagpipesFlow = () => {
             </ReactFlowStyled>
             <StartButton draftTransactions={handleDraftTransactions} />
 
-            <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} />
+            {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
             <GitInfo />
 
