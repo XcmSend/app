@@ -4,9 +4,11 @@ export interface ActionData {
   source: any;
   actionType: ActionType | null | undefined;
   chain: string;
+  display?: string;
   assetId: number;
   address: string; 
   amount?: number; 
+  symbol?: string; 
   nodeId?: string;
 }
 

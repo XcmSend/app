@@ -167,9 +167,11 @@ const ChainNode = ({ children, data, isConnectable }) => {
 
   useEffect(() => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    console.log('currentNodeFormData', scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
     if (currentNodeFormData) {
         setFormState({
             chain: currentNodeFormData?.chain?.name || "",
+            display: currentNodeFormData?.chain?.display || "",
             asset: {
                 name: currentNodeFormData?.asset?.name || "",
                 assetId: currentNodeFormData?.asset?.assetId || null
@@ -374,7 +376,7 @@ console.log('Component re-rendered', formState.address);
        Amount 
        <div className="flex items-center primary-font">
 
-        {isFetchingBalance ? (
+        {formState && formState.symbol && isFetchingBalance ? (
           <div className="small-spinner"></div>
         ) : (
           balance !== null && (

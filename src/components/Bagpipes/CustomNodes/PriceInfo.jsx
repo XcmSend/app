@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 const InfoDivider = ({ label, value }) => (
-    <div className="p-2 m-1 bg-gray-100 rounded border border-gray-400 flex justify-between ">
-       {label}: <strong>  {value} </strong>
+    <div className="p-3 m-2 bg-gray-100 rounded border border-gray-300 flex justify-between ">
+       <span className='px-1'>{label}:</span> <strong>{" "}  {value} </strong>
     </div>
 );
 
 const ConversionDivider = ({ label, value, label2, value2 }) => (
-    <div className="p-2 m-1 bg-gray-100 rounded border border-dotted border-gray-400 snap-center">
+    <div className="p-3 m-2 bg-gray-100 rounded border border-dotted border-gray-300 snap-center flex justify-center">
         <strong>{label} {value} {label2} {value2} </strong>
     </div>
 );
@@ -20,7 +20,7 @@ const PriceInfo = ({ sourceInfo, targetInfo, priceInfo }) => {
         <div className="sell-price-info mt-4 bg-gray-100 p-2 rounded border border-gray-300 text-gray-700 mt-1 p-3 m-2 snap-x" style={{ maxWidth: '300px' }}>
             <ConversionDivider label="" value={`${sourceInfo.asset.symbol}`} label2="->" value2={`${targetInfo.asset.symbol}`} />
             <InfoDivider label="Sell" value={`${priceInfo.amountIn} ${sourceInfo.asset.symbol}`} />
-            <InfoDivider label="Receive" value={` ${priceInfo.amountOut} ${targetInfo.asset.symbol}`} />
+            <InfoDivider label="Receive" value={`${" "} ${priceInfo.amountOut} ${targetInfo.asset.symbol}`} />
 
             <InfoDivider label="Type" value={priceInfo.type} />
             <InfoDivider label="Spot Price" value={priceInfo.spotPrice} />

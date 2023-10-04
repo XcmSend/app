@@ -10,10 +10,11 @@ import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: { 
   selectedChainName: string, 
   onSelect: (address: string) => void,
-  selectedAddress: string | null // New prop
+  selectedAddress: string | null
 }) {
   const walletContext = useContext(WalletContext);
   const chains = listChains(); 
+  console.log(  "AccountDropdown chains:", chains);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(selectedAddress);
 
   // console.log("WalletContext:", walletContext);
@@ -43,6 +44,7 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
   const getPrefixForAddress = (address: string) => {
     // Using the passed chain name to fetch the correct prefix
     const chainInfo = Object.values(chains).find(chain => chain.name === selectedChainName);
+
     return chainInfo ? chainInfo.prefix : 42; // Default to 42 if not found
   };
 

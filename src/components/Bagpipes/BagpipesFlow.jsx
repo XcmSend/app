@@ -659,12 +659,14 @@ const BagpipesFlow = () => {
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
     const handleDraftTransactions = async () => {
-      const actionNodes = scenarios[activeScenarioId].diagramData.nodes.filter(node => node.type === 'action');
-      console.log('actionNodes:', actionNodes);
+
+      const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
+
+      console.log('handleDraftTransactions actionNodes:', actionNodes);
    
       // Check if any action node has empty or missing actionData
       const hasEmptyActionData = actionNodes.some(node => node.formState?.actionData);
-      console.log('hasEmptyActionData:', hasEmptyActionData);
+      console.log('handleDraftTransactions hasEmptyActionData:', hasEmptyActionData);
    
       if (hasEmptyActionData) {
          toast('you need to fetch data from your action nodes');

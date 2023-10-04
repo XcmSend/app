@@ -15,6 +15,7 @@ interface BalanceTippyProps {
         reserved: string;
         total: string;
     }
+    symbol: string;
 }
 
 const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance, symbol }) => {
@@ -25,11 +26,11 @@ const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance, symbol }) => {
             content={
                 <div className="bg-white text-xss tippy-chain flex flex-wrap p-1">
                     <div className="w-1/2 font-semibold">Available:</div> 
-                    <div className="w-1/2 font-semibold">{balance.free}</div>
+                    <div className="w-1/2 font-semibold">{balance.free} {symbol}</div>
                     <div className="w-1/2 font-semibold">Reserved:</div> 
-                    <div className="w-1/2">{balance.reserved}</div>
+                    <div className="w-1/2">{balance.reserved } {symbol}</div>
                     <div className="w-1/2 font-semibold">Total:</div> 
-                    <div className="w-1/2">{balance.total}</div>
+                    <div className="w-1/2">{balance.total} {symbol}</div>
                 </div>
             }
             arrow={false}

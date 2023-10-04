@@ -7,6 +7,8 @@ import xTransferSVG from '/xTransfer.svg';
 import { getOrderedList } from '../../utils/scenarioUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
+import Selector from './Selector';
+import toast from 'react-hot-toast';
 
 import '../../../../index.css';
 import '../../node.styles.scss';
@@ -31,7 +33,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [priceInfo, setPriceInfo] = useState(null);
   const [sellPriceInfoMap, setPriceInfoMap] = useState({});
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [isfetchingPriceInfo, setIsFetchingPrice] = useState(false);
+  const [isFetchingActionData, setIsFetchingActionData] = useState(false);
   const initialAction = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.action || null;
   const [formState, setFormState] = useState({ action: initialAction });
   const nodes = scenarios[activeScenarioId]?.diagramData?.nodes;
@@ -49,8 +51,8 @@ export default function ActionNode({ children, data, isConnectable }) {
     console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
     return nodeData?.formData;
   }, [assetOutNodeId, nodes]);
-  // console.log('[ActionNode] assetInFormData:', assetInFormData);
-  // console.log('[ActionNode] assetOutFormData:', assetOutFormData);
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
@@ -92,42 +94,50 @@ export default function ActionNode({ children, data, isConnectable }) {
     const assetOutId = assetOutFormData?.asset?.assetId;
     const amount = assetInFormData?.amount;
 
-    if (!assetInId || !assetOutId || !amount) return;  
+    if (!assetInId || !assetOutId ) return;
 
-    if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
-        try {
-            setIsFetchingPrice(true);
+    setIsFetchingActionData(true); // Start the loading state
+
+    try {
+        if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
+          console.log('fetchActionInfo Fetching for swap');
             const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
             setPriceInfoMap(prevMap => ({
                 ...prevMap,
                 [nodeId]: fetchedPriceInfo
             }));
             setLastUpdated(new Date());
-        } catch (error) {
-            // Handle error
-        } finally {
-            setIsFetchingPrice(false);
-        } 
-    }
+        }
 
-    if(formState.action === 'xTransfer') {
-        // Handle fetching for xTransfer if needed
-        console.log('Fetching for xTransfer');
-    }
+        if(formState.action && formState.action === 'xTransfer') {
+          setIsFetchingActionData(true); // Start the loading state
+          await sleep(1000);
+            // Handle fetching for xTransfer if needed
+            console.log('Fetching for xTransfer');
+        }
 
-      // Set actionData outside of the action-specific blocks
-      // Create action data based on the selected value
-      const newActionData = convertFormStateToActionType(
-        { ...formState, action: value }, 
-        assetInFormData, 
-        assetOutFormData
-      );    
+        // Set actionData outside of the action-specific blocks
+        // Create action data based on the selected value
+        const newActionData = convertFormStateToActionType(
+            { ...formState, action: formState.action }, 
+            assetInFormData, 
+            assetOutFormData
+        );
 
         if (newActionData) {
             setActionData(newActionData);
             console.log("Constructed action data: ", newActionData);
         }
-  };
+
+    } catch (error) {
+        // Handle error
+        toast.error("An error occurred while fetching action info...", error);
+        setPriceInfoMap({})    
+      } finally {
+        setIsFetchingActionData(false);
+    }
+};
+
 
 
 
@@ -163,10 +173,10 @@ export default function ActionNode({ children, data, isConnectable }) {
         setAssetOutNodeId(assetOutNodeId);
     }, [selectedNodeId, scenarios]);
 
-    useEffect(() => {
-      console.log('[ActionNode] Updated assetInNodeId:', assetInNodeId);
-      console.log('[ActionNode] Updated assetOutNodeId:', assetOutNodeId);
-  }, [assetInNodeId, assetOutNodeId]);
+  //   useEffect(() => {
+  //     console.log('[ActionNode] Updated assetInNodeId:', assetInNodeId);
+  //     console.log('[ActionNode] Updated assetOutNodeId:', assetOutNodeId);
+  // }, [assetInNodeId, assetOutNodeId]);
   
     // This effect will only run once when the component mounts
     useEffect(() => {
@@ -197,11 +207,23 @@ export default function ActionNode({ children, data, isConnectable }) {
           console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
           return;
       }
+
+      // fetchActionInfo()
       const formData = { ...formState, actionData }; // combine formState with actionData
       saveNodeFormData(activeScenarioId, nodeId, formData);
   }, [formState, actionData, nodeId, activeScenarioId]); 
   
   
+  useEffect(() => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+
+    if (currentNodeFormData && currentNodeFormData.action === 'swap') {
+      console.log('fetchActionInfo Fetching for swap', currentNodeFormData.action)
+      fetchActionInfo(assetInFormData, assetOutFormData)
+      return
+    }
+
+  } , [assetInFormData, assetOutFormData]); 
   // Here we want to create the action form data object to pass for processing 
   useEffect(() => {
     const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
@@ -212,16 +234,22 @@ export default function ActionNode({ children, data, isConnectable }) {
   }, [formState, assetInFormData, assetOutFormData]);
   
   return (
+    <>
+      
     <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start p-2 bg-gray-100 primary-font">
+ 
           <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
 
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
     <div className='p-3 border rounded flex justify-center flex-col items-center mb-3'>
-      <div className="text-gray-400 mb-2 text-xxs">{data.name}</div>
+      <div className="text-gray-400 mb-2 text-xxs"> {data.name}</div>
+
+      
+      
 
       {/* Custom dropdown */}
-      <div className="relative w-28">
+      <div className="relative">
         <div className="flex justify-between items-center border py-1 px-2 rounded cursor-pointer text-xs ml-3 mr-3 font-semibold  bg-white" onClick={() => setDropdownVisible(!dropdownVisible)}>
         {formState.action ? (
           <>
@@ -235,18 +263,12 @@ export default function ActionNode({ children, data, isConnectable }) {
         </div>
         
         {dropdownVisible && (
-          <div className="absolute z-10 min-w-full border mt-1 rounded bg-white whitespace-nowrap ">
-            <div className="flex flex-col">
-              <div onClick={() => handleDropdownClick('swap')} className="flex items-center p-2 hover:bg-gray-200">
-                <img src={SwapSVG} alt="Swap" className="w-4 h-4 mr-2" />
-                <div className='text-xs bold font-semibold'>Swap</div>
-              </div> 
-              <div onClick={() => handleDropdownClick('xTransfer')} className="flex items-center p-2 hover:bg-gray-200">
-                <img src={xTransferSVG} alt="Transfer" className="w-5 h-4 mr-2" />
-                <div className='text-xs font-semibold'>xTransfer</div>
-              </div>
-            </div>
-          </div>
+          <Selector
+            handleDropdownClick={handleDropdownClick} 
+            onActionSelect={(action) => console.log("Selected action:", action)}
+            SwapSVG={SwapSVG}
+            xTransferSVG={xTransferSVG} 
+          />
         )}
       </div>
 
@@ -254,9 +276,8 @@ export default function ActionNode({ children, data, isConnectable }) {
         {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
       </div>
 
-
-      {formState.action === 'swap' && (
-        isfetchingPriceInfo ? (
+      {formState && formState.action === 'swap' && (
+        isFetchingActionData ? (
           <div className="small-spinner"></div>
         ) : (
           sellPriceInfoMap[nodeId] ? (
@@ -269,21 +290,49 @@ export default function ActionNode({ children, data, isConnectable }) {
       )}
       </div>
 
-      <button 
-    onClick={() => fetchActionInfo(assetInFormData, assetOutFormData)} 
-    className=" flex justify-center align-center font-bold py-1 px-1 border-gray-300 hover:border-green rounded" 
-    >
-    <span className=" font-semibold mr-1">fetch</span>
-    <img className="h-4 w-4 ml-2" src="/refresh.svg" alt="refresh icon" />
-</button>
+      {formState.action === 'xTransfer' && actionData?.source?.chain && actionData?.source?.amount && actionData?.source?.symbol && (
+      <div className='p-2 border rounded m-1'>
+        <div className="flex justify-between">
+          <div className="w-1/3">From:</div>
+          <div className="w-2/3 font-semibold text-left">{actionData.source.chain}</div>
+        </div>
+
+        <div className="flex justify-between">
+          <div className="w-1/3">To:</div>
+          <div className="w-2/3 font-semibold text-left">{actionData.target.chain}</div>
+        </div>
+
+        <div className="flex justify-between">
+          <div className="w-1/3">Amount:</div>
+          <div className="w-2/3 font-semibold text-left">{actionData.source.amount} {actionData.source.symbol}</div>
+        </div>
+      </div>
+    )}
+
+
+
+
+
+    <button 
+      onClick={() => fetchActionInfo(assetInFormData, assetOutFormData)} 
+      className=" flex justify-center align-center font-bold py-1 px-1 mb-1 border-gray-300 hover:border-green rounded" 
+      >
+       { isFetchingActionData ? (
+          <div className="small-spinner"></div>
+        ) : (
+          <span className=" font-semibold mr-1">fetch</span>
+        )}
+      <img className="h-4 w-4 ml-2" src="/refresh.svg" alt="refresh icon" />
+    </button>
 
         {sellPriceInfoMap ? (
-        lastUpdated && <span className='text-gray-400 text-xss'>Last updated: {formatTime(lastUpdated)}</span>
+        lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>Last updated: {formatTime(lastUpdated)}</span>
         ):( null)
         }
-      <div className="space-y-2 mt-2">
+      <div className="space-y-2 mt-1">
         {data.children}
       </div>
     </div>
+    </>
   );
 }

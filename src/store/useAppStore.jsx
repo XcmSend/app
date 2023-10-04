@@ -521,24 +521,29 @@ const useAppStore = create(
 
     deleteNodeFromScenario: (scenarioId, nodeIdsToDelete) => {
       console.log("[deleteNodeFromScenario] Called with:", { scenarioId, nodeIdsToDelete });
-
+  
       if (!scenarioId || !nodeIdsToDelete || nodeIdsToDelete.length === 0) {
           console.error('[deleteNodeFromScenario] Invalid parameters provided. Action aborted.');
           return;
       }
-
+  
       set((state) => {
           const currentScenario = state.scenarios[scenarioId];
           if (!currentScenario) {
               console.error(`[deleteNodeFromScenario] Scenario with ID ${scenarioId} not found. Action aborted.`);
               return; 
           }
-
+  
           // Filter out the nodes that are not in the delete list
           const updatedNodes = currentScenario.diagramData.nodes.filter(
-            node => !nodeIdsToDelete.includes(node.id)
+              node => !nodeIdsToDelete.includes(node.id)
           );
-
+  
+          // Filter out the edges connected to the deleted nodes
+          const updatedEdges = currentScenario.diagramData.edges.filter(
+              edge => !nodeIdsToDelete.includes(edge.source) && !nodeIdsToDelete.includes(edge.target)
+          );
+  
           const updatedScenarios = {
               ...state.scenarios,
               [scenarioId]: {
@@ -546,6 +551,7 @@ const useAppStore = create(
                   diagramData: {
                       ...currentScenario.diagramData,
                       nodes: updatedNodes,
+                      edges: updatedEdges,
                   },
                   // Clear out the selectedNodeId if it was deleted
                   selectedNodeId: nodeIdsToDelete.includes(currentScenario.selectedNodeId) ? null : currentScenario.selectedNodeId
@@ -555,7 +561,8 @@ const useAppStore = create(
           console.log("[deleteNodeFromScenario] Updated scenarios:", updatedScenarios);
           return { scenarios: updatedScenarios };
       });
-    },
+  },
+  
 
     deleteEdgeFromScenario: (scenarioId, edgeId) => {
       console.log("[deleteEdgeFromScenario] Called with:", { scenarioId, edgeId });
