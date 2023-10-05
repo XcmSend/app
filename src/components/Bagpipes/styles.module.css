@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 .node {
     font-size: 21px;
     border: 2px solid #ff0071;
@@ -33,7 +35,7 @@
     font-weight: bold;
     font-size: 21px;
     border: 2px solid #0041d0;
-    background: #ccd9f6;
+    background: var(--button-bg);
     margin: 0 10px;
     border-radius: 10px;
     color: #0041d0;

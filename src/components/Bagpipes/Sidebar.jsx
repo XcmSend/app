@@ -32,7 +32,7 @@ export default () => {
   }
 
   return (
-<aside className={`${theme} sidebar fixed top-100 right-0 ${theme}`}>
+<aside className={`${theme} sidebar fixed top-100 right-0`}>
         <CreateButton createScenario={createScenario} />
       <div className="description">Drag thes nodes to the canvass, connect them together and build a workflow. </div>
     

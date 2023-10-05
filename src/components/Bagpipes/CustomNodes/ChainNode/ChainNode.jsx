@@ -285,11 +285,11 @@ console.log('Component re-rendered', formState.address);
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
     <div className="m-2">
-      <div className="border p-2 rounded mb-2 ">
+      <div className="in-node-border p-2 rounded mb-2 ">
         <div className="chain-selection mb-2">
           <h3 className="text-xxs node-input primary-font mb-1">Chain</h3> 
           <select 
-              className="chain-selector font-semibold text-black border border-gray-300 p-2 rounded"
+              className="chain-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
               onChange={handleChainChange}
               value={formState.chain}  // sets the value for the dropdown from the state
           >
@@ -303,7 +303,7 @@ console.log('Component re-rendered', formState.address);
 
         </div>
         </div>
-        <div className="border p-2 rounded mb-2 ">
+        <div className="in-node-border p-2 rounded mb-2 ">
 
 
 
@@ -312,12 +312,12 @@ console.log('Component re-rendered', formState.address);
             <h3 className="text-xxs node-input primary-font mb-1">Asset</h3>
             {isLoading ? (
                <div className="select-container">
-               <div className="border border-gray-300 p-2 rounded-md w-full">
+               <div className="in-node-border border-gray-300 p-2 rounded-md w-full">
                  <div className="spinner"></div>  
                </div>
              </div>
           ) : (
-            <select className="asset-selector text-black border border-gray-300 p-2 rounded font-semibold" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
+            <select className="asset-selector text-black in-node-border border-gray-300 p-2 rounded font-semibold" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
               <option value="">Select an asset</option>
                {assetsForChain.map(asset => (
                    <option key={asset.assetId} value={asset.asset.name}>
@@ -331,7 +331,7 @@ console.log('Component re-rendered', formState.address);
       </div>
   
   {formState.chain && (
-    <div className="flex flex-col items-start mb-2 border p-2 rounded">
+    <div className="flex flex-col items-start mb-2 in-node-border p-2 rounded">
       <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>
       <div className="flex items-center text-black justify-start  w-full">
                 <AccountDropdown 
@@ -346,10 +346,10 @@ console.log('Component re-rendered', formState.address);
   )}
   
   {formState.chain && contacts.length > 0 && (
-    <div className="mb-2 border p-2 rounded flex flex-col items-start justify-start">
+    <div className="mb-2 in-node-border p-2 rounded flex flex-col items-start justify-start">
         <h3 className="text-xxs node-input primary-font mb-2 self-start">Contacts</h3>
         <select 
-            className="contact-selector font-semibold text-black border border-gray-300 p-2 rounded"
+            className="contact-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
             value={formState.contact || ""}
             onChange={(e) => {
                 if(e.target.value === 'create_new_contact') {
@@ -372,7 +372,7 @@ console.log('Component re-rendered', formState.address);
   )}
 
 {formState.chain && (
-   <div className="mb-2 border p-2 rounded">
+   <div className="mb-2 in-node-border p-2 rounded">
      <h3 className="text-xxs node-input primary-font mb-1 flex items-center justify-between">
        Amount 
        <div className="flex items-center primary-font">
@@ -392,7 +392,7 @@ console.log('Component re-rendered', formState.address);
      </h3>
      <div className="unbounded-black">
        <input 
-         className='unbounded-black text-xl text-black pl-1 border border-gray-300 rounded amount-selector'
+         className='unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector'
          type="number" 
          placeholder="0.0000" 
          value={formState.amount}

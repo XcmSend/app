@@ -26,9 +26,11 @@ export const CHAIN_METADATA = {
     polkadot: {
         chain: "Polkadot",
         endpoints: [
+            "wss://rpc-polkadot.luckyfriday.io",
+            "wss://polkadot.api.onfinality.io/public-ws",
             "wss://polkadot-rpc.dwellir.com",
             "wss://rpc.polkadot.io",
-            "wss://polkadot.api.onfinality.io/public-ws",
+
         ],
         queryBalancePaths: ["system.account"],
         transferFunction: "xcmPallet.limitedReserveTransferAssets",

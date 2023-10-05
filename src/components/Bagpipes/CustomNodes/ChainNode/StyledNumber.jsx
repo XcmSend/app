@@ -1,9 +1,12 @@
 
-import './ChainNode.scss';
+import react, { useContext } from 'react';
+import ThemeContext from '../../../../contexts/ThemeContext';
+
 import '../../node.styles.scss';
-import '../../../../index.css';
-import '../../../../variables.scss';
-export default function StyledNumber({ value,  symbol }) {
+
+
+const StyledNumber = ({ value, symbol }) => {
+  const { theme } = useContext(ThemeContext);
     // If value is "1234.5678", this splits it into whole="1234" and decimal="5678"
     const [whole, decimal] = value.split('.');
 
@@ -12,12 +15,14 @@ export default function StyledNumber({ value,  symbol }) {
 
 
     return (
-       <div className='primary-font'>
+       <div className={` ${theme} primary-font`}>
 
-            <span className="text-xxs primary-font font-semibold text-gray-800">{whole}</span>
-            <span className="text-xxs primary-font text-gray-400">.{displayDecimal}</span>
-            <span className="text-xxs primary-font font-semibold text-gray-800">{" "}{symbol}</span>
+            <span className={`text-xxs primary-font font-semibold whole-number `}>{whole}</span>
+            <span className="text-xxs primary-font display-decimal">.{displayDecimal}</span>
+            <span className="text-xxs primary-font font-semibold whole-number">{" "}{symbol}</span>
 
       </div>
     );
 }
+
+export default StyledNumber;

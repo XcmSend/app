@@ -5,6 +5,7 @@ import { ChainInfo, listChains } from "../ChainsInfo";
 import connectToWsEndpoint from "../api/connect";
 import { CHAIN_METADATA } from "../api/metadata";
 import toast, { Toaster } from 'react-hot-toast';
+import { ApiPromise } from '@polkadot/api';
 
 
 function getRawAddress(ss58Address: string): Uint8Array {
@@ -17,9 +18,14 @@ function getRawAddress(ss58Address: string): Uint8Array {
 
 /// Send DOT to a parachain
 export async function genericPolkadotToParachain(paraid: number, amount: number, address: string) {
-	const api = await connectToWsEndpoint('polkadot');
-	//const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
+  let api: ApiPromise;
+
+  try {
+	api = await connectToWsEndpoint('polkadot');
+  	//const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
 	const accountId = api.createType("AccountId32", address).toHex();
+  
+
 	
 
 	const destination = {
@@ -48,8 +54,12 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
         { V3: asset },
         0,
       );
+  
+  return tx;
 
-	return tx;
+  } catch (error) {
+    console.error('Error connecting to WS endpoint:', error.message);
+  }
 }
 
 // working: https://hydradx.subscan.io/xcm_message/polkadot-047344414db62b7c424c8de9037c5a99edd0794c

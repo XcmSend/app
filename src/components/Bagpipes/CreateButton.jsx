@@ -7,7 +7,7 @@ import '../../index.css';
 export const CreateButton = ({createScenario}) => {
     return (
         <button 
-        className=" button flex items-center dndnode new-scenario  bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" 
+        className="flex items-center dndnode new-scenario  bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" 
         onClick={createScenario} 
             style={{ zIndex: 1000 }}
         >

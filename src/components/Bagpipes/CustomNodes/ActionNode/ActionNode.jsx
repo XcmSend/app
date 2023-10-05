@@ -9,6 +9,7 @@ import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
 import Selector from './Selector';
 import toast from 'react-hot-toast';
+import ThemeContext from '../../../../contexts/ThemeContext';
 
 import '../../../../index.css';
 import '../../node.styles.scss';
@@ -19,6 +20,7 @@ const formatTime = (date) => {
 };
 
 export default function ActionNode({ children, data, isConnectable }) {
+  const { theme } = React.useContext(ThemeContext);
   const nodeId = useNodeId();
   const { scenarios, activeScenarioId, loading, saveNodeFormData  } = useAppStore(state => ({ 
     scenarios: state.scenarios,
@@ -90,11 +92,14 @@ export default function ActionNode({ children, data, isConnectable }) {
   // }, [edges]);
 
   const fetchActionInfo = async () => {
+    console.log('fetchActionInfo Fetching');
     const assetInId = assetInFormData?.asset?.assetId;
     const assetOutId = assetOutFormData?.asset?.assetId;
     const amount = assetInFormData?.amount;
 
-    if (!assetInId || !assetOutId ) return;
+    console.log('fetchActionInfo assetInId:', assetInId, assetOutId);
+    if (assetInId === undefined || assetInId === null || assetOutId === undefined || assetOutId === null) return;
+    console.log('fetchActionInfo we passed through the if statement');
 
     setIsFetchingActionData(true); // Start the loading state
 
@@ -109,9 +114,9 @@ export default function ActionNode({ children, data, isConnectable }) {
             setLastUpdated(new Date());
         }
 
-        if(formState.action && formState.action === 'xTransfer') {
-          setIsFetchingActionData(true); // Start the loading state
-          await sleep(1000);
+        if(formState.action === 'xTransfer') {
+            setIsFetchingActionData(true); // Start the loading state
+            await sleep(1000);
             // Handle fetching for xTransfer if needed
             console.log('Fetching for xTransfer');
         }
@@ -126,7 +131,10 @@ export default function ActionNode({ children, data, isConnectable }) {
 
         if (newActionData) {
             setActionData(newActionData);
+            setLastUpdated(new Date());
             console.log("Constructed action data: ", newActionData);
+            console.log('lastUpdated:', lastUpdated);
+
         }
 
     } catch (error) {
@@ -135,6 +143,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         setPriceInfoMap({})    
       } finally {
         setIsFetchingActionData(false);
+
     }
 };
 
@@ -236,13 +245,13 @@ export default function ActionNode({ children, data, isConnectable }) {
   return (
     <>
       
-    <div className="custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start p-2 bg-gray-100 primary-font">
+    <div className={`${theme} custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start bg-gray-100 primary-font`}>
  
           <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
 
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
-    <div className='p-3 border rounded flex justify-center flex-col items-center mb-3'>
+    <div className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
       <div className="text-gray-400 mb-2 text-xxs"> {data.name}</div>
 
       
@@ -250,7 +259,7 @@ export default function ActionNode({ children, data, isConnectable }) {
 
       {/* Custom dropdown */}
       <div className="relative">
-        <div className="flex justify-between items-center border py-1 px-2 rounded cursor-pointer text-xs ml-3 mr-3 font-semibold  bg-white" onClick={() => setDropdownVisible(!dropdownVisible)}>
+        <div className="flex justify-between items-center in-node-border py-1 px-2 rounded cursor-pointer text-xs ml-2 mr-2 font-semibold  bg-white" onClick={() => setDropdownVisible(!dropdownVisible)}>
         {formState.action ? (
           <>
             <img src={getActionImage()} alt={formState.action} className="w-12 h-12 p-1 mx-auto" />
@@ -259,7 +268,7 @@ export default function ActionNode({ children, data, isConnectable }) {
           <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
         )}
 
-          <div className="pl-2">⌄</div>
+          <div className="pl-2 dropdown">⌄</div>
         </div>
         
         {dropdownVisible && (
@@ -272,7 +281,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         )}
       </div>
 
-      <div className="mt-2 text-center text-xs font-semibold primary-font m-2">
+      <div className="mt-2 text-center text-xs font-semibold primary-font">
         {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
       </div>
 
@@ -284,26 +293,26 @@ export default function ActionNode({ children, data, isConnectable }) {
             <PriceInfo sourceInfo={assetInFormData} targetInfo={assetOutFormData} priceInfo={sellPriceInfoMap[nodeId]} />
           ) : (
             // Placeholder for when no price info is available
-            <div className="border rounded m-2 p-2 ">No price info available</div>
+            <div className="in-node-border rounded m-2 p-2 ">No price info available</div>
           )
         )
       )}
       </div>
 
       {formState.action === 'xTransfer' && actionData?.source?.chain && actionData?.source?.amount && actionData?.source?.symbol && (
-      <div className='p-2 border rounded m-1'>
+      <div className='p-2 in-node-border rounded mb-2 '>
         <div className="flex justify-between">
-          <div className="w-1/3 text-xxs text-gray-500">From:</div>
+          <div className="w-1/3 text-xxs text-gray-400">From:</div>
           <div className="w-2/3 font-semibold text-left ">{actionData.source.chain}</div>
         </div>
 
         <div className="flex justify-between">
-          <div className="w-1/3 text-xxs text-gray-500">To:</div>
+          <div className="w-1/3 text-xxs text-gray-400">To:</div>
           <div className="w-2/3 font-semibold text-left">{actionData.target.chain}</div>
         </div>
 
         <div className="flex justify-between">
-          <div className="w-1/3 text-xxs text-gray-500">Amount:</div>
+          <div className="w-1/3 text-xxs text-gray-400">Amount:</div>
           <div className="w-2/3 font-semibold text-left">{actionData.source.amount} {actionData.source.symbol}</div>
         </div>
       </div>
@@ -315,13 +324,14 @@ export default function ActionNode({ children, data, isConnectable }) {
 
     <button 
       onClick={() => fetchActionInfo(assetInFormData, assetOutFormData)} 
-      className=" flex justify-center align-center font-bold py-1 px-1 mb-1 border-gray-300 hover:border-green rounded" 
+      className=" flex justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
       >
        { isFetchingActionData ? (
           <div className="small-spinner"></div>
         ) : (
           <span className=" font-semibold mr-1">fetch</span>
         )}
+
       <img className="h-4 w-4 ml-2" src="/refresh.svg" alt="refresh icon" />
     </button>
 
@@ -329,6 +339,15 @@ export default function ActionNode({ children, data, isConnectable }) {
         lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>Last updated: {formatTime(lastUpdated)}</span>
         ):( null)
         }
+
+      
+      {/* { formState.action === 'xTransfer' ? (
+         lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>
+          Last updated: {formatTime(lastUpdated)}
+        </span>
+      ):( null)
+    }  */}
+
       <div className="space-y-2 mt-1">
         {data.children}
       </div>

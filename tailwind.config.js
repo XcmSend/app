@@ -8,7 +8,11 @@ export default {
     extend: {
       minWidth: {
         '300': '300px',
-      }
+      },
+      borderColor: (theme) => ({
+        ...theme('colors'),
+        DEFAULT: 'var(--border-color)',
+      }),
     }
   },
   variants: {},

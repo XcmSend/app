@@ -11,9 +11,12 @@ import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast'; 
 import { signExtrinsicUtil } from '../../utils/signExtrinsicUtil';
 import { ISubmittableResult } from '@polkadot/types/types';
+import ThemeContext from '../../../../contexts/ThemeContext';
+import '../../../../index.css';
 
 
 export default function TransactionMain() {
+  const { theme } = useContext(ThemeContext);
   const { scenarios, activeScenarioId, transactions, setTransactions, saveSignedExtrinsic, setNodes, nodes } = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
@@ -81,19 +84,18 @@ const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", I
     const allSignedExtrinsics: any = [];
 
     // Loop through the draft extrinsics and sign each
-    for (const txData of transactions) { 
-      updateTransactionStatus(txData, 'waiting for extrinsic to be signed...');
+    for (const { draftedExtrinsic, formData } of transactions) { 
+      const { nodeId, source } = formData;
+      console.log("[handleAcceptTransactions] draftedExtrinsic:", draftedExtrinsic)
 
-      console.log("[handleAcceptTransactions] draftedExtrinsic:", txData)
-        const signedExtrinsic = await signExtrinsic(txData.draftedExtrinsic, txData.formData.source.address);
-        allSignedExtrinsics.push(signedExtrinsic);
-
-        console.log("[handleAcceptTransactions] saving signed extrinsic activeScenarioId:", activeScenarioId);
-
-        // Update node data with the signed extrinsic using nodeId from txData.formData
-        saveSignedExtrinsic(activeScenarioId, txData.formData.nodeId, signedExtrinsic);
-
+      updateTransactionStatus({ draftedExtrinsic, formData }, 'waiting for extrinsic to be signed...');
+    
+      const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address);
+      allSignedExtrinsics.push(signedExtrinsic);
+    
+      saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
     }
+    
 
     // Save the signed extrinsics
     setSignedExtrinsics(allSignedExtrinsics);
@@ -137,14 +139,14 @@ const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", I
 
 const handleDeclineTransactions = () => {
   setIsReviewingTransactions(false);
-  // Handle declined scenario...
+  navigate('/builder');
 };
 
 
   return (
     <div>
       
-      <button className='button' onClick={backToBuilder}>Back</button>
+      <button className={`button ${theme}`} onClick={backToBuilder}>Back</button>
       {isReviewingTransactions && (
        <TransactionReview
         transactions={transactions}

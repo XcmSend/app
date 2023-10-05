@@ -17,6 +17,11 @@ $chain-node-width: 250px;
     --button-bg: #{$primary-color};
     --node-handle: #181818;
     --node-input-title:rgb(156 163 175);
+    --color: rgb(19, 19, 19);
+    --border-color: rgb(224, 224, 224); 
+    --button-bg-hover: darken(#{$primary-color}, 10%);
+    --box-shadow-color: #bdbdbd44;
+    
 }
 
 .dark {
@@ -32,6 +37,11 @@ $chain-node-width: 250px;
     --controls-border: #676768;
     --button-bg: #{$primary-color};
     --node-handle: #ffffff;
-    --node-input-title:white;
+    --node-input-title:rgb(160, 160, 160);
+    --color: rgb(252, 252, 252);
+    --border-color: rgb(44, 44, 44); 
+    --button-bg-hover: darken(#{$primary-color}, 10%);
+    --box-shadow-color: #4d4d4d44;
+
 
 }
