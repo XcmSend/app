@@ -15,7 +15,7 @@ interface BalanceTippyProps {
         reserved: string;
         total: string;
     }
-    symbol: string;
+    symbol?: string;
 }
 
 const BalanceTippy: React.FC<BalanceTippyProps> = ({ balance, symbol }) => {

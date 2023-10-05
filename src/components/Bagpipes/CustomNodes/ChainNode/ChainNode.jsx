@@ -2,7 +2,6 @@
 import React, { useState, useContext, useEffect, useMemo, useRef } from 'react';
 import {  Handle, Position, useNodeId } from 'reactflow';
 import SocketContext from '../../../../contexts/SocketContext';
-import CustomNode from '../CustomNode';
 import { useAddressBook } from '../../../../contexts/AddressBookContext';
 import useExecuteScenario from '../../hooks/useExecuteScenario';
 import AccountDropdown from './AccountDropdown';
@@ -13,15 +12,18 @@ import { listChains } from '../../../../Chains/ChainsInfo';
 import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
 import { getAssetBalanceForChain } from '../../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
+import ThemeContext from '../../../../contexts/ThemeContext';
+import '../../node.styles.scss';
+
 import 'antd/dist/antd.css';
 import '../../../../index.css';
 import './ChainNode.scss';
-import '../../node.styles.scss';
 import '../../../../main.scss';
 
 import '/plus.svg'
 
 const ChainNode = ({ children, data, isConnectable }) => {
+  const { theme } = useContext(ThemeContext);
   const { nodeContent } = data;
   const socket = useContext(SocketContext);
   const { nodeContentMap, executeScenario } = useExecuteScenario();
@@ -35,7 +37,6 @@ const ChainNode = ({ children, data, isConnectable }) => {
     isModalVisible: state.isModalVisible,
     setIsModalVisible: state.setIsModalVisible,
     saveNodeFormData: state.saveNodeFormData,
-
   }));
   const { addContact, contacts, error, setError } = useAddressBook();
   const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -273,12 +274,12 @@ console.log('Component re-rendered', formState.address);
 
 
   return (
-    <div className="custom-node  shadow-lg text-xs p-4 bg-gray-100"> {/* Added background for light grey */}
-    <h1 className="text-xxs text-gray-400 primary-font mb-1">{nodeId}</h1>
+    <div className={`${theme} custom-node shadow-lg text-xs p-4`}>
+    <h1 className="text-xxs node-input primary-font mb-1">{nodeId}</h1>
 
         {selectedChainLogo && (
             <div className="chain-logo-container mb-2 mt-2 flex justify-center">
-              <img src={selectedChainLogo} alt={`${formState.chain} Logo`} className="chain-logo w-12 h-12" /> {/* Adjust w-16 and h-16 as necessary */}
+              <img src={selectedChainLogo} alt={`${formState.chain} Logo`} className="chain-logo w-12 h-12" /> 
             </div>
           )}
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
@@ -286,11 +287,11 @@ console.log('Component re-rendered', formState.address);
     <div className="m-2">
       <div className="border p-2 rounded mb-2 ">
         <div className="chain-selection mb-2">
-          <h3 className="text-xxs text-gray-400 primary-font mb-1">Chain</h3> {/* Title */}
+          <h3 className="text-xxs node-input primary-font mb-1">Chain</h3> 
           <select 
               className="chain-selector font-semibold text-black border border-gray-300 p-2 rounded"
               onChange={handleChainChange}
-              value={formState.chain}  // This sets the value for the dropdown from the state
+              value={formState.chain}  // sets the value for the dropdown from the state
           >
               <option value="" selected>Select chain</option>
               {ChainInfoList.map((ChainInfo, index) => (
@@ -308,7 +309,7 @@ console.log('Component re-rendered', formState.address);
 
         {formState.chain && (
           <div className="asset-selection mb-2">
-            <h3 className="text-xxs text-gray-400 primary-font mb-1">Asset</h3>
+            <h3 className="text-xxs node-input primary-font mb-1">Asset</h3>
             {isLoading ? (
                <div className="select-container">
                <div className="border border-gray-300 p-2 rounded-md w-full">
@@ -331,7 +332,7 @@ console.log('Component re-rendered', formState.address);
   
   {formState.chain && (
     <div className="flex flex-col items-start mb-2 border p-2 rounded">
-      <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start ">Addresses</h3>
+      <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>
       <div className="flex items-center text-black justify-start  w-full">
                 <AccountDropdown 
                     selectedChainName={formState.chain}
@@ -346,7 +347,7 @@ console.log('Component re-rendered', formState.address);
   
   {formState.chain && contacts.length > 0 && (
     <div className="mb-2 border p-2 rounded flex flex-col items-start justify-start">
-        <h3 className="text-xxs text-gray-400 primary-font mb-2 self-start">Contacts</h3>
+        <h3 className="text-xxs node-input primary-font mb-2 self-start">Contacts</h3>
         <select 
             className="contact-selector font-semibold text-black border border-gray-300 p-2 rounded"
             value={formState.contact || ""}
@@ -372,7 +373,7 @@ console.log('Component re-rendered', formState.address);
 
 {formState.chain && (
    <div className="mb-2 border p-2 rounded">
-     <h3 className="text-xxs text-gray-400 primary-font mb-1 flex items-center justify-between">
+     <h3 className="text-xxs node-input primary-font mb-1 flex items-center justify-between">
        Amount 
        <div className="flex items-center primary-font">
 

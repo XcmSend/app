@@ -1,4 +1,37 @@
 $primary-color: #007bff;
 $primary-font: 'Lexend', 'Muli', 'Mulish', sans-serif;
 $unbounded-font: 'Unbounded', sans-serif;
-$chain-node-with: 250px;
+$chain-node-width: 250px;
+
+.light {
+    --bg: #fff;
+    --primary: #fefefe;
+    --node-bg: #ffffff;
+    --node-color: #222;
+    --node-border: #222;
+    --minimap-mask-bg: #f2f2f5;
+    --controls-bg: #fefefe;
+    --controls-bg-hover: #eee;
+    --controls-color: #222;
+    --controls-border: #ddd;
+    --button-bg: #{$primary-color};
+    --node-handle: #181818;
+    --node-input-title:rgb(156 163 175);
+}
+
+.dark {
+    --bg: #111827;
+    --primary: #0035a8;
+    --node-bg: #1a1a1a;
+    --node-color: #f9f9f9;
+    --node-border: #888;
+    --minimap-mask-bg: #343435;
+    --controls-bg: #555;
+    --controls-bg-hover: #676768;
+    --controls-color: #dddddd;
+    --controls-border: #676768;
+    --button-bg: #{$primary-color};
+    --node-handle: #ffffff;
+    --node-input-title:white;
+
+}

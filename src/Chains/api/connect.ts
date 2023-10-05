@@ -31,10 +31,18 @@ export default async function connectToWsEndpoint(chain: string): Promise<ApiPro
             return api;
         } catch (error) {
             lastError = error;
-            toast.error(`Failed to connect to endpoint ${endpoint}. Trying next...`);
+
+            if (error.message.includes("Insufficient resources")) {
+                toast.error(`Endpoint ${endpoint} has insufficient resources.`);
+            } else if (error.message.includes("abnormal closure")) {
+                toast.error(`Endpoint ${endpoint} closed the connection abnormally.`);
+            } else {
+                toast.error(`Failed to connect to endpoint ${endpoint}. Trying next...`);
+            }
         }
     }
 
     toast.error("All endpoints failed. Please check your connection.");
     throw lastError;
 }
+

@@ -6,7 +6,7 @@
   }
   
   .react-flow__node-openAi {
-    background-color: #ffffff !important;
+    background-color: var(--node-bg);
     border-color: #e2e2e2;
     color: #333;
     border-radius :10px !important;
@@ -16,7 +16,8 @@
   }
 
   .react-flow__node-chain {
-    background-color: #ffffff !important;
+    background-color: var(--button-bg) !important;
+    color: var(--node-color) !important;
     border-color: #e2e2e2;
     color: #333;
     border-radius: 12px !important;
@@ -29,9 +30,9 @@
   }
 
   .react-flow__node-action {
-    background-color: #ffffff !important;
+    // background-color: #ffffff00 !important;
     border-color: #e2e2e2;
-    color: #333;
+    color: var(--node-color) !important;
     border-radius: 8px !important;
     font-family: $primary-font, sans-serif;
     font-size: x-small;
@@ -43,7 +44,8 @@
   .react-flow__node  {
     outline: 1px solid rgba(195, 195, 195, 0.535) !important;
     border-radius: 12px !important;
-    background: white;
+    background-color: var(--node-bg);
+    color: var(--node-color) !important;
     box-shadow: 8px 8px 10px 5px #bdbdbd44 !important;
     font-family: $primary-font, sans-serif;
     /* border: 3px solid black !important; */
@@ -91,57 +93,6 @@
 }
 
 
-/* .react-flow__edge-.selected {
-  outline: 3px solid rgba(20, 255, 51, 0.535) !important;
-  border: 3px solid rgba(20, 255, 51, 0.535) !important;
-
-} */
-
-  
-  /* .react-flow__node-openAi:hover {
-    outline: 2px solid rgba(185, 185, 185, 0.627) !important;
-  }
-   */
-  /* .react-flow__node-openAi.selected {
-    outline: 3px solid rgba(21, 206, 0, 0.356) !important;
-  } */
-
-  /* .react-flow__node:focus {
-    outline: 1px solid #ffb219 !important;
-    box-shadow: -7px 15px 10px 3px #7c7c7c18 !important;
-  } */
-  
-  /* .react-flow__handle-right {
-    right: -4px !important;
-    top: 90% !important;
-    transform: translate(0, -50%) !important;
-    height: 10px !important;
-    width: 6px !important;
-    border-radius: 1px !important;
-  } */ 
-
-  /* .react-flow__handle-left {
-    right: -4px !important;
-    top: 10% !important;
-    transform: translate(0, -50%) !important;
-    height: 6px !important;
-    width: 6px !important;
-    border-radius: 20px !important;
-    border: 2px solid white;
-    background: black;
-  }  */
-
-  /* .tippy-custom {
-    color: black !important;
-    font-size: 12px !important
-  } */
-
-  /* .tippy-box {
-    background: white !important;
-    border-radius: 7px !important;
-    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.334) !important;
-    color: black !important;
-  } */
 
   .tippy-arrow {
     color: rgb(255, 255, 255) !important;
@@ -186,12 +137,19 @@
 background-color: white !important;
   }
 
+  .node-input {
+    color: var(--node-input-title);
+  }
 
   .update-text {
     color: white;
   }
 
   .custom-node {
+    background-color: var(--node-bg) !important;
+    border-radius: 12px !important;
+    color: var(--node-color) !important;
+    
     width: 100%;
     height: 100%;
     // overflow-wrap: break-word;

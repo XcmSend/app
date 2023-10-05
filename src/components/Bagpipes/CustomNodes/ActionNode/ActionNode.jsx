@@ -293,17 +293,17 @@ export default function ActionNode({ children, data, isConnectable }) {
       {formState.action === 'xTransfer' && actionData?.source?.chain && actionData?.source?.amount && actionData?.source?.symbol && (
       <div className='p-2 border rounded m-1'>
         <div className="flex justify-between">
-          <div className="w-1/3">From:</div>
-          <div className="w-2/3 font-semibold text-left">{actionData.source.chain}</div>
+          <div className="w-1/3 text-xxs text-gray-500">From:</div>
+          <div className="w-2/3 font-semibold text-left ">{actionData.source.chain}</div>
         </div>
 
         <div className="flex justify-between">
-          <div className="w-1/3">To:</div>
+          <div className="w-1/3 text-xxs text-gray-500">To:</div>
           <div className="w-2/3 font-semibold text-left">{actionData.target.chain}</div>
         </div>
 
         <div className="flex justify-between">
-          <div className="w-1/3">Amount:</div>
+          <div className="w-1/3 text-xxs text-gray-500">Amount:</div>
           <div className="w-2/3 font-semibold text-left">{actionData.source.amount} {actionData.source.symbol}</div>
         </div>
       </div>

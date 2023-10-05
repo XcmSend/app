@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-import React, { useState, useRef, useCallback , useEffect, memo } from 'react';
+import React, { useState, useRef, useCallback , useEffect, memo, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactFlow, { Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
@@ -29,6 +29,7 @@ import toast from 'react-hot-toast';
 import './utils/getAllConnectedNodes';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
+import ThemeContext from '../../contexts/ThemeContext';
 import { lightTheme, darkTheme } from './theme';
 import { node } from 'stylis';
 
@@ -39,7 +40,7 @@ import Edges from './edges';
 
 // import 'reactflow/dist/style.css';
 // import './node.styles.scss';
-// import '../../index.css';
+import '../../index.css';
 
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};
@@ -118,7 +119,9 @@ const BagpipesFlow = () => {
     const [mode, setMode] = useState('light');
     const { undo, redo, canUndo, canRedo, takeSnapshot } = useUndoRedo();
     // console.log("takeSnapshot from useUndoRedo:", takeSnapshot);
-    const theme = mode === 'light' ? lightTheme : darkTheme;
+    const { theme: appTheme, setTheme: setAppTheme } = useContext(ThemeContext);
+    const theme = appTheme === 'light' ? lightTheme : darkTheme;
+    
 
     const [modalNodeId, setModalNodeId] = useState(null);
     // const [nodeConnections, setNodeConnections] = useState({});
@@ -659,32 +662,52 @@ const BagpipesFlow = () => {
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
     const handleDraftTransactions = async () => {
-
       const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
-
       console.log('handleDraftTransactions actionNodes:', actionNodes);
-   
+  
+      // Helper function to check for the completeness of actionData for a given node
+      const isActionDataComplete = (node) => {
+        // Ensure node has formData and actionData
+        if (!node.formData || !node.formData.actionData) return false;
+    
+        const { source, target } = node.formData.actionData;
+    
+        // Ensure source and target are not undefined or null
+        if (!source || !target) return false;
+    
+        // Check required properties for source and target
+        const isSourceComplete = source.chain && source.assetId !== undefined && source.address && source.amount;
+        const isTargetComplete = target.chain && target.assetId !== undefined && target.address;
+    
+        return isSourceComplete && isTargetComplete;
+    };
+    
+    
+    
+      console.log('handleDraftTransactions isActionDataComplete:', isActionDataComplete);
+  
       // Check if any action node has empty or missing actionData
-      const hasEmptyActionData = actionNodes.some(node => node.formState?.actionData);
-      console.log('handleDraftTransactions hasEmptyActionData:', hasEmptyActionData);
-   
-      if (hasEmptyActionData) {
-         toast('you need to fetch data from your action nodes');
-         return;  // Stop the function here if there's missing actionData
+      const hasIncompleteActionData = actionNodes.some(node => !isActionDataComplete(node));
+      console.log('handleDraftTransactions hasIncompleteActionData:', hasIncompleteActionData);
+  
+        if (hasIncompleteActionData) {
+          toast('you need to fetch data from your action nodes');
+          return;  // Stop the function here if there's missing actionData
       }
-   
+  
       try {
-         const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
-         console.log('Drafted transactions:', draftedTransactions);
-   
-         // Now navigate the user to TransactionMain for review
-         setTransactions(draftedTransactions);
-         navigate('/transaction/review');
+          const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
+          console.log('Drafted transactions:', draftedTransactions);
+  
+          // Now navigate the user to TransactionMain for review
+          setTransactions(draftedTransactions);
+          navigate('/transaction/review');
       } catch (error) {
-         console.error("Error during transaction drafting:", error);
-         toast.error('An error occurred during transaction drafting.');
+          console.error("Error during transaction drafting:", error);
+          toast.error('An error occurred during transaction drafting.');
       }
-   };
+  };
+  
    
 
   useEffect(() => {
@@ -748,7 +771,7 @@ const BagpipesFlow = () => {
               <MiniMap />
               {/* <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Lines} /> 
              <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Lines} />  */}
-              <Background color='fff' className="" variant={BackgroundVariant.Dots} />
+              <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bg-gray-300" : "bg-gray-900"} variant={BackgroundVariant.Dots} />
               <ControlsStyled />
               <EdgeLabelRenderer type='' />
               {/* <Panel position="bottom-center">

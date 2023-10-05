@@ -26,6 +26,7 @@ import toast, { Toaster, ToastBar } from 'react-hot-toast';
 import './App.scss';
 import 'tippy.js/dist/tippy.css';
 import { Socket } from 'socket.io-client';
+import ThemeContext from './contexts/ThemeContext';
 
 
 export function App () {
@@ -46,6 +47,7 @@ export function App () {
 
     return (
       <div style={{ width: '100vw', height: '100vh' }}>
+        <ThemeContext.Provider>
       <WalletContextProvider>
         <SocketContext.Provider value={socket}>
         <ConfigProvider>
@@ -129,6 +131,7 @@ export function App () {
             </ConfigProvider>
           </SocketContext.Provider>
       </WalletContextProvider>
+      </ThemeContext.Provider>
       </div>
     );
   }

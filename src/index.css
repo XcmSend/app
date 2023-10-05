@@ -1,8 +1,10 @@
+@import './variables.scss';
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-:root {
+
+/* :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
@@ -16,7 +18,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-}
+} */
 
 a {
   font-weight: 500;
@@ -47,7 +49,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--button-bg);
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -72,8 +74,9 @@ button:focus-visible {
   }
 }
 
-
-
+.sidebar {
+  background-color: var(--no-bg) !important;
+}
 
 .bagpipe {
   flex-direction: column;
@@ -105,6 +108,7 @@ button:focus-visible {
 }
 
 .bagpipe .dndnode {
+  background-color: var(--button-bg) !important;
   height: 20px !important;
   padding: 20px;
   border: 1px solid #250303;
