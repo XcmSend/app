@@ -6,10 +6,12 @@ import ScenarioService from '../../../services/ScenarioService';
 import { processScenarioData, validateDiagramData } from '../utils/scenarioUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import useAppStore from '../../../store/useAppStore';
-import { broadcastToChain } from '../../../Chains/api/broadcast';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-hot-toast';
 import { getOrderedList } from '../utils/scenarioUtils';
+import { broadcastToChain } from '../../../Chains/api/broadcast';
+
+
 
 const useExecuteChainScenario = (nodes, setNodes) => {
     const socket = useContext(SocketContext);
@@ -185,6 +187,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
     setNodeContentMap({});
 
     try {
+
         const rawDiagramData = store.getState();
         console.log('[executeChainScenario] rawDiagramData:', rawDiagramData);
 
@@ -194,7 +197,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                 id: node.id, 
                 type: node.type, 
                 data: node.data, 
-                formState: getSavedFormState(node.id) || {},  // Get the form state for each node
+                formState: getSavedFormState(node.id) || {},  
             })),
             edges: rawDiagramData.edges.map(edge => ({ ...edge })),
         };
@@ -225,58 +228,53 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         let executionCycleFinished = false;
 
         // Iterate over the nodes based on the order from orderedList
-        for(let nodeId of orderedList) {
+        for(let index = 0; index < orderedList.length; index++) {
+            let nodeId = orderedList[index];
             let currentNode = diagramData.nodes.find(node => node.id === nodeId);
             if (!currentNode) {
                 toast.error('The execution has ended due to an unknown node.');
                 return;
             }
 
-
             switch(currentNode.type) {
-              case 'openAi':
-                  // Handle the openAi node execution
-                  break;
+            case 'openAi':
+                // Handle the openAi node execution
+                break;
 
-              case 'chain':
+            case 'chain':
                 toast.success('Executing Chain Node...');
-                  // Handle the chain node execution
-          
-                  break;
+                // Handle the chain node execution
+                break;
 
-              case 'action':
-                toast.success('Executing Action Node...');
+            case 'action':
+                toast('Executing action node!', {
+                    icon: '💥',
+                });
 
-                  // Handle the action node execution
-                  break;
-          }
-      }
+
+                // Retrieve the signedExtrinsic from the current node data
+                const signedExtrinsic = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.signedExtrinsic || null;
+                const chain = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.actionData?.source?.chain || null; 
+                console.log('executeChainScenario Signed Extrinsic:', signedExtrinsic);
+                console.log('executeChainScenario Chain:', chain);
+
+                if(signedExtrinsic) {
+                    await broadcastToChain(chain, signedExtrinsic); 
+
+                }
+                // if it's the last iteration and set executionCycleFinished accordingly
+                executionCycleFinished = index === orderedList.length - 1; 
+                break;
+            }
+        }
+
 
       if (executionCycleFinished) {
-          // Handle the end of the execution
+         toast.success('Workflow Execution Completed! The execution cycle has finished.');
+         setLoading(false); 
       }
 
-              // Here we have the logic from handleSaveScenario (from runChainScenarioOnce)
-
-
-
-
-            console.log("[executeChainScenario] About to run the scenario with the following data:", { diagramData: diagramData, scenario: activeScenarioId });
-
-            // the response should provide the executionId
-            const response = await ScenarioService.runOnce({ 
-              diagramData: diagramData,
-              scenario: activeScenarioId,
-            
-            });  
-            setExecutionId(response.executionId);
-
-
-            console.log('[executeChainScenario], Workflow execution result:', response.executionId); 
-            
-            if (response.executionId) {
-
-              // setExecutionId(response.executionId); 
+            if (executionId) {
 
               const currentDateTime = new Date().toISOString();
 
@@ -285,7 +283,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                   nodeContentMap: { ...nodeContentMap },
               };
               console.log('Saving execution data...');
-              saveExecution(response.executionId, executionData);
+              saveExecution(executionId, executionData);
             } else {
               console.error('No executionId received from the server. Cannot save execution.');
           }
