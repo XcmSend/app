@@ -598,6 +598,8 @@ const BagpipesFlow = () => {
     
       // Gather IDs of selected nodes
       const nodeIdsToDelete = currentScenarioNodes.filter(node => node.selected).map(node => node.id);
+      console.log("[onNodesDelete] Selected nodes for deletion:", nodeIdsToDelete);
+
     
       // Delete selected nodes from the state
       setNodes((prevNodes) => prevNodes.filter(node => !node.selected));
@@ -681,8 +683,6 @@ const BagpipesFlow = () => {
     
         return isSourceComplete && isTargetComplete;
     };
-    
-    
     
       console.log('handleDraftTransactions isActionDataComplete:', isActionDataComplete);
   

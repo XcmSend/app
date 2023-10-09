@@ -37,6 +37,10 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
         navigate('/builder') ;
       };
   
+          // Function to navigate to /builder
+    const goToLab = () => {
+      navigate('/lab');
+    };
 
       return (
         <header className={'wallet-header-wrapper'}>
@@ -54,6 +58,11 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
                   onClick={goToBagpipes}
                   type={'primary'}
                 >Builder</Button>
+                                <Button
+                  className='xcm-send-btn xcm-send-btn-small-size'
+                  onClick={goToLab}
+                  type={'primary'}
+                >Lab</Button>
 {/*       
                 <Button
                   className='xcm-send-btn-wallet xcm-send-btn-small-size'

@@ -9,7 +9,7 @@ import useAppStore from '../../../store/useAppStore';
 import { broadcastToChain } from '../../../Chains/api/broadcast';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-hot-toast';
-
+import { getOrderedList } from '../utils/scenarioUtils';
 
 const useExecuteChainScenario = (nodes, setNodes) => {
     const socket = useContext(SocketContext);

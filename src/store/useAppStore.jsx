@@ -414,6 +414,26 @@ const useAppStore = create(
         });
     },
 
+    saveActionDataForNode: (scenarioId, nodeId, newActionData) => {
+      console.log("[saveActionDataForNode] Called with:", { scenarioId, nodeId, newActionData });
+      set((state) => {
+          const scenario = state.scenarios[scenarioId];
+          if (!scenario) return; // return if no scenario found
+          
+          const nodes = scenario.diagramData.nodes.map((node) => 
+              node.id === nodeId 
+                  ? { ...node, formData: { ...node.formData, actionData: newActionData } } 
+                  : node
+          );
+          
+          const updatedScenarios = {
+              ...state.scenarios,
+              [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
+          };
+          return { scenarios: updatedScenarios };
+      });
+  },  
+
     saveSignedExtrinsic: (scenarioId, nodeId, signedExtrinsic) => {
       console.log("[saveSignedExtrinsic] Called with:", { scenarioId, nodeId, signedExtrinsic });
   

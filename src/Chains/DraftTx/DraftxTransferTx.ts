@@ -165,6 +165,52 @@ export async function dotToParachain(amount: number,  targetAddress: string){
 }
 
 
+export async function parachainToPolkadot(amount: number, targetAddress: string, chainEndpoint: string) {
+  console.log(`[parachainToPolkadot] Sending ${amount} DOT from assetHub to Polkadot`);
+
+  const api = await connectToWsEndpoint(chainEndpoint);
+
+  const rawTargetAddress = getRawAddress(targetAddress);
+
+
+     // Destination is Polkadot relay chain
+     const destination = {
+      parents: 1, // Polkadot relay chain is one level up from any parachain
+      interior: { Here: null }
+  };
+
+  console.log(`[parachainToPolkadot] targetAddress`, targetAddress);
+
+
+  // The target account on Polkadot relay chain to receive the DOT
+  const targetAccount = {
+      parents: 1,  // Address is on the relay chain
+      interior: { X1: { AccountId32: { id: rawTargetAddress } } }
+  };
+
+  // The asset to transfer, in this case, DOT from the relay chain
+  const dotAssetLocation = { 
+      Concrete: destination
+  };
+
+  const asset = {
+      id: dotAssetLocation,
+      fun: { Fungible: amount }
+  };
+
+  console.log(`[parachainToPolkadot] targetAccount`, targetAccount);
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+      { V3: destination },
+      { V3: targetAccount },
+      { V3: [asset] },
+      0,
+      { Unlimited: null }  // weight_limit
+  );
+
+  return tx;
+}
+
+
 
 
 // ref: https://hydradx.subscan.io/extrinsic/3330338-2?event=3330338-7
@@ -195,7 +241,7 @@ export async function hydraDxToParachain(amount: number, assetId: number, destAc
 
     const tx = api.tx.xTokens.transferMultiasset(
         { V3: asset },
-        { V2: destination },
+        { V3: destination },
         { Unlimited: 0 },
 
     );
@@ -205,47 +251,47 @@ export async function hydraDxToParachain(amount: number, assetId: number, destAc
 
 /// tested on assethub > hydradx
 /// assethub > parachain, send an asset on assethub to receiving parachain
-export async function assethub_to_parachain(assetid: string, amount: number, accountid: string, paraid: number) {
-	//console.log(`[assethub_to_hydra]`);
-	const api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
-	//const paraid = 2034;//hydradx
-	//const accountid = "0xca477d2ed3c433806a8ce7969c5a1890187d765ab8080d3793b49b42aa9e805f";
-	const destination = {
-		interior: { X1: { Parachain: paraid } },
-		parents: 1,
-	  };
-	
-	  const account = {
-		parents: 0,
-		interior: { X1: { AccountId32: { id: accountid} } },
-	  };
+export async function assetHubToParachain(assetid: string, amount: number, accountid: string, paraid: number) {
+  console.log(`[assethubToParachain]`);
 
-	  const asset =	{
-		id: {
-            Concrete: {
+  const api = await connectToWsEndpoint('assetHub');
+
+  const destination = {
+      parents: 0,
+      interior: { X1: { Parachain: paraid } }
+  };
+
+  const targetAccount = {
+      parents: 0,
+      interior: { X1: { AccountId32: { id: accountid } } }
+  };
+
+  const asset = {
+      id: {
+          Concrete: {
               parents: 0,
               interior: {
-                X2: [
-                  { PalletInstance: 50 },
-                  { GeneralIndex: assetid },
-                ],
-              },
-            },
-          },
-		fun: { Fungible: amount },
-		 parents: 0,
-		};
-	  //];
+                  X2: [
+                      { PalletInstance: 50 },
+                      { GeneralIndex: assetid }
+                  ]
+              }
+          }
+      },
+      fun: { Fungible: amount }
+  };
 
-	const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
-		{ V3: destination},
-		{ V3: account},
-		{ V3: [asset]},
-		0,
-		{ Unlimited: 0 }
-	);
-	return tx;
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(  // Note: changed to xcmPallet
+      { V3: destination },
+      { V3: targetAccount },
+      { V3: [asset] },
+      0,
+      { Unlimited: null }  // weight_limit
+  );
+
+  return tx;
 }
+
 
 // rococo to parachain
 // sends native ROC to parachain

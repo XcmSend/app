@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, assethub_to_parachain, dotToParachain } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, dotToParachain, assetHubToParachain, parachainToPolkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -53,21 +53,22 @@ function handlexTransfer(formData) {
             // const paraid = chains.find(chain => chain.name === 'assethub').paraid;
             return dotToParachain(submittableAmount, target.address);
         },
+        'assetHub:polkadot': () => {
+            console.log("handlexTransfer for AssetHub to Polkadot...");
+            // const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
+            return parachainToPolkadot(submittableAmount, target.address, target.chain);
+        },
         'hydradx:polkadot': () => {
             console.log("handlexTransfer for HydraDx to Polkadot...");
             const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
-        'assethub:polkadot': () => {
-            console.log("handlexTransfer for AssetHub to Polkadot...");
-            const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
-            return assethub_to_parachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
-        },
+
         'assethub:hydradx': () => {
             console.log("handlexTransfer forAssetHub to HydraDx...");
             const paraid = chains.find(chain => chain.name === 'hydraDx').paraid;
-            return assethub_to_parachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
+            return assetHubToParachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
         }
     };
 

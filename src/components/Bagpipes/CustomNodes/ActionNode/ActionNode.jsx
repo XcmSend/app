@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
@@ -22,11 +23,12 @@ const formatTime = (date) => {
 export default function ActionNode({ children, data, isConnectable }) {
   const { theme } = React.useContext(ThemeContext);
   const nodeId = useNodeId();
-  const { scenarios, activeScenarioId, loading, saveNodeFormData  } = useAppStore(state => ({ 
+  const { scenarios, activeScenarioId, loading, saveNodeFormData, saveActionDataForNode  } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     loading: state.loading,
     saveNodeFormData: state.saveNodeFormData,
+    saveActionDataForNode: state.saveActionDataForNode,
   }));
   const [orderedList, setOrderedList] = useState([]);
   const selectedNodeId = scenarios[activeScenarioId]?.selectedNodeId;
@@ -42,6 +44,11 @@ export default function ActionNode({ children, data, isConnectable }) {
   const edges = scenarios[activeScenarioId]?.diagramData?.edges;
   const [lastUpdated, setLastUpdated] = useState(null);
   const [actionData, setActionData] = useState({});
+  const [localActionData, setLocalActionData] = useState(null);
+  // At the top of your component after state or props declarations:
+const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
+const currentActionData = currentNode?.formData?.actionData;
+
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
     console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
@@ -79,31 +86,41 @@ export default function ActionNode({ children, data, isConnectable }) {
     );
 
     if (newActionData) {
-        setActionData(newActionData);
-        console.log("[handleDropdownClick] Constructed action data : ", newActionData);
+      setActionData({ [nodeId]: newActionData });
+      console.log("[handleDropdownClick] Constructed action data : ", newActionData);
     }
   };
 
 
-  // useEffect(() => {
-  //   // logic to generate new orderedList
-  //   const newList = getOrderedList();  // Assuming this is your function to generate the list
-  //   setOrderedList(newList);
-  // }, [edges]);
+  const fetchActionInfo = async (currentNodeId) => {
+    if (isFetchingActionData) return;  // Ensure no simultaneous fetches
+    setIsFetchingActionData(true);
 
-  const fetchActionInfo = async () => {
-    console.log('fetchActionInfo Fetching');
-    const assetInId = assetInFormData?.asset?.assetId;
-    const assetOutId = assetOutFormData?.asset?.assetId;
-    const amount = assetInFormData?.amount;
+     // console.log('fetchActionInfo Fetching');
+    // const assetInId = assetInFormData?.asset?.assetId;
+    // const assetOutId = assetOutFormData?.asset?.assetId;
+    // const amount = assetInFormData?.amount;
 
-    console.log('fetchActionInfo assetInId:', assetInId, assetOutId);
-    if (assetInId === undefined || assetInId === null || assetOutId === undefined || assetOutId === null) return;
-    console.log('fetchActionInfo we passed through the if statement');
 
-    setIsFetchingActionData(true); // Start the loading state
+    // console.log('fetchActionInfo assetInId:', assetInId, assetOutId);
+    // if (assetInId === undefined || assetInId === null || assetOutId === undefined || assetOutId === null) return;
+    // console.log('fetchActionInfo we passed through the if statement');
 
     try {
+        // Deduce the assetInNodeId and assetOutNodeId based on the currentNodeId.
+        const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
+        const currentIndex = orderedList.indexOf(currentNodeId);
+        const assetInNodeId = orderedList[currentIndex - 1];
+        const assetOutNodeId = orderedList[currentIndex + 1];
+
+        // Now that you have the asset node IDs, derive the assetInFormData and assetOutFormData
+        const assetInFormData = nodes.find(node => node.id === assetInNodeId)?.formData;
+        const assetOutFormData = nodes.find(node => node.id === assetOutNodeId)?.formData;
+
+        const assetInId = assetInFormData?.asset?.assetId;
+        const assetOutId = assetOutFormData?.asset?.assetId;
+        const amount = assetInFormData?.amount;
+        
         if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
           console.log('fetchActionInfo Fetching for swap');
             const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
@@ -124,39 +141,30 @@ export default function ActionNode({ children, data, isConnectable }) {
         // Set actionData outside of the action-specific blocks
         // Create action data based on the selected value
         const newActionData = convertFormStateToActionType(
-            { ...formState, action: formState.action }, 
-            assetInFormData, 
-            assetOutFormData
-        );
+          { ...formState, action: formState.action }, 
+          assetInFormData, 
+          assetOutFormData
+      );
+  
+      if (newActionData) {
+        console.log("[fetchActionInfo] Constructed action data : ", newActionData);
+        setActionData(newActionData); // Directly set the current action data
+        saveActionDataForNode(activeScenarioId, currentNodeId, newActionData); // And also save it to global state
+        console.log("Constructed action data: ", newActionData);
+        setIsFetchingActionData(false);
 
-        if (newActionData) {
-            setActionData(newActionData);
-            setLastUpdated(new Date());
-            console.log("Constructed action data: ", newActionData);
-            console.log('lastUpdated:', lastUpdated);
-
-        }
+      }
 
     } catch (error) {
         // Handle error
-        toast.error("An error occurred while fetching action info...", error);
+        toast.error(error.toString());
+        console.error("An error occurred while fetching action info...", error);
         setPriceInfoMap({})    
       } finally {
         setIsFetchingActionData(false);
 
     }
 };
-
-
-
-
-
-
-  // useEffect(() => {
-  //   console.log('[ActionNode] assetInFormData:', assetInFormData);
-  //   fetchActionInfo(assetInFormData, assetOutFormData)
-  //   }, [assetInNodeId, assetOutNodeId, assetInFormData?.amount, assetInFormData?.address, assetOutFormData?.amount, assetOutFormData?.address]);
-
 
     useEffect(() => {
       if (!selectedNodeId || !selectedNodeId.startsWith('action_')) return;
@@ -182,10 +190,6 @@ export default function ActionNode({ children, data, isConnectable }) {
         setAssetOutNodeId(assetOutNodeId);
     }, [selectedNodeId, scenarios]);
 
-  //   useEffect(() => {
-  //     console.log('[ActionNode] Updated assetInNodeId:', assetInNodeId);
-  //     console.log('[ActionNode] Updated assetOutNodeId:', assetOutNodeId);
-  // }, [assetInNodeId, assetOutNodeId]);
   
     // This effect will only run once when the component mounts
     useEffect(() => {
@@ -194,12 +198,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         setFormState(currentNodeFormData);
       }
     }, []);
-    
-    // useEffect(() => {
-    //   if (formState.action === 'xTransfer') {
-    //       setPriceInfo(null);
-    //   }
-    // }, [formState.action]);
+  
     
     
     useEffect(() => {
@@ -211,36 +210,31 @@ export default function ActionNode({ children, data, isConnectable }) {
     
     
     useEffect(() => {
-      console.log("Attempting to save form state:", formState);
       if (!activeScenarioId || !nodeId) {
-          console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
-          return;
+        console.warn("Missing activeScenarioId or nodeId. Not proceeding with save.");
+        return;
       }
-
-      // fetchActionInfo()
-      const formData = { ...formState, actionData }; // combine formState with actionData
+    
+      const formData = { ...formState, actionData: currentActionData };
       saveNodeFormData(activeScenarioId, nodeId, formData);
-  }, [formState, actionData, nodeId, activeScenarioId]); 
-  
-  
-  useEffect(() => {
-    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-
-    if (currentNodeFormData && currentNodeFormData.action === 'swap') {
-      console.log('fetchActionInfo Fetching for swap', currentNodeFormData.action)
-      fetchActionInfo(assetInFormData, assetOutFormData)
-      return
-    }
-
-  } , [assetInFormData, assetOutFormData]); 
+    }, [formState, currentActionData, nodeId, activeScenarioId]); 
+    
+    useEffect(() => {
+      if (currentActionData?.action === 'swap' && !isFetchingActionData) {
+        console.log('fetchActionInfo Fetching for swap', currentActionData.action);
+        fetchActionInfo(nodeId);
+      }
+    }, [assetInFormData, assetOutFormData, currentActionData]); 
+    
   // Here we want to create the action form data object to pass for processing 
   useEffect(() => {
     const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
     if (newActionData) {
-        setActionData(newActionData);
-        console.log("Constructed action data: ", newActionData);
+      setActionData({ [nodeId]: newActionData });
+      console.log("Constructed action data: ", newActionData);
     }
   }, [formState, assetInFormData, assetOutFormData]);
+
   
   return (
     <>
@@ -299,21 +293,21 @@ export default function ActionNode({ children, data, isConnectable }) {
       )}
       </div>
 
-      {formState.action === 'xTransfer' && actionData?.source?.chain && actionData?.source?.amount && actionData?.source?.symbol && (
+      {formState.action === 'xTransfer' && currentActionData?.source?.chain && currentActionData?.source?.amount && currentActionData?.source?.symbol && (
       <div className='p-2 in-node-border rounded mb-2 '>
         <div className="flex justify-between">
           <div className="w-1/3 text-xxs text-gray-400">From:</div>
-          <div className="w-2/3 font-semibold text-left ">{actionData.source.chain}</div>
+          <div className="w-2/3 font-semibold text-left ">{currentActionData.source.chain}</div>
         </div>
 
         <div className="flex justify-between">
           <div className="w-1/3 text-xxs text-gray-400">To:</div>
-          <div className="w-2/3 font-semibold text-left">{actionData.target.chain}</div>
+          <div className="w-2/3 font-semibold text-left">{currentActionData.target.chain}</div>
         </div>
 
         <div className="flex justify-between">
           <div className="w-1/3 text-xxs text-gray-400">Amount:</div>
-          <div className="w-2/3 font-semibold text-left">{actionData.source.amount} {actionData.source.symbol}</div>
+          <div className="w-2/3 font-semibold text-left">{currentActionData.source.amount} {currentActionData.source.symbol}</div>
         </div>
       </div>
     )}
@@ -323,7 +317,7 @@ export default function ActionNode({ children, data, isConnectable }) {
 
 
     <button 
-      onClick={() => fetchActionInfo(assetInFormData, assetOutFormData)} 
+      onClick={() => fetchActionInfo(nodeId)} 
       className=" flex justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
       >
        { isFetchingActionData ? (
@@ -355,3 +349,4 @@ export default function ActionNode({ children, data, isConnectable }) {
     </>
   );
 }
+
