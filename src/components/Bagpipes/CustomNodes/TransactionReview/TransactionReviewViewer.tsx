@@ -74,7 +74,7 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
          <h2 className='m-2 font-semibold'>Review Transactions</h2>
       <div className='m-2'>Check the drafted transactions and accept or cancel them before signing. </div>
       {transactions.map(txWithData => (
-          <div key={txWithData.formData.actionType} className="draft-transaction-item">
+          <div key={txWithData.formData.nodeId} className="draft-transaction-item">
             <div className='flex justify-between align-center'>
                 <p>Node ID: <strong>{txWithData.formData.nodeId}</strong></p>
                 <p>Status: <strong className={txWithData.status === 'drafted' ? 'status-drafted' : txWithData.status === 'signed' ? 'status-signed' : ''}>

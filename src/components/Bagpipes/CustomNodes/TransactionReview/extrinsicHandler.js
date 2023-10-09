@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, dotToParachain, assetHubToParachain, parachainToPolkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, dotToParachain, assetHubToParachain, parachainToPolkadot, dotToAssetHub } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -51,7 +51,7 @@ function handlexTransfer(formData) {
         'polkadot:assetHub': () => {
             console.log("handlexTransfer for Polkadot to AssetHub...");
             // const paraid = chains.find(chain => chain.name === 'assethub').paraid;
-            return dotToParachain(submittableAmount, target.address);
+            return dotToAssetHub(submittableAmount, target.address);
         },
         'assetHub:polkadot': () => {
             console.log("handlexTransfer for AssetHub to Polkadot...");

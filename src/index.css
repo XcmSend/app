@@ -259,9 +259,9 @@ border: 1px solid rgb(184, 184, 184);
 }
 
 .spinner {
-  border: 4px solid rgba(255, 255, 255, 0.3);
+  border: 4px solid var(--controls-color);
   border-radius: 50%;
-  border-top: 4px solid black;  /* Change the color to fit your design */
+  border-top: 4px solid var(--controls-color); 
   width: 24px;
   height: 24px;
   animation: spin 1s linear infinite;
@@ -276,9 +276,9 @@ border: 1px solid rgb(184, 184, 184);
 }
 
 .small-spinner {
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid var(--controls-color);
   border-radius: 100%;
-  border-top: 1px solid black;  /* Change the color to fit your design */
+  border-top: 1px solid var(--controls-color); 
   width: 8px;
   height: 8px;
   animation: spin 1s linear infinite;

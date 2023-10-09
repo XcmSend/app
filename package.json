@@ -1,6 +1,6 @@
 {
   "name": "@bagpipes/xcm-send",
-  "author": "Bagpipes",
+  "author": "Ramsey Ajram (Decentration) <ramsey@decentration.org>",
   "maintainers": [
     "Ramsey Ajram <ramsey@decentration.org>",
     "Filip Kalebo <filip@rustsyndi.cat>"

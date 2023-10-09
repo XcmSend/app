@@ -21,25 +21,28 @@ export async function broadcastToChain(chain: string, signedExtrinsic: any): Pro
         throw error;
     }
 
-    try {
-        // Broadcast the transaction and watch its status
-        const unsub = await signedExtrinsic.send(({ status, events, error }) => {
-            if (error) {
-                toast.error(`Transaction error: ${error.message}`);
-                unsub();
-                return;
-            }
+    return new Promise((resolve, reject) => {
+        try {
+            signedExtrinsic.send(({ status, events, error }) => {
+                if (error) {
+                    toast.error(`Transaction error: ${error.message}`);
+                    reject(error);
+                    return;
+                }
 
-            if (status.isInBlock) {
-                toast.success(`Transaction included at blockHash ${status.asInBlock}`);
-            } else if (status.isFinalized) {
-                toast.success(`Transaction finalized at blockHash ${status.asFinalized}`);
-            } else if (status.isDropped || status.isInvalid || status.isUsurped) {
-                toast.error(`Error with transaction: ${status.type}`);
-            }
-        });
-    } catch (error) {
-        toast.error('Error broadcasting transaction:', error.message || error.toString());
-        throw error;
-    }
+                if (status.isInBlock) {
+                    toast.success(`Transaction included at blockHash ${status.asInBlock}`);
+                } else if (status.isFinalized) {
+                    toast.success(`Transaction finalized at blockHash ${status.asFinalized}`);
+                    resolve(); // Only resolve when the transaction is finalized
+                } else if (status.isDropped || status.isInvalid || status.isUsurped) {
+                    toast.error(`Error with transaction: ${status.type}`);
+                    reject(new Error(status.type));
+                }
+            });
+        } catch (error) {
+            toast.error('Error broadcasting transaction:', error.message || error.toString());
+            reject(error);
+        }
+    });
 }

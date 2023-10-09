@@ -377,7 +377,7 @@ console.log('Component re-rendered', formState.address);
        Amount 
        <div className="flex items-center primary-font">
 
-        {formState && formState.symbol && isFetchingBalance ? (
+        { isFetchingBalance ? (
           <div className="small-spinner"></div>
         ) : (
           balance !== null && (

@@ -164,6 +164,47 @@ export async function dotToParachain(amount: number,  targetAddress: string){
 	return tx;
 }
 
+export async function dotToAssetHub(amount: number,  targetAddress: string){
+  const paraid = 1000;
+	const api = await connectToWsEndpoint('polkadot');
+	console.log(`sending dot to parachain`);
+
+  const rawTargetAddress = getRawAddress(targetAddress);
+
+	// const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
+	// const accountId = api.createType("account_id_32", address).toHex(); // convert account to public key
+
+	const destination = {
+	  parents: 0,
+	  interior: { X1: { Parachain: paraid } },
+	};
+
+
+	const targetAccount = {
+	  parents: 0,
+	  interior: { X1: { AccountId32: { id: rawTargetAddress} } },
+	};
+
+
+	const asset = [
+	  {
+		id: { Concrete: { parents: 0, interior: "Here" } },
+		fun: { Fungible: amount },
+	  },
+	];
+
+  const tx = api.tx.xcmPallet.limitedTeleportAssets(
+    { V3: destination },
+    { V3: targetAccount },
+    { V3: asset },
+    0,
+{ Unlimited: null }  // weight_limit
+  );
+//	console.log(`tx created!`);
+//	console.log(tx.toHex());
+	return tx;
+}
+
 
 export async function parachainToPolkadot(amount: number, targetAddress: string, chainEndpoint: string) {
   console.log(`[parachainToPolkadot] Sending ${amount} DOT from assetHub to Polkadot`);
@@ -210,6 +251,51 @@ export async function parachainToPolkadot(amount: number, targetAddress: string,
   return tx;
 }
 
+
+export async function parachainToAssetHub(amount: number, targetAddress: string, chainEndpoint: string) {
+  console.log(`[parachainToPolkadot] Sending ${amount} DOT from assetHub to Polkadot`);
+
+  const api = await connectToWsEndpoint(chainEndpoint);
+
+  const rawTargetAddress = getRawAddress(targetAddress);
+
+
+     // Destination is Polkadot relay chain
+     const destination = {
+      parents: 1, // Polkadot relay chain is one level up from any parachain
+      interior: { Here: null }
+  };
+
+  console.log(`[parachainToPolkadot] targetAddress`, targetAddress);
+
+
+  // The target account on Polkadot relay chain to receive the DOT
+  const targetAccount = {
+      parents: 1,  // Address is on the relay chain
+      interior: { X1: { AccountId32: { id: rawTargetAddress } } }
+  };
+
+  // The asset to transfer, in this case, DOT from the relay chain
+  const dotAssetLocation = { 
+      Concrete: destination
+  };
+
+  const asset = {
+      id: dotAssetLocation,
+      fun: { Fungible: amount }
+  };
+
+  console.log(`[parachainToPolkadot] targetAccount`, targetAccount);
+  const tx = api.tx.xcmPallet.limitedTeleportAssets(
+      { V3: destination },
+      { V3: targetAccount },
+      { V3: [asset] },
+      0,
+      { Unlimited: null }  // weight_limit
+  );
+
+  return tx;
+}
 
 
 
