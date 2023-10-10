@@ -4,7 +4,7 @@ import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
 import connectToWsEndpoint from "../api/connect";
 import { CHAIN_METADATA } from "../api/metadata";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { ApiPromise } from '@polkadot/api';
 
 
@@ -250,6 +250,52 @@ export async function parachainToPolkadot(amount: number, targetAddress: string,
 
   return tx;
 }
+
+export async function assetHubToPolkadot(amount: number, targetAddress: string, chainEndpoint: string) {
+  console.log(`[parachainToPolkadot] Sending ${amount} DOT from assetHub to Polkadot`);
+
+  const api = await connectToWsEndpoint(chainEndpoint);
+
+  const rawTargetAddress = getRawAddress(targetAddress);
+
+
+     // Destination is Polkadot relay chain
+     const destination = {
+      parents: 1, // Polkadot relay chain is one level up from any parachain
+      interior: { Here: null }
+  };
+
+  console.log(`[parachainToPolkadot] targetAddress`, targetAddress);
+
+
+  // The target account on Polkadot relay chain to receive the DOT
+  const targetAccount = {
+      parents: 1,  // Address is on the relay chain
+      interior: { X1: { AccountId32: { id: rawTargetAddress } } }
+  };
+
+  // The asset to transfer, in this case, DOT from the relay chain
+  const dotAssetLocation = { 
+      Concrete: destination
+  };
+
+  const asset = {
+      id: dotAssetLocation,
+      fun: { Fungible: amount }
+  };
+
+  console.log(`[parachainToPolkadot] targetAccount`, targetAccount);
+  const tx = api.tx.xcmPallet.limitedTeleportAssets(
+      { V3: destination },
+      { V3: targetAccount },
+      { V3: [asset] },
+      0,
+      { Unlimited: null }  // weight_limit
+  );
+
+  return tx;
+}
+
 
 
 export async function parachainToAssetHub(amount: number, targetAddress: string, chainEndpoint: string) {

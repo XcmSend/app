@@ -8,10 +8,11 @@ import { extrinsicHandler } from './extrinsicHandler';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { useExecuteChainScenario } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
-import toast, { Toaster } from 'react-hot-toast'; 
+import toast from 'react-hot-toast'; 
 import { signExtrinsicUtil } from '../../utils/signExtrinsicUtil';
 import { ISubmittableResult } from '@polkadot/types/types';
 import ThemeContext from '../../../../contexts/ThemeContext';
+import getNonce from '../../../../Chains/api/getNonce';
 import '../../../../index.css';
 
 
@@ -34,76 +35,22 @@ export default function TransactionMain() {
   const [isReviewingTransactions, setIsReviewingTransactions] = useState(true);
   const [signedExtrinsics, setSignedExtrinsics] = useState([]);
   const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+  const [fetchedNonces, setFetchedNonces] = useState<{ [key: string]: number }>({});
+  const [isFetchingNonces, setIsFetchingNonces] = useState<boolean>(false);
+  
 
 
 
-    useEffect(() => {
-    if (activeScenarioId && scenarios[activeScenarioId]?.diagramData) {
-      const diagramData = scenarios[activeScenarioId].diagramData;
-      const orderedList = getOrderedList(diagramData.edges);
-      const preparedActions = prepareTransactionsForReview(diagramData, orderedList);
 
-      // Transform the prepared actions into drafted extrinsics with data
-      const fetchDraftedExtrinsicsWithData = async () => {
-        const draftedExtrinsicsWithData: { formData: any; draftedExtrinsic: any; status: string; }[] = [];
-        for (const formData of preparedActions) {
-          const draftedExtrinsic = await extrinsicHandler(formData.actionType, formData);
-          const transactionData = {
-            formData: formData,
-            draftedExtrinsic: draftedExtrinsic,
-            status: 'drafted'
-
-          };
-          console.log("[fetchDraftedExtrinsicsWithData] transactionData:", transactionData);
-          draftedExtrinsicsWithData.push(transactionData);
-        }
-        return draftedExtrinsicsWithData;
-      }
-
-      fetchDraftedExtrinsicsWithData().then((extrinsicsWithData) => {
-        setTransactions(extrinsicsWithData);
-      });
-    }
-  }, [activeScenarioId, scenarios]);
-
-
-const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", ISubmittableResult>, address: string) => {
+const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", ISubmittableResult>, address: string, nonce?: number) => {
   const signer = walletContext.wallet?.signer;
-  return await signExtrinsicUtil(signer, draftedExtrinsic, address);
+  return await signExtrinsicUtil(signer, draftedExtrinsic, address, nonce);
 };
 
   const startReview = () => {
     setIsReviewingTransactions(true);
     // display drafted extrinsics plus information about the extrinsics
   }
-
-
-  const handleAcceptTransactions = async () => {
-    setIsReviewingTransactions(false);
-
-    const allSignedExtrinsics: any = [];
-
-    // Loop through the draft extrinsics and sign each
-    for (const { draftedExtrinsic, formData } of transactions) { 
-      const { nodeId, source } = formData;
-      console.log("[handleAcceptTransactions] draftedExtrinsic:", draftedExtrinsic)
-
-      updateTransactionStatus({ draftedExtrinsic, formData }, 'waiting for extrinsic to be signed...');
-    
-      const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address);
-      allSignedExtrinsics.push(signedExtrinsic);
-    
-      saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
-    }
-    
-
-    // Save the signed extrinsics
-    setSignedExtrinsics(allSignedExtrinsics);
-    console.log("[handleAcceptTransactions] Signed extrinsics:", allSignedExtrinsics);
-
-    // Once all are signed, proceed to the execution phase
-    executeAndNavigate();
-  };
 
   const executeAndNavigate = async () => {
     navigate('/builder', { state: { executeScenario: true } });
@@ -112,8 +59,6 @@ const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", I
   const backToBuilder = () => {
     navigate('/builder');
   }
-  
-
 
 
   const updateTransactionStatus = (transaction: any, status: string) => {
@@ -126,6 +71,56 @@ const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", I
     setTransactions(updatedTransactions);
 };
 
+const handleDeclineTransactions = () => {
+  setIsReviewingTransactions(false);
+  navigate('/builder');
+};
+
+const handleAcceptTransactions = async () => {
+  setIsReviewingTransactions(false);
+
+  const allSignedExtrinsics: any = [];
+  let currentAddress: string | undefined;
+  let currentNonce: number | undefined;
+
+  for (const { draftedExtrinsic, formData } of transactions) {
+      const { nodeId, source } = formData;
+
+      // If it's a single transaction, sign without a nonce and continue
+      if (transactions.length === 1) {
+          const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address);
+          allSignedExtrinsics.push(signedExtrinsic);
+          saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
+          continue; // Move to the next iteration of the loop
+      }
+
+      // Check if the address is the same as the previous one
+      if (currentAddress === source.address && currentNonce !== undefined) {
+          currentNonce++; // Increment the nonce if it's the same address
+      } else {
+          currentNonce = fetchedNonces[source.address];
+          currentAddress = source.address;
+      }
+
+      updateTransactionStatus({ draftedExtrinsic, formData }, 'waiting for extrinsic to be signed...');
+
+      // Sign with the adjusted nonce
+      const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address, currentNonce);
+      allSignedExtrinsics.push(signedExtrinsic);
+
+      saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
+  }
+
+
+      // Save the signed extrinsics
+      setSignedExtrinsics(allSignedExtrinsics);
+      console.log("[handleAcceptTransactions] Signed extrinsics:", allSignedExtrinsics);
+  
+      // Once all are signed, proceed to the execution phase
+      executeAndNavigate();
+    };
+
+
 // useEffect(() => {
 //   if (signedExtrinsics.length === transactions.length) {
 //       console.log("[handleAccept] Broadcasting extrinsics:", signedExtrinsics);
@@ -137,10 +132,76 @@ const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", I
 //     }
 // }, [signedExtrinsics]);
 
-const handleDeclineTransactions = () => {
-  setIsReviewingTransactions(false);
-  navigate('/builder');
-};
+
+
+useEffect(() => {
+  if (activeScenarioId && scenarios[activeScenarioId]?.diagramData) {
+    const diagramData = scenarios[activeScenarioId].diagramData;
+    const orderedList = getOrderedList(diagramData.edges);
+    const preparedActions = prepareTransactionsForReview(diagramData, orderedList);
+
+    // Transform the prepared actions into drafted extrinsics with data
+    const fetchDraftedExtrinsicsWithData = async () => {
+      const draftedExtrinsicsWithData: { formData: any; draftedExtrinsic: any; status: string; }[] = [];
+      for (const formData of preparedActions) {
+        const draftedExtrinsic = await extrinsicHandler(formData.actionType, formData);
+        const transactionData = {
+          formData: formData,
+          draftedExtrinsic: draftedExtrinsic,
+          status: 'drafted'
+
+        };
+        console.log("[fetchDraftedExtrinsicsWithData] transactionData:", transactionData);
+        draftedExtrinsicsWithData.push(transactionData);
+      }
+      return draftedExtrinsicsWithData;
+    }
+
+    fetchDraftedExtrinsicsWithData().then((extrinsicsWithData) => {
+      setTransactions(extrinsicsWithData);
+    });
+  }
+}, [activeScenarioId, scenarios]);
+
+
+
+
+useEffect(() => {
+  let addressesWithChains = {};
+
+  for (const { formData } of transactions) {
+      const { source, nodeId } = formData;
+      if (typeof source === 'object' && 'address' in source && 'chain' in source) {
+          if (!addressesWithChains[source.address]) {
+              addressesWithChains[source.address] = [];
+          }
+          addressesWithChains[source.address].push({ nodeId, chain: source.chain });
+      }
+  }
+
+  const fetchAllNonces = async () => {
+      setIsFetchingNonces(true);
+      console.log("[fetchAllNonces] fetching nonces");
+
+      const nonces: { [key: string]: number } = {};
+
+      for (const address in addressesWithChains) {
+          // Assuming the nonce is the same across all chains for a given address
+          const chain = addressesWithChains[address][0].chain;
+          const nonce = await getNonce(chain, address);
+          nonces[address] = nonce;
+      }
+
+      setFetchedNonces(nonces);
+      console.log("[fetchAllNonces] Nonces:", nonces);
+      setIsFetchingNonces(false);
+  }
+
+  fetchAllNonces();
+}, [transactions]);
+
+
+
 
 
   return (

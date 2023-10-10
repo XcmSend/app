@@ -380,15 +380,15 @@ const BagpipesFlow = () => {
       
       
       
-      const DEFAULT_EDGE_STYLE = {
+      const ACTIVATED_EDGE_STYLE = {
         style: {
-          stroke: '#000',
+          stroke: 'green',
           strokeWidth: 2
         },
         animated: true,
         markerEnd: {
-          type: MarkerType.ArrowClosed,
-          color: 'gray',
+          // type: MarkerType.ArrowClosed,
+          color: 'green',
           strokeWidth: 1
         },
         // type: 'arrow',
@@ -415,7 +415,7 @@ const BagpipesFlow = () => {
                 ...closeEdge, 
                 id: generateEdgeId(closeEdge.source, closeEdge.target), // Ensure consistent id
                 className: undefined, // Remove the 'temp' className
-                // ...DEFAULT_EDGE_STYLE
+                ...ACTIVATED_EDGE_STYLE
               }; 
               console.log("Connected edge added:", connectedEdge);
               connectedEdges.push(connectedEdge);
@@ -666,6 +666,7 @@ const BagpipesFlow = () => {
     const handleDraftTransactions = async () => {
       const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
       console.log('handleDraftTransactions actionNodes:', actionNodes);
+      toast('Processing draft transactions...')
   
       // Helper function to check for the completeness of actionData for a given node
       const isActionDataComplete = (node) => {
@@ -718,13 +719,18 @@ const BagpipesFlow = () => {
          {
            loading: 'Processing workflow...',
            success: <b>Workflow success!</b>,
-           error: <b>Could notexecute.</b>,
+           error: <b>Could not execute.</b>,
          },
+         
          {
          success: {
           duration: 30000,
           icon: '🔥',
         },
+        loading: {
+          duration: 50000,
+          icon: '⏳',
+        }
       }
        );
       

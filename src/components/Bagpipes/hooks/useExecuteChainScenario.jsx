@@ -7,7 +7,7 @@ import { processScenarioData, validateDiagramData } from '../utils/scenarioUtils
 import SocketContext from '../../../contexts/SocketContext';
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
-import { toast } from 'react-hot-toast';
+import toast  from 'react-hot-toast';
 import { getOrderedList } from '../utils/scenarioUtils';
 import { broadcastToChain } from '../../../Chains/api/broadcast';
 
@@ -132,7 +132,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                 break;
 
             case 'chain':
-                toast.success('Executing Chain Node...');
+                toast('Executing Chain Node...');
                 // Handle the chain node execution
                 break;
 
@@ -150,8 +150,8 @@ const useExecuteChainScenario = (nodes, setNodes) => {
 
                 if(signedExtrinsic) {
                     await broadcastToChain(chain, signedExtrinsic); 
-
                 }
+                console.log('executeChainScenario Broadcasted to Chain:', signedExtrinsic);
                 // if it's the last iteration and set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1; 
                 break;

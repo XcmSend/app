@@ -5,7 +5,7 @@ import { Button } from 'antd';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { OpenSelectWallet, WalletContext } from './Wallet/contexts';
-
+import ThemeContext from '../contexts/ThemeContext';
 import'./styles/Header.scss';
 
 interface Props {
@@ -20,7 +20,6 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
   const navigate = useNavigate();  // Add this line to get the navigate function
   const walletContext = useContext(WalletContext);
   const selectWallet = useContext(OpenSelectWallet);
-
   const wallet = walletContext.wallet || walletContext.evmWallet;
   const logoSrc = theme === 'dark' ? '/logo-white.svg' : '/logo.svg';
 
@@ -43,32 +42,31 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
     };
 
       return (
-        <header className={'wallet-header-wrapper'}>
+        <header className={`wallet-header-wrapper ${theme}`}>
           <div className={'boxed-container'}>
-            <div className={'wallet-header-content'}>
+            <div className={'wallet-header-content flex justify-left'}>
               <img src={logoSrc} className='bagpipe-logo' alt="Bagpipe Logo" />
-      
-                {/* <Button
-                  className='xcm-send-btn xcm-send-btn-small-size'
-                  onClick={goToBuilder}
-                  type={'primary'}
-                >Builder</Button> */}
-                   <Button
-                  className='xcm-send-btn xcm-send-btn-small-size'
-                  onClick={goToBagpipes}
-                  type={'primary'}
-                >Builder</Button>
-                                <Button
-                  className='xcm-send-btn xcm-send-btn-small-size'
-                  onClick={goToLab}
-                  type={'primary'}
-                >Lab</Button>
-{/*       
-                <Button
-                  className='xcm-send-btn-wallet xcm-send-btn-small-size'
-                  onClick={selectWallet.open}
-                  type={'primary'}
-                >Select Wallet</Button> */}
+  
+              <Button
+                className='xcm-send-btn  button-header'
+                onClick={goToBagpipes}
+                type={'primary'}
+              >
+                <span className='button-header-text'>Builder</span>
+              </Button>
+              <Button
+                className='xcm-send-btn xcm-send-btn-small-size button-header'
+                onClick={goToLab}
+                type={'primary'}
+                >
+                <span className='button-header-text'>Lab</span>
+              </Button>
+                {/* 
+              <Button
+                className='xcm-send-btn-wallet xcm-send-btn-small-size'
+                onClick={selectWallet.open}
+                type={'primary'}
+              >Select Wallet</Button> */}
             </div>
           </div>
         </header>

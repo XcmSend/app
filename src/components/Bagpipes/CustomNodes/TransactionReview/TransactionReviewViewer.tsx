@@ -86,26 +86,25 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
               <pre>{JSON.stringify(txWithData.draftedExtrinsic.toHuman(), null, 2)}</pre>
             </JSONContainer>
             <div className='mt-3 mb-3 transaction-review-data'>
-            
-            <p>Action Type: <strong>{txWithData.formData.actionType}</strong></p>
-            <p>Source Chain: <strong>{txWithData.formData.source.chain}</strong></p>
-            <p>Source AssetId: <strong>{txWithData.formData.source.assetId}</strong></p>
-            <p>Source Address: <strong>{txWithData.formData.source.address}</strong></p>
-            <p>Target Chain: <strong>{txWithData.formData.target.chain}</strong></p>
-            <p>Target AssetId: <strong>{txWithData.formData.target.assetId}</strong></p>
-            <p>Target Address:<strong> {txWithData.formData.target.address}</strong></p>
-            <p>Amount: <strong>{txWithData.formData.source.amount} {txWithData.formData.source.symbol}</strong> </p>
-            <p>Fees:<strong> {fees[txWithData.formData.nodeId]?.partialFee || 'Fetching...'}</strong></p>
+              <div className='flex flex-row '><div className=' transaction-name w-1/3'>Action Type:</div> <div><strong>{txWithData.formData.actionType}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Source Chain: </div> <div><strong>{txWithData.formData.source.chain}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Source AssetId: </div> <div><strong>{txWithData.formData.source.assetId}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Source Address: </div> <div><strong>{txWithData.formData.source.address}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Target Chain: </div> <div><strong>{txWithData.formData.target.chain}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Target AssetId: </div> <div><strong>{txWithData.formData.target.assetId}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Target Address:</div> <div><strong> {txWithData.formData.target.address}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Amount: </div> <div><strong>{txWithData.formData.source.amount} {txWithData.formData.source.symbol}</strong> </div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Fees:</div> <div><strong> {fees[txWithData.formData.nodeId]?.partialFee || 'Fetching...'}</strong></div></div>
 
           </div>
           <div className={``}>
-         <button className={`button mr-2`} onClick={onAccept}>Accept</button>
-         <button className={`button`} onClick={onDecline}>Cancel</button>
+        
        </div>
-
+       
         </div>
       ))}
-       
+       <button className={`button mr-2`} onClick={onAccept}>Accept</button>
+         <button className={`button`} onClick={onDecline}>Cancel</button>
     </div>
     </div>
   );

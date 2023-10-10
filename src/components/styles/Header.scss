@@ -1,6 +1,26 @@
+@import "../../variables.scss";
+
 .wallet-header-wrapper {
   border-bottom: 1px solid #151A30;
   z-index: 10;
+}
+
+.button-header {
+  background-color: rgba(255, 255, 255, 0) !important;
+  color: var(--color) !important;
+
+  &:hover {
+    color: var(--color-hover) !important;
+  }
+}
+
+.button-header-text {
+  background-color: rgba(255, 255, 255, 0) !important;
+  color: var(--color) !important;
+
+  &:hover {
+    color: var(--color-hover) !important;
+  }
 }
 
 .wallet-header-content {
@@ -40,8 +60,8 @@
   .bagpipe-logo {
     position: absolute;
     margin-left:0;
-    left:30px;
-    top:30px;
+    left:25px;
+    top:20px;
   }
 }
 

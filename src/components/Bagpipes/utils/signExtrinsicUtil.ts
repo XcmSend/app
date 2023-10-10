@@ -1,6 +1,6 @@
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 
-export const signExtrinsicUtil = async (signer: any, draftedExtrinsic: SubmittableExtrinsic<'promise'>, address: string) => {
+export const signExtrinsicUtil = async (signer: any, draftedExtrinsic: SubmittableExtrinsic<'promise'>, address: string, nonce?: number) => {
   console.log("signExtrinsicUtil drafted extrinsic:", draftedExtrinsic);
 
   if (signer && signer.signPayload) {
@@ -8,7 +8,7 @@ export const signExtrinsicUtil = async (signer: any, draftedExtrinsic: Submittab
         console.log("signExtrinsicUtil Before signing:", draftedExtrinsic.toJSON());
 
           // Use Polkadot JS API's own method to sign the extrinsic
-          await draftedExtrinsic.signAsync(address, { signer });
+          await draftedExtrinsic.signAsync(address, { signer, nonce });
 
           console.log("signExtrinsicUtil After signing:", draftedExtrinsic.toJSON());
 
