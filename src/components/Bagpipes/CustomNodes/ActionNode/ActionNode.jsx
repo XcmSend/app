@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
@@ -9,7 +9,7 @@ import { getOrderedList } from '../../utils/scenarioUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
 import Selector from './Selector';
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast/headless';
 import ThemeContext from '../../../../contexts/ThemeContext';
 
 import '../../../../index.css';
@@ -23,12 +23,13 @@ const formatTime = (date) => {
 export default function ActionNode({ children, data, isConnectable }) {
   const { theme } = React.useContext(ThemeContext);
   const nodeId = useNodeId();
-  const { scenarios, activeScenarioId, loading, saveNodeFormData, saveActionDataForNode  } = useAppStore(state => ({ 
+  const { scenarios, activeScenarioId, loading, saveNodeFormData, saveActionDataForNode, saveTriggerNodeToast } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     loading: state.loading,
     saveNodeFormData: state.saveNodeFormData,
     saveActionDataForNode: state.saveActionDataForNode,
+    saveTriggerNodeToast: state.saveTriggerNodeToast,
   }));
   const [orderedList, setOrderedList] = useState([]);
   const selectedNodeId = scenarios[activeScenarioId]?.selectedNodeId;
@@ -48,6 +49,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   // At the top of your component after state or props declarations:
 const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
 const currentActionData = currentNode?.formData?.actionData;
+const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
@@ -235,11 +237,37 @@ const currentActionData = currentNode?.formData?.actionData;
     }
   }, [formState, assetInFormData, assetOutFormData]);
 
+
+  useEffect(() => {
+    console.log('ActionNode currentNode:', currentNode);
+    if (currentNode.data.triggerToast) {
+        const nodeRect = nodeRef.current.getBoundingClientRect();
+        const x = window.scrollX - 100 // position of the node relative to the document
+        const y = window.scrollY - 180// position of the node relative to the document
+        console.log('Calculated X:', x, 'Calculated Y:', y);
+        
+
+        toast('Executing action node!', {
+            icon: '💥',
+            data: {
+                position: { x, y },
+                theme: theme  
+            },
+            visible: true,
+            zIndex: 100000,
+            styleClass: 'node-notifications'
+            
+          });
+
+        saveTriggerNodeToast(activeScenarioId, nodeId, false);
+    }
+}, [data.triggerToast, data.position, nodeRef, activeScenarioId, nodeId]);
+
   
   return (
     <>
       
-    <div className={`${theme} custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start bg-gray-100 primary-font`}>
+    <div ref={nodeRef} className={`${theme} custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start bg-gray-100 primary-font`}>
  
           <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
 

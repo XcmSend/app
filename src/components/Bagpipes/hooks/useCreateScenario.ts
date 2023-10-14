@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"; // or whatever routing library you're using
 import { v4 as uuidv4 } from 'uuid';
 import useAppStore from "../../../store/useAppStore";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast/headless";
 
 export const useCreateScenario = () => {
     const {  setActiveScenarioId, addScenario } = useAppStore(state => ({

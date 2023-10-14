@@ -286,5 +286,11 @@ border: 1px solid rgb(184, 184, 184);
 }
 
 .react-flow {
-  height: 90% !important;
+  height: 93% !important;
+}
+
+.node-notifications {
+  background-color: var(--toast-bg) !important;
+  padding: 5px;
+  color: var(--color) !important;
 }

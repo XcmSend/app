@@ -17,6 +17,10 @@ const defaultState = {
   chainAddresses: [],
   isModaVisible: false,
   transactions: [],
+  shouldExecuteChainScenario: false,
+  executionState: 'idle', // can be 'idle', 'sending', 'stopped'
+  toastPosition: null
+
 };
 
 const useAppStore = create(
@@ -48,6 +52,8 @@ const useAppStore = create(
       setNodeContentMap: (contentMap) => {
         set({ nodeContentMap: contentMap });
     },
+
+    setToastPosition: (position) => set(state => ({ toastPosition: position })),
 
     setNodes: (newStateOrUpdater) => {
         set((prevState) => {
@@ -116,6 +122,9 @@ const useAppStore = create(
     },
         
     setNodeConnections: (newConnections) => set({ nodeConnections: newConnections }),
+    toggleExecuteChainScenario: () => set((state) => ({ shouldExecuteChainScenario: !state.shouldExecuteChainScenario })),
+    setExecutionState: (newState) => set((state) => ({ executionState: newState })),
+
 
     addScenario: (scenarioId, scenario) => {
       // Log the action initiation with its parameters
@@ -413,6 +422,38 @@ const useAppStore = create(
             return { scenarios: updatedScenarios };
         });
     },
+
+    saveTriggerNodeToast: (scenarioId, nodeId, shouldTrigger) => {
+      console.log("[triggerNodeToast] Called with:", { scenarioId, nodeId, shouldTrigger });
+  
+      // Checking for potential issues
+      if (!scenarioId || !nodeId) {
+          console.error("[triggerNodeToast] Scenario ID or Node ID is missing. Cannot trigger node toast.");
+          return;
+      }
+  
+      set((state) => {
+          const scenario = state.scenarios[scenarioId];
+          
+          if (!scenario) {
+              console.error(`[triggerNodeToast] Scenario with ID ${scenarioId} not found.`);
+              return;
+          }
+  
+          const nodes = scenario.diagramData.nodes.map((node) =>
+              node.id === nodeId ? { ...node, data: { ...node.data, triggerToast: shouldTrigger } } : node
+          );
+  
+          const updatedScenarios = {
+              ...state.scenarios,
+              [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
+          };
+  
+          console.log("[triggerNodeToast] Updated scenarios:", updatedScenarios, scenarioId);
+          return { scenarios: updatedScenarios };
+      });
+  },
+  
 
     saveActionDataForNode: (scenarioId, nodeId, newActionData) => {
       console.log("[saveActionDataForNode] Called with:", { scenarioId, nodeId, newActionData });

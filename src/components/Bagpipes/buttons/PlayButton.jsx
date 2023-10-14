@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React from 'react';
-import { PlayIcon } from '../Icons/icons';
-import { useAppStore } from '../../components/Bagpipes/hooks';
+import { PlayIcon } from '../../Icons/icons';
+import { useAppStore } from '../hooks';
 
 const PlayButton = ({ executeScenario, stopExecution }) => {
 

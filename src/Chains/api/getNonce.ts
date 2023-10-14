@@ -7,6 +7,7 @@ const getNonce = (chainEndpoint: string, address: string) => {
             const { nonce } = await api.query.system.account(address);
             await api.disconnect();  // Disconnect after use
             resolve(nonce.toNumber());
+            console.log('nonce', nonce.toNumber());
         } catch (error) {
             reject(error);
         }

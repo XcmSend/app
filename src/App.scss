@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 .App {
   height: 100vh;
 }
@@ -22,6 +24,11 @@
     color: #ddd;
   }
 
+}
+
+.toast-button {
+  z-index: 100000;
+  margin-top: 100px !important;
 }
 
 .dark-theme {
@@ -107,6 +114,30 @@
 
   .wallet-item:hover {
     background-color: #EEE;
+  }
+
+}
+
+.toast-styles {
+  width: auto;
+  min-width: 200px;  /* Minimum width you want */
+  max-width: 90%;   /* Maximum width based on the viewport width */
+  word-wrap: break-word; /* This will ensure that long words/URLs will wrap instead of overflowing */
+  background-color: var(--toast-bg);
+}
+
+.toast-button {
+  background-color: var(--button-bg);
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+
+  &:hover {
+    background-color: var(--button-bg-hover);
   }
 
 }

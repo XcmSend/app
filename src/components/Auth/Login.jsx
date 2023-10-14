@@ -7,7 +7,7 @@ import ScenarioService from '../../services/ScenarioService';
 import { reconcileStateOnLogin } from '../../store/AsyncHelpers';
 import successMessages from '../../utils/messages/successMessages';
 import errorMessages from '../../utils/messages/errorMessages';
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast/headless';
 import '../../index.css'
 
 function Login() {

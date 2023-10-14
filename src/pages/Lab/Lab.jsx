@@ -9,7 +9,7 @@ import '../../main.scss';
 import { EditIcon, PlusIcon, CloseIcon } from '../../components/Icons/icons';
 import { deleteScenarioAsync, loadScenarioAsync } from '../../store/AsyncHelpers';
 import ScenarioService from '../../services/ScenarioService';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast/headless';
 import { v4 as uuidv4 } from 'uuid';
 import { useCreateScenario } from '../../components/Bagpipes/hooks/useCreateScenario';
 

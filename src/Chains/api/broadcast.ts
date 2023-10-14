@@ -3,7 +3,7 @@
 import { ApiPromise } from '@polkadot/api';
 import connectToWsEndpoint from "./connect";
 import { CHAIN_METADATA } from './metadata';
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast/headless';
 
 /**
  * Broadcast a signed extrinsic to the chain.
@@ -31,17 +31,18 @@ export async function broadcastToChain(chain: string, signedExtrinsic: any): Pro
                 }
 
                 if (status.isInBlock) {
-                    toast.success(`Transaction included at blockHash ${status.asInBlock}`);
+                    toast.success(`Transaction included at blockHash ${status.asInBlock} `, { id: 'transaction-included' });
                 } else if (status.isFinalized) {
-                    toast.success(`Transaction finalized at blockHash ${status.asFinalized}`);
+                    toast.success(`Transaction finalized at blockHash ${status.asFinalized}`, { id: 'transaction-finalized' });
+                    console.log(`Transaction finalized, evets: ${events}`);
                     resolve(); // Only resolve when the transaction is finalized
                 } else if (status.isDropped || status.isInvalid || status.isUsurped) {
-                    toast.error(`Error with transaction: ${status.type}`);
+                    toast.error(`Error with transaction: ${status.type}`, { id: 'transaction-error' });
                     reject(new Error(status.type));
                 }
             });
         } catch (error) {
-            toast.error('Error broadcasting transaction:', error.message || error.toString());
+            toast.error(`Error broadcasting transaction from chain${chain}`, error.message || error.toString());
             reject(error);
         }
     });

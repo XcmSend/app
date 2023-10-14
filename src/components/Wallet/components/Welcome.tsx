@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import {Button} from 'antd';
+import { Button } from 'antd';
 import React, {useContext, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 

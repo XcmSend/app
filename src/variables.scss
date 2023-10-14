@@ -21,6 +21,7 @@ $chain-node-width: 250px;
     --border-color: rgb(224, 224, 224); 
     --button-bg-hover: darken(#{$primary-color}, 10%);
     --box-shadow-color: #bdbdbd44;
+    --toast-bg: #b9b9b9;
     
 }
 
@@ -42,6 +43,5 @@ $chain-node-width: 250px;
     --border-color: rgb(44, 44, 44); 
     --button-bg-hover: darken(#{$primary-color}, 10%);
     --box-shadow-color: #2e2d2f2b;
-
-
+    --toast-bg: #0d121e;
 }

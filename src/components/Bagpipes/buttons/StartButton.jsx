@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React from 'react';
-import { PlayIcon } from '../Icons/icons';
+import { PlayIcon } from '../../Icons/icons';
 
 const StartButton = ({ draftTransactions }) => {
     return (

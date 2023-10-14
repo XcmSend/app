@@ -4,7 +4,7 @@ import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
 import connectToWsEndpoint from "../api/connect";
 import { CHAIN_METADATA } from "../api/metadata";
-import toast from 'react-hot-toast';
+import toast from 'react-hot-toast/headless';
 import { ApiPromise } from '@polkadot/api';
 
 
@@ -251,10 +251,10 @@ export async function parachainToPolkadot(amount: number, targetAddress: string,
   return tx;
 }
 
-export async function assetHubToPolkadot(amount: number, targetAddress: string, chainEndpoint: string) {
+export async function assetHubToPolkadot(amount: number, targetAddress: string) {
   console.log(`[parachainToPolkadot] Sending ${amount} DOT from assetHub to Polkadot`);
 
-  const api = await connectToWsEndpoint(chainEndpoint);
+  const api = await connectToWsEndpoint('assetHub');
 
   const rawTargetAddress = getRawAddress(targetAddress);
 
@@ -285,13 +285,14 @@ export async function assetHubToPolkadot(amount: number, targetAddress: string, 
   };
 
   console.log(`[parachainToPolkadot] targetAccount`, targetAccount);
-  const tx = api.tx.xcmPallet.limitedTeleportAssets(
+  const tx = api.tx.polkadotXcm.limitedTeleportAssets(
       { V3: destination },
       { V3: targetAccount },
       { V3: [asset] },
       0,
       { Unlimited: null }  // weight_limit
   );
+  console.log('assetHubToPolkadot tx',tx.toHuman())
 
   return tx;
 }

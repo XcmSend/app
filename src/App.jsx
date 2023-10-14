@@ -21,16 +21,24 @@ import TransactionMain  from './components/Bagpipes/CustomNodes/TransactionRevie
 import ReactTestFlow from './ReactTestFlow';
 import WalletInfo from './components/Wallet/pages/WalletInfo';
 import initializeKeyring from './services/initializeKeyring';
-import Notifications from './components/Notifications';
+import Notifications from './components/toasts/Notifications';
 import toast, { Toaster, ToastBar } from 'react-hot-toast';
+import { useToaster } from 'react-hot-toast/headless';
 import './App.scss';
 import 'tippy.js/dist/tippy.css';
 import { Socket } from 'socket.io-client';
 import ThemeContext from './contexts/ThemeContext';
+import NodeToast from './components/toasts/NodeToast';
+import NodeNotifications from './components/toasts/NodeNotifications';
+import useAppStore from './store/useAppStore';
 
 
 export function App () {
+
   
+  const { toastPosition } = useAppStore(state => ({
+    toastPosition: state.toastPosition,
+  }));
   const [socket, setSocket] = useState(null);
 
     async function setupKeyring() {
@@ -43,48 +51,54 @@ export function App () {
     }
     setupKeyring();
 
-
+    const testToast = () => {
+      console.log("Testing toast");
+      toast('This is a test toast!');
+    };
 
     return (
       <div style={{ width: '100vw', height: '100vh' }}>
         <ThemeContext.Provider>
+        <NodeNotifications />
       <WalletContextProvider>
         <SocketContext.Provider value={socket}>
         <ConfigProvider>
-         
-          {/* <Notifications /> */}
+
+{/* <Toaster /> */}
+
+        {/* <button onClick={testToast}>Show Test Toast</button>
+
+        <button className='toast-button'onClick={() => toast("Hello World!")}>Add Toast</button> */}
+
           <AddressBookProvider>
-          <Toaster
-          
-          position="top-center"
-          reverseOrder={false}
-          gutter={8}
-          containerClassName=""
-          containerStyle={{}}
-          toastOptions={{
-            // Define default options
-            className: '',
-            duration: 5000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            }}}
-          
-        >
-          {(t) => (
-            <ToastBar toast={t}>
-              {({ icon, message }) => (
-                <>
-                  {icon}
-                  {message}
-                  {t.type !== 'loading' && (
-                    <button className='bg-black text-white' onClick={() => toast.dismiss(t.id)}>dismiss</button>
-                  )}
-                </>
-              )}
-            </ToastBar>
+         
+
+          {/* <Toaster
+              containerStyle={{ position: 'absolute', ...toastPosition }} 
+              toastOptions={{
+              className: 'toast-styles',
+              duration: 5000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              }
+            }}
+          > 
+            {(t) => (
+              <ToastBar toast={t}>
+                {({ icon, message }) => (
+                  <>
+                    {icon}
+                    {message}
+                    {t.type !== 'loading' && (
+                      <button className='toast-button' onClick={() => toast.dismiss(t.id)}>dismiss</button>
+                    )}
+                  </>
+                )}
+              </ToastBar> 
           )}
-        </Toaster> 
+          </Toaster> */}
+ 
           <Routes>
             <Route element={<Layout />} path='/' >
             <Route

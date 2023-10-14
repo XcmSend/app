@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import toast  from "react-hot-toast";
+import toast  from "react-hot-toast/headless";
 
 
 export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {

@@ -11,6 +11,7 @@ import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState
 import useAppStore from '../../store/useAppStore';
 import { generateEdgeId } from './utils/storageUtils';
 import GitInfo from './git_tag';
+import { useDebounce } from 'use-debounce';
 import TextUpdaterNode from './TextupdaterNode';
 import Sidebar from './Sidebar';
 import FormGroupNode from './FormGroupNode';
@@ -20,18 +21,19 @@ import ActionNode from './CustomNodes/ActionNode/ActionNode';
 import CustomEdge from './CustomEdges/CustomEdge';
 import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
-import PlayButton from './PlayButton';
-import StartButton from './StartButton';
+import PlayButton from './buttons/PlayButton';
+import StartButton from './buttons/StartButton';
+import SendButton from './buttons/SendButton';
 import { startDraftingProcess } from './utils/startDraftingProcess';
-import {  MarkerType } from 'reactflow';
+import { MarkerType } from 'reactflow';
 import { useCreateScenario } from './hooks/useCreateScenario';
-import toast from 'react-hot-toast';
 import './utils/getAllConnectedNodes';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
 import ThemeContext from '../../contexts/ThemeContext';
 import { lightTheme, darkTheme } from './theme';
 import { node } from 'stylis';
+import NodeNotifications from '../toasts/NodeNotifications';
 
 
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
@@ -41,6 +43,7 @@ import Edges from './edges';
 // import 'reactflow/dist/style.css';
 // import './node.styles.scss';
 import '../../index.css';
+import toast, { useToaster } from "react-hot-toast/headless";
 
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};
@@ -84,7 +87,7 @@ const BagpipesFlow = () => {
 
   const reactFlowWrapper = useRef(null);
 
-    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteChainScenario, toggleExecuteChainScenario, executionId, setExecutionState, setToastPosition } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       addScenario: state.addScenario,
@@ -108,6 +111,12 @@ const BagpipesFlow = () => {
       loading: state.loading,
       transactions: state.transactions,
       setTransactions: state.setTransactions,
+      shouldExecuteChainScenario: state.shouldExecuteChainScenario,
+      toggleExecuteChainScenario: state.toggleExecuteChainScenario,
+      executionId: state.executionId,
+      setExecutionState: state.setExecutionState,
+      setToastPosition: state.setToastPosition,
+
     }));
     const store = useStoreApi();
     const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
@@ -665,8 +674,22 @@ const BagpipesFlow = () => {
     
     const handleDraftTransactions = async () => {
       const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
-      console.log('handleDraftTransactions actionNodes:', actionNodes);
-      toast('Processing draft transactions...')
+      console.log('Found action nodes:', actionNodes);
+      
+      const firstNodePosition = actionNodes && actionNodes.length > 0 ? actionNodes[0].position : null;
+      toast('This is a basic toast message.');
+      if (firstNodePosition) {
+          console.log('Setting toast position based on first action node:', firstNodePosition);
+          setToastPosition({
+              top: `${firstNodePosition.y}px`, 
+              left: `${firstNodePosition.x}px`
+          });
+          toast('Processing draft transactions...');
+      } else {
+          console.log('No valid action node position found. Resetting toast position.');
+          setToastPosition(null);
+          toast('Processing draft transactions...');
+      }
   
       // Helper function to check for the completeness of actionData for a given node
       const isActionDataComplete = (node) => {
@@ -711,39 +734,74 @@ const BagpipesFlow = () => {
   
    
 
-  useEffect(() => {
-    if (location.state && location.state.executeScenario) {
-      const executeMyScenario = executeChainScenario();
+  // useEffect(() => {
+  //   console.log('useEffect running due to location change');
 
-      toast.promise(executeMyScenario,
-         {
-           loading: 'Processing workflow...',
-           success: <b>Workflow success!</b>,
-           error: <b>Could not execute.</b>,
-         },
+  //   if (debouncedLocationState && debouncedLocationState.executeScenario) {
+  //     const executeMyScenario = executeChainScenario();
+
+  //     toast.promise(executeMyScenario,
+  //        {
+  //          loading: 'Processing workflow...',
+  //          success: <b>Workflow success!</b>,
+  //          error: <b>Could not execute.</b>,
+  //        },
          
-         {
-         success: {
-          duration: 30000,
-          icon: '🔥',
-        },
-        loading: {
-          duration: 50000,
-          icon: '⏳',
-        }
-      }
-       );
+  //        {
+  //        success: {
+  //         duration: 30000,
+  //         icon: '🔥',
+  //       },
+  //       loading: {
+  //         duration: 50000,
+  //         icon: '⏳',
+  //       }
+  //     }
+  //      );
       
-      // Reset the executeScenario flag in the location state
-      navigate('/builder', { state: { ...location.state, executeScenario: false } });
-    }
-  }, [location]);
+  //     // Reset the executeScenario flag in the location state
+  //     // navigate('/builder', { state: { ...location.state, executeScenario: false } });
 
-   
+  //   }
+  // }, [debouncedLocationState]);
+
+  // useEffect(() => {
+  //   if (shouldExecuteChainScenario) {
+  //     console.log("Running executeChainScenario due to shouldExecuteChainScenario being true");
+
+  //     executeChainScenario();
+  //     toggleExecuteChainScenario(); 
+  //   }
+  // }, []);
+
+  async function handleExecuteChainScenario() {
+    console.log("Running executeChainScenario due to executionState being 'idle'");
+    setExecutionState('sending');
+    try {
+        await executeChainScenario();
+    } catch (error) {
+        console.error("An error occurred during scenario execution:", error);
+    } finally {
+        setExecutionState('idle');
+    }
+}
+
+// const MAX_TIME = 10
+// setTimeout(() => {
+//   setExecutionState('idle');
+// }, MAX_TIME);
+
+const testToast = () => {
+  console.log("Testing toast");
+  toast('This is a test toast!');
+};
+
         
     return (
 
       <div className="bagpipe-flow-canvass" style={{ width: '100vw', height: '1000px' }}>
+
+                 
 
         <ThemeProvider theme={theme}>
             <Panel position="top-center">          
@@ -774,7 +832,7 @@ const BagpipesFlow = () => {
                   fitView
               >
               <Controls />
-              <MiniMap />
+              {/* <MiniMap /> */}
               {/* <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Lines} /> 
              <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Lines} />  */}
               <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bg-gray-300" : "bg-gray-900"} variant={BackgroundVariant.Dots} />
@@ -792,11 +850,15 @@ const BagpipesFlow = () => {
 
             </Panel> */}
             </ReactFlowStyled>
-            <StartButton draftTransactions={handleDraftTransactions} />
+            {shouldExecuteChainScenario ? (
+              <SendButton executeChainScenario={handleExecuteChainScenario} />
+            ) : (
+              <StartButton draftTransactions={handleDraftTransactions} />
 
+            )}
             {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
-            <GitInfo />
+            {/* <GitInfo /> */}
 
             </div>
             <Sidebar />

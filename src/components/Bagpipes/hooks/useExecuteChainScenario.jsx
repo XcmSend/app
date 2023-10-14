@@ -7,7 +7,7 @@ import { processScenarioData, validateDiagramData } from '../utils/scenarioUtils
 import SocketContext from '../../../contexts/SocketContext';
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
-import toast  from 'react-hot-toast';
+import toast  from 'react-hot-toast/headless';
 import { getOrderedList } from '../utils/scenarioUtils';
 import { broadcastToChain } from '../../../Chains/api/broadcast';
 
@@ -16,7 +16,7 @@ import { broadcastToChain } from '../../../Chains/api/broadcast';
 const useExecuteChainScenario = (nodes, setNodes) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading} = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteChainScenario, executionState, setExecutionState, saveTriggerNodeToast} = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -26,6 +26,10 @@ const useExecuteChainScenario = (nodes, setNodes) => {
       updateNodeContent: state.updateNodeContent,
       setLoading: state.setLoading,
       loading: state.loading,
+      toggleExecuteChainScenario: state.toggleExecuteChainScenario,
+      executionState: state.executionState,
+      setExecutionState: state.setExecutionState,
+      saveTriggerNodeToast: state.saveTriggerNodeToast,
       
     }));
     // const [executionId, setExecutionId] = useState(null);
@@ -35,6 +39,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
     
     const prevExecutionIdRef = useRef(null);  
 
+    const executedIds = useRef(new Set()).current;
 
 
       const fetchMissingData = async (nodeId) => {
@@ -69,8 +74,12 @@ const useExecuteChainScenario = (nodes, setNodes) => {
   }
 
   async function executeChainScenario() {
-    toast('Starting Workflow Execution...');
-    console.log('[executeChainScenario] Starting Workflow Execution...');
+    if (executedIds.has(executionId)) {
+        console.log(`Already executed scenario for executionId: ${executionId}. Skipping...`);
+        return;
+      }
+      toast('Starting Workflow Execution...', { id: 'workflow-start' });
+      console.log('[executeChainScenario] Starting Workflow Execution...');
     // setLoading(true);
 
     // Clear the nodeContentMap before starting a new execution
@@ -87,6 +96,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                 id: node.id, 
                 type: node.type, 
                 data: node.data, 
+                position: node.position,
                 formState: getSavedFormState(node.id) || {},  
             })),
             edges: rawDiagramData.edges.map(edge => ({ ...edge })),
@@ -94,8 +104,8 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         
         console.log('[executeChainScenario] Retrieved diagramData from state:', diagramData);
 
-        const executionId = uuidv4();
-        setExecutionId(executionId);
+        // const executionId = uuidv4();
+        // setExecutionId(executionId);
        
         
         // Get the ordered list of nodes
@@ -112,7 +122,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         diagramData = validateDiagramData(diagramData);
                 
         console.log("[executeChainScenario] About to run the scenario with the following data:", { diagramData: diagramData, scenario: activeScenarioId });
-        toast.success('Running Scenario...');
+        toast.success('Running Scenario...', { id: 'running-scenario' });
 
         let nodeContents = {};
         let executionCycleFinished = false;
@@ -122,7 +132,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
             let nodeId = orderedList[index];
             let currentNode = diagramData.nodes.find(node => node.id === nodeId);
             if (!currentNode) {
-                toast.error('The execution has ended due to an unknown node.');
+                toast.error('The execution has ended due to an unknown node.', { id: 'unknown-node' });
                 return;
             }
 
@@ -132,15 +142,27 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                 break;
 
             case 'chain':
-                toast('Executing Chain Node...');
+                toast('Executing Chain Node...', { id: 'execution-chain' });
                 // Handle the chain node execution
                 break;
 
             case 'action':
-                toast('Executing action node!', {
-                    icon: '💥',
-                });
+                console.log('executeChainScenario currentNode position:', currentNode.position);
+                // toast('Executing action node!', {
+                //     icon: '💥',
+                //     id: 'execution-action',
+                //     data: {
+                //         position: currentNode.position
+                //     },
+                //     visible: true,
+                //     zIndex: 100000,
+                // });
 
+                currentNode.data.triggerToast = true;
+                saveTriggerNodeToast(activeScenarioId, currentNode.id, true);
+            
+
+                console.log('executeChainScenario currentNode:', executionState, currentNode.id);
 
                 // Retrieve the signedExtrinsic from the current node data
                 const signedExtrinsic = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.signedExtrinsic || null;
@@ -151,7 +173,8 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                 if(signedExtrinsic) {
                     await broadcastToChain(chain, signedExtrinsic); 
                 }
-                console.log('executeChainScenario Broadcasted to Chain:', signedExtrinsic);
+                toast(`executeChainScenario Broadcasted to Chain: ${chain}`, signedExtrinsic );
+                console.log('executeChainScenario Broadcasted to Chain:', signedExtrinsic );
                 // if it's the last iteration and set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1; 
                 break;
@@ -160,7 +183,7 @@ const useExecuteChainScenario = (nodes, setNodes) => {
 
 
       if (executionCycleFinished) {
-         toast.success('Workflow Execution Completed! The execution cycle has finished.');
+         toast.success('Workflow Execution Completed! The execution cycle has finished.', { id: 'execution-finished' });
          setLoading(false); 
       }
 
@@ -182,6 +205,13 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         } finally {
             console.log('Workflow Execution Prepared and Sent to Server...');
             setNodes([...nodes]);
+            executedIds.add(executionId);
+            toggleExecuteChainScenario();
+            setExecutionState('idle');
+            console.log('Workflow Execution Prepared and set to idle and toggled...', executionState, toggleExecuteChainScenario);
+
+
+
         }
     };
     return { nodeContentMap, executeChainScenario, stopExecution };
