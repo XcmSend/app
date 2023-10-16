@@ -43,31 +43,29 @@ function handlexTransfer(formData) {
             console.log("handlexTransfer for Polkadot to HydraDx...");
             return dotToHydraDx(submittableAmount, target.address);
         },
-        'hydradx:assetHub': () => {
+        'hydraDx:assetHub': () => {
             console.log("handlexTransfer for HydraDx to AssetHub...");
-            const paraid = chains.find(chain => chain.name === 'assetHub').paraid;
+            const paraid = 1000;
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
         'polkadot:assetHub': () => {
             console.log("handlexTransfer for Polkadot to AssetHub...");
-            // const paraid = chains.find(chain => chain.name === 'assethub').paraid;
             return dotToAssetHub(submittableAmount, target.address);
         },
         'assetHub:polkadot': () => {
             console.log("handlexTransfer for AssetHub to Polkadot...");
-            // const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
             return assetHubToPolkadot(submittableAmount, target.address);
         },
-        'hydradx:polkadot': () => {
+        'hydraDx:polkadot': () => {
             console.log("handlexTransfer for HydraDx to Polkadot...");
-            const paraid = chains.find(chain => chain.name === 'polkadot').paraid;
+            const paraid = 0;
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
 
-        'assethub:hydradx': () => {
+        'assetHub:hydraDx': () => {
             console.log("handlexTransfer forAssetHub to HydraDx...");
-            const paraid = chains.find(chain => chain.name === 'hydraDx').paraid;
+            const paraid = 2034;
             return assetHubToParachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
         }
     };
