@@ -46,7 +46,7 @@ export function listChains() {
       const assethub: ChainInfo = {
         name: 'assetHub',
         display: 'Asset Hub (Polkadot)',
-        paraid: 2034,
+        paraid: 1000,
         prefix: 63,
         token_decimals: 10,
         logo: '/chains/assethub.svg'

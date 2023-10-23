@@ -57,6 +57,13 @@ export async function inandoutchannels(paraid: number): Promise<number[]> {
 /// const index_channels: Map<number, number[]> = await build_hrmp();
 export async function build_hrmp(): Promise<Map<number, number[]>> { // Promise<Map<ParaId, ParaId[]>> 
   const chainlist: Record<number, ChainInfo> = listChains();
+   /// remove rococo
+   for (const key in chainlist) {
+    if (chainlist[key].name === "rococo") {
+      delete chainlist[key];
+    }
+  }
+
     // const mylist: Vec<ParaId, Vec<ParaId>> = 
    const openchannels: Map<number, number[]> = new Map();
   // console.log(`Building hrmp dicts`);
