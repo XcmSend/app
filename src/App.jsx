@@ -23,22 +23,21 @@ import WalletInfo from './components/Wallet/pages/WalletInfo';
 import initializeKeyring from './services/initializeKeyring';
 import Notifications from './components/toasts/Notifications';
 import toast, { Toaster, ToastBar } from 'react-hot-toast';
-import { useToaster } from 'react-hot-toast/headless';
+import { useToaster } from 'react-hot-toast';
 import './App.scss';
 import 'tippy.js/dist/tippy.css';
 import { Socket } from 'socket.io-client';
 import ThemeContext from './contexts/ThemeContext';
 import NodeToast from './components/toasts/NodeToast';
-import NodeNotifications from './components/toasts/NodeNotifications';
+// import NodeNotifications from './components/toasts/NodeNotifications';
 import useAppStore from './store/useAppStore';
+import MainLayout from './components/MainLayout';
 
 
 export function App () {
 
   
-  const { toastPosition } = useAppStore(state => ({
-    toastPosition: state.toastPosition,
-  }));
+ 
   const [socket, setSocket] = useState(null);
 
     async function setupKeyring() {
@@ -51,101 +50,51 @@ export function App () {
     }
     setupKeyring();
 
-    const testToast = () => {
-      console.log("Testing toast");
-      toast('This is a test toast!');
-    };
 
     return (
       <div style={{ width: '100vw', height: '100vh' }}>
-        <ThemeContext.Provider>
-        <NodeNotifications />
-      <WalletContextProvider>
-        <SocketContext.Provider value={socket}>
-        <ConfigProvider>
+      <ThemeContext.Provider value={{ theme: 'dark' }}>
+        <WalletContextProvider>
+          <SocketContext.Provider value={socket}>
+            <ConfigProvider>
+              {/* <Toaster /> */}
+                {/* <button onClick={testToast}>Show Test Toast</button>
+                <button className='toast-button'onClick={() => toast("Hello World!")}>Add Toast</button> */}
 
-{/* <Toaster /> */}
+              <AddressBookProvider>
 
-        {/* <button onClick={testToast}>Show Test Toast</button>
-
-        <button className='toast-button'onClick={() => toast("Hello World!")}>Add Toast</button> */}
-
-          <AddressBookProvider>
-         
-
-          {/* <Toaster
-              containerStyle={{ position: 'absolute', ...toastPosition }} 
-              toastOptions={{
-              className: 'toast-styles',
-              duration: 5000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              }
-            }}
-          > 
-            {(t) => (
-              <ToastBar toast={t}>
-                {({ icon, message }) => (
-                  <>
-                    {icon}
-                    {message}
-                    {t.type !== 'loading' && (
-                      <button className='toast-button' onClick={() => toast.dismiss(t.id)}>dismiss</button>
+              {/* <Toaster
+                  containerStyle={{ position: 'absolute', ...toastPosition }} 
+                  toastOptions={{
+                  className: 'toast-styles',
+                  duration: 5000,
+                  style: {
+                    background: '#363636',
+                    color: '#fff',
+                  }
+                }}
+              > 
+                {(t) => (
+                  <ToastBar toast={t}>
+                    {({ icon, message }) => (
+                      <>
+                        {icon}
+                        {message}
+                        {t.type !== 'loading' && (
+                          <button className='toast-button' onClick={() => toast.dismiss(t.id)}>dismiss</button>
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </ToastBar> 
-          )}
-          </Toaster> */}
+                  </ToastBar> 
+              )}
+              </Toaster> */}
  
-          <Routes>
-            <Route element={<Layout />} path='/' >
-            <Route
-                element={<Welcome />}
-                index
-              />
-              <Route
-                  element={<Welcome />}
-                  index
-                />
-                <Route
-                  element={<Welcome />}
-                  path='/welcome'
-                />
-                <Route
-                  element={<WalletInfo />}
-                  path='/wallet-info'
-                />
-                    {/* <Route
-                  element={<Builder />}
-                  path='/builder'
-                /> */}
-                  <Route
-                  element={<BagpipesFlowRoute />}
-                  path='/builder'
-                />
-                 <Route
-                  element={<TransactionMain />}
-                  path='/transaction/review'
-                />
-                  <Route element={<Lab />} path='/lab' />
-  
-                  <Route
-                  element={<ReactTestFlow />}
-                  path='/test-flow'
-                />
-                {/* <Route
-                  element={<EvmWalletInfo />}
-                  path='/evm-wallet-info'
-                /> */}
-              </Route>
-            </Routes>
+              <MainLayout/>
             </AddressBookProvider>
             </ConfigProvider>
           </SocketContext.Provider>
-      </WalletContextProvider>
-      </ThemeContext.Provider>
+        </WalletContextProvider>
+        </ThemeContext.Provider>
       </div>
     );
   }

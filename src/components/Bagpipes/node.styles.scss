@@ -1,5 +1,10 @@
 @import "../../variables";
 
+
+// .react-flow__renderer {
+//   transition: transform 0.5s ease !important;
+// }
+
 .react-flow__node-openAi.selectable, .react-flow__node-openAi.selectable:focus {
     border: 3px solid #ffffff !important;
     box-shadow: -7px 15px 10px 3px #7c7c7c18 !important;

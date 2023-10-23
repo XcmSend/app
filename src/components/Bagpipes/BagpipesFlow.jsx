@@ -5,7 +5,7 @@
 
 import React, { useState, useRef, useCallback , useEffect, memo, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import ReactFlow, { Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
+import ReactFlow, { useReactFlow, Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
 import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
@@ -33,9 +33,9 @@ import styled, { ThemeProvider } from 'styled-components';
 import ThemeContext from '../../contexts/ThemeContext';
 import { lightTheme, darkTheme } from './theme';
 import { node } from 'stylis';
-import NodeNotifications from '../toasts/NodeNotifications';
-
-
+import transformOrderedList from '../toasts/utils/transformOrderedList';
+import { getOrderedList } from './hooks/utils/scenarioExecutionUtils';
+import OrderedListContent from '../toasts/OrderedListContenxt';
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
@@ -43,7 +43,7 @@ import Edges from './edges';
 // import 'reactflow/dist/style.css';
 // import './node.styles.scss';
 import '../../index.css';
-import toast, { useToaster } from "react-hot-toast/headless";
+import toast  from "react-hot-toast";
 
 const ReactFlowStyled = styled(ReactFlow)`
   background-color: ${(props) => props.theme.bg};
@@ -141,8 +141,9 @@ const BagpipesFlow = () => {
     const [maxNodeId, setMaxNodeId] = useState(0);
     const [selectedNodeId, setSelectedNodeId] = useState(null);
     const [selectedEdgeId, setSelectedEdgeId] = useState(null);
+    const instance = useReactFlow();
 
-    const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteChainScenario(currentScenarioNodes, setNodes);
+    const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteChainScenario(currentScenarioNodes, setNodes, instance);
 
 
 
@@ -672,65 +673,75 @@ const BagpipesFlow = () => {
       }
     }, [selectedNodeId, setSelectedNodeInScenario, activeScenarioId]);
     
-    const handleDraftTransactions = async () => {
+  // Helper function outside of main function
+  const isActionDataComplete = (node) => {
+    if (!node.formData || !node.formData.actionData) return false;
+
+    const { source, target } = node.formData.actionData;
+
+    if (!source || !target) return false;
+
+    const isSourceComplete = source.chain && source.assetId !== undefined && source.address && source.amount && source.amount.trim() !== "";
+
+    // Debugging logs:
+    console.log(`isActionDataComplete source.amount: ${source.amount}`);
+    console.log(`isActionDataComplete Trimmed source.amount: ${source.amount && source.amount.trim()}`);
+    console.log(`isActionDataComplete isSourceComplete: ${isSourceComplete}`);
+
+    const isTargetComplete = target.chain && target.assetId !== undefined && target.address;
+
+    return isSourceComplete && isTargetComplete;
+};
+
+const diagramData = scenarios[activeScenarioId].diagramData;
+const orderedList = getOrderedList(diagramData.edges);
+const transformedList = transformOrderedList(orderedList, scenarios[activeScenarioId]?.diagramData?.nodes);
+
+const handleDraftTransactions = async () => {
+
+  toast(<OrderedListContent list={transformedList} />)
+
+  try {
       const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
-      console.log('Found action nodes:', actionNodes);
-      
-      const firstNodePosition = actionNodes && actionNodes.length > 0 ? actionNodes[0].position : null;
-      toast('This is a basic toast message.');
+      if (!actionNodes || actionNodes.length === 0) {
+          toast.warning('No action nodes found.');
+          return;
+      }
+
+      // Display toast based on first node's position
+      const firstNodePosition = actionNodes[0].position;
       if (firstNodePosition) {
-          console.log('Setting toast position based on first action node:', firstNodePosition);
           setToastPosition({
-              top: `${firstNodePosition.y}px`, 
+              top: `${firstNodePosition.y}px`,
               left: `${firstNodePosition.x}px`
           });
-          toast('Processing draft transactions...');
+          toast('Processing draft transactions...', {
+              icon: '💥',
+              data: {
+                  chain: actionNodes[0].formData.actionData.source.chain,
+              },
+              visible: true,
+              zIndex: 100000,
+              styleClass: 'node-notifications'
+          });
       } else {
-          console.log('No valid action node position found. Resetting toast position.');
-          setToastPosition(null);
           toast('Processing draft transactions...');
       }
-  
-      // Helper function to check for the completeness of actionData for a given node
-      const isActionDataComplete = (node) => {
-        // Ensure node has formData and actionData
-        if (!node.formData || !node.formData.actionData) return false;
-    
-        const { source, target } = node.formData.actionData;
-    
-        // Ensure source and target are not undefined or null
-        if (!source || !target) return false;
-    
-        // Check required properties for source and target
-        const isSourceComplete = source.chain && source.assetId !== undefined && source.address && source.amount;
-        const isTargetComplete = target.chain && target.assetId !== undefined && target.address;
-    
-        return isSourceComplete && isTargetComplete;
-    };
-    
-      console.log('handleDraftTransactions isActionDataComplete:', isActionDataComplete);
-  
-      // Check if any action node has empty or missing actionData
-      const hasIncompleteActionData = actionNodes.some(node => !isActionDataComplete(node));
-      console.log('handleDraftTransactions hasIncompleteActionData:', hasIncompleteActionData);
-  
-        if (hasIncompleteActionData) {
-          toast('you need to fetch data from your action nodes');
-          return;  // Stop the function here if there's missing actionData
+
+      if (actionNodes.some(node => !isActionDataComplete(node))) {
+          toast.warning('Incomplete data in some action nodes. Please review and complete all fields.');
+          return;
       }
-  
-      try {
-          const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
-          console.log('Drafted transactions:', draftedTransactions);
-  
-          // Now navigate the user to TransactionMain for review
-          setTransactions(draftedTransactions);
-          navigate('/transaction/review');
-      } catch (error) {
-          console.error("Error during transaction drafting:", error);
-          toast.error('An error occurred during transaction drafting.');
-      }
-  };
+
+      const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
+      setTransactions(draftedTransactions);
+      navigate('/transaction/review');
+  } catch (error) {
+      console.error("Error during transaction drafting:", error);
+      toast.error('An unexpected error occurred during transaction drafting.');
+  }
+};
+
   
    
 
@@ -774,11 +785,11 @@ const BagpipesFlow = () => {
   //   }
   // }, []);
 
-  async function handleExecuteChainScenario() {
+  async function handleExecuteChainScenario(instance) {
     console.log("Running executeChainScenario due to executionState being 'idle'");
     setExecutionState('sending');
     try {
-        await executeChainScenario();
+        await executeChainScenario(instance);
     } catch (error) {
         console.error("An error occurred during scenario execution:", error);
     } finally {
@@ -791,10 +802,6 @@ const BagpipesFlow = () => {
 //   setExecutionState('idle');
 // }, MAX_TIME);
 
-const testToast = () => {
-  console.log("Testing toast");
-  toast('This is a test toast!');
-};
 
         
     return (

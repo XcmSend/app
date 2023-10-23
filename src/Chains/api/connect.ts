@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider, SubmittableResult } from "@polkadot/api";
 import { CHAIN_METADATA } from "./metadata";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
-import toast from "react-hot-toast/headless";
+import toast from "react-hot-toast";
 
 
 /**

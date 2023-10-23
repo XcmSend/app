@@ -5,11 +5,11 @@ import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
-import { getOrderedList } from '../../utils/scenarioUtils';
+import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
 import Selector from './Selector';
-import toast from 'react-hot-toast/headless';
+import toast from 'react-hot-toast';
 import ThemeContext from '../../../../contexts/ThemeContext';
 
 import '../../../../index.css';
@@ -238,30 +238,30 @@ const nodeRef = useRef(null);
   }, [formState, assetInFormData, assetOutFormData]);
 
 
-  useEffect(() => {
-    console.log('ActionNode currentNode:', currentNode);
-    if (currentNode.data.triggerToast) {
-        const nodeRect = nodeRef.current.getBoundingClientRect();
-        const x = window.scrollX - 100 // position of the node relative to the document
-        const y = window.scrollY - 180// position of the node relative to the document
-        console.log('Calculated X:', x, 'Calculated Y:', y);
+//   useEffect(() => {
+//     console.log('ActionNode currentNode:', currentNode);
+//     if (currentNode.data.triggerToast) {
+//         const nodeRect = nodeRef.current.getBoundingClientRect();
+//         const x = window.scrollX - 100 // position of the node relative to the document
+//         const y = window.scrollY - 130// position of the node relative to the document
+//         console.log('Calculated X:', x, 'Calculated Y:', y);
         
 
-        toast('Executing action node!', {
-            icon: '💥',
-            data: {
-                position: { x, y },
-                theme: theme  
-            },
-            visible: true,
-            zIndex: 100000,
-            styleClass: 'node-notifications'
+//         toast('Executing action node!', {
+//             icon: '💥',
+//             data: {
+//                 position: { x, y },
+//                 theme: theme  
+//             },
+//             visible: true,
+//             zIndex: 100000,
+//             styleClass: 'node-notifications'
             
-          });
+//           });
 
-        saveTriggerNodeToast(activeScenarioId, nodeId, false);
-    }
-}, [data.triggerToast, data.position, nodeRef, activeScenarioId, nodeId]);
+//         saveTriggerNodeToast(activeScenarioId, nodeId, false);
+//     }
+// }, [data.triggerToast, data.position, nodeRef, activeScenarioId, nodeId]);
 
   
   return (

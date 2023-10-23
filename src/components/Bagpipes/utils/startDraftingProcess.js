@@ -1,4 +1,4 @@
-import { getOrderedList } from "./scenarioUtils";
+import { getOrderedList } from "../hooks/utils/scenarioExecutionUtils";
 import { prepareTransactionsForReview } from "../CustomNodes/TransactionReview/transactionUtils";
 import { extrinsicHandler } from "../CustomNodes/TransactionReview/extrinsicHandler";
 import { useAppStore } from "../hooks";

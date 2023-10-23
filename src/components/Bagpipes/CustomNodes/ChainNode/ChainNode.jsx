@@ -44,7 +44,6 @@ const ChainNode = ({ children, data, isConnectable }) => {
   const [newName, setNewName] = useState('');
   const [allAddresses, setAllAddresses] = useState([]);
 
-  const [chainList, setChainList] = useState({});
   const [assetOptions, setAssetOptions] = useState([]);
   const [assetsForChain, setAssetsForChain] = useState([]);
   const initialState = savedState || {
@@ -63,7 +62,9 @@ const ChainNode = ({ children, data, isConnectable }) => {
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
 
   const inputRef = useRef(null);
+  const [chainList, setChainList] = useState({});
   const ChainInfoList = Object.values(chainList);
+  const selectedChainLogo = ChainInfoList.find(chain => chain.name === formState.chain)?.logo;
 
   const fetchAddressesFromExtension = () => {
     // Return a mock list of addresses for simplicity.
@@ -77,7 +78,6 @@ const ChainNode = ({ children, data, isConnectable }) => {
   const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
   const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
     // console.log('ChainInfoList', ChainInfoList)
-    const selectedChainLogo = ChainInfoList.find(chain => chain.name === formState.chain)?.logo;
 
     const handleFormChange = (field, value) => {
       setFormState(prev => ({

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { TransactionReview } from './TransactionReviewViewer';
 import { prepareTransactionsForReview } from './transactionUtils';
 import useAppStore from '../../../../store/useAppStore';
-import { getOrderedList } from "../../utils/scenarioUtils";
+import { getOrderedList } from "../../hooks/utils/scenarioExecutionUtils";
 import { WalletContext } from '../../../Wallet/contexts';
 import { extrinsicHandler } from './extrinsicHandler';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
@@ -207,6 +207,7 @@ const handleAcceptTransactions = async () => {
 
 
   return (
+    <>
     <div>
       
       <button className={`button ${theme}`} onClick={backToBuilder}>Back</button>
@@ -221,5 +222,6 @@ const handleAcceptTransactions = async () => {
      
       )}
     </div>
+    </>
   );
 }

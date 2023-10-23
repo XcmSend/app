@@ -3,7 +3,7 @@
 import { ApiPromise } from '@polkadot/api';
 import connectToWsEndpoint from "./connect";
 import { CHAIN_METADATA } from './metadata';
-import toast from 'react-hot-toast/headless';
+import toast from 'react-hot-toast';
 
 /**
  * Broadcast a signed extrinsic to the chain.

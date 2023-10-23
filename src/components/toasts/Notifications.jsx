@@ -1,5 +1,5 @@
 import React from "react";
-import toast, { useToaster } from "react-hot-toast/headless";
+import toast  from "react-hot-toast";
 
  const Notifications = () => {
   const { toasts, handlers } = useToaster();

@@ -4,7 +4,7 @@ import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
 import connectToWsEndpoint from "../api/connect";
 import { CHAIN_METADATA } from "../api/metadata";
-import toast from 'react-hot-toast/headless';
+import toast from 'react-hot-toast';
 import { ApiPromise } from '@polkadot/api';
 
 

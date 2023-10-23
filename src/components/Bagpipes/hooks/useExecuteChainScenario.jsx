@@ -7,13 +7,15 @@ import { processScenarioData, validateDiagramData } from '../utils/scenarioUtils
 import SocketContext from '../../../contexts/SocketContext';
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
-import toast  from 'react-hot-toast/headless';
-import { getOrderedList } from '../utils/scenarioUtils';
+import toast  from 'react-hot-toast';
+import { getOrderedList } from './utils/scenarioExecutionUtils';
+import { handleNodeViewport } from '../handlers/handleNodeViewport';
 import { broadcastToChain } from '../../../Chains/api/broadcast';
+import { ChainToastContent, ActionToastContent } from '../../toasts/CustomToastContext'
 
 
 
-const useExecuteChainScenario = (nodes, setNodes) => {
+const useExecuteChainScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
     const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteChainScenario, executionState, setExecutionState, saveTriggerNodeToast} = useAppStore(state => ({
@@ -78,7 +80,11 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         console.log(`Already executed scenario for executionId: ${executionId}. Skipping...`);
         return;
       }
-      toast('Starting Workflow Execution...', { id: 'workflow-start' });
+      toast('Starting Workflow Execution...', { 
+        id: 'workflow-start',
+        duration: 5000,
+    
+    });
       console.log('[executeChainScenario] Starting Workflow Execution...');
     // setLoading(true);
 
@@ -97,7 +103,9 @@ const useExecuteChainScenario = (nodes, setNodes) => {
                 type: node.type, 
                 data: node.data, 
                 position: node.position,
-                formState: getSavedFormState(node.id) || {},  
+                formState: getSavedFormState(node.id) || {}, 
+                height: node.height,
+                width: node.width,   
             })),
             edges: rawDiagramData.edges.map(edge => ({ ...edge })),
         };
@@ -127,58 +135,91 @@ const useExecuteChainScenario = (nodes, setNodes) => {
         let nodeContents = {};
         let executionCycleFinished = false;
 
+
         // Iterate over the nodes based on the order from orderedList
         for(let index = 0; index < orderedList.length; index++) {
             let nodeId = orderedList[index];
             let currentNode = diagramData.nodes.find(node => node.id === nodeId);
+          
+           
+
             if (!currentNode) {
                 toast.error('The execution has ended due to an unknown node.', { id: 'unknown-node' });
                 return;
             }
 
+           
+
             switch(currentNode.type) {
             case 'openAi':
                 // Handle the openAi node execution
+
                 break;
 
             case 'chain':
                 toast('Executing Chain Node...', { id: 'execution-chain' });
-                // Handle the chain node execution
+                 // Zoom into the current node
+                await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
+                
+             
                 break;
 
             case 'action':
                 console.log('executeChainScenario currentNode position:', currentNode.position);
-                // toast('Executing action node!', {
-                //     icon: '💥',
-                //     id: 'execution-action',
-                //     data: {
-                //         position: currentNode.position
-                //     },
-                //     visible: true,
-                //     zIndex: 100000,
-                // });
+
+                toast('Executing action node!', {
+                    icon: '💥',
+                    id: 'execution-action',
+                    data: {
+                        position: currentNode.position
+                    },
+                    visible: true,
+                    zIndex: 100000,
+                });
 
                 currentNode.data.triggerToast = true;
                 saveTriggerNodeToast(activeScenarioId, currentNode.id, true);
+                 // Zoom into the current node
+                 await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
             
 
                 console.log('executeChainScenario currentNode:', executionState, currentNode.id);
 
                 // Retrieve the signedExtrinsic from the current node data
-                const signedExtrinsic = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.signedExtrinsic || null;
-                const chain = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.actionData?.source?.chain || null; 
-                console.log('executeChainScenario Signed Extrinsic:', signedExtrinsic);
-                console.log('executeChainScenario Chain:', chain);
+                const formData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData || null;
+                const signedExtrinsic = formData?.signedExtrinsic || null;
+                const actionData = formData?.actionData || null; 
+                const sourceChain = actionData?.source?.chain || null;
+                const targetChain = actionData?.target?.chain || null;  
+                const sourceAsset = actionData?.source?.asset || null;
+                const targetAsset = actionData?.target?.asset || null;
 
-                if(signedExtrinsic) {
-                    await broadcastToChain(chain, signedExtrinsic); 
-                }
-                toast(`executeChainScenario Broadcasted to Chain: ${chain}`, signedExtrinsic );
+                // TODO: if action type is swap then show swap stuff and if type is xTransfer show xTransfer stuff    
+
+
+                console.log('executeChainScenario Signed Extrinsic:', signedExtrinsic);
+                console.log('executeChainScenario Chain:', sourceChain);
+
+                // if(signedExtrinsic) {
+                //     await broadcastToChain(sourceChain, signedExtrinsic); 
+                // }
+                toast(<ActionToastContent type={actionData.actionType} message={`executeChainScenario Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
+
                 console.log('executeChainScenario Broadcasted to Chain:', signedExtrinsic );
                 // if it's the last iteration and set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1; 
+
+
                 break;
             }
+
+               // Hold view
+               await handleNodeViewport(instance, currentNode, 'hold', orderedList);
+
+
+               // Zoom out
+               await handleNodeViewport(instance, currentNode, 'zoomOut', orderedList);
+
         }
 
 
@@ -209,9 +250,6 @@ const useExecuteChainScenario = (nodes, setNodes) => {
             toggleExecuteChainScenario();
             setExecutionState('idle');
             console.log('Workflow Execution Prepared and set to idle and toggled...', executionState, toggleExecuteChainScenario);
-
-
-
         }
     };
     return { nodeContentMap, executeChainScenario, stopExecution };

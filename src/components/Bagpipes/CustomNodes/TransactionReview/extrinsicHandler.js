@@ -1,6 +1,6 @@
 import { dotToHydraDx, hydraDxToParachain, dotToParachain, assetHubToParachain, parachainToPolkadot, dotToAssetHub, assetHubToPolkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
-import toast from "react-hot-toast/headless";
+import toast from "react-hot-toast";
 
 // import { hydradx_omnipool_sell } from "../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
