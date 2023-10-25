@@ -6,6 +6,8 @@ import { useAddressBook } from '../../../../contexts/AddressBookContext';
 import useExecuteScenario from '../../hooks/useExecuteScenario';
 import AccountDropdown from './AccountDropdown';
 import useAppStore from '../../../../store/useAppStore';
+import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
+
 import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
 import { listChains } from '../../../../Chains/ChainsInfo';
@@ -13,6 +15,8 @@ import { getSavedFormState, setSavedFormState } from '../../utils/storageUtils';
 import { getAssetBalanceForChain } from '../../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 import ThemeContext from '../../../../contexts/ThemeContext';
+import { buildHrmp } from '../../../../Chains/Helpers/XcmHelper';
+import { mapToObject } from '../../utils/storageUtils';
 import '../../node.styles.scss';
 
 import 'antd/dist/antd.css';
@@ -22,7 +26,7 @@ import '../../../../main.scss';
 
 import '/plus.svg'
 
-const ChainNode = ({ children, data, isConnectable }) => {
+const ChainNode = ({ data, isConnectable }) => {
   const { theme } = useContext(ThemeContext);
   const { nodeContent } = data;
   const socket = useContext(SocketContext);
@@ -30,13 +34,15 @@ const ChainNode = ({ children, data, isConnectable }) => {
   const nodeId = useNodeId();
   const [content, setContent] = useState("");
   const savedState = getSavedFormState(nodeId); 
-  const { scenarios, activeScenarioId, loading, saveChainAddress, isModalVisible, setIsModalVisible, saveNodeFormData  } = useAppStore(state => ({ 
+  const { scenarios, activeScenarioId, loading, saveChainAddress, isModalVisible, setIsModalVisible, saveNodeFormData, saveHrmpChannels, hrmpChannels  } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     loading: state.loading,
     isModalVisible: state.isModalVisible,
     setIsModalVisible: state.setIsModalVisible,
     saveNodeFormData: state.saveNodeFormData,
+    saveHrmpChannels: state.saveHrmpChannels,
+    hrmpChannels: state.hrmpChannels,
   }));
   const { addContact, contacts, error, setError } = useAddressBook();
   const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -66,6 +72,57 @@ const ChainNode = ({ children, data, isConnectable }) => {
   const ChainInfoList = Object.values(chainList);
   const selectedChainLogo = ChainInfoList.find(chain => chain.name === formState.chain)?.logo;
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const newHrmpChannels = await buildHrmp();
+      saveHrmpChannels(newHrmpChannels);
+    };
+    fetchData();
+  }, []);
+
+  const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
+  const currentNodeId = currentNode?.id;  
+  console.log("hrmp currentNode", currentNodeId);
+  const diagramData = scenarios[activeScenarioId]?.diagramData;
+  const orderedList = getOrderedList(diagramData.edges);
+  console.log("hrmp orderedList", orderedList);
+  const currentNodeIndex = orderedList.indexOf(currentNodeId);
+  const previousNodeIndex = currentNodeIndex - 2;
+  console.log("hrmp currentNodeIndex", currentNodeIndex);
+
+  const chainNameToId = (chainName) => {
+    const chainInfo = ChainInfoList.find(info => info.name === chainName);
+    return chainInfo ? chainInfo.paraid : null;
+  }
+
+  const sourceChainName = scenarios[activeScenarioId]?.diagramData?.nodes[previousNodeIndex]?.formData?.chain;
+  console.log(`hrmp Source chain name: "${sourceChainName}"`);
+  const sourceChainId = chainNameToId(sourceChainName);
+  console.log(`hrmp Converted source chain name "${sourceChainName}" to ID:`, sourceChainId); 
+
+  let filteredChainInfoList = ChainInfoList;
+  
+  
+  if (sourceChainId !== null && sourceChainId !== undefined) {
+    console.log(`HRMP channels for source chain ID "${sourceChainId}":`, hrmpChannels[sourceChainId]);
+
+    const hrmpForSource = hrmpChannels[sourceChainId];
+    if (!hrmpForSource) {
+        console.error(`No HRMP channels found for source chain ID: ${sourceChainId}`);
+        return;
+    }
+
+    console.log("Full ChainInfoList before filtering:", ChainInfoList);  // Debugging
+
+    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+        // Always include chain with name "polkadot", or if it's in the hrmpForSource list
+        return chainInfo.name.toLowerCase() === "polkadot" || hrmpForSource.includes(chainInfo.paraid);
+    });
+}
+
+console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
+
+
   const fetchAddressesFromExtension = () => {
     // Return a mock list of addresses for simplicity.
     return [];
@@ -73,6 +130,8 @@ const ChainNode = ({ children, data, isConnectable }) => {
   
   // Assuming we have some function to fetch addresses from the extension
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
+
+
 
   // Filtered assets based on the selected chain
   const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
@@ -294,11 +353,12 @@ console.log('Component re-rendered', formState.address);
               value={formState.chain}  // sets the value for the dropdown from the state
           >
               <option value="" selected>Select chain</option>
-              {ChainInfoList.map((ChainInfo, index) => (
-                  <option key={ChainInfo.name} value={ChainInfo.name}>
-                      {ChainInfo.display}
-                  </option>
+              {filteredChainInfoList.map((ChainInfo, index) => (
+                <option key={ChainInfo.name} value={ChainInfo.name}>
+                  {ChainInfo.display}
+                </option>
               ))}
+
           </select>
 
         </div>

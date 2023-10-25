@@ -8,6 +8,8 @@ interface ChainInfo {
   prefix: number,
   token_decimals: number,
   logo?: string,
+  relay?: string,
+  parachain?: boolean,
   }
 
 interface AssetInfo {
@@ -29,7 +31,8 @@ export function listChains() {
         paraid: 0,
         prefix: 0,
         token_decimals: 10,
-        logo: '/chains/polkadot.svg'
+        logo: '/chains/polkadot.svg',
+        parachain: false
       };
       chainList[0] = Polkadot;
 
@@ -39,7 +42,9 @@ export function listChains() {
         paraid: 2034,
         prefix: 0,
         token_decimals: 12,
-        logo: '/chains/hydradx.svg'
+        logo: '/chains/hydradx.svg',
+        relay: 'polkadot',
+        parachain: true
       };
       chainList[2034] = HydraDX;
 
@@ -49,7 +54,11 @@ export function listChains() {
         paraid: 1000,
         prefix: 63,
         token_decimals: 10,
-        logo: '/chains/assethub.svg'
+        logo: '/chains/assethub.svg',
+        relay: 'polkadot',
+        parachain: true
+
+
       };
       chainList[1000] = assethub;
 
@@ -59,7 +68,9 @@ export function listChains() {
         paraid: 0,
         prefix: 0,
         token_decimals: 12,
-        logo: '/chains/rococo.jpeg'
+        logo: '/chains/rococo.jpeg',
+        parachain: false
+
       };
       chainList[10000] = rococo;
 
@@ -69,13 +80,17 @@ export function listChains() {
         paraid: 2011,
         prefix: 0, //change me
         token_decimals: 10,
-        logo: '/chains/sora.svg'
+        logo: '/chains/sora.svg',
+        relay: 'rococo',
+        parachain: true
       };
 
       chainList[2011] = sora_roc;
 
     return chainList;
 }
+
+
 
 // handle matching chains easier
 export enum supported_Polkadot_Chains {

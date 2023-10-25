@@ -19,7 +19,8 @@ const defaultState = {
   transactions: [],
   shouldExecuteChainScenario: false,
   executionState: 'idle', // can be 'idle', 'sending', 'stopped'
-  toastPosition: null
+  toastPosition: null,
+  hrmpChannels: {},
 
 };
 
@@ -121,7 +122,7 @@ const useAppStore = create(
         });
     },
         
-    setNodeConnections: (newConnections) => set({ nodeConnections: newConnections }),
+    // setNodeConnections: (newConnections) => set({ nodeConnections: newConnections }),
     toggleExecuteChainScenario: () => set((state) => ({ shouldExecuteChainScenario: !state.shouldExecuteChainScenario })),
     setExecutionState: (newState) => set((state) => ({ executionState: newState })),
 
@@ -827,7 +828,35 @@ const useAppStore = create(
               return { chainAddresses: updatedAddresses };
           }
       });
+    },
+
+  saveHrmpChannels: (newChannels) => {
+    set((state) => {
+      console.log("Existing channels:", state.hrmpChannels);
+      console.log("saveHrmpChannels Saving channels to store:", newChannels);
+      return {
+        ...state,
+        hrmpChannels: { ...state.hrmpChannels, ...newChannels }
+      }
+    });
   },
+  
+  // Action to update the edges with the correct style
+  updateEdgeStyleForNode: (nodeId, style) => {
+    set(state => {
+      const updatedEdges = state.edges.map(edge => {
+        if (edge.source === nodeId || edge.target === nodeId) {
+          return {
+            ...edge,
+            ...EDGE_STYLES[style],
+          };
+        }
+        return edge;
+      });
+      return { edges: updatedEdges };
+    });
+  },
+
   }
 )
 ),
@@ -846,6 +875,9 @@ const useAppStore = create(
   }
 }
 ),
+
+
+
 
 );
 

@@ -26,63 +26,6 @@ export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
     return newText;
 }
 
-export function getOrderedList(edges) {
-    console.log('[getOrderedList] Received edges:', edges);
-
-    // Handle no edges case
-    if (!edges || edges.length === 0) {
-        console.log('[getOrderedList] No edges received.');
-        return [];
-    }
-
-    // Handle single edge case
-    if (edges.length === 1) {
-        console.log('[getOrderedList] Only one edge received:', edges[0]);
-        return [edges[0].source, edges[0].target];
-    }
-
-    // Below is your original logic
-    let orderedList = [];
-    
-    // Find the Start Node
-    let startEdge = edges.find(edge => 
-        !edges.some(e => e.target === edge.source)
-    );
-    if (!startEdge) {
-        console.error('[getOrderedList] Failed at finding the start node.');
-        throw new Error('Start node not found.');
-    }
-    console.log('[getOrderedList] Start node found:', startEdge);  // Log the start node
-
-    // Find the End Node
-    let endEdge = edges.find(edge => 
-        !edges.some(e => e.source === edge.target)
-    );
-    if (!endEdge) {
-        console.error('[getOrderedList] Failed at finding the end node.');
-        throw new Error('End node not found.');
-    }
-    console.log('[getOrderedList] End node found:', endEdge);  // Log the end node
-
-    let currentEdge = startEdge;
-    orderedList.push(currentEdge.source);
-
-    // Loop through edges to build the ordered list
-    while (currentEdge && currentEdge !== endEdge) {
-        currentEdge = edges.find(edge => edge.source === currentEdge.target);
-        if (currentEdge) {
-            // console.log('[getOrderedList] Current edge being processed:', currentEdge);
-            orderedList.push(currentEdge.source);
-        }
-    }
-    
-    // Add the target of the endEdge (the last node) to the ordered list.
-    orderedList.push(endEdge.target);
-    
-    console.log('[getOrderedList] Final ordered list:', orderedList);
-    return orderedList;
-}
-
 
 
 export function validateDiagramData(diagramData) {

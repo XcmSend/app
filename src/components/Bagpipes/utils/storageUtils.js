@@ -16,4 +16,13 @@ export function getSavedFormState(nodeId) {
     console.log(`[generateEdgeId] source: ${source}, target: ${target}`);
     return `${source}-${target}`;
   }
+
+  export function mapToObject(map) {
+    let obj = {};
+    for (let [k,v] of map) {
+      obj[k] = v;
+    }
+    return obj;
+  }
+  
   

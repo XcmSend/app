@@ -31,11 +31,9 @@ export default function ActionNode({ children, data, isConnectable }) {
     saveActionDataForNode: state.saveActionDataForNode,
     saveTriggerNodeToast: state.saveTriggerNodeToast,
   }));
-  const [orderedList, setOrderedList] = useState([]);
   const selectedNodeId = scenarios[activeScenarioId]?.selectedNodeId;
   const [assetInNodeId, setAssetInNodeId] = useState(null);
   const [assetOutNodeId, setAssetOutNodeId] = useState(null);
-  const [priceInfo, setPriceInfo] = useState(null);
   const [sellPriceInfoMap, setPriceInfoMap] = useState({});
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isFetchingActionData, setIsFetchingActionData] = useState(false);
@@ -45,11 +43,9 @@ export default function ActionNode({ children, data, isConnectable }) {
   const edges = scenarios[activeScenarioId]?.diagramData?.edges;
   const [lastUpdated, setLastUpdated] = useState(null);
   const [actionData, setActionData] = useState({});
-  const [localActionData, setLocalActionData] = useState(null);
-  // At the top of your component after state or props declarations:
-const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
-const currentActionData = currentNode?.formData?.actionData;
-const nodeRef = useRef(null);
+  const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
+  const currentActionData = currentNode?.formData?.actionData;
+  const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);

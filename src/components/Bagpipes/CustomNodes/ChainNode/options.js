@@ -9,6 +9,16 @@ const dotAssets = {
   assetId: 0,
 };
 
+const assetHubAssets = {
+    asset: {
+        name: 'assetHubDot',
+        symbol: 'DOT',
+        description: 'AssetHub (DOT)',
+    },
+    assetId: 1000,
+};
+
+
 const rococoAssets = {
   asset: {
     name: 'rococoRoc',
@@ -33,7 +43,7 @@ export const assetOptions = [
     },
     {
         chain: 'assetHub',
-        assets: [],  // We'll fetch and populate this later
+        assets: [], 
     }
 ];
 
@@ -47,6 +57,8 @@ export const getAssetOptions = async (selectedChain, signal) => {
           break;
       case 'assetHub':
           assets = await listAssetHubAssets();
+           // Append assetHubAssets to the fetched assets list
+           assets.push(assetHubAssets);
           break;
       case 'polkadot':
           assets = [dotAssets];

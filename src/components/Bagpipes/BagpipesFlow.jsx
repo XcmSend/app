@@ -39,6 +39,7 @@ import OrderedListContent from '../toasts/OrderedListContenxt';
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
+import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 
 // import 'reactflow/dist/style.css';
 // import './node.styles.scss';
@@ -390,22 +391,6 @@ const BagpipesFlow = () => {
       
       
       
-      const ACTIVATED_EDGE_STYLE = {
-        style: {
-          stroke: 'green',
-          strokeWidth: 2
-        },
-        animated: true,
-        markerEnd: {
-          // type: MarkerType.ArrowClosed,
-          color: 'green',
-          strokeWidth: 1
-        },
-        // type: 'arrow',
-        // label: 'Edge Label',
-        focusable: true,
-
-      };
   
       const onNodeDragStop = useCallback(
         (_, node) => {
@@ -425,7 +410,7 @@ const BagpipesFlow = () => {
                 ...closeEdge, 
                 id: generateEdgeId(closeEdge.source, closeEdge.target), // Ensure consistent id
                 className: undefined, // Remove the 'temp' className
-                ...ACTIVATED_EDGE_STYLE
+                ...EDGE_STYLES.default_connected,
               }; 
               console.log("Connected edge added:", connectedEdge);
               connectedEdges.push(connectedEdge);
@@ -692,6 +677,12 @@ const BagpipesFlow = () => {
 
     return isSourceComplete && isTargetComplete;
 };
+
+  // If there's no active scenario, create a new one using the useCreateScenario hook
+  if (!activeScenarioId || !scenarios[activeScenarioId]) {
+    const createScenario = useCreateScenario();
+    createScenario(); // Create a new scenario 
+  }
 
 const diagramData = scenarios[activeScenarioId].diagramData;
 const orderedList = getOrderedList(diagramData.edges);

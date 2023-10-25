@@ -1,10 +1,73 @@
 import {  MarkerType } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-
 // onConnect.js
 import { addEdge } from 'reactflow';
-import useAppStore from '../useAppStore';
+
+export const EDGE_STYLES = {
+  default: {
+    style: {
+      stroke: '#000',
+      strokeWidth: 5,
+    },
+    animated: true,
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: '#000',
+      strokeWidth: 2,
+    },
+    label: 'Edge Label',
+  },
+  executing: {
+    style: {
+      stroke: '#FF5733',
+      strokeWidth: 7,
+    },
+    animated: true,
+    markerEnd: {
+      type: MarkerType.ArrowClosed,
+      color: '#FF5733',
+      strokeWidth: 3,
+    },
+    label: 'Executing...',
+  },
+
+  default_connected: {
+    style: {
+      stroke: 'green',
+      strokeWidth: 2
+    },
+    animated: true,
+    markerEnd: {
+      // type: MarkerType.ArrowClosed,
+      color: 'green',
+      strokeWidth: 1
+    },
+    // type: 'arrow',
+    // label: 'Edge Label',
+    focusable: true,
+  
+  }
+  // ... add more styles as needed
+};
+
+
+const ACTIVATED_EDGE_STYLE = {
+  style: {
+    stroke: 'green',
+    strokeWidth: 2
+  },
+  animated: true,
+  markerEnd: {
+    // type: MarkerType.ArrowClosed,
+    color: 'green',
+    strokeWidth: 1
+  },
+  // type: 'arrow',
+  // label: 'Edge Label',
+  focusable: true,
+
+};
 
 const DEFAULT_EDGE_STYLE = {
   style: {
@@ -21,7 +84,7 @@ const DEFAULT_EDGE_STYLE = {
   label: 'Edge Label'
 };
 
-const onConnect = (currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario) => (params) => {
+const onConnect = (currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario ) => (params) => {
   console.log("onConnect called with params:", params);
   console.log("onConnect called with setEddge:", setEdges);
 
