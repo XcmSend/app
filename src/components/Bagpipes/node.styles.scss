@@ -92,7 +92,7 @@
     min-height: 5px;
     width: 8px !important;
     height: 8px !important;
-    background: #000000 !important;
+    background: rgb(189, 196, 204) !important;
     border: 1px solid black !important;
     /* color: black; */
     border-radius: 100%;
@@ -100,6 +100,16 @@
     margin-right: -5px
 }
 
+.react-flow__handle-right {
+  right: -4px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.react-flow__handle.connectionindicator {
+  cursor: crosshair;
+  pointer-events: all;
+}
 
 
   .tippy-arrow {

@@ -18,7 +18,7 @@ import { ChainToastContent, ActionToastContent } from '../../toasts/CustomToastC
 const useExecuteChainScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteChainScenario, executionState, setExecutionState, saveTriggerNodeToast} = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteChainScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -32,6 +32,8 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
       executionState: state.executionState,
       setExecutionState: state.setExecutionState,
       saveTriggerNodeToast: state.saveTriggerNodeToast,
+      updateEdgeStyleForNode: state.updateEdgeStyleForNode,
+
       
     }));
     // const [executionId, setExecutionId] = useState(null);
@@ -141,14 +143,10 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
             let nodeId = orderedList[index];
             let currentNode = diagramData.nodes.find(node => node.id === nodeId);
           
-           
-
             if (!currentNode) {
                 toast.error('The execution has ended due to an unknown node.', { id: 'unknown-node' });
                 return;
             }
-
-           
 
             switch(currentNode.type) {
             case 'openAi':
@@ -158,14 +156,19 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
 
             case 'chain':
                 toast('Executing Chain Node...', { id: 'execution-chain' });
+                updateEdgeStyleForNode(currentNode.id, 'executing');
+
                  // Zoom into the current node
                 await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
                 
-             
+                updateEdgeStyleForNode(currentNode.id, 'default_connected');
+
                 break;
 
             case 'action':
                 console.log('executeChainScenario currentNode position:', currentNode.position);
+                updateEdgeStyleForNode(currentNode.id, 'executing');
+
 
                 toast('Executing action node!', {
                     icon: '💥',
@@ -208,7 +211,9 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
                 console.log('executeChainScenario Broadcasted to Chain:', signedExtrinsic );
                 // if it's the last iteration and set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1; 
+                
 
+                updateEdgeStyleForNode(currentNode.id, 'default_connected');
 
                 break;
             }

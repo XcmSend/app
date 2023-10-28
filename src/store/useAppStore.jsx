@@ -2,6 +2,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { create } from 'zustand'
 import zukeeper from 'zukeeper';
 import { loadScenarioAsync } from './AsyncHelpers';
+import { EDGE_STYLES } from './reactflow/onConnect';
 
 const defaultState = {
   scenarios: {},
@@ -21,7 +22,7 @@ const defaultState = {
   executionState: 'idle', // can be 'idle', 'sending', 'stopped'
   toastPosition: null,
   hrmpChannels: {},
-
+  currentNodeState: 'default_connected',
 };
 
 const useAppStore = create(
@@ -843,8 +844,23 @@ const useAppStore = create(
   
   // Action to update the edges with the correct style
   updateEdgeStyleForNode: (nodeId, style) => {
-    set(state => {
-      const updatedEdges = state.edges.map(edge => {
+
+    const activeScenarioId = get().activeScenarioId;
+
+    console.log("[updateEdgeStyleForNode] Called with:", { nodeId, style, activeScenarioId });
+
+
+  
+    set((state) => {
+      const currentScenario = state.scenarios[activeScenarioId];
+      
+      if (!currentScenario || !currentScenario.diagramData || !Array.isArray(currentScenario.diagramData.edges)) {
+        console.error(`[updateEdgeStyleForNode] Data inconsistency. Please check scenario data for ID: ${activeScenarioId}`);
+        return;
+      }
+  
+      // Update the edges associated with the given nodeId and apply the style
+      const updatedEdges = currentScenario.diagramData.edges.map(edge => {
         if (edge.source === nodeId || edge.target === nodeId) {
           return {
             ...edge,
@@ -853,10 +869,23 @@ const useAppStore = create(
         }
         return edge;
       });
-      return { edges: updatedEdges };
-    });
-  },
 
+      console.log("[updateEdgeStyleForNode] Updated edges:", updatedEdges);
+  
+      const updatedScenario = {
+        ...currentScenario,
+        diagramData: {
+          ...currentScenario.diagramData,
+          edges: updatedEdges,
+        },
+      };
+  
+      console.log("[updateEdgeStyleForNode] Updated edges for scenario:", activeScenarioId, updatedScenario);
+  
+      // Return the updated state
+      return { scenarios: { ...state.scenarios, [activeScenarioId]: updatedScenario } };
+    });
+  }, 
   }
 )
 ),

@@ -23,20 +23,22 @@ function MainLayout({ children }) {
         <>
         {/* <Toaster /> */}
         <Toaster
-    containerStyle={{ position: 'absolute' }} 
-    toastOptions={{
-        className: 'toast-styles',
-        style: {
-            background: '#fff00', // This seems like an incorrect color value. Ensure it's valid.
-            padding: 0,
-            minWidth: "200px",
-            transition: "all 0.5s ease-out",
-            zIndex: 100000,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between", // This will push the elements to the opposite ends
-            borderRadius: "8px",
-        }
+            position="top-left"
+
+            containerStyle={{ position: 'absolute' }} 
+            toastOptions={{
+                className: 'toast-styles',
+                style: {
+                    background: '#fff00', // This seems like an incorrect color value. Ensure it's valid.
+                    padding: 0,
+                    minWidth: "200px",
+                    transition: "all 0.5s ease-out",
+                    zIndex: 100000,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between", // This will push the elements to the opposite ends
+                    borderRadius: "8px",
+        },
     }}
 > 
     {(t) => (

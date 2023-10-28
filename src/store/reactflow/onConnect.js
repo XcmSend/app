@@ -12,7 +12,7 @@ export const EDGE_STYLES = {
     },
     animated: true,
     markerEnd: {
-      type: MarkerType.ArrowClosed,
+      // type: MarkerType.ArrowClosed,
       color: '#000',
       strokeWidth: 2,
     },
@@ -20,13 +20,13 @@ export const EDGE_STYLES = {
   },
   executing: {
     style: {
-      stroke: '#FF5733',
+      stroke: 'green',
       strokeWidth: 7,
     },
     animated: true,
     markerEnd: {
       type: MarkerType.ArrowClosed,
-      color: '#FF5733',
+      color: 'green',
       strokeWidth: 3,
     },
     label: 'Executing...',
@@ -34,55 +34,25 @@ export const EDGE_STYLES = {
 
   default_connected: {
     style: {
-      stroke: 'green',
+      stroke: ``,
       strokeWidth: 2
     },
-    animated: true,
+    // animated: true,
     markerEnd: {
-      // type: MarkerType.ArrowClosed,
-      color: 'green',
+      // type: MarkerType.Arrow,
+      color: ``,
       strokeWidth: 1
     },
     // type: 'arrow',
     // label: 'Edge Label',
     focusable: true,
+    label: '',
+
   
   }
-  // ... add more styles as needed
 };
 
 
-const ACTIVATED_EDGE_STYLE = {
-  style: {
-    stroke: 'green',
-    strokeWidth: 2
-  },
-  animated: true,
-  markerEnd: {
-    // type: MarkerType.ArrowClosed,
-    color: 'green',
-    strokeWidth: 1
-  },
-  // type: 'arrow',
-  // label: 'Edge Label',
-  focusable: true,
-
-};
-
-const DEFAULT_EDGE_STYLE = {
-  style: {
-    stroke: '#000',
-    strokeWidth: 5
-  },
-  animated: true,
-  markerEnd: {
-    type: MarkerType.ArrowClosed,
-    color: '#000',
-    strokeWidth: 2
-  },
-  // type: 'arrow',
-  label: 'Edge Label'
-};
 
 const onConnect = (currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario ) => (params) => {
   console.log("onConnect called with params:", params);
@@ -105,7 +75,7 @@ const onConnect = (currentScenarioEdges, nodeConnections, setEdges, setNodeConne
   const newEdge = {
     ...params,
     id: newEdgeId,
-    ...DEFAULT_EDGE_STYLE
+    ...EDGE_STYLES.default_connected,
   };
   console.log('onConnect Constructing new edge:', newEdge);
 

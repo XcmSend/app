@@ -121,3 +121,7 @@ code {
 .font-prim  {
   font-family: $primary-font;
 }
+
+.default_connected {
+  color: var(--default_edge);
+}
