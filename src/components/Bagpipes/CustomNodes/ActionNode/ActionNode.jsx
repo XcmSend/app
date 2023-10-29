@@ -49,13 +49,13 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
-    console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
+    // console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
     return nodeData?.formData;
   }, [assetInNodeId, nodes]);
   
   const assetOutFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetOutNodeId);
-    console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
+    // console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
     return nodeData?.formData;
   }, [assetOutNodeId, nodes]);
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -134,6 +134,7 @@ export default function ActionNode({ children, data, isConnectable }) {
             await sleep(1000);
             // Handle fetching for xTransfer if needed
             console.log('Fetching for xTransfer');
+            setLastUpdated(new Date());
         }
 
         // Set actionData outside of the action-specific blocks
@@ -166,22 +167,22 @@ export default function ActionNode({ children, data, isConnectable }) {
 
     useEffect(() => {
       if (!selectedNodeId || !selectedNodeId.startsWith('action_')) return;
-      console.log('[ActionNode] active node:', selectedNodeId);
+      // console.log('[ActionNode] active node:', selectedNodeId);
 
       const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
-      console.log('ActionNode scenario edges:', scenarios[activeScenarioId]?.diagramData?.edges);
-      console.log('ActionNode Ordered List:', orderedList);
+      // console.log('ActionNode scenario edges:', scenarios[activeScenarioId]?.diagramData?.edges);
+      // console.log('ActionNode Ordered List:', orderedList);
 
       const currentIndex = orderedList.indexOf(selectedNodeId);
-      console.log('ActionNode Current Index:', currentIndex);
+      // console.log('ActionNode Current Index:', currentIndex);
 
       if (currentIndex === -1) return;
 
       const assetInNodeId = orderedList[currentIndex - 1];
 
       const assetOutNodeId = orderedList[currentIndex + 1];
-      console.log('[ActionNode] assetInNodeId:', assetInNodeId);
-      console.log('[ActionNode] assetOutNodeId:', assetOutNodeId);
+      // console.log('[ActionNode] assetInNodeId:', assetInNodeId);
+      // console.log('[ActionNode] assetOutNodeId:', assetOutNodeId);
 
         
         setAssetInNodeId(assetInNodeId);
@@ -342,15 +343,14 @@ export default function ActionNode({ children, data, isConnectable }) {
 
     <button 
       onClick={() => fetchActionInfo(nodeId)} 
-      className=" flex justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
+      className="flex  justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
       >
        { isFetchingActionData ? (
           <div className="small-spinner"></div>
         ) : (
-          <span className=" font-semibold mr-1">fetch</span>
+          <img className="h-4 w-4" src="/refresh.svg" alt="refresh icon" />
         )}
 
-      <img className="h-4 w-4 ml-2" src="/refresh.svg" alt="refresh icon" />
     </button>
 
         {sellPriceInfoMap ? (

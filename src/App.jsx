@@ -57,38 +57,7 @@ export function App () {
         <WalletContextProvider>
           <SocketContext.Provider value={socket}>
             <ConfigProvider>
-              {/* <Toaster /> */}
-                {/* <button onClick={testToast}>Show Test Toast</button>
-                <button className='toast-button'onClick={() => toast("Hello World!")}>Add Toast</button> */}
-
               <AddressBookProvider>
-
-              {/* <Toaster
-                  containerStyle={{ position: 'absolute', ...toastPosition }} 
-                  toastOptions={{
-                  className: 'toast-styles',
-                  duration: 5000,
-                  style: {
-                    background: '#363636',
-                    color: '#fff',
-                  }
-                }}
-              > 
-                {(t) => (
-                  <ToastBar toast={t}>
-                    {({ icon, message }) => (
-                      <>
-                        {icon}
-                        {message}
-                        {t.type !== 'loading' && (
-                          <button className='toast-button' onClick={() => toast.dismiss(t.id)}>dismiss</button>
-                        )}
-                      </>
-                    )}
-                  </ToastBar> 
-              )}
-              </Toaster> */}
- 
               <MainLayout/>
             </AddressBookProvider>
             </ConfigProvider>

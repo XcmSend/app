@@ -14,8 +14,8 @@ const OrderedListContent = ({ list }) => {
     console.log('OrderedListContent SwapSVG',SwapSVG);
 
     return (
-        <div className={`toast-container  toast-container ${theme}`}>
-        <div  style={{ display: 'flex', alignItems: 'center' }}>
+        <div className={`toast-container ${theme}`}>
+        <div className='ordered-list-map' style={{ display: 'flex', alignItems: 'center' }}>
             {list.map((item, index) => {
                 let imageSrc, altText;
                 if (item.type === 'chain') {

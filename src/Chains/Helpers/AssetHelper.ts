@@ -55,7 +55,7 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 async function checkAssetHubBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, assetDecimals?: number }> {
   let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ''), 10);
   console.log(`checkAssetHubBalance accountId`, account_id_32);
-  if (cleanAssetId === 3) {
+  if (cleanAssetId === 1000) {
       // If assetId is 3, then we need to check assetHubNativeBalance
       const nativeBal = await assetHubNativeBalance(account_id_32);
       console.log(`AssetHub Native Balance:`, nativeBal);

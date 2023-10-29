@@ -68,28 +68,23 @@ export async function buildHrmp(): Promise<Record<number, number[]>> {
 
    // Remove rococo without mutating original list
    const filteredChainList = {...chainlist};
-   console.log("buildHrmp chainlist", chainlist);
   //  delete filteredChainList[10000]; 
 
    const openchannels: Map<number, number[]> = new Map();
 
-   console.log("buildHrmp Starting to build HRMP channels...");
 
    for (const key in filteredChainList) {
        const chainInfo = filteredChainList[key];
        const paraid = chainInfo.paraid;
        
-       console.log(`buildHrmp Fetching channels for paraid: ${paraid}...`);
        const channels: number[] = await inAndOutChannels(paraid); 
        
-       console.log(`buildHrmp Channels for paraid ${paraid}:`, channels);
        
        openchannels.set(paraid, channels);
      }
      openchannels.set(0, localHrmpChannels[0]);
 
 
-   console.log("buildHrmp Finished building HRMP channels.");
    return Object.fromEntries(openchannels);
 
 }

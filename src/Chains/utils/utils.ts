@@ -39,7 +39,7 @@ export function formatToFourDecimals(value: string) {
 
 
 export function toUnit(balance: string | number, token_decimals: number): number {
-  console.log('[toUnit] balance', balance, token_decimals);
+  // console.log('[toUnit] balance', balance, token_decimals);
   if (balance === null || balance === undefined) {
     throw new Error('Received invalid balance: null or undefined');
   }
@@ -54,13 +54,13 @@ export function toUnit(balance: string | number, token_decimals: number): number
   }
   const base = 10n;
   const exponent = BigInt(token_decimals);
-  console.log('[toUnit] exponent', exponent);
+  // console.log('[toUnit] exponent', exponent);
   const mod = base ** exponent;
-  console.log('[toUnit] mod', mod);
+  // console.log('[toUnit] mod', mod);
   let bi = BigInt(balanceStr);
-  console.log('toUnit bi', bi);
+  // console.log('toUnit bi', bi);
   var div = bi / mod;
-  console.log('toUnit div', div);
+  // console.log('toUnit div', div);
   return parseFloat(div.toString()) + parseFloat((bi - div * mod).toString()) / parseFloat(mod.toString());
 }
 

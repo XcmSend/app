@@ -26,10 +26,6 @@
 
 }
 
-.toast-button {
-  z-index: 100000;
-  margin-top: 100px !important;
-}
 
 .dark-theme {
   .ant-select .ant-select-selector, .ant-select:not(.ant-select-customize-input) .ant-select-selector {
@@ -126,18 +122,3 @@
   background-color: var(--toast-bg);
 }
 
-.toast-button {
-  background-color: var(--button-bg);
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin: 5px;
-
-  &:hover {
-    background-color: var(--button-bg-hover);
-  }
-
-}

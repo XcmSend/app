@@ -12,7 +12,7 @@ export default () => {
     event.dataTransfer.effectAllowed = 'move';
   };
   const { theme } = useContext(ThemeContext);
-  console.log('Sidebar theme', theme);
+  // console.log('Sidebar theme', theme);
   const createScenario = useCreateScenario();
 
 
@@ -34,12 +34,12 @@ export default () => {
   return (
 <aside className={`${theme} sidebar fixed top-100 right-0`}>
         <CreateButton createScenario={createScenario} />
-      <div className="description">Drag thes nodes to the canvass, connect them together and build a workflow. </div>
+      <div className="description">Drag thes nodes to the canvas, connect them together to build a workflow. </div>
     
-      <div className={`dndnode chain`} onDragStart={(event) => onDragStart(event, 'chain')} draggable>
+      <div className={` dndnode chain`} onDragStart={(event) => onDragStart(event, 'chain')} draggable>
         {nodeNames.chain}
       </div>
-      <div className="dndnode action" onDragStart={(event) => onDragStart(event, 'action')} draggable>
+      <div className=" dndnode action" onDragStart={(event) => onDragStart(event, 'action')} draggable>
         {nodeNames.action}
       </div>
     </aside>

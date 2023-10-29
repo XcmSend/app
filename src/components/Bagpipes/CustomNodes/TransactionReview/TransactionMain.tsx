@@ -39,6 +39,10 @@ export default function TransactionMain() {
   const currentScenarioNodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
   const [fetchedNonces, setFetchedNonces] = useState<{ [key: string]: number }>({});
   const [isFetchingNonces, setIsFetchingNonces] = useState<boolean>(false);
+  // const signedCount = signedExtrinsics.length;
+
+  const [signedCount, setSignedCount] = useState(0);
+
 
 
 
@@ -95,6 +99,7 @@ const handleAcceptTransactions = async () => {
           const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address);
           allSignedExtrinsics.push(signedExtrinsic);
           saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
+
           continue;
       }
   
@@ -112,6 +117,10 @@ const handleAcceptTransactions = async () => {
       // Sign with the adjusted nonce
       const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address, currentNonce);
       allSignedExtrinsics.push(signedExtrinsic);
+      console.log('All signed extrinsics:', allSignedExtrinsics);
+
+      // Increment the signed count
+setSignedCount(prevCount => prevCount + 1);
   
       saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
   }
@@ -121,6 +130,7 @@ const handleAcceptTransactions = async () => {
       // Save the signed extrinsics
       setSignedExtrinsics(allSignedExtrinsics);
       console.log("[handleAcceptTransactions] Signed extrinsics:", allSignedExtrinsics);
+      console.log('signedExtrinsics in state:', signedExtrinsics);
 
       const executionId = uuidv4();
       setExecutionId(executionId);
@@ -133,6 +143,9 @@ const handleAcceptTransactions = async () => {
       executeAndNavigate();
     };
 
+    useEffect(() => {
+      console.log('signedExtrinsics in state:', signedExtrinsics);
+  }, [signedExtrinsics]);
 
 
   useEffect(() => {
@@ -208,20 +221,34 @@ const handleAcceptTransactions = async () => {
 
   return (
     <>
-    <div>
-      
-      <button className={`button ${theme}`} onClick={backToBuilder}>Back</button>
-      {isReviewingTransactions && (
-       <TransactionReview
-        transactions={transactions}
-        onAccept={handleAcceptTransactions}
-        onDecline={handleDeclineTransactions}
-        signExtrinsic={signExtrinsic}
-        setSignedExtrinsics={setSignedExtrinsics}
-     />
-     
-      )}
-    </div>
+      <div>
+        
+        <button className={`button ${theme}`} onClick={backToBuilder}>Back</button>
+  
+        {isReviewingTransactions ? (
+          <TransactionReview
+            transactions={transactions}
+            onAccept={handleAcceptTransactions}
+            onDecline={handleDeclineTransactions}
+            signExtrinsic={signExtrinsic}
+            setSignedExtrinsics={setSignedExtrinsics}
+          />
+        ) : (
+          <div className="transaction-signature-status">
+            {signedCount < transactions.length 
+             ? `${signedCount}/${transactions.length} transactions signed. Once you have signed all transactions you will be sent back to the builder. Then you can broadcast them when you are ready.`
+             : `All transactions are signed! You can now broadcast them.`}
+          </div>
+        )}
+  
+      </div>
     </>
   );
+  
+  
+  
+  
+  
+  
+  
 }

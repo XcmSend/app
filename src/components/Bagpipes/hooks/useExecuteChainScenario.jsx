@@ -155,11 +155,13 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
                 break;
 
             case 'chain':
-                toast('Executing Chain Node...', { id: 'execution-chain' });
+
+                // we don't need to execute a chain node so it doesnt make sense to zoom into it. 
+                // toast('Executing Chain Node...', { id: 'execution-chain' });
                 updateEdgeStyleForNode(currentNode.id, 'executing');
 
-                 // Zoom into the current node
-                await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
+                //  // Zoom into the current node
+                // await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
                 
                 updateEdgeStyleForNode(currentNode.id, 'default_connected');
 
@@ -170,7 +172,7 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
                 updateEdgeStyleForNode(currentNode.id, 'executing');
 
 
-                toast('Executing action node!', {
+                toast('Executing action!', {
                     icon: '💥',
                     id: 'execution-action',
                     data: {

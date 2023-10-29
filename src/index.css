@@ -118,6 +118,7 @@ button:focus-visible {
   justify-content: center;
   align-items: center;
   cursor: grab;
+  color: var(--button-color) !important;
 }
 
 .new-scenario {
@@ -278,7 +279,7 @@ border: 1px solid rgb(184, 184, 184);
 .small-spinner {
   border: 1px solid var(--controls-color);
   border-radius: 100%;
-  border-top: 1px solid var(--controls-color); 
+  border-top: 1px solid rgb(65, 65, 255); 
   width: 8px;
   height: 8px;
   animation: spin 1s linear infinite;

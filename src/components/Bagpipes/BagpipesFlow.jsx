@@ -35,7 +35,7 @@ import { lightTheme, darkTheme } from './theme';
 import { node } from 'stylis';
 import transformOrderedList from '../toasts/utils/transformOrderedList';
 import { getOrderedList } from './hooks/utils/scenarioExecutionUtils';
-import OrderedListContent from '../toasts/OrderedListContenxt';
+import OrderedListContent from '../toasts/OrderedListContent';
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
@@ -688,50 +688,87 @@ const diagramData = scenarios[activeScenarioId].diagramData;
 const orderedList = getOrderedList(diagramData.edges);
 const transformedList = transformOrderedList(orderedList, scenarios[activeScenarioId]?.diagramData?.nodes);
 
-const handleDraftTransactions = async () => {
+const processDraftTransactions = async () => {
+  const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
+  
+  if (!actionNodes || actionNodes.length === 0) {
+      throw new Error('No action nodes found.');
+  }
 
-  toast(<OrderedListContent list={transformedList} />)
+  if (actionNodes.some(node => !isActionDataComplete(node))) {
+      throw new Error('Incomplete data in some action nodes. Please review and complete all fields.');
+  }
+
+  // Start the drafting process and return a promise that either resolves with the transactions
+  // or rejects after a timeout.
+  return new Promise(async (resolve, reject) => {
+      const timeoutId = setTimeout(() => {
+          reject(new Error('Drafting is taking longer than expected. Please refresh the page and try again.'));
+      }, 10000); // 10 seconds timeout
+
+      try {
+          const result = await startDraftingProcess(activeScenarioId, scenarios);
+          clearTimeout(timeoutId); // Clear the timeout if drafting succeeds in time
+          resolve(result);
+      } catch (error) {
+          clearTimeout(timeoutId); // Clear the timeout if there's an error
+          reject(error);
+      }
+  });
+};
+
+
+const handleDraftTransactions = async () => {
+  toast(<OrderedListContent list={transformedList} />);
 
   try {
-      const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
-      if (!actionNodes || actionNodes.length === 0) {
-          toast.warning('No action nodes found.');
-          return;
-      }
+      const promise = processDraftTransactions();
 
-      // Display toast based on first node's position
-      const firstNodePosition = actionNodes[0].position;
-      if (firstNodePosition) {
-          setToastPosition({
-              top: `${firstNodePosition.y}px`,
-              left: `${firstNodePosition.x}px`
-          });
-          toast('Processing draft transactions...', {
-              icon: '💥',
-              data: {
-                  chain: actionNodes[0].formData.actionData.source.chain,
+      toast.promise(
+          promise,
+          {
+              loading: 'Processing draft transactions...',
+              success: 'Draft transactions processed successfully',
+              error: (error) => error.message
+          },
+          {
+              style: {
+                  minWidth: '250px',
+                  zIndex: 100000,
               },
-              visible: true,
-              zIndex: 100000,
-              styleClass: 'node-notifications'
-          });
-      } else {
-          toast('Processing draft transactions...');
-      }
+              position: 'top-center',
+              loading: {
+                  icon: '💥',
+                  className: 'node-notifications'
+              },
+              success: {
+                duration: 5000,
+                icon: '🔥',
+            },
+            error: {
+                duration: null,  // This will make the error toast persistent.
+                icon: '❌',
+                // Here's how you can add a button to the toast:
+                render({ icon, message }) {
+                    return (
+                        <div>
+                            {icon} {message}
+                            <button onClick={() => window.location.reload()}>Refresh</button>
+                        </div>
+                    );
+                },
+            }
+          }
+      );
 
-      if (actionNodes.some(node => !isActionDataComplete(node))) {
-          toast.warning('Incomplete data in some action nodes. Please review and complete all fields.');
-          return;
-      }
-
-      const draftedTransactions = await startDraftingProcess(activeScenarioId, scenarios);
+      const draftedTransactions = await promise;
       setTransactions(draftedTransactions);
       navigate('/transaction/review');
   } catch (error) {
       console.error("Error during transaction drafting:", error);
-      toast.error('An unexpected error occurred during transaction drafting.');
   }
 };
+
 
   
    

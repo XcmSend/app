@@ -37,26 +37,25 @@ function MainLayout({ children }) {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between", // This will push the elements to the opposite ends
-                    borderRadius: "8px",
-        },
-    }}
-> 
-    {(t) => (
-        <ToastBar toast={t}>
-            {({ icon, message }) => (
-                <div className={` toast-container ${theme}`}>
-                    <div className="toast-content">
-                        {icon}
-                        {message}
+                },
+            }}
+        > 
+        {(t) => (
+            <ToastBar toast={t}>
+                {({ icon, message }) => (
+                    <div className={` toast-container ${theme}`}>
+                        <div className="toast-content">
+                            {icon}
+                            {message}
+                        </div>
+                        {t.type !== 'loading' && (
+                            <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
+                        )}
                     </div>
-                    {t.type !== 'loading' && (
-                        <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
-                    )}
-                </div>
-            )}
-        </ToastBar> 
-    )}
-</Toaster>
+                )}
+            </ToastBar> 
+        )}
+        </Toaster>
 
 
       {/* <NodeNotifications /> */}

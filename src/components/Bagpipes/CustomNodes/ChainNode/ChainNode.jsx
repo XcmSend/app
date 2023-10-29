@@ -72,23 +72,15 @@ const ChainNode = ({ data, isConnectable }) => {
   const ChainInfoList = Object.values(chainList);
   const selectedChainLogo = ChainInfoList.find(chain => chain.name === formState.chain)?.logo;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const newHrmpChannels = await buildHrmp();
-      saveHrmpChannels(newHrmpChannels);
-    };
-    fetchData();
-  }, []);
 
+
+  // HRMP channel filtering area 
   const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
   const currentNodeId = currentNode?.id;  
-  console.log("hrmp currentNode", currentNodeId);
   const diagramData = scenarios[activeScenarioId]?.diagramData;
   const orderedList = getOrderedList(diagramData.edges);
-  console.log("hrmp orderedList", orderedList);
   const currentNodeIndex = orderedList.indexOf(currentNodeId);
   const previousNodeIndex = currentNodeIndex - 2;
-  console.log("hrmp currentNodeIndex", currentNodeIndex);
 
   const chainNameToId = (chainName) => {
     const chainInfo = ChainInfoList.find(info => info.name === chainName);
@@ -96,31 +88,32 @@ const ChainNode = ({ data, isConnectable }) => {
   }
 
   const sourceChainName = scenarios[activeScenarioId]?.diagramData?.nodes[previousNodeIndex]?.formData?.chain;
-  console.log(`hrmp Source chain name: "${sourceChainName}"`);
   const sourceChainId = chainNameToId(sourceChainName);
-  console.log(`hrmp Converted source chain name "${sourceChainName}" to ID:`, sourceChainId); 
-
   let filteredChainInfoList = ChainInfoList;
-  
-  
   if (sourceChainId !== null && sourceChainId !== undefined) {
-    console.log(`HRMP channels for source chain ID "${sourceChainId}":`, hrmpChannels[sourceChainId]);
 
     const hrmpForSource = hrmpChannels[sourceChainId];
     if (!hrmpForSource) {
         console.error(`No HRMP channels found for source chain ID: ${sourceChainId}`);
         return;
     }
-
-    console.log("Full ChainInfoList before filtering:", ChainInfoList);  // Debugging
-
     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
         // Always include chain with name "polkadot", or if it's in the hrmpForSource list
         return chainInfo.name.toLowerCase() === "polkadot" || hrmpForSource.includes(chainInfo.paraid);
     });
-}
+  }
 
-console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
+  useEffect(() => {
+    const fetchData = async () => {
+      console.log('fetching HRMP channels');
+      const newHrmpChannels = await buildHrmp();
+      saveHrmpChannels(newHrmpChannels);
+    };
+    fetchData();
+  }, []);
+
+  // END of HRMP channel filtering area
+
 
 
   const fetchAddressesFromExtension = () => {
@@ -178,6 +171,8 @@ console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
     }
 };
 
+
+
   
 
   useEffect(() => {
@@ -190,7 +185,7 @@ console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
           const assetsData = await getAssetOptions(formState.chain, signal); 
           if (!signal.aborted) {
             setAssetsForChain(assetsData.assets);
-            console.log('Fetched assets:', assetsData);
+            // console.log('Fetched assets:', assetsData);
   
             if (!formState.asset && assetsData.assets?.length) {
               handleFormChange("asset", assetsData.assets[0]);
@@ -217,17 +212,12 @@ console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
 
 
   useEffect(() => {
-    console.log('Updated formState:', formState);
-  }, [formState]);
-
-
-  useEffect(() => {
     setFormState(initialState);
   }, [nodeId]);
 
   useEffect(() => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    console.log('currentNodeFormData', scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
+    // console.log('currentNodeFormData', scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
     if (currentNodeFormData) {
         setFormState({
             chain: currentNodeFormData?.chain?.name || "",
@@ -244,9 +234,6 @@ console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
   useEffect(() => {
     const formData = { ...formState };
 
-    
-    console.log('saving nodeFormData', formData, nodeId);
-
     saveNodeFormData(activeScenarioId, nodeId, formData);
     setSavedFormState(nodeId, formData); // save to local storage
   }, [formState]);
@@ -260,15 +247,11 @@ console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
   }, [ nodeId, activeScenarioId]);
 
   useEffect(() => {
-    console.log('contacts', contacts)
-
     setAllAddresses([...extensionAddresses, ...contacts.map(contact => contact.address)]);
   }, [extensionAddresses, contacts]);
 
 
   useEffect(() => {
-    console.log("isModalVisible", isModalVisible);
-
     if (isModalVisible && inputRef.current) {
         inputRef.current.focus();
     }
@@ -280,9 +263,6 @@ console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
       setContent(""); // Clear the content
     } else {
       setContent(nodeContentMap[nodeId] || '');
-      console.log(`Setting content for node ${nodeId}:`, nodeContentMap[nodeId]); 
-      console.log(`Full node content map:`, nodeContentMap); 
-
     }
   }, [nodeContentMap, nodeId]);
 
@@ -297,11 +277,9 @@ console.log("Filtered ChainInfoList:", filteredChainInfoList);  // Debugging
 
   const fetchBalance = async (signal) => {
     try {
-      console.log('[fetchBalance] [raw] Fetching balance for', formState.chain, formState.asset.assetId, formState.address);
       setIsFetchingBalance(true);
       const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address, signal); 
       if (!signal.aborted) {
-        console.log('[fetchBalance] Fetched balance:', fetchedBalance);
         setBalance(fetchedBalance);
       }
     } catch (error) {
@@ -328,45 +306,36 @@ useEffect(() => {
     return () => controller.abort();
 }, [formState.chain, formState.asset, formState.address]);
 
-console.log('Component re-rendered', formState.address);
-
-
 
   return (
     <div className={`${theme} custom-node shadow-lg text-xs p-4`}>
-    <h1 className="text-xxs node-input primary-font mb-1">{nodeId}</h1>
-
-        {selectedChainLogo && (
-            <div className="chain-logo-container mb-2 mt-2 flex justify-center">
-              <img src={selectedChainLogo} alt={`${formState.chain} Logo`} className="chain-logo w-12 h-12" /> 
-            </div>
-          )}
+      <h1 className="text-xxs node-input primary-font mb-1">{nodeId}</h1>
+      {selectedChainLogo && (
+          <div className="chain-logo-container mb-2 mt-2 flex justify-center">
+            <img src={selectedChainLogo} alt={`${formState.chain} Logo`} className="chain-logo w-12 h-12" /> 
+          </div>
+        )}
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
-    <div className="m-2">
-      <div className="in-node-border p-2 rounded mb-2 ">
-        <div className="chain-selection mb-2">
-          <h3 className="text-xxs node-input primary-font mb-1">Chain</h3> 
-          <select 
-              className="chain-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
-              onChange={handleChainChange}
-              value={formState.chain}  // sets the value for the dropdown from the state
-          >
-              <option value="" selected>Select chain</option>
-              {filteredChainInfoList.map((ChainInfo, index) => (
-                <option key={ChainInfo.name} value={ChainInfo.name}>
-                  {ChainInfo.display}
-                </option>
-              ))}
-
-          </select>
-
-        </div>
+      <div className="m-2">
+        <div className="in-node-border p-2 rounded mb-2 ">
+          <div className="chain-selection mb-2">
+            <h3 className="text-xxs node-input primary-font mb-1">Chain</h3> 
+            <select 
+                className="chain-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
+                onChange={handleChainChange}
+                value={formState.chain}  // sets the value for the dropdown from the state
+            >
+                <option value="" selected>Select chain</option>
+                {filteredChainInfoList.map((ChainInfo, index) => (
+                  <option key={ChainInfo.name} value={ChainInfo.name}>
+                    {ChainInfo.display}
+                  </option>
+                ))}
+            </select>
+          </div>
         </div>
         <div className="in-node-border p-2 rounded mb-2 ">
-
-
-
         {formState.chain && (
           <div className="asset-selection mb-2">
             <h3 className="text-xxs node-input primary-font mb-1">Asset</h3>
@@ -390,77 +359,76 @@ console.log('Component re-rendered', formState.address);
         )}
       </div>
   
-  {formState.chain && (
-    <div className="flex flex-col items-start mb-2 in-node-border p-2 rounded">
-      <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>
-      <div className="flex items-center text-black justify-start  w-full">
-                <AccountDropdown 
-                    selectedChainName={formState.chain}
-                    selectedAddress={formState.address}  // Pass address value from state
-                    onSelect={(address) => handleFormChange("address", address)} 
-                />
-      
-      </div>
-      <AddContacts />
-    </div>
-  )}
+      {formState.chain && (
+        <div className="flex flex-col items-start mb-2 in-node-border p-2 rounded">
+          <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>
+          <div className="flex items-center text-black justify-start  w-full">
+            <AccountDropdown 
+                selectedChainName={formState.chain}
+                selectedAddress={formState.address}  // Pass address value from state
+                onSelect={(address) => handleFormChange("address", address)} 
+            />
+          </div>
+          <AddContacts />
+        </div>
+      )}
   
-  {formState.chain && contacts.length > 0 && (
-    <div className="mb-2 in-node-border p-2 rounded flex flex-col items-start justify-start">
-        <h3 className="text-xxs node-input primary-font mb-2 self-start">Contacts</h3>
-        <select 
-            className="contact-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
-            value={formState.contact || ""}
-            onChange={(e) => {
-                if(e.target.value === 'create_new_contact') {
-                   <AddContacts />
-                   setIsModalVisible(true)
-                  } else {
-                    handleFormChange("contact", e.target.value);
-                  }
-            }}
-        >
-            <option value="create_new_contact" style={{ borderBottom: '1px solid #ccc', fontWeight: 500 }}>Create New Contact</option> {/* Added style for borderBottom */}
-            <option value="">Select Contact</option>
-            {contacts.map(contact => (
-                <option key={contact.address} value={contact.address}>
-                    {`${contact.name} (${contact.address})`}
-                </option>
-            ))}
-        </select>
-    </div>
-  )}
+      {formState.chain && contacts.length > 0 && (
+        <div className="mb-2 in-node-border p-2 rounded flex flex-col items-start justify-start">
+            <h3 className="text-xxs node-input primary-font mb-2 self-start">Contacts</h3>
+            <select 
+                className="contact-selector font-semibold text-black in-node-border border-gray-300 p-2 rounded"
+                value={formState.contact || ""}
+                onChange={(e) => {
+                    if(e.target.value === 'create_new_contact') {
+                      <AddContacts />
+                      setIsModalVisible(true)
+                      } else {
+                        handleFormChange("contact", e.target.value);
+                      }
+                }}
+            >
+                <option value="create_new_contact" style={{ borderBottom: '1px solid #ccc', fontWeight: 500 }}>Create New Contact</option> {/* Added style for borderBottom */}
+                <option value="">Select Contact</option>
+                {contacts.map(contact => (
+                    <option key={contact.address} value={contact.address}>
+                        {`${contact.name} (${contact.address})`}
+                    </option>
+                ))}
+            </select>
+        </div>
+      )}
 
-{formState.chain && (
-   <div className="mb-2 in-node-border p-2 rounded">
-     <h3 className="text-xxs node-input primary-font mb-1 flex items-center justify-between">
-       Amount 
-       <div className="flex items-center primary-font">
+    {formState.chain && (
+      <div className="mb-2 in-node-border p-2 rounded">
+        <h3 className="text-xxs node-input primary-font mb-1 flex items-center justify-between">
+          Amount 
+          <div className="flex items-center primary-font">
 
-        { isFetchingBalance ? (
-          <div className="small-spinner"></div>
-        ) : (
-          balance !== null && (
-            <BalanceTippy balance={balance} symbol={formState.asset.symbol} />
-          )
-        )}
-        <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
-          <img className="h-3 w-3" src="/refresh.svg" />
-        </span>
-        
+            { isFetchingBalance ? (
+              <div className="small-spinner"></div>
+            ) : (
+              balance !== null && (
+                <BalanceTippy balance={balance} symbol={formState.asset.symbol} />
+              )
+            )}
+            <span onClick={fetchBalance} className="text-xs m-1 p-0 rounded refresh-button">
+              <img className="h-3 w-3" src="/refresh.svg" />
+            </span>
+            
+          </div>
+        </h3>
+        <div className="unbounded-black">
+          <input 
+            className='unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector'
+            type="number" 
+            placeholder="0.0000" 
+            value={formState.amount}
+            onChange={(e) => handleFormChange('amount', e.target.value)}
+          />
+        </div>
       </div>
-     </h3>
-     <div className="unbounded-black">
-       <input 
-         className='unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector'
-         type="number" 
-         placeholder="0.0000" 
-         value={formState.amount}
-         onChange={(e) => handleFormChange('amount', e.target.value)}
-       />
-     </div>
-   </div>
-)}
+    )}
 
 
       {/* {loading ? (

@@ -7,13 +7,13 @@ import { addEdge } from 'reactflow';
 export const EDGE_STYLES = {
   default: {
     style: {
-      stroke: '#000',
-      strokeWidth: 5,
+      stroke: 'gray',
+      strokeWidth: 3,
     },
     animated: true,
     markerEnd: {
       // type: MarkerType.ArrowClosed,
-      color: '#000',
+      color: 'gray',
       strokeWidth: 2,
     },
     label: 'Edge Label',
