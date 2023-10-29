@@ -74,19 +74,19 @@ export function listHydraDxAssets() {
 // }
 
 
-export async function listPolkadexAssets(signal: AbortSignal) {
-	const api = await connectToWsEndpoint('polkadex', signal);
-	console.log(`Connected to Polkadex`);
+// export async function listPolkadexAssets(signal: AbortSignal) {
+// 	const api = await connectToWsEndpoint('polkadex', signal);
+// 	console.log(`Connected to Polkadex`);
 	
-	const dictionary = new Map<number, any>();
-	const assets = await api.query.assets.metadata.entries();
-    assets.forEach(([{args: [id] } ,asset]) => {
-		const myasset = {
-			asset: asset.toHuman(),
-			assetId: id.toHuman(),
-		};
-		dictionary.set(id.toHuman() as number, myasset);
-      });
-	return dictionary;
+// 	const dictionary = new Map<number, any>();
+// 	const assets = await api.query.assets.metadata.entries();
+//     assets.forEach(([{args: [id] } ,asset]) => {
+// 		const myasset = {
+// 			asset: asset.toHuman(),
+// 			assetId: id.toHuman(),
+// 		};
+// 		dictionary.set(id.toHuman() as number, myasset);
+//       });
+// 	return dictionary;
 
-}
+// }
