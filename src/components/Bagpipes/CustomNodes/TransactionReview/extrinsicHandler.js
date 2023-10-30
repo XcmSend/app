@@ -1,9 +1,10 @@
-import { dotToHydraDx, hydraDxToParachain, dotToParachain, assetHubToParachain, parachainToPolkadot, dotToAssetHub, assetHubToPolkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, polkadot_to_assethub, interlay2assethub, assethub2interlay } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
 // import { hydradx_omnipool_sell } from "../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
+import { account } from "@polkadot/api-derive/balances";
 
 export async function extrinsicHandler(actionType, formData) {
     
@@ -50,11 +51,11 @@ function handlexTransfer(formData) {
         },
         'polkadot:assetHub': () => {
             console.log("handlexTransfer for Polkadot to AssetHub...");
-            return dotToAssetHub(submittableAmount, target.address);
+            return polkadot_to_assethub(submittableAmount, target.address);
         },
         'assetHub:polkadot': () => {
             console.log("handlexTransfer for AssetHub to Polkadot...");
-            return assetHubToPolkadot(submittableAmount, target.address);
+            return assethub_to_parachain(source.assetId.toString(), submittableAmount, target.address, paraid);
         },
         'hydraDx:polkadot': () => {
             console.log("handlexTransfer for HydraDx to Polkadot...");
@@ -62,11 +63,18 @@ function handlexTransfer(formData) {
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
+        'assetHub:interlay': () => {
+            return assethub2interlay(source.assetId, submittableAmount, target.address);
+        },
+
+        'interlay:assethub': () => {
+            return interlay2assethub(source.assetId, submittableAmount, target.address);
+        },
 
         'assetHub:hydraDx': () => {
             console.log("handlexTransfer forAssetHub to HydraDx...");
             const paraid = 2034;
-            return assetHubToParachain(formData.assetId.toString(), submittableAmount, target.chain, paraid);
+            return assethub_to_hydra(source.assetId, submittableAmount, target.address);
         }
     };
 

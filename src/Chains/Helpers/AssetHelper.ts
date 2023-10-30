@@ -52,7 +52,7 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 
 // check asset balance on polkadot assethub
-async function checkAssetHubBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, assetDecimals?: number }> {
+export async function checkAssetHubBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, assetDecimals?: number }> {
   let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ''), 10);
   console.log(`checkAssetHubBalance accountId`, account_id_32);
   if (cleanAssetId === 1000) {
@@ -88,7 +88,7 @@ async function checkAssetHubBalance(assetid: number, account_id_32: string, sign
   return { free: 0, reserved: 0, total: 0, assetDecimals };
 }
 
-async function assetHubNativeBalance(accountid: string): Promise<{ free: number, reserved: number, total: number }> {
+export async function assetHubNativeBalance(accountid: string): Promise<{ free: number, reserved: number, total: number }> {
   const api = await connectToWsEndpoint('assetHub');
   const result = await generic_check_native_balance(api, accountid);
   // Compute total by aggregating all balance types
@@ -119,7 +119,7 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
         );
 }
 
-async function checkHydraDxAssetBalance(assetid: number | string, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, frozen?: number, assetDecimals?: number }> {
+export async function checkHydraDxAssetBalance(assetid: number | string, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, frozen?: number, assetDecimals?: number }> {
   console.log(`checkHydraDxAssetBalance accountId`, account_id_32);
   console.log(`checkHydraDxAssetBalance assetId`, assetid);
   console.log('checkHydraDxAssetBalance typeof asset id',typeof assetid);
@@ -179,7 +179,7 @@ async function checkHydraDxAssetBalance(assetid: number | string, account_id_32:
 
 
 /// returns the raw balance of the native dot token
-async function checkPolkadotDotRawNativeBalance(accountId: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+export async function checkPolkadotDotRawNativeBalance(accountId: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
   let bal: any;
   let bal3: any;
   if (accountId) {

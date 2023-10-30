@@ -26,7 +26,7 @@ export default async function connectToWsEndpoint(chain: string): Promise<ApiPro
     for (const endpoint of metadata.endpoints) {
         try {
             const provider = new WsProvider(endpoint);
-            const api = await ApiPromise.create({ provider });
+            const api = await ApiPromise.create({ provider, noInitWarn: true });
             await api.isReady;
             return api;
         } catch (error) {
