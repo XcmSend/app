@@ -15,6 +15,15 @@ export function listAssetHubAssets() {
     }));
 }
 
+export function listInterlayAssets() {
+    const assets = CHAIN_ASSETS.interlay.assets;
+    // Transform the assets data to match your previous structure
+    return assets.map((assetData: { asset: any; assetId: any; }) => ({
+        asset: assetData.asset,
+        assetId: assetData.assetId
+    }));
+}
+
 
 export function listHydraDxAssets() {
     const assets = CHAIN_ASSETS.hydraDx.assets;

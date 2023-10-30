@@ -1,4 +1,4 @@
-import { listAssetHubAssets, listHydraDxAssets } from '../../../../Chains/Assets/listAssetsForChain';
+import { listAssetHubAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
 
 const dotAssets = {
   asset: {
@@ -60,6 +60,9 @@ export const getAssetOptions = async (selectedChain, signal) => {
            // Append assetHubAssets to the fetched assets list
            assets.push(assetHubAssets);
           break;
+    case 'interlay':
+        assets = await listInterlayAssets();
+        break;
       case 'polkadot':
           assets = [dotAssets];
           break;

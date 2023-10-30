@@ -234,6 +234,120 @@ export const CHAIN_ASSETS = {
         ]
 
     },
+    "interlay": {
+        "assets": [
+                {
+                    "asset": {
+                        "decimals": '18',
+                        "name": 'Wrapped BNB',
+                    "symbol": 'WBNB.wh',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '7'
+                },
+                {
+                  asset: {
+                    decimals: '18',
+                    name: 'tBTC v2',
+                    "symbol": 'TBTC.wh',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '5'
+                },
+                {
+                  asset: {
+                    decimals: '6',
+                    name: 'USD Coin',
+                    "symbol": 'USDC.wh',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '8'
+                },
+                {
+                  asset: {
+                    decimals: '10',
+                    name: 'Liquid DOT',
+                    "symbol": 'LDOT',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '1'
+                },
+                {
+                  asset: {
+                    decimals: '8',
+                    name: 'Wrapped BTC',
+                    "symbol": 'WBTC.wh',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '9'
+                },
+                {
+                  asset: {
+                    decimals: '6',
+                    name: 'Tether USD',
+                    "symbol": 'USDT',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '2'
+                },
+                {
+                  asset: {
+                    decimals: '18',
+                    name: 'Glimmer',
+                    "symbol": 'GLMR',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '10'
+                },
+                {
+                  asset: {
+                    decimals: '18',
+                    name: 'Wrapped Ether',
+                    "symbol": 'WETH.wh',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '6'
+                },
+                {
+                  asset: {
+                    decimals: '12',
+                    name: 'Bifrost Native Coin',
+                    "symbol": 'BNC',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '11'
+                },
+                {
+                  asset: {
+                    decimals: '10',
+                    name: 'Voucher DOT',
+                    "symbol": 'VDOT',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '3'
+                },
+                {
+                  asset: {
+                    decimals: '18',
+                    name: 'Dai Stablecoin',
+                    "symbol": 'DAI.wh',
+                    "existentialDeposit": '0',
+
+                  },
+                  assetId: '4'
+                }
+              ]
+    },
     "assetHub": {
         "assets": [
             {
