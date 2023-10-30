@@ -24,7 +24,22 @@ export function listInterlayAssets() {
     }));
 }
 
+async function listInterlayAssetReal() {
 
+    const api = await connectToWsEndpoint('interlay');
+	
+    const dictionary = new Map<number, any>();
+    const assets = await api.query.assetRegistry.metadata.entries();
+    assets.forEach(([{args: [id] } ,asset]) => {
+        const myasset = {
+            asset: asset.toHuman(),
+            assetId: id.toHuman(),
+        };
+        dictionary.set(id.toHuman() as number, myasset);
+      });
+    const valuesArray = Array.from(dictionary.values());
+    return valuesArray;
+}
 export function listHydraDxAssets() {
     const assets = CHAIN_ASSETS.hydraDx.assets;
     // Transform the assets data to match your previous structure
