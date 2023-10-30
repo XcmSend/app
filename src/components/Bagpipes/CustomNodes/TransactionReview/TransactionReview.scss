@@ -1,0 +1,74 @@
+@import '../../../../variables.scss';
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+.button {
+    background-color: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+  
+    &:hover {
+      background-color: var(--button-bg-hover);
+    }
+  
+  }
+  
+
+.draft-transaction-item {
+    color: var(--color);
+    background-color: var(--bg);
+    margin: 10px !important;
+    padding: 10px !important;
+    border-radius: 5px; 
+
+    @media (max-width: 768px) {
+        padding: 8px !important;
+    }
+}
+
+.transaction-name {
+   color: var(--color) !important;
+   font-size: 12px;
+   margin-bottom: 5px;
+}
+
+
+.transaction-review-data {
+    color: var(--color);
+    background-color: var(--bg);
+   border: 1px solid var(--border-color);
+    padding: 10px !important;
+    border-radius: 5px; 
+
+    @media (max-width: 768px) {
+        padding: 8px !important;
+    }
+}
+
+
+.status-drafted {
+    color: orange; 
+}
+
+.status-signed {
+    color: green; 
+}
+
+
+h2 {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--color) !important;
+}
+
+

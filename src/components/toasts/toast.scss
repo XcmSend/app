@@ -1,0 +1,54 @@
+@import '../../variables.scss';
+
+
+
+.toast-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* A subtle shadow for the toast */
+    color: var(--color);
+    background: var(--toast-bg);
+    height: auto;
+    width: 100%;
+    position: relative;
+
+}
+
+.toast-button {
+ 
+
+    background-color: var(--button-bg);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 5px;
+    
+  
+    &:hover {
+      background-color: var(--button-bg-hover);
+    }
+  
+  }
+
+.toast-icon {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+}
+
+.ordered-list-map {
+    background: var(--toast-bg-accent);
+    padding: 10px;
+    border-radius: 6px;   
+}

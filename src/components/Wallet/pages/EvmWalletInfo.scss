@@ -1,0 +1,77 @@
+.evm-wallet-info-page {
+  padding: 50px 8px;
+
+  input.code {
+    font-family: monospace;
+  }
+}
+
+.evm-wallet-info-page__text {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 500;
+  padding-bottom: 16px;
+}
+.evm-wallet-info-page__section {
+  margin-bottom: 24px;
+}
+
+.evm-wallet-info__button_group {
+  .ant-btn {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+}
+
+.evm-wallet-info__button_row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -16px;
+
+  .ant-btn {
+    width: 100%;
+    margin-left: 16px;
+    flex: 1 1 260px;
+  }
+}
+
+.warning-text {
+  color: #d7a22f;
+  white-space: pre-wrap;
+  margin-bottom: 16px;
+}
+
+.evm-wallet-transaction_row {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .label {
+    width: 110px;
+    margin-bottom: 8px;
+  }
+  .ant-input, .ant-select, .input-wrapper,.max-w {
+    flex: 1 1 200px;
+    margin-bottom: 8px;
+  }
+  .input-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+    align-items: center;
+
+    .ant-input {
+      flex: 1 1 120px;
+    }
+  }
+  .suffix {
+    padding-left: 12px;
+    margin-bottom: 8px;
+  }
+}
+
+.transaction-button {
+  width: 100%;
+  margin-bottom: 8px;
+}
