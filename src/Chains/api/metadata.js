@@ -10,6 +10,16 @@ export const CHAIN_METADATA = {
         nativeAccount: true,
 
     },
+    interlay: {
+        chain: "interlay",
+        endpoints: [
+            "wss://rpc-interlay.luckyfriday.io",
+            "wss://interlay-rpc.dwellir.com",
+        ],
+        queryAssetPaths: ["assets.metadata"],  
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
     hydraDx: {
         chain: "HydraDX",
         endpoints: [
@@ -26,8 +36,7 @@ export const CHAIN_METADATA = {
     polkadot: {
         chain: "Polkadot",
         endpoints: [
-            "wss://rpc-polkadot.luckyfriday.io",
-            "wss://polkadot-rpc.dwellir.com",
+              "wss://polkadot-rpc.dwellir.com",
             "wss://rpc.polkadot.io",
             "wss://polkadot.api.onfinality.io/public-ws",
 

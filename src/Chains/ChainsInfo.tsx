@@ -48,6 +48,18 @@ export function listChains() {
       };
       chainList[2034] = HydraDX;
 
+      const interlay: ChainInfo = {
+        name: 'interlay',
+        display: 'Interlay',
+        paraid: 2032,
+        prefix: 0,
+        token_decimals: 12,
+        logo: '/chains/interlay.svg',
+        relay: 'polkadot',
+        parachain: true
+      };
+      chainList[2032] = interlay;
+
       const assethub: ChainInfo = {
         name: 'assetHub',
         display: 'Asset Hub (Polkadot)',
@@ -77,7 +89,7 @@ export function listChains() {
       const sora_roc: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
-        paraid: 2011,
+        paraid: 12011, // change me
         prefix: 0, //change me
         token_decimals: 10,
         logo: '/chains/sora.svg',

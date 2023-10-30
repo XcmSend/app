@@ -12,6 +12,7 @@ const endpoints = {
         assetHub: "wss://statemint.api.onfinality.io/public-ws",
         hydraDx: "wss://hydradx-rpc.dwellir.com",
         polkadex: "wss://polkadex-parachain.public.curie.radiumblock.co/ws",
+        interlay: "wss://interlay-rpc.dwellir.com",
     },
     hydradx: {
 
