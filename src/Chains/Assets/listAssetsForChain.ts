@@ -24,6 +24,8 @@ export function listInterlayAssets() {
     }));
 }
 
+
+
 async function listInterlayAssetReal() {
 
     const api = await connectToWsEndpoint('interlay');
