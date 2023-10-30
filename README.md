@@ -9,7 +9,6 @@ $ npm install -f
 $ npm run dev
 ```
 
-
 Build tailwind:
 
 ```
