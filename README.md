@@ -2,10 +2,10 @@
 
 
 ## Build and run me:    
-```
-$ git clone git@github.com:XcmSend/xcmsend-ui.git  
-$ yarn run gen-gitinfo  
+```shell
+$ git clone git@github.com:XcmSend/app.git  
 $ npm install -f
+$ npm run build
 $ npm run dev
 ```
 
