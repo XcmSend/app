@@ -1,0 +1,132 @@
+@import "../../variables";
+  
+  .lab-container {
+     padding: 20px;
+   }
+  
+  .lab-top-bar {
+    display: flex;
+    justify-content: space-between;
+    background-color: #f3f4f6;
+    padding: 10px;
+  }
+  
+  .create-scenario-button {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+  .scenario-card {
+    margin-top: 15px;
+    padding: 15px 20px 15px 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    
+    // Original size (you can adjust if necessary)
+    transform: scale(1);
+  
+    &:hover {
+      // Reduced scaling
+      transform: scale(1.02);
+      background-color: white;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .scenario-header {
+    cursor: pointer;
+  }
+  
+  .execution-panel {
+    margin-top: 10px;
+  }
+  
+  .execution-item {
+    background-color: #f9f9f9;
+    padding: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+  }
+
+  .execution-container {
+    padding: 20px;
+
+  }
+  
+  .empty-state {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+
+  .edit-button-right {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+
+  .close-button-right {
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 5px 5px;
+    cursor: pointer;
+   
+  &:hover {
+    background-color: darken($primary-color, 10%);
+  }
+}
+  .scenario-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .scenario-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .button-container {
+    text-align: right;
+  }
+
+  .scenario-container {
+    padding: 2rem;
+  }
+  
+  h1 {
+    margin-bottom: 1rem;
+  }
+  
+  h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .executions-table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.5rem;
+      text-align: left;
+    }
+    
+    th {
+      background-color: white;
+      color: rgb(0, 0, 0);
+    }
+  
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  }

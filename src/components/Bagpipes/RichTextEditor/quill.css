@@ -1,0 +1,40 @@
+.ql-container {
+    border: 1px solid #e2e2e2;
+    border-radius: 5px;
+    background: white;
+  }
+  
+  .ql-toolbar .ql-ifStatement {
+    background-color: gray !important;
+    /* color: white !important; */
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-right: 4px;
+  }
+  
+  /* Style the inserted blot */
+  .ql-editor .ql-ifStatement {
+    background-color: lightgray !important;
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+    font-family: monospace !important;
+  
+  }
+  
+  .if-statement {
+    background-color: grey !important;
+    padding: 10px;
+    border-radius: 5px;
+    /* color: white; */
+    font-family: monospace !important;
+  }
+  
+  
+  .ql-editor .dropped-node {
+    color: blue;
+  }
+  
+  .ql-editor .removed-node {
+    color: red;
+  }

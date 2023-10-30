@@ -1,0 +1,55 @@
+$primary-color: #007bff;
+$primary-font: 'Lexend', 'Muli', 'Mulish', sans-serif;
+$unbounded-font: 'Unbounded', sans-serif;
+$chain-node-width: 250px;
+
+.light {
+    --bg: #fff;
+    --bg-accent: #d8d8d8;
+    --primary: #fefefe;
+    --node-bg: #dddddd;
+    --node-color: #222;
+    --node-border: #222;
+    --minimap-mask-bg: #f2f2f5;
+    --controls-bg: #fefefe;
+    --controls-bg-hover: #eee;
+    --controls-color: #222;
+    --controls-border: #ddd;
+    --button-bg: #{$primary-color};
+    --node-handle: #181818;
+    --node-input-title:rgb(156 163 175);
+    --color: rgb(19, 19, 19);
+    --border-color: rgb(202, 202, 202); 
+    --button-bg-hover: darken(#{$primary-color}, 10%);
+    --box-shadow-color: #bdbdbd44;
+    --toast-bg: #b9b9b9;
+    --toast-bg-accent: #5182f6;
+    --default-edge: black;
+    --button-color: white;
+    
+}
+
+.dark {
+    --bg: #111827;
+    --bg-accent: #1f2b44;
+    --primary: #0035a8;
+    --node-bg: #1a1a1a;
+    --node-color: #f9f9f9;
+    --node-border: #888;
+    --minimap-mask-bg: #343435;
+    --controls-bg: #555;
+    --controls-bg-hover: #676768;
+    --controls-color: #dddddd;
+    --controls-border: #676768;
+    --button-bg: #{$primary-color};
+    --node-handle: #ffffff;
+    --node-input-title:rgb(160, 160, 160);
+    --color: rgb(252, 252, 252);
+    --border-color: rgb(44, 44, 44); 
+    --button-bg-hover: darken(#{$primary-color}, 10%);
+    --box-shadow-color: #2e2d2f2b;
+    --toast-bg: #192748;
+    --toast-bg-accent: #1c4cbe;
+    --default-edge: white;
+    --button-color: white;
+}

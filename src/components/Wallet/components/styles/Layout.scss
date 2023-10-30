@@ -1,0 +1,29 @@
+.ant-switch.bagpipe-switch-theme {
+  position: absolute;
+}
+
+.bagpipe-switch-theme {
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+  background-color: #004BFF;
+}
+
+@media (max-width: 840px) {
+  .bagpipe-switch-theme.with-header {
+    right: calc((100% - 620px)/2 + 186px);
+  }
+}
+
+@media (max-width: 600px) {
+  .bagpipe-switch-theme.with-header {
+    right: 185px;
+  }
+}
+
+@media (max-width: 501px) {
+  .bagpipe-switch-theme.with-header {
+    top: 100px;
+    right: 30px;
+  }
+}

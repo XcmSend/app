@@ -1,0 +1,127 @@
+@import "variables";
+body {
+  margin: 0;
+  font-family: $primary-font;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #020412;
+}
+
+#root {
+  height: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
+}
+
+.xcm-send-btn-wallet {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #0059ff;
+  border: none;
+  border-radius: 8px;
+  height: auto;
+  outline: 0;
+  box-shadow: none;
+
+  &:hover, &:focus, &:active {
+    background-color: #226fff;
+  }
+}
+
+.xcm-send-btn {
+  color: rgb(0, 0, 0) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  height: auto;
+  outline: 0;
+  box-shadow: none;
+}
+
+.xcm-send-btn-wallet > span {
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.xcm-send-btn > span {
+  font-size: 15px;
+  line-height: 26px;
+  font-weight: 500;
+  color: #000000;
+}
+
+.xcm-send-btn:hover, .xcm-send-btn:focus, .xcm-send-btn:active {
+  background-color: #ffffff;
+  color: #00266c;
+}
+
+.xcm-send-btn-normal-size {
+  padding: 11px 13px;
+}
+
+.xcm-send-btn-normal-size > span:last-child {
+  padding: 0 20px;
+}
+
+.xcm-send-btn-small-size {
+  padding: 7px 16px;
+}
+
+.xcm-send-btn-small-size > span {
+  padding: 0 12px;
+}
+
+.sub-wallet-icon-btn {
+  padding: 11px 13px;
+}
+
+.sub-wallet-sign-btn {
+  background-color: #181E42;
+  padding: 7px 16px;
+}
+
+.sub-wallet-sign-btn > span {
+  color: #42C59A;
+}
+
+.sub-wallet-sign-btn:hover, .sub-wallet-sign-btn:focus, .sub-wallet-sign-btn:active {
+  background-color: #181E42;
+}
+
+.ant-input {
+  outline: none;
+
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.ant-select {
+  outline: none;
+
+  .ant-select-selector {
+    outline: none;
+    box-shadow: none!important;
+  }
+}
+
+.ant-btn[disabled], .ant-btn[disabled]:active, .ant-btn[disabled]:focus, .ant-btn[disabled]:hover {
+  background-color: #5485fc;
+}
+
+.font-prim  {
+  font-family: $primary-font;
+}
+
+.default_connected {
+  color: var(--default_edge);
+}
