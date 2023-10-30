@@ -27,7 +27,7 @@ import SendButton from './buttons/SendButton';
 import { startDraftingProcess } from './utils/startDraftingProcess';
 import { MarkerType } from 'reactflow';
 import { useCreateScenario } from './hooks/useCreateScenario';
-import './utils/getAllConnectedNodes';
+import CreateTemplateLink from './TemplateFeatures/CreateTemplateLink';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
 import ThemeContext from '../../contexts/ThemeContext';
@@ -40,6 +40,8 @@ import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/'
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
+import './utils/getAllConnectedNodes';
+
 
 // import 'reactflow/dist/style.css';
 // import './node.styles.scss';
@@ -836,10 +838,11 @@ const handleDraftTransactions = async () => {
 
       <div className="bagpipe-flow-canvass" style={{ width: '100vw', height: '1000px' }}>
 
-                 
 
         <ThemeProvider theme={theme}>
-            <Panel position="top-center">          
+            <Panel position="top-center">   
+            <CreateTemplateLink scenarioId={activeScenarioId} />
+       
                 {/* <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button> */}
             </Panel>
             <div className="bagpipe">
@@ -866,7 +869,9 @@ const handleDraftTransactions = async () => {
                   proOptions={proOptions}
                   fitView
               >
+                
               <Controls />
+              
               {/* <MiniMap /> */}
               {/* <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Lines} /> 
              <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Lines} />  */}
@@ -885,12 +890,14 @@ const handleDraftTransactions = async () => {
 
             </Panel> */}
             </ReactFlowStyled>
+           
             {shouldExecuteChainScenario ? (
               <SendButton executeChainScenario={handleExecuteChainScenario} />
             ) : (
               <StartButton draftTransactions={handleDraftTransactions} />
 
             )}
+        
             {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
             {/* <GitInfo /> */}
