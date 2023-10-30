@@ -4,7 +4,7 @@ import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain
 import * as assert from 'assert';
 import { checkAssetHubBalance, assetHubNativeBalance, checkHydraDxAssetBalance, checkPolkadotDotRawNativeBalance } from './Chains/Helpers/AssetHelper';
 import { Keyring } from '@polkadot/keyring';
-
+import { inAndOutChannels } from './Chains/Helpers/XcmHelper';
 
 async function test_interlay() {
 	console.log(`testing interlay`);
@@ -135,16 +135,16 @@ async function test_balances(){
 
 /// make sure chains have open channels
 async function check_open_channels(){
-    console.log('Checking open Hmrp channels');
+    console.log('Checking open hrmp channels');
     const assethub = 1000;
-   // const assethubchans: [number] = await find_open_polkadot_channels(assethub);
-   // assert.ok(assethubchans.length > 1, 'Could not find open channels for assethub');
+    const assethubchans: number[] = await inAndOutChannels(assethub);
+    assert.ok(assethubchans.length > 1, 'Could not find open channels for assethub');
     console.log('assethub has open channels');
   
     console.log('checking hydradx channels');
     const hdx = 2034;
-   // const hdxchans: [number] = await find_open_polkadot_channels(hdx);
-  //  assert.ok(hdxchans.length > 1, 'Could not find open channels for assethub');
+    const hdxchans: number[] = await inAndOutChannels(hdx);
+    assert.ok(hdxchans.length > 1, 'Could not find open channels for assethub');
     console.log('hydradx has open channels');
 }
 
@@ -160,11 +160,11 @@ You can broadcast each tx, by feeding the tx into the broadcast_run_tx function
 async function main() {
     console.log('Running tests');
     console.log('Running Balance tests');
-  //  await test_balances();
+    await test_balances();
     console.log('running transaction tests');
     await test_transfers();
     console.log('Checking XCM channels');
- //   await check_open_channels();
+    await check_open_channels();
     console.log('test completed');
 }
 

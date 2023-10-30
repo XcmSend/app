@@ -51,6 +51,17 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 }
 
 
+/// check the balance of an asset on interlay
+/// returns { free: '304', reserved: '0', frozen: '0' }
+export async function checkInterlayassetbalance(assetid: number, accountid: string){
+  const asset =  {
+    "foreignasset": assetid
+  };
+    const thebalance = await api.query.tokens.accounts(accountid, asset);
+
+    return thebalance;
+}
+
 // check asset balance on polkadot assethub
 export async function checkAssetHubBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, assetDecimals?: number }> {
   let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ''), 10);
