@@ -53,13 +53,22 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 /// check the balance of an asset on interlay
 /// returns { free: '304', reserved: '0', frozen: '0' }
-export async function checkInterlayassetbalance(assetid: number, accountid: string){
+export async function checkInterlayassetbalance(assetid: number, accountid: string): Promise<{ free: number, reserved: number, total?: number, assetDecimals?: number }>{
+  const api = await connectToWsEndpoint('interlay');
   const asset =  {
     "foreignasset": assetid
   };
     const thebalance = await api.query.tokens.accounts(accountid, asset);
+    if (isOrmlTokensAccountData(thebalance)) {
+      const bal_obj: OrmlTokensAccountData = thebalance;
+      return {
+        free: bal_obj.free,
+        reserved: bal_obj.reserved,
+        total: bal_obj.free + bal_obj.reserved,
+      };
 
-    return thebalance;
+    }
+    return { free: 0, reserved: 0, total: 0 };;
 }
 
 // check asset balance on polkadot assethub
@@ -354,6 +363,11 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
       console.log(`getAssetBalanceForChain hydra assetDecimals`, assetDecimals);    
     break;
 
+    case "interlay":
+      balances = await checkInterlayassetbalance(assetId, accountId);
+      assetDecimals = balances.assetDecimals;  
+    break;
+
     case "assetHub":
       const assetHubBalanceInfo = await checkAssetHubBalance(assetId, accountId, signal);
       balances = assetHubBalanceInfo;
@@ -413,6 +427,11 @@ console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
       totalInUnits = freeInUnits + reservedInUnits;
       break;
       
+    case "interlay":
+      freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
+      reservedInUnits = toUnit(balances.reserved, assetDecimals || tokenDecimals);
+      totalInUnits = freeInUnits + reservedInUnits;
+      break;
     case "assetHub":
       // Process balances for assetHub
 
