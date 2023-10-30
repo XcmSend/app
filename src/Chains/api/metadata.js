@@ -16,7 +16,8 @@ export const CHAIN_METADATA = {
             "wss://rpc-interlay.luckyfriday.io",
             "wss://interlay-rpc.dwellir.com",
         ],
-
+        queryAssetPaths: ["assets.metadata"],  
+        queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
     hydraDx: {
