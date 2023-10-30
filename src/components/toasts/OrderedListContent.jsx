@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import SwapSVG from '/swap.svg';
-import xTransferSVG from '/xtransfer.svg';
+import xTransferSVG from '/xTransfer.svg';
 import { listChains } from '../../Chains/ChainsInfo';
 import { toast } from 'react-hot-toast';
 import ThemeContext from '../../contexts/ThemeContext';

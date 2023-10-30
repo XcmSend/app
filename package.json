@@ -9,10 +9,10 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "gen-gitinfo": "echo export default \"\\\"$(git rev-parse HEAD)\\\"\"  > src/components/Bagpipes/_git_commit.js",
     "build:tailwind": "npx tailwindcss -c ./tailwind.config.js -i ./src/index.css -o dist/output.css",
     "dev": "yarn build:tailwind && vite",
-    "gen-gitinfo": "echo export default \"\\\"$(git rev-parse HEAD)\\\"\"  > src/components/Bagpipes/_git_commit.js",
-    "build": "gen-gitinfo; tsc && vite build ",
+    "build": "yarn gen-gitinfo && tsc && vite build ",
     "test": "ts-node src/run_tests.ts",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
