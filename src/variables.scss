@@ -6,6 +6,8 @@ $chain-node-width: 250px;
 .light {
     --bg: #fff;
     --bg-accent: #d8d8d8;
+    --bg-hover: #3b65c9;
+
     --primary: #fefefe;
     --node-bg: #dddddd;
     --node-color: #222;
@@ -32,6 +34,8 @@ $chain-node-width: 250px;
 .dark {
     --bg: #111827;
     --bg-accent: #1f2b44;
+    --bg-hover: #3b65c9;
+
     --primary: #0035a8;
     --node-bg: #1a1a1a;
     --node-color: #f9f9f9;

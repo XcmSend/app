@@ -43,7 +43,7 @@ interface TransactionReviewProps {
 }
 
 
-export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactions, onAccept, onDecline }) => {
+export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactions, onAccept, onDecline, signExtrinsic, setSignedExtrinsics }) => {
   const { theme } = React.useContext(ThemeContext);
   const [fees, setFees] = React.useState<{ [key: string]: PaymentInfo }>({});
 

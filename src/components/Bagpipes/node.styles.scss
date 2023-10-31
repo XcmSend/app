@@ -247,3 +247,16 @@ background-color: white !important;
     color: var(--color);
   }
 
+  .background {
+    background: var(--bg);  
+  }
+
+
+
+  .hovering:hover {
+    background: var(--bg-hover) !important;
+  }
+
+  .action-type {
+    border-radius: 8px !important;
+  }

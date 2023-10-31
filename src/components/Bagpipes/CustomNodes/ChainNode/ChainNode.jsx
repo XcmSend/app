@@ -89,28 +89,34 @@ const ChainNode = ({ data, isConnectable }) => {
 
   const sourceChainName = scenarios[activeScenarioId]?.diagramData?.nodes[previousNodeIndex]?.formData?.chain;
   const sourceChainId = chainNameToId(sourceChainName);
-  let filteredChainInfoList = ChainInfoList;
-  if (sourceChainId !== null && sourceChainId !== undefined) {
+  let filteredChainInfoList;
+  const hrmpForSource = hrmpChannels[sourceChainId] || [];  // Default to an empty array if undefined
 
-    const hrmpForSource = hrmpChannels[sourceChainId];
-    if (!hrmpForSource) {
-        console.error(`No HRMP channels found for source chain ID: ${sourceChainId}`);
-        return;
-    }
-    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-        // Always include chain with name "polkadot", or if it's in the hrmpForSource list
-        return chainInfo.name.toLowerCase() === "polkadot" || hrmpForSource.includes(chainInfo.paraid);
-    });
+  // Always include "polkadot" and filter based on HRMP channels if they exist
+  filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+      return chainInfo.name.toLowerCase() === "polkadot" || hrmpForSource.length === 0 || hrmpForSource.includes(chainInfo.paraid);
+  });
+
+  // Log a warning if the HRMP channels list is empty
+  if (hrmpForSource.length === 0) {
+      console.warn(`No HRMP channels or empty HRMP channels list for source chain ID: ${sourceChainId}. Showing all options.`);
   }
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log('fetching HRMP channels');
-      const newHrmpChannels = await buildHrmp();
-      saveHrmpChannels(newHrmpChannels);
+      console.log('Fetching HRMP channels at initialization');
+      try {
+        const newHrmpChannels = await buildHrmp();
+        saveHrmpChannels(newHrmpChannels); // Assuming saveHrmpChannels is a function to store the channels in your state
+        console.log('HRMP channels fetched and saved:', newHrmpChannels);
+      } catch (error) {
+        console.error('Failed to fetch HRMP channels:', error);
+      }
     };
+  
     fetchData();
-  }, []);
+  }, []); 
+  
 
   // END of HRMP channel filtering area
 

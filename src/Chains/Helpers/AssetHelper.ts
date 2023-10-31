@@ -78,7 +78,7 @@ export async function checkAssetHubBalance(assetid: number, account_id_32: strin
   if (cleanAssetId === 1000) {
       // If assetId is 3, then we need to check assetHubNativeBalance
       const nativeBal = await assetHubNativeBalance(account_id_32);
-  //    console.log(`AssetHub Native Balance:`, nativeBal);
+    //  console.log(`AssetHub Native Balance:`, nativeBal);
       // Assuming native balance is provided in the same format, return it
       return {
           free: nativeBal.free,
@@ -93,11 +93,11 @@ export async function checkAssetHubBalance(assetid: number, account_id_32: strin
   const balance = await api.query.assets.account(cleanAssetId, account_id_32);
   const b3 = balance.toHuman();
 
- // console.log(`checkAssetHubBalance balance`, balance);
+  //console.log(`checkAssetHubBalance balance`, balance);
   
   if (isAssetHubAssetBalance(b3)) {
       const bal_obj: AssetHubAssetBalance = b3;
-    //  console.log(`checkAssetHubBalance balance object`, bal_obj);
+     // console.log(`checkAssetHubBalance balance object`, bal_obj);
       return {
           free: bal_obj.balance,
           reserved: 0,
@@ -140,9 +140,9 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
 }
 
 export async function checkHydraDxAssetBalance(assetid: number | string, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, frozen?: number, assetDecimals?: number }> {
-  console.log(`checkHydraDxAssetBalance accountId`, account_id_32);
-  console.log(`checkHydraDxAssetBalance assetId`, assetid);
-  console.log('checkHydraDxAssetBalance typeof asset id',typeof assetid);
+   // console.log(`checkHydraDxAssetBalance accountId`, account_id_32);
+   // console.log(`checkHydraDxAssetBalance assetId`, assetid);
+   // console.log('checkHydraDxAssetBalance typeof asset id',typeof assetid);
 
   // If assetId is 0, fetch the native balance.
   if (assetid === 0 || assetid === "0") {
@@ -153,7 +153,7 @@ export async function checkHydraDxAssetBalance(assetid: number | string, account
   let hdxBalance: any;
   let assetDecimals: number;
 
-  console.log(`checkHydraDxAssetBalance trying to connect`);
+   // console.log(`checkHydraDxAssetBalance trying to connect`);
 
   try {
       api = await connectToWsEndpoint('hydraDx', signal);
@@ -164,7 +164,7 @@ export async function checkHydraDxAssetBalance(assetid: number | string, account
   }
   
   const stringBalance = hdxBalance.toHuman();
- // console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
 
   try {
       // Get the asset's metadata
@@ -175,8 +175,8 @@ export async function checkHydraDxAssetBalance(assetid: number | string, account
       } else {
         throw new Error('Decimals not found in metadata');
       }
-  //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-  //    console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
+     //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
       console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
       // You might want to set a default or throw an error here
@@ -185,7 +185,7 @@ export async function checkHydraDxAssetBalance(assetid: number | string, account
 
   if (isOrmlTokensAccountData(hdxBalance)) {
       const bal_obj: OrmlTokensAccountData = hdxBalance;
-    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+      //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
       return {
           free: bal_obj.free,
           reserved: bal_obj.reserved,

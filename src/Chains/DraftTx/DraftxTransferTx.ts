@@ -242,7 +242,7 @@ export async function dotToHydraDx(amount: number, targetAddress: string){
 export async function dotToParachain(amount: number,  targetAddress: string){
   const paraid = 1000;
 	const api = await connectToWsEndpoint('polkadot');
-	console.log(`sending dot to parachain`);
+//	console.log(`sending dot to parachain`);
 
   const rawTargetAddress = getRawAddress(targetAddress);
 
@@ -290,10 +290,10 @@ export async function hydraDxToParachain(amount: number, assetId: number, destAc
 	const api = await connectToWsEndpoint('hydraDx');
 
 
-	console.log(`[hydradx to parachain]amount :`, amount);
-	console.log(`[hydradx to parachain]assetId :`, assetId);
-	console.log(`[hydradx to parachain]destAccount :`, destAccount);
-	console.log(`[hydradx to parachain]paraId :`, paraId);
+// 	console.log(`[hydradx to parachain]amount :`, amount);
+// 	console.log(`[hydradx to parachain]assetId :`, assetId);
+// 	console.log(`[hydradx to parachain]destAccount :`, destAccount);
+	// console.log(`[hydradx to parachain]paraId :`, paraId);
 	
 
     const asset = {
@@ -388,10 +388,10 @@ export async function assethub_to_hydra(assetid: number, amount: number, account
 /// assethub > parachain, send an asset on assethub to receiving parachain
 export async function assethub_to_parachain(assetid: string, amount: number, accountid: string, paraid: number) {
 
-	console.log(`assethub_to_parachain]amount :`, amount);
-	console.log(`[assethub_to_parachain]assetId :`, assetid);
+	//console.log(`assethub_to_parachain]amount :`, amount);
+	//console.log(`[assethub_to_parachain]assetId :`, assetid);
 
-	console.log(`[assethub_to_parachain]paraId :`, paraid);
+	//console.log(`[assethub_to_parachain]paraId :`, paraid);
 	
 	const api = await connectToWsEndpoint('assetHub');
 
@@ -400,7 +400,7 @@ export async function assethub_to_parachain(assetid: string, amount: number, acc
 	
 	const accountId = raw_address_now(accountid);//uint8ArrayToHex(blake2(getRawAddress(accountid)).map((x, i): number => (x + 256 - ZERO[i]) % 256));
 
-	console.log(`[assethub_to_parachain]destAccount :`, accountId);
+	//console.log(`[assethub_to_parachain]destAccount :`, accountId);
 	//console.log(`[assethub_to_parachain]`);
 
 	//const paraid = 2034;//hydradx

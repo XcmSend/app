@@ -14,7 +14,7 @@ export async function extrinsicHandler(actionType, formData) {
             return handlexTransfer(formData);
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
-            throw new Error("Swaps are not supported yet.");
+            return handleSwap(formData);
         default:
             throw new Error("Unsupported action type.");
         }
@@ -92,7 +92,20 @@ function handlexTransfer(formData) {
 
  
 function handleSwap(formData) {
+    const source = formData.source;
+    const target = formData.target;
+
+      // Retrieve token decimals for the source chain
+      const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+
+      // Adjust the source amount according to the token decimals
+      const submittableAmount = source.amount * (10 ** tokenDecimals);
 
 
-    throw new Error("Swap from hydradx is not done yet");
+      // TODO: handle swaps
+    if (source.chain === 'hydraDx' && target.chain === 'hydraDx') {
+        // hydradx_omnipool_sell hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
+        return true;
+    }
+    throw new Error("You can only swap from hydradx to hydradx");
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import toast  from "react-hot-toast";
 import { listChains } from '../../Chains/ChainsInfo';
 import SwapSVG from '/swap.svg';
-import xTransferSVG from '/xtransfer.svg';
+import xTransferSVG from '/xTransfer.svg';
 import ThemeContext from '../../contexts/ThemeContext';
 import './toast.scss';
 

@@ -1,5 +1,5 @@
 import connectToWsEndpoint from "../api/connect";
-import { ChainInfo, listChains } from "../ChainsInfo"
+import { ChainInfo, listChains, listRelayChains } from "../ChainsInfo"
 
 /*
 returns a list of paraid's
@@ -13,7 +13,9 @@ returns a list of paraid's
 ]
 */
 export async function findIngressPolkadotChannels(paraid: number): Promise<[number]> {
+ //  console.log("findIngressPolkadotChannels for hrmp for  paraid", paraid);
 	const api = await connectToWsEndpoint('polkadot');
+  // console.log("findIngressPolkadotChannels for hrmp for  api", api);
 	const Channels = (
         (await api.query.hrmp.hrmpIngressChannelsIndex(paraid)) as any
       ).map((a: { toNumber: () => any; }) => a.toNumber());
@@ -45,52 +47,69 @@ export async function polkadotParachainChannelCheck(sourceparaid: number, destch
 }
 
 export async function inAndOutChannels(paraid: number): Promise<number[]> {
-  const s_ingress = await findIngressPolkadotChannels(paraid);
+ // console.log("inAndOutChannels for hrmp for paraid", paraid);
+
+  try {
+    const s_ingress = await findIngressPolkadotChannels(paraid);
+   // console.log(`Ingress hrmp channels for paraid ${paraid}:`, s_ingress);
+
     const s_egress = await findEngressPolkadotChannels(paraid);
-  const paraid_map: number[] = s_ingress.filter((num) => s_egress.includes(num));
+  //  console.log(`Egress hrmp channels for paraid ${paraid}:`, s_egress);
 
-  return paraid_map;
+    const paraid_map: number[] = s_ingress.filter((num) => s_egress.includes(num));
+  //  console.log(`Filtered channels for hrmp for  paraid ${paraid}:`, paraid_map);
 
+    return paraid_map;
+  } catch (error) {
+ //   console.error(`Error in inAndOutChannels for paraid ${paraid}:`, error);
+    throw error; // Re-throw the error to ensure it's not silently ignored
+  }
 }
 
+
 export function listParachainsConnectedToRelay(relayName: string, chains: Record<number, ChainInfo>): ChainInfo[] {
-  return Object.values(chains).filter(chain => chain.relay === relayName);
+ // console.log("listParachainsConnectedToRelay for hrmp", chains);
+  return Object.values(chains).filter(chain => chain.relayParent === relayName);
 }
 
 
 /// <sourceparaid, [openhrmp channels ingoing and outgoing as paraid]>
 /// const index_channels: Map<number, number[]> = await build_hrmp();
 export async function buildHrmp(): Promise<Record<number, number[]>> { 
-  const chainlist: Record<number, ChainInfo> = listChains();
-  const polkadotParachains = listParachainsConnectedToRelay('polkadot', chainlist);
-  const localHrmpChannels: Record<number, number[]> = {};  // A local version of the hrmpChannels map
-  localHrmpChannels[0] = polkadotParachains.map(parachain => parachain.paraid);
+  //console.log("building hrmp channels");
+  const chainlist = listChains();
+  //console.log("hrmp Retrieved chain list", chainlist);
 
-   // Remove rococo without mutating original list
-   const filteredChainList = {...chainlist};
-  //  delete filteredChainList[10000]; 
+  const relayChains = listRelayChains();
+  const hrmpChannels: Record<number, number[]> = {};
 
-   const openchannels: Map<number, number[]> = new Map();
+  for (const relayChain of relayChains) {
+    // Assuming relayChain.paraid is the identifier for the relay chain
+   // console.log(`buildHrmp processing ${relayChain.name} with paraid ${relayChain.paraid}`);
 
+    const parachains = Object.values(chainlist).filter(chain => chain.relayParent === relayChain.name);
+   // console.log(`buildHrmp ${relayChain.name} parachains`, parachains);
 
-   for (const key in filteredChainList) {
-       const chainInfo = filteredChainList[key];
-       const paraid = chainInfo.paraid;
-       
-       const channels: number[] = await inAndOutChannels(paraid); 
-       
-       
-       openchannels.set(paraid, channels);
-     }
-     openchannels.set(0, localHrmpChannels[0]);
+    for (const parachain of parachains) {
+      const paraid = parachain.paraid;
+   //   console.log(`hrmp Processing channels for paraid: ${paraid}`);
+      
+      try {
+        const channels: number[] = await inAndOutChannels(paraid); 
+     //   console.log(`hrmp Channels for ${paraid}`, channels);
+        hrmpChannels[paraid] = channels;
+      } catch (error) {
+        console.error(`Error fetching channels for paraid ${paraid}`, error);
+      }
+    }
+  }
 
-
-   return Object.fromEntries(openchannels);
-
+ // console.log("HRMP channels object to return", hrmpChannels);
+  return hrmpChannels;
 }
 
 
-/// get the lease time of a polkadot connected chain
+// get the lease time of a polkadot connected chain
 export async function polkadotGetLeaseTime(paraid: number) {
     
 }
