@@ -8,7 +8,8 @@ interface ChainInfo {
   prefix: number,
   token_decimals: number,
   logo?: string,
-  relay?: string,
+  relayParent?: string,
+  relay?: boolean
   parachain?: boolean,
   }
 
@@ -32,7 +33,8 @@ export function listChains() {
         prefix: 0,
         token_decimals: 10,
         logo: '/chains/polkadot.svg',
-        parachain: false
+        parachain: false,
+        relay: true,
       };
       chainList[0] = Polkadot;
 
@@ -43,7 +45,7 @@ export function listChains() {
         prefix: 0,
         token_decimals: 12,
         logo: '/chains/hydradx.svg',
-        relay: 'polkadot',
+        relayParent: 'polkadot',
         parachain: true
       };
       chainList[2034] = HydraDX;
@@ -55,8 +57,9 @@ export function listChains() {
         prefix: 0,
         token_decimals: 12,
         logo: '/chains/interlay.svg',
-        relay: 'polkadot',
-        parachain: true
+        relayParent: 'polkadot',
+        parachain: true,
+        
       };
       chainList[2032] = interlay;
 
@@ -67,7 +70,7 @@ export function listChains() {
         prefix: 63,
         token_decimals: 10,
         logo: '/chains/assethub.svg',
-        relay: 'polkadot',
+        relayParent: 'polkadot',
         parachain: true
 
 
@@ -81,7 +84,8 @@ export function listChains() {
         prefix: 0,
         token_decimals: 12,
         logo: '/chains/rococo.jpeg',
-        parachain: false
+        parachain: false,
+        relay: true,
 
       };
       chainList[10000] = rococo;
@@ -93,13 +97,19 @@ export function listChains() {
         prefix: 0, //change me
         token_decimals: 10,
         logo: '/chains/sora.svg',
-        relay: 'rococo',
+        relayParent: 'rococo',
         parachain: true
       };
 
       chainList[2011] = sora_roc;
 
     return chainList;
+}
+
+export function listRelayChains(): ChainInfo[] {
+  const allChains = listChains();
+  const relayChains = Object.values(allChains).filter(chain => chain.relay);
+  return relayChains;
 }
 
 

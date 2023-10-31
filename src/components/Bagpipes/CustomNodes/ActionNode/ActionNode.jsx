@@ -17,7 +17,11 @@ import '../../node.styles.scss';
 import '../../../../main.scss';
 
 const formatTime = (date) => {
-  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${hours}:${minutes}:${seconds}`;
 };
 
 export default function ActionNode({ children, data, isConnectable }) {
@@ -73,18 +77,8 @@ export default function ActionNode({ children, data, isConnectable }) {
 
 
   const fetchActionInfo = async (currentNodeId) => {
-    if (isFetchingActionData) return;  // Ensure no simultaneous fetches
+    if (isFetchingActionData) return;  
     setIsFetchingActionData(true);
-
-     // console.log('fetchActionInfo Fetching');
-    // const assetInId = assetInFormData?.asset?.assetId;
-    // const assetOutId = assetOutFormData?.asset?.assetId;
-    // const amount = assetInFormData?.amount;
-
-
-    // console.log('fetchActionInfo assetInId:', assetInId, assetOutId);
-    // if (assetInId === undefined || assetInId === null || assetOutId === undefined || assetOutId === null) return;
-    // console.log('fetchActionInfo we passed through the if statement');
 
     try {
         // Deduce the assetInNodeId and assetOutNodeId based on the currentNodeId.
