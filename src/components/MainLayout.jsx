@@ -7,9 +7,9 @@ import Welcome from './Wallet/components/Welcome';
 import WalletInfo from './Wallet/pages/WalletInfo';
 import BagpipesFlowRoute from '../routes/BagpipesFlowRoute';
 import TransactionMain from './Bagpipes/CustomNodes/TransactionReview/TransactionMain';
+import CreateFromTemplate from './Bagpipes/TemplateFeatures/CreateFromTemplate';
 import ReactTestFlow from '../ReactTestFlow';
 import Lab from '../pages/Lab/Lab';
-import useAppStore from '../store/useAppStore';
 import ThemeContext from '../contexts/ThemeContext';
 import './toasts/toast.scss';
 
@@ -60,11 +60,11 @@ function MainLayout({ children }) {
 
       {/* <NodeNotifications /> */}
       <Routes>
+        <Route element={<CreateFromTemplate />} path='/create'>
+      <Route path="/create" element={<CreateFromTemplate />} />
+      </Route>
+
             <Route element={<Layout />} path='/' >
-            <Route
-                element={<Welcome />}
-                index
-              />
               <Route
                   element={<Welcome />}
                   index
@@ -77,10 +77,6 @@ function MainLayout({ children }) {
                   element={<WalletInfo />}
                   path='/wallet-info'
                 />
-                    {/* <Route
-                  element={<Builder />}
-                  path='/builder'
-                /> */}
                   <Route
                   element={<BagpipesFlowRoute />}
                   path='/builder'
@@ -89,8 +85,9 @@ function MainLayout({ children }) {
                   element={<TransactionMain />}
                   path='/transaction/review'
                 />
-                  <Route element={<Lab />} path='/lab' />
-  
+                 <Route element={<Lab />} 
+                 path='/lab' 
+                 />
                   <Route
                   element={<ReactTestFlow />}
                   path='/test-flow'
@@ -100,6 +97,7 @@ function MainLayout({ children }) {
                   path='/evm-wallet-info'
                 /> */}
               </Route>
+
             </Routes>
     </>
   );

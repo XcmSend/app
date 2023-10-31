@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
@@ -8,7 +8,7 @@ import xTransferSVG from '/xTransfer.svg';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
-import Selector from './Selector';
+import Selector, { useOutsideAlerter } from './Selector';
 import toast from 'react-hot-toast';
 import ThemeContext from '../../../../contexts/ThemeContext';
 
@@ -17,7 +17,11 @@ import '../../node.styles.scss';
 import '../../../../main.scss';
 
 const formatTime = (date) => {
-  return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+
+  return `${hours}:${minutes}:${seconds}`;
 };
 
 export default function ActionNode({ children, data, isConnectable }) {
@@ -35,6 +39,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [assetInNodeId, setAssetInNodeId] = useState(null);
   const [assetOutNodeId, setAssetOutNodeId] = useState(null);
   const [sellPriceInfoMap, setPriceInfoMap] = useState({});
+  const dropdownRef = useRef(null);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [isFetchingActionData, setIsFetchingActionData] = useState(false);
   const initialAction = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData?.action || null;
@@ -69,40 +74,11 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   
 
-  const handleDropdownClick = (value) => {
-    setDropdownVisible(false);
-    setFormState(prev => ({
-      ...prev,
-      action: value
-    }));
-    
-    // Create action data based on the selected value
-    const newActionData = convertFormStateToActionType(
-        { ...formState, action: value }, 
-        assetInFormData, 
-        assetOutFormData
-    );
-
-    if (newActionData) {
-      setActionData({ [nodeId]: newActionData });
-      console.log("[handleDropdownClick] Constructed action data : ", newActionData);
-    }
-  };
 
 
   const fetchActionInfo = async (currentNodeId) => {
-    if (isFetchingActionData) return;  // Ensure no simultaneous fetches
+    if (isFetchingActionData) return;  
     setIsFetchingActionData(true);
-
-     // console.log('fetchActionInfo Fetching');
-    // const assetInId = assetInFormData?.asset?.assetId;
-    // const assetOutId = assetOutFormData?.asset?.assetId;
-    // const amount = assetInFormData?.amount;
-
-
-    // console.log('fetchActionInfo assetInId:', assetInId, assetOutId);
-    // if (assetInId === undefined || assetInId === null || assetOutId === undefined || assetOutId === null) return;
-    // console.log('fetchActionInfo we passed through the if statement');
 
     try {
         // Deduce the assetInNodeId and assetOutNodeId based on the currentNodeId.
@@ -260,7 +236,44 @@ export default function ActionNode({ children, data, isConnectable }) {
 //     }
 // }, [data.triggerToast, data.position, nodeRef, activeScenarioId, nodeId]);
 
+const handleDropdownClick = (value) => {
+  console.log("[handleDropdownClick] Selected value clicked:", value);
+  setDropdownVisible(false);
+  setFormState(prev => ({
+    ...prev,
+    action: value
+  }));
+
   
+  // Create action data based on the selected value
+  const newActionData = convertFormStateToActionType(
+      { ...formState, action: value }, 
+      assetInFormData, 
+      assetOutFormData
+  );
+
+  if (newActionData) {
+    setActionData({ [nodeId]: newActionData });
+    console.log("[handleDropdownClick] Constructed action data : ", newActionData);
+  }
+};
+const handleOutsideClick = useCallback(() => {
+  // setDropdownVisible(false);
+}, []);
+
+
+// useOutsideAlerter(dropdownRef, handleOutsideClick);
+
+
+// This function will handle the visibility toggle
+const toggleDropdown = () => {
+  setDropdownVisible(prev => {
+    console.log('Toggling dropdown:', !prev); // This should log the new state
+    return !prev;
+  });
+};
+
+
   return (
     <>
       
@@ -268,9 +281,9 @@ export default function ActionNode({ children, data, isConnectable }) {
  
           <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
 
-      <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} />
-      <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} />
-    <div className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
+      <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} className='' />
+      <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} className=''  />
+    <div  className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
       <div className="text-gray-400 mb-2 text-xxs"> {data.name}</div>
 
       
@@ -278,30 +291,27 @@ export default function ActionNode({ children, data, isConnectable }) {
 
       {/* Custom dropdown */}
       <div className="relative">
-        <div className="flex justify-between items-center in-node-border py-1 px-2 rounded cursor-pointer text-xs ml-2 mr-2 font-semibold  bg-white" onClick={() => setDropdownVisible(!dropdownVisible)}>
-        {formState.action ? (
-          <>
+        <div className="action-type flex justify-between items-center in-node-border py-1 px-2 rounded cursor-pointer text-xs ml-2 mr-2 font-semibold bg-white" onClick={toggleDropdown}>
+          {formState.action ? (
             <img src={getActionImage()} alt={formState.action} className="w-12 h-12 p-1 mx-auto" />
-          </>
-        ) : (
-          <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
-        )}
+          ) : (
+            <div className="text-gray-500 mx-auto text-xs font-semibold">Select Action</div>
+          )}
 
           <div className="pl-2 dropdown">⌄</div>
         </div>
         
-        {dropdownVisible && (
-          <Selector
-            handleDropdownClick={handleDropdownClick} 
-            onActionSelect={(action) => console.log("Selected action:", action)}
-            SwapSVG={SwapSVG}
-            xTransferSVG={xTransferSVG} 
-          />
-        )}
-      </div>
+        {/* Absolute positioning for the dropdown */}
+        <div className={`absolute z-10 ${dropdownVisible ? '' : 'hidden'}`} style={{ width: 'max-content', top: '100%' }}>
+        <Selector
+          handleDropdownClick={handleDropdownClick}
+          SwapSVG={SwapSVG}
+          xTransferSVG={xTransferSVG}
+          dropdownVisible={dropdownVisible}
+          ref={dropdownRef}
+        />
 
-      <div className="mt-2 text-center text-xs font-semibold primary-font">
-        {formState.action && formState.action.charAt(0).toUpperCase() + formState.action.slice(1)}
+        </div>
       </div>
 
       {formState && formState.action === 'swap' && (
@@ -312,11 +322,13 @@ export default function ActionNode({ children, data, isConnectable }) {
             <PriceInfo sourceInfo={assetInFormData} targetInfo={assetOutFormData} priceInfo={sellPriceInfoMap[nodeId]} />
           ) : (
             // Placeholder for when no price info is available
-            <div className="in-node-border rounded m-2 p-2 ">No price info available</div>
+            <div className="in-node-border rounded m-2 p-2 ">Swaps coming soon...</div>
           )
         )
       )}
       </div>
+
+
 
       {formState.action === 'xTransfer' && currentActionData?.source?.chain && currentActionData?.source?.amount && currentActionData?.source?.symbol && (
       <div className='p-2 in-node-border rounded mb-2 '>
@@ -353,18 +365,18 @@ export default function ActionNode({ children, data, isConnectable }) {
 
     </button>
 
-        {sellPriceInfoMap ? (
+        {/* {sellPriceInfoMap ? (
         lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>Last updated: {formatTime(lastUpdated)}</span>
         ):( null)
-        }
+        } */}
 
       
-      {/* { formState.action === 'xTransfer' ? (
+      { formState.action === 'xTransfer' ? (
          lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>
           Last updated: {formatTime(lastUpdated)}
         </span>
       ):( null)
-    }  */}
+    } 
 
       <div className="space-y-2 mt-1">
         {data.children}

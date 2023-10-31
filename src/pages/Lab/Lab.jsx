@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../components/Bagpipes/hooks';
@@ -8,6 +8,7 @@ import '../../index.css';
 import '../../main.scss';
 import { EditIcon, PlusIcon, CloseIcon } from '../../components/Icons/icons';
 import { deleteScenarioAsync, loadScenarioAsync } from '../../store/AsyncHelpers';
+import CreateTemplateLink from '../../components/Bagpipes/TemplateFeatures/CreateTemplateLink';
 import ScenarioService from '../../services/ScenarioService';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,6 +26,7 @@ function Lab() {
     }));
     const navigate = useNavigate();
     const createScenario = useCreateScenario();
+    const [templateScenarioId, setTemplateScenarioId] = useState(null);
 
 
     // const saveScenario = (scenarioId) => {
@@ -70,6 +72,8 @@ function Lab() {
                   Create New Scenario
                 </button>
               </div>
+              {templateScenarioId && <CreateTemplateLink scenarioId={templateScenarioId} />}
+
               
               <div>
                 {Object.entries(scenarios).length > 0 ? (
@@ -84,10 +88,11 @@ function Lab() {
                         <div className=''>{scenario.name}</div>
                           <div className="">Scenario {scenarioId} </div>
 
+                          <CreateTemplateLink scenarioId={scenarioId} />
 
                         
                           <button 
-                            className="button edit-button-right flex items-center"
+                            className="edit-button-right flex items-center"
                             onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
                           >
                             {EditIcon}
