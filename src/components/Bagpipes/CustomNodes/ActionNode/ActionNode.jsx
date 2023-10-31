@@ -322,7 +322,7 @@ const toggleDropdown = () => {
             <PriceInfo sourceInfo={assetInFormData} targetInfo={assetOutFormData} priceInfo={sellPriceInfoMap[nodeId]} />
           ) : (
             // Placeholder for when no price info is available
-            <div className="in-node-border rounded m-2 p-2 ">No price info available</div>
+            <div className="in-node-border rounded m-2 p-2 ">Swaps coming soon...</div>
           )
         )
       )}
@@ -365,18 +365,18 @@ const toggleDropdown = () => {
 
     </button>
 
-        {sellPriceInfoMap ? (
+        {/* {sellPriceInfoMap ? (
         lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>Last updated: {formatTime(lastUpdated)}</span>
         ):( null)
-        }
+        } */}
 
       
-      {/* { formState.action === 'xTransfer' ? (
+      { formState.action === 'xTransfer' ? (
          lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>
           Last updated: {formatTime(lastUpdated)}
         </span>
       ):( null)
-    }  */}
+    } 
 
       <div className="space-y-2 mt-1">
         {data.children}
