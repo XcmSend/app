@@ -54,13 +54,13 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
               >
                 <span className='button-header-text'>Builder</span>
               </Button>
-              <Button
+              {/* <Button
                 className='xcm-send-btn xcm-send-btn-small-size button-header'
                 onClick={goToLab}
                 type={'primary'}
                 >
                 <span className='button-header-text'>Lab</span>
-              </Button>
+              </Button> */}
                 {/* 
               <Button
                 className='xcm-send-btn-wallet xcm-send-btn-small-size'

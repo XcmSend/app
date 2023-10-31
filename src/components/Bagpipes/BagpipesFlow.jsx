@@ -841,7 +841,7 @@ const handleDraftTransactions = async () => {
 
         <ThemeProvider theme={theme}>
             <Panel position="top-center">   
-            <CreateTemplateLink scenarioId={activeScenarioId} />
+            {/* <CreateTemplateLink scenarioId={activeScenarioId} /> */}
        
                 {/* <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button> */}
             </Panel>
