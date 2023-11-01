@@ -27,6 +27,7 @@ function handlexTransfer(formData) {
     const source = formData.source;
     const target = formData.target;
 
+    // check if the asset is native or on-chain asset. 
     // Retrieve token decimals for the source chain
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
 
@@ -64,7 +65,9 @@ function handlexTransfer(formData) {
         },
 
         'assetHub:interlay': () => {
-            return assethub2interlay(source.assetId, submittableAmount, target.address);
+            const tetherAmount = submittableAmount / 1000;
+            console.log("handlexTransfer forAssetHub to Interlay...", tetherAmount);
+            return assethub2interlay(source.assetId, tetherAmount, target.address);
         },
 
         'interlay:assethub': () => {

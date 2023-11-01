@@ -205,9 +205,9 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
                 console.log('executeChainScenario Signed Extrinsic:', signedExtrinsic);
                 console.log('executeChainScenario Chain:', sourceChain);
 
-                // if(signedExtrinsic) {
-                //     await broadcastToChain(sourceChain, signedExtrinsic); 
-                // }
+                if(signedExtrinsic) {
+                    await broadcastToChain(sourceChain, signedExtrinsic); 
+                }
                 toast(<ActionToastContent type={actionData.actionType} message={`executeChainScenario Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
 
                 console.log('executeChainScenario Broadcasted to Chain:', signedExtrinsic );

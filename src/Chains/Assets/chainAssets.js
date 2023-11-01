@@ -237,7 +237,7 @@ export const CHAIN_ASSETS = {
     "interlay": {
         "assets": [
                 {
-                    "asset": {
+                    asset: {
                         "decimals": '18',
                         "name": 'Wrapped BNB',
                     "symbol": 'WBNB.wh',
