@@ -67,24 +67,21 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 	return tx;
 }
 
-export async function assethub2interlay(assetid: number, amount: number, destaccount: string){
-	console.log(`[assethub2interlay]: `, destaccount, amount, assetid);
-	
-  const accountid = raw_address_now(destaccount);
-  console.log(`[assethub2interlay]: `, accountid);
-  const paraid = 2032;
+
+// https://assethub-polkadot.subscan.io/extrinsic/4929110-2
+async function assethub2interlay(assetid: number, amount: number, accountid: string){
+	const paraid = 2032;
 	const api = await connectToWsEndpoint('assetHub');
-	 console.log(`[assethub2interlay]: `, api);
+
 
 	const destination = {
-		interior: { X1: { Parachain: paraid } },
 		parents: 1,
+		interior: { X1: { Parachain: paraid } },
 	};
 
 	const account = {
 		parents: 0,
-		interior: { X1: { AccountId32: { id: accountid } } },
-
+		interior: { X1: { AccountId32: { id: accountid, network: null } } },
 	};
 
 	const asset = {
@@ -94,27 +91,28 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 				interior: {
 					X2: [
 						{ PalletInstance: 50 },
-						{ GeneralIndex: "1984" },
+						{ GeneralIndex: assetid.toString() },
 					],
 				},
 			},
 		},
-		fun: { Fungible: amount },
-		parents: 0,
+		fun: { Fungible: amount.toString() },
+
 	};
 
 	const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
-		{ V3: destination },
-		{ V3: account },
-		{ V3: [asset] },
+		{ V2: destination },
+		{ V2: account },
+		{ V2: [asset] },
 		0,
-		{ Unlimited: 0 }
+		{ Unlimited: null }
 	);
-	console.log(`[assethub2interlay]: `, tx);
 
-
-	return tx;
+		return tx;
 }
+
+
+
 
 // https://polkaholic.io/tx/0xaa4ccd2b190b9c96d60068ef418860a99b1cea6c220c726284712c081b90766d
 export async function interlay2assethub(assetid: number, amount: number, accountid32: string){
