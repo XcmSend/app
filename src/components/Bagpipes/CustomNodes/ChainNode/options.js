@@ -18,6 +18,15 @@ const assetHubAssets = {
     assetId: 1000,
 };
 
+const interlayAssets = {
+    asset: {
+        name: 'interlayDot',
+        symbol: 'DOT',
+        description: 'Interlay (DOT)',
+    },
+    assetId: 1000,
+};
+
 
 const rococoAssets = {
   asset: {
@@ -44,6 +53,10 @@ export const assetOptions = [
     {
         chain: 'assetHub',
         assets: [], 
+    },
+    {
+        chain: 'interlay',
+        assets: [], 
     }
 ];
 
@@ -62,6 +75,7 @@ export const getAssetOptions = async (selectedChain, signal) => {
           break;
     case 'interlay':
         assets = await listInterlayAssets();
+        assets.push(interlayAssets);
         break;
       case 'polkadot':
           assets = [dotAssets];

@@ -67,20 +67,37 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 	return tx;
 }
 
+
+function number_to_string(input: number): number {
+	console.log(`number_to_string: `, input);
+	const numberWithCommas = input.toString();
+	const numberWithNoCommas = numberWithCommas.replace(/,/g, ''); // Remove the commas
+	console.log(`number_to_string numberWithNoCommas: `, numberWithNoCommas);
+// Using parseInt to convert to an integer
+	const integerNumber = parseInt(numberWithNoCommas, 10); // The second argument (10) specifies the base (decimal) for parsing.
+	console.log(`number_to_string integerNumber: `, integerNumber);
+
+	return integerNumber;
+}
+
+// https://assethub-polkadot.subscan.io/extrinsic/4929110-2
 export async function assethub2interlay(assetid: number, amount: number, destaccount: string){
-	console.log(`[assethub2interlay]: `, destaccount);
-  const accountid = raw_address_now(destaccount);
-  const paraid = 2032;
+	const paraid = 2032;
 	const api = await connectToWsEndpoint('assetHub');
+	const accountido = raw_address_now(destaccount);
+	console.log(`assetid:`, assetid);
+// remove commas in assetid
+	
+// 
 
 	const destination = {
-		interior: { X1: { Parachain: paraid } },
 		parents: 1,
+		interior: { X1: { Parachain: paraid } },
 	};
 
 	const account = {
 		parents: 0,
-		interior: { X1: { AccountId32: { id: accountid } } },
+		interior: { X1: { AccountId32: { id: accountido, network: null } } },
 	};
 
 	const asset = {
@@ -90,26 +107,31 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 				interior: {
 					X2: [
 						{ PalletInstance: 50 },
-						{ GeneralIndex: assetid.toString() },
+						{ GeneralIndex: number_to_string(assetid).toString() },
 					],
 				},
 			},
 		},
-		fun: { Fungible: amount },
-		parents: 0,
+		fun: { Fungible: number_to_string(amount).toString() },
+
 	};
 
+	console.log(`asset: `, asset);
+
 	const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
-		{ V3: destination },
-		{ V3: account },
-		{ V3: [asset] },
+		{ V2: destination },
+		{ V2: account },
+		{ V2: [asset] },
 		0,
-		{ Unlimited: 0 }
+		{ Unlimited: null }
 	);
 
 		return tx;
 }
 
+
+
+// not working
 // https://polkaholic.io/tx/0xaa4ccd2b190b9c96d60068ef418860a99b1cea6c220c726284712c081b90766d
 export async function interlay2assethub(assetid: number, amount: number, accountid32: string){
 	const api = await connectToWsEndpoint('interlay');	
@@ -361,7 +383,7 @@ export async function assethub_to_hydra(assetid: number, amount: number, account
 				interior: {
 					X2: [
 						{ PalletInstance: 50 },
-						{ GeneralIndex: "1984" },
+						{ GeneralIndex: assetid },
 					],
 				},
 			},
@@ -390,7 +412,6 @@ export async function assethub_to_parachain(assetid: string, amount: number, acc
 
 	//console.log(`assethub_to_parachain]amount :`, amount);
 	//console.log(`[assethub_to_parachain]assetId :`, assetid);
-
 	//console.log(`[assethub_to_parachain]paraId :`, paraid);
 	
 	const api = await connectToWsEndpoint('assetHub');

@@ -704,9 +704,9 @@ const processDraftTransactions = async () => {
   // Start the drafting process and return a promise that either resolves with the transactions
   // or rejects after a timeout.
   return new Promise(async (resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-          reject(new Error('Drafting is taking longer than expected. Please refresh the page and try again.'));
-      }, 10000); // 10 seconds timeout
+     const timeoutId = setTimeout(() => {
+           reject(new Error('Drafting is taking longer than expected. Please refresh the page and try again.'));
+       }, 10000); // 10 seconds timeout
 
       try {
           const result = await startDraftingProcess(activeScenarioId, scenarios);
