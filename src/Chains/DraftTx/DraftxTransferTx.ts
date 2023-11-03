@@ -68,11 +68,27 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 }
 
 
+function number_to_string(input: number): number {
+	console.log(`number_to_string: `, input);
+	const numberWithCommas = input.toString();
+	const numberWithNoCommas = numberWithCommas.replace(/,/g, ''); // Remove the commas
+	console.log(`number_to_string numberWithNoCommas: `, numberWithNoCommas);
+// Using parseInt to convert to an integer
+	const integerNumber = parseInt(numberWithNoCommas, 10); // The second argument (10) specifies the base (decimal) for parsing.
+	console.log(`number_to_string integerNumber: `, integerNumber);
+
+	return integerNumber;
+}
+
 // https://assethub-polkadot.subscan.io/extrinsic/4929110-2
-async function assethub2interlay(assetid: number, amount: number, accountid: string){
+export async function assethub2interlay(assetid: number, amount: number, destaccount: string){
 	const paraid = 2032;
 	const api = await connectToWsEndpoint('assetHub');
-
+	const accountido = raw_address_now(destaccount);
+	console.log(`assetid:`, assetid);
+// remove commas in assetid
+	
+// 
 
 	const destination = {
 		parents: 1,
@@ -81,7 +97,7 @@ async function assethub2interlay(assetid: number, amount: number, accountid: str
 
 	const account = {
 		parents: 0,
-		interior: { X1: { AccountId32: { id: accountid, network: null } } },
+		interior: { X1: { AccountId32: { id: accountido, network: null } } },
 	};
 
 	const asset = {
@@ -91,14 +107,16 @@ async function assethub2interlay(assetid: number, amount: number, accountid: str
 				interior: {
 					X2: [
 						{ PalletInstance: 50 },
-						{ GeneralIndex: assetid.toString() },
+						{ GeneralIndex: number_to_string(assetid).toString() },
 					],
 				},
 			},
 		},
-		fun: { Fungible: amount.toString() },
+		fun: { Fungible: number_to_string(amount).toString() },
 
 	};
+
+	console.log(`asset: `, asset);
 
 	const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
 		{ V2: destination },
@@ -113,7 +131,7 @@ async function assethub2interlay(assetid: number, amount: number, accountid: str
 
 
 
-
+// not working
 // https://polkaholic.io/tx/0xaa4ccd2b190b9c96d60068ef418860a99b1cea6c220c726284712c081b90766d
 export async function interlay2assethub(assetid: number, amount: number, accountid32: string){
 	const api = await connectToWsEndpoint('interlay');	

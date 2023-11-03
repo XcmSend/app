@@ -69,10 +69,10 @@ function handlexTransfer(formData) {
             console.log("handlexTransfer forAssetHub to Interlay...", tetherAmount);
             return assethub2interlay(source.assetId, tetherAmount, target.address);
         },
-
-        'interlay:assethub': () => {
-            return interlay2assethub(source.assetId, submittableAmount, target.address);
-        },
+// not supported
+       // 'interlay:assethub': () => {
+    //     return interlay2assethub(source.assetId, submittableAmount, target.address);
+    //    },
 
         'assetHub:hydraDx': () => {
             console.log("handlexTransfer forAssetHub to HydraDx...");
