@@ -120,6 +120,16 @@ export async function buildHrmp(): Promise<Record<number, number[]>> {
 
 
 // get the lease time of a polkadot connected chain
-export async function polkadotGetLeaseTime(paraid: number) {
-    
+export async function polkadotGetLeaseTime(chainname: string) {
+ 
+    switch (chainname) {
+      case "interlay":
+        return "16-01-2024";
+      case "assethub":
+        return "forever";
+      case "hydradx":
+        return "16-01-2024";
+    }
+  
+  
 }
