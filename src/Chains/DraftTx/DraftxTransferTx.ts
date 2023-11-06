@@ -18,7 +18,7 @@ function raw_address_now(ss58: string) {
 		return address;
 }
 
-function getRawAddress(ss58Address: string): Uint8Array {
+export function getRawAddress(ss58Address: string): Uint8Array {
     try {
 		
         return decodeAddress(ss58Address);

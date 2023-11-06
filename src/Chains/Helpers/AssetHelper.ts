@@ -1,9 +1,11 @@
 //@ts-nocheck
 import connectToWsEndpoint from '../api/connect';
 import { ChainInfo, listChains } from '../ChainsInfo'; 
+import { listInterlayAssets } from '../Assets/listAssetsForChain';
 import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from '../utils/utils'
 import { ApiPromise } from "@polkadot/api";
 import { string } from 'slate';
+import { getRawAddress } from "../DraftTx/DraftxTransferTx";
 
 interface AssetResponseObject {
     nonce: number;
@@ -53,25 +55,62 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 /// check the balance of an asset on interlay
 /// returns { free: '304', reserved: '0', frozen: '0' }
-export async function checkInterlayAssetBalance(assetid: number, accountid: string): Promise<{ free: number, reserved: number, total?: number, assetDecimals?: number }>{
-  const api = await connectToWsEndpoint('interlay');
-  let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ''), 10);
+export async function checkInterlayAssetBalance(assetid: number | string, account_id: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, frozen?: number, assetDecimals?: number }> {
 
-  const asset =  {
-    "foreignasset": cleanAssetId
-  };
-    const thebalance = await api.query.tokens.accounts(accountid, asset);
-    if (isOrmlTokensAccountData(thebalance)) {
-      const bal_obj: OrmlTokensAccountData = thebalance;
+  // If assetId is 0, fetch the native balance.
+  //if (assetid === 0 || assetid === "0") {
+   // return hydraDxNativeBalance(account_id_32);
+ // }
+
+  let api: any;
+  let hdxBalance: any;
+  let assetDecimals: number;
+
+  const account_id_32 = getRawAddress(account_id);
+  try {
+    const asset =  {
+      "foreignasset": assetid
+    };
+      api = await connectToWsEndpoint('interlay', signal);
+      hdxBalance = await api.query.tokens.accounts(account_id_32, asset);
+  } catch (error) {
+      console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
+      return { free: 0, reserved: 0, total: 0 };
+  }
+  
+  const stringBalance = hdxBalance.toHuman();
+  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+
+  try {
+    const assetlist = listInterlayAssets();
+
+    const assetWithAssetId2 = assetlist.find(asset => asset.assetId === '2');
+    const decimals = parseInt(assetWithAssetId2.asset.decimals, 10);
+  
+      assetDecimals = decimals;
+      
+    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
+     //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+  } catch (error) {
+      console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
+      // You might want to set a default or throw an error here
+      assetDecimals = 12; 
+  }
+
+  if (isOrmlTokensAccountData(hdxBalance)) {
+      const bal_obj: OrmlTokensAccountData = hdxBalance;
+      //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
       return {
-        free: bal_obj.free,
-        reserved: bal_obj.reserved,
-        total: bal_obj.free + bal_obj.reserved,
+          free: bal_obj.free,
+          reserved: bal_obj.reserved,
+          frozen: bal_obj.frozen,
+          total: bal_obj.free + bal_obj.reserved + bal_obj.frozen,
+          assetDecimals
       };
-
-    }
-    return { free: 0, reserved: 0, total: 0 };;
+  }
+  return { free: 0, reserved: 0, total: 0 };
 }
+
 
 // check asset balance on polkadot assethub
 export async function checkAssetHubBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, assetDecimals?: number }> {
