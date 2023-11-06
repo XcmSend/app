@@ -90,26 +90,10 @@ const ChainNode = ({ data, isConnectable }) => {
   let filteredChainInfoList;
   const hrmpForSource = hrmpChannels[sourceChainId] || [];  // Default to an empty array if undefined
 
-  // Function to determine if a given chain is a relay chain
-const isRelayChain = (chainInfo) => chainInfo.relay === true;
-
-// Get the `ChainInfo` for the current node
-const currentChainInfo = chainList[currentNodeId];
-
-// Determine if the current node is a relay chain
-const isRelayChainSelected = currentChainInfo && isRelayChain(currentChainInfo);
-
-filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-  // If a relay chain is selected, include itself and all its parachains
-  if (isRelayChainSelected) {
-    return chainInfo.name.toLowerCase() === currentChainInfo.name.toLowerCase() || chainInfo.relayParent === currentChainInfo.name;
-  }
-  // If a parachain is selected, include the relay chain it's connected to and filter based on HRMP channels
-  const isCurrentNodeRelayParent = chainInfo.relay && chainInfo.name.toLowerCase() === (currentChainInfo.relayParent?.toLowerCase() || "");
-  return isCurrentNodeRelayParent || hrmpForSource.length === 0 || hrmpForSource.includes(chainInfo.paraid);
-});
-
-  
+  // Always include "polkadot" and filter based on HRMP channels if they exist
+  filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+      return chainInfo.name.toLowerCase() === "polkadot" || hrmpForSource.length === 0 || hrmpForSource.includes(chainInfo.paraid);
+  });
 
   // Log a warning if the HRMP channels list is empty
   if (hrmpForSource.length === 0) {
@@ -130,6 +114,7 @@ filteredChainInfoList = ChainInfoList.filter(chainInfo => {
   
     fetchData();
   }, []); 
+
   // END of HRMP channel filtering area
 
 

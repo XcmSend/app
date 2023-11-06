@@ -104,6 +104,16 @@ export async function buildHrmp(): Promise<Record<number, number[]>> {
     }
   }
 
+    // Add all parachains under Polkadot to hrmpChannels[0]
+    hrmpChannels[0] = Object.values(chainlist)
+    .filter(chain => chain.relayParent === 'polkadot')
+    .map(chain => chain.paraid);
+
+    // Add all parachains under Polkadot to hrmpChannels[0]
+    hrmpChannels[10000] = Object.values(chainlist)
+    .filter(chain => chain.relayParent === 'rococo')
+    .map(chain => chain.paraid);
+
  // console.log("HRMP channels object to return", hrmpChannels);
   return hrmpChannels;
 }
