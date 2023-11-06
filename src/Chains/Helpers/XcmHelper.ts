@@ -88,7 +88,7 @@ export async function buildHrmp(): Promise<Record<number, number[]>> {
    // console.log(`buildHrmp processing ${relayChain.name} with paraid ${relayChain.paraid}`);
 
     const parachains = Object.values(chainlist).filter(chain => chain.relayParent === relayChain.name);
-   // console.log(`buildHrmp ${relayChain.name} parachains`, parachains);
+    console.log(`buildHrmp ${relayChain.name} parachains`, parachains);
 
     for (const parachain of parachains) {
       const paraid = parachain.paraid;
@@ -114,7 +114,7 @@ export async function buildHrmp(): Promise<Record<number, number[]>> {
     .filter(chain => chain.relayParent === 'rococo')
     .map(chain => chain.paraid);
 
- // console.log("HRMP channels object to return", hrmpChannels);
+  console.log("HRMP channels object to return", hrmpChannels);
   return hrmpChannels;
 }
 
