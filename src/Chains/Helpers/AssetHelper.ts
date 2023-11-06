@@ -84,7 +84,7 @@ export async function checkInterlayAssetBalance(assetid: number | string, accoun
   try {
     const assetlist = listInterlayAssets();
 
-    const assetWithAssetId2 = assetlist.find(asset => asset.assetId === '2');
+    const assetWithAssetId2 = assetlist.find(asset => asset.assetId === assetid.toString());
     const decimals = parseInt(assetWithAssetId2.asset.decimals, 10);
   
       assetDecimals = decimals;
