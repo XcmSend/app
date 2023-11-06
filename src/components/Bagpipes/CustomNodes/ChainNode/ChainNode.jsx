@@ -46,8 +46,6 @@ const ChainNode = ({ data, isConnectable }) => {
   }));
   const { addContact, contacts, error, setError } = useAddressBook();
   const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-  const [newAddress, setNewAddress] = useState(''); // To capture address in modal
-  const [newName, setNewName] = useState('');
   const [allAddresses, setAllAddresses] = useState([]);
 
   const [assetOptions, setAssetOptions] = useState([]);
@@ -97,9 +95,29 @@ const ChainNode = ({ data, isConnectable }) => {
       return chainInfo.name.toLowerCase() === "polkadot" || hrmpForSource.length === 0 || hrmpForSource.includes(chainInfo.paraid);
   });
 
+  console.log(`sourceChainName:`, sourceChainName);
+
+  if (sourceChainName == 'rococo') {
+    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+      return chainInfo.name.toLowerCase() === "rococo";
+  });
+  }
+
+  if (sourceChainName == 'sora') {
+    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+      return chainInfo.name.toLowerCase() === "rococo";
+  });
+  }
+
+ // filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+ //    return chainInfo.name.toLowerCase() === "rococo" | hrmpForSource.length === 0 || hrmpForSource.includes(12011);
+ //});
+
   // Log a warning if the HRMP channels list is empty
   if (hrmpForSource.length === 0) {
-      console.warn(`No HRMP channels or empty HRMP channels list for source chain ID: ${sourceChainId}. Showing all options.`);
+    console.log(`hrmpForSource:`, hrmpForSource);
+      console.warn(`No HRMP channels or empty HRMP channels list for source chain ID: ${sourceChainId}. Showing all options.`, ChainInfoList);
+    //  filteredChainInfoList = [];
   }
 
   useEffect(() => {
@@ -116,10 +134,8 @@ const ChainNode = ({ data, isConnectable }) => {
   
     fetchData();
   }, []); 
-  
 
   // END of HRMP channel filtering area
-
 
 
   const fetchAddressesFromExtension = () => {
@@ -176,10 +192,6 @@ const ChainNode = ({ data, isConnectable }) => {
       }));
     }
 };
-
-
-
-  
 
   useEffect(() => {
     if (formState.chain) {
