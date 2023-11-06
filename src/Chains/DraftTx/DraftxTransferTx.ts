@@ -69,7 +69,7 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 
 
 // https://assethub-polkadot.subscan.io/extrinsic/4929110-2
-async function assethub2interlay(assetid: number, amount: number, accountid: string){
+export async function assethub2interlay(assetid: number, amount: number, accountid: string){
 	const paraid = 2032;
 	const api = await connectToWsEndpoint('assetHub');
 
