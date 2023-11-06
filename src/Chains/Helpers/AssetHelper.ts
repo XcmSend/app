@@ -53,10 +53,12 @@ function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
 
 /// check the balance of an asset on interlay
 /// returns { free: '304', reserved: '0', frozen: '0' }
-export async function checkInterlayassetbalance(assetid: number, accountid: string): Promise<{ free: number, reserved: number, total?: number, assetDecimals?: number }>{
+export async function checkInterlayAssetBalance(assetid: number, accountid: string): Promise<{ free: number, reserved: number, total?: number, assetDecimals?: number }>{
   const api = await connectToWsEndpoint('interlay');
+  let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ''), 10);
+
   const asset =  {
-    "foreignasset": assetid
+    "foreignasset": cleanAssetId
   };
     const thebalance = await api.query.tokens.accounts(accountid, asset);
     if (isOrmlTokensAccountData(thebalance)) {
@@ -364,7 +366,7 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
     break;
 
     case "interlay":
-      balances = await checkInterlayassetbalance(assetId, accountId);
+      balances = await checkInterlayAssetBalance(assetId, accountId);
       assetDecimals = balances.assetDecimals;  
     break;
 

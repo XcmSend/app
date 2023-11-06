@@ -100,7 +100,6 @@ export function listChains() {
         relayParent: 'rococo',
         parachain: true
       };
-
       chainList[2011] = sora_roc;
 
     return chainList;

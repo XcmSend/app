@@ -109,7 +109,7 @@ export default function ActionNode({ children, data, isConnectable }) {
             setIsFetchingActionData(true); // Start the loading state
             await sleep(1000);
             // Handle fetching for xTransfer if needed
-            console.log('Fetching for xTransfer');
+            console.log('fetchActionInfo Fetching for xTransfer');
             setLastUpdated(new Date());
         }
 
@@ -125,7 +125,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         console.log("[fetchActionInfo] Constructed action data : ", newActionData);
         setActionData(newActionData); // Directly set the current action data
         saveActionDataForNode(activeScenarioId, currentNodeId, newActionData); // And also save it to global state
-        console.log("Constructed action data: ", newActionData);
+        console.log("fetchActionInfo Constructed action data: ", newActionData);
         setIsFetchingActionData(false);
 
       }
