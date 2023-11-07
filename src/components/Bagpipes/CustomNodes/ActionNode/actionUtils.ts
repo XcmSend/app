@@ -39,6 +39,12 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
         source: actionDataIn,
         target: actionDataOut
       };
+    case 'Schedule':
+      return {
+        actionType: 'Schedule',
+        source: actionDataIn,
+        target: actionDataOut
+      };
     case 'transfer':
       return {
         actionType: 'transfer',

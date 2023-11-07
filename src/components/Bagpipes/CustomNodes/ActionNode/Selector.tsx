@@ -12,6 +12,7 @@ type SelectorProps = {
     setDropdownVisible: (visible: boolean) => void; 
     SwapSVG: string;
     xTransferSVG: string;
+    ScheduleSVG: string;
     iIcon: string;  
     dropdownVisible: boolean;
 
@@ -52,7 +53,7 @@ export function useOutsideAlerter(ref: React.RefObject<HTMLElement>, callback: (
   }
   
 
-const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, xTransferSVG }, ref) => {
+const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, ScheduleSVG, xTransferSVG }, ref) => {
       const { theme } = React.useContext(ThemeContext);
 
 
@@ -71,6 +72,19 @@ const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdo
                     </span>
                     </Tippy>
                 </div> 
+
+                <div onClick={() => handleDropdownClick('Schedule')} className="hovering flex items-center p-2  relative">
+                    <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded'>
+                    <img src={ScheduleSVG} alt="Swap" className="w-3 h-3 border rounded" />
+                    </div>
+                    <div className='text-xs bold font-semibold align-right'>Schedule </div>
+                    <Tippy theme="light" content="Time delay a transaction">
+                    <span className='absolute top-0 right-0 mt-1 mr-1 bg-blue-100 hover:bg-blue-200 p-1 rounded-full shadow-md cursor-pointer flex items-center justify-center w-3 h-3'>
+                        <img src={icons.iIcon} className='w-1 h-1' alt="Info"/>
+                    </span>
+                    </Tippy>
+                </div> 
+
                 <div onClick={() => handleDropdownClick('xTransfer')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
                     <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
 

@@ -24,10 +24,17 @@ export interface xTransferAction {
   target: ActionData;
 }
 
+export interface ScheduleAction {
+  actionType: 'Schedule';
+  source: ActionData;
+  target: ActionData;
+}
+
+
 export interface TransferAction {
   actionType: 'transfer';
   source: ActionData;
   target: ActionData;
 }
 
-export type ActionType = SwapAction | xTransferAction | TransferAction;
+export type ActionType = SwapAction | ScheduleAction | xTransferAction | TransferAction;

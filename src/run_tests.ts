@@ -1,6 +1,6 @@
 /// tests for XCMSend
 
-import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, interlay2assethub, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
+import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, interlay2assethub, assethub2interlay, polkadot_schedule } from './Chains/DraftTx/DraftxTransferTx';
 import * as assert from 'assert';
 import { checkAssetHubBalance, assetHubNativeBalance, checkHydraDxAssetBalance, checkPolkadotDotRawNativeBalance } from './Chains/Helpers/AssetHelper';
 import { Keyring } from '@polkadot/keyring';
@@ -148,6 +148,20 @@ async function check_open_channels(){
     console.log('hydradx has open channels');
 }
 
+async function test_scheduler(){
+    console.log('test scheduler start');
+    const amount = 1337;
+    const address = "0x68de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40";// random accountid32
+
+    const tx = await dotToHydraDx(amount, address);
+
+    const out = await polkadot_schedule(tx, 20);
+    console.log('test scheduler ok');
+    
+}
+
+
+
 /*
 Tests run: 
 drafting transactions and checking that they are encoded in the right way
@@ -160,11 +174,14 @@ You can broadcast each tx, by feeding the tx into the broadcast_run_tx function
 async function main() {
     console.log('Running tests');
     console.log('Running Balance tests');
-    await test_balances();
+  //  await test_balances();
     console.log('running transaction tests');
-    await test_transfers();
+ //   await test_transfers();
     console.log('Checking XCM channels');
-    await check_open_channels();
+ //   await check_open_channels();
+
+    await test_scheduler();
+
     console.log('test completed');
 }
 

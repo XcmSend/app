@@ -130,6 +130,23 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 }
 
 
+/// amount of blocks to delay for
+export async function polkadot_schedule(tx: any, blocks: number){
+	const api = await connectToWsEndpoint('polkadot');
+	let callback = api.tx.system.remark('hello from xcmsend');
+	// futureblock = amount of user submited blocks + current latest block nr
+	const future: number = await api.query.system.number() + blocks;
+	const txo = await api.tx.scheduler.schedule(
+		future, 
+		0,
+		callback
+
+	);
+	return txo;
+}
+
+
+
 
 // not working
 // https://polkaholic.io/tx/0xaa4ccd2b190b9c96d60068ef418860a99b1cea6c220c726284712c081b90766d
