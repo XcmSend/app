@@ -68,8 +68,10 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 }
 
 export async function assethub_to_polkadot(amount: number, address: string) {
+	console.log(`[assethub_to_polkadot] connecting`);
 	const api = await connectToWsEndpoint('assetHub'); // Assuming 'connectToWsEndpoint' connects to the parachain
 	const paraid = 1000; // The parachain ID where the assetHub is located, change if different
+	console.log(`[assethub_to_polkadot] connected`);
 	const accountId = api.createType("AccountId32", address).toHex();
   
 	// Define the destination on the Polkadot Relay Chain
@@ -96,7 +98,7 @@ export async function assethub_to_polkadot(amount: number, address: string) {
 	  { V3: account },
 	  { V3: asset },
 	  { fee_asset_item: 0},
-	  { Unlimited: null }, // Assuming no weight limit is to be applied
+	  { Unlimited: null }, 
 	);
   
 	return tx;

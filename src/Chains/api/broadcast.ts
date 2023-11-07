@@ -31,6 +31,7 @@ export async function broadcastToChain(chain: string, signedExtrinsic: any): Pro
                 }
 
                 if (status.isInBlock) {
+                    console.log(`Transaction included at blockHash ${status.asInBlock}`);
                     toast.success(`Transaction included at blockHash ${status.asInBlock} `, { id: 'transaction-included' });
                 } else if (status.isFinalized) {
                     toast.success(`Transaction finalized at blockHash ${status.asFinalized}`, { id: 'transaction-finalized' });
