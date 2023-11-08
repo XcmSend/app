@@ -124,9 +124,9 @@ export async function polkadotGetLeaseTime(chainname: string) {
     switch (chainname) {
       case "interlay":
         return "16-01-2024";
-      case "assethub":
-        return "forever";
-      case "hydradx":
+      case "assetHub":
+        return "indefinitely";
+      case "hydraDx":
         return "16-01-2024";
     }
 }

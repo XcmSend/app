@@ -10,6 +10,7 @@ import TransactionMain from './Bagpipes/CustomNodes/TransactionReview/Transactio
 import CreateFromTemplate from './Bagpipes/TemplateFeatures/CreateFromTemplate';
 import ReactTestFlow from '../ReactTestFlow';
 import Lab from '../pages/Lab/Lab';
+import Parachains from '../pages/Parachains/Parachains';
 import ThemeContext from '../contexts/ThemeContext';
 import './toasts/toast.scss';
 
@@ -67,19 +68,19 @@ function MainLayout({ children }) {
             <Route element={<Layout />} path='/' >
               <Route
                   element={<Welcome />}
-                  index
                 />
                 <Route
                   element={<Welcome />}
                   path='/welcome'
                 />
                 <Route
-                  element={<WalletInfo />}
-                  path='/wallet-info'
-                />
-                  <Route
                   element={<BagpipesFlowRoute />}
                   path='/builder'
+                  index
+                />
+                <Route
+                  element={<WalletInfo />}
+                  path='/wallet-info'
                 />
                  <Route
                   element={<TransactionMain />}
@@ -87,6 +88,9 @@ function MainLayout({ children }) {
                 />
                  <Route element={<Lab />} 
                  path='/lab' 
+                 />
+                <Route element={<Parachains />} 
+                 path='/parachains' 
                  />
                   <Route
                   element={<ReactTestFlow />}
