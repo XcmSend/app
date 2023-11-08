@@ -2,7 +2,7 @@
 
 import { ApiPromise } from "@polkadot/api";
 import { genericRawNativeBalance } from "./AssetHelper";
-import connectToWsEndpoint from "../api/connect";
+import { getApiInstance } from "../api/connect";
 import { supported_Polkadot_Chains } from "../ChainsInfo";
 import endpoints from "../api/WsEndpoints";
 
@@ -14,14 +14,14 @@ async function spawn_native_balance_check(chain: supported_Polkadot_Chains, acco
 	// get the api instance for the chain
 	switch (chain) {
 		case supported_Polkadot_Chains.polkadot:
-			api = await connectToWsEndpoint(endpoints.polkadot.default);
+			api = await getApiInstance(endpoints.polkadot.default);
 			console.log(`Polkadot`);
 			break;
 		case supported_Polkadot_Chains.assethub:
-			api = await connectToWsEndpoint(endpoints.polkadot.assetHub);
+			api = await getApiInstance(endpoints.polkadot.assetHub);
 			break;
 		case supported_Polkadot_Chains.hydradx:
-			api = await connectToWsEndpoint(endpoints.polkadot.hydraDx);
+			api = await getApiInstance(endpoints.polkadot.hydraDx);
 			break
 		}
 	const original_balance = await genericRawNativeBalance(api, account);	

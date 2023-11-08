@@ -1,5 +1,5 @@
 //@ts-nocheck
-import connectToWsEndpoint from '../api/connect';
+import { getApiInstance } from '../api/connect';
 import { ChainInfo, listChains } from '../ChainsInfo'; 
 import { listInterlayAssets } from '../Assets/listAssetsForChain';
 import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from '../utils/utils'
@@ -71,7 +71,7 @@ export async function checkInterlayAssetBalance(assetid: number | string, accoun
     const asset =  {
       "foreignasset": assetid
     };
-      api = await connectToWsEndpoint('interlay', signal);
+      api = await getApiInstance('interlay', signal);
       hdxBalance = await api.query.tokens.accounts(account_id_32, asset);
   } catch (error) {
       console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
@@ -129,7 +129,7 @@ export async function checkAssetHubBalance(assetid: number, account_id_32: strin
   }
 
   // For other assetIds, continue checking balance as before
-  const api = await connectToWsEndpoint('assetHub', signal);
+  const api = await getApiInstance('assetHub', signal);
   const assetDecimals = await api.query.assets.metadata(cleanAssetId).then((meta: { decimals: any; }) => meta.decimals.toNumber());
   const balance = await api.query.assets.account(cleanAssetId, account_id_32);
   const b3 = balance.toHuman();
@@ -150,7 +150,7 @@ export async function checkAssetHubBalance(assetid: number, account_id_32: strin
 }
 
 export async function assetHubNativeBalance(accountid: string): Promise<{ free: number, reserved: number, total: number }> {
-  const api = await connectToWsEndpoint('assetHub');
+  const api = await getApiInstance('assetHub');
   const result = await generic_check_native_balance(api, accountid);
   // Compute total by aggregating all balance types
   const total = result.free + result.reserved + result.miscFrozen + result.feeFrozen;
@@ -197,7 +197,7 @@ export async function checkHydraDxAssetBalance(assetid: number | string, account
    // console.log(`checkHydraDxAssetBalance trying to connect`);
 
   try {
-      api = await connectToWsEndpoint('hydraDx', signal);
+      api = await getApiInstance('hydraDx', signal);
       hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
   } catch (error) {
       console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
@@ -244,7 +244,7 @@ export async function checkPolkadotDotRawNativeBalance(accountId: string, signal
   let bal: any;
   let bal3: any;
   if (accountId) {
-    const api = await connectToWsEndpoint('polkadot', signal);
+    const api = await getApiInstance('polkadot', signal);
     bal = await api.query.system.account(accountId);
   }
   bal3 = bal.toHuman();
@@ -262,7 +262,7 @@ export async function checkPolkadotDotRawNativeBalance(accountId: string, signal
 
 /// returns the raw balance of the native dot token
 async function checkRococoRocRawNativeBalance(accountid: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  const api = await connectToWsEndpoint('rococo', signal);
+  const api = await getApiInstance('rococo', signal);
   const bal = await api.query.system.account(accountid);
   const bal3 = bal.toHuman();
   if (isAssetResponseObject(bal3)) {
@@ -284,7 +284,7 @@ assetRegistry.assetMetadataMap(5)
 }
 */
 async function getHydradxAssetSymbolDecimals(assetid: number){
-    const api = await connectToWsEndpoint('hydraDx');
+    const api = await getApiInstance('hydraDx');
     const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
     return resp;
 }
@@ -313,7 +313,7 @@ async function generic_check_native_balance(api: ApiPromise, address: string) {
 }
 
 async function hydraDxNativeBalance(address: string): Promise<{ free: number, reserved: number, total: number, frozen?: number }> {
-  const api = await connectToWsEndpoint('hydraDx');
+  const api = await getApiInstance('hydraDx');
   const result = await generic_check_native_balance(api, address);
 
   // assuming generic_check_native_balance returns an object like:
@@ -351,7 +351,7 @@ return (
 // get asset metadata 
 // output:  {"deposit":"u128","name":"Bytes","symbol":"Bytes","decimals":"u8","isFrozen":"bool"}
 async function get_assethub_asset_metadata(assetid: number) {
-const api = await connectToWsEndpoint('assetHub');
+const api = await getApiInstance('assetHub');
 const quuery = await api.query.asset.metadat(assetid);
 
 if (isAssethubAssetMetadata(quuery)){
@@ -371,7 +371,7 @@ assetRegistry.assetMetadataMap(5)
 }
 */
 async function get_hydradx_asset_symbol_decimals(assetid: number){
-  const api = await connectToWsEndpoint('hydraDx');
+  const api = await getApiInstance('hydraDx');
   const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
   return resp;
 }

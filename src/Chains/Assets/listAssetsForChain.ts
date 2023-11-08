@@ -1,6 +1,6 @@
 import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
-import connectToWsEndpoint from "../api/connect";
+import { getApiInstance } from "../api/connect";
 import { CHAIN_METADATA } from "../api/metadata";
 import { CHAIN_ASSETS } from "./chainAssets";
 
@@ -28,7 +28,7 @@ export function listInterlayAssets() {
 
 async function listInterlayAssetReal() {
 
-    const api = await connectToWsEndpoint('interlay');
+    const api = await getApiInstance('interlay');
 	
     const dictionary = new Map<number, any>();
     const assets = await api.query.assetRegistry.metadata.entries();
@@ -54,7 +54,7 @@ export function listHydraDxAssets() {
 
 // COMMENTING OUT THE BELOW CODE BECAUSE IT IS FETCHING TOO OFTEN AND UNECESSARILY
 // export async function listAssetHubAssets(signal: AbortSignal) {
-// 	const api = await connectToWsEndpoint('assetHub', signal);
+// 	const api = await getApiInstance('assetHub', signal);
 // 	console.log(`Connected to assethub`);
 	
 // 	const dictionary = new Map<number, any>();
@@ -79,7 +79,7 @@ export function listHydraDxAssets() {
 // COMMENTING OUT THE BELOW CODE BECAUSE IT IS FETCHING TOO OFTEN AND UNECESSARILY
 // export async function listHydraDxAssets(signal: AbortSignal) {
 // 	console.log(`[listHydraDxAssets] listing assets on hydradx`);
-// 	const api = await connectToWsEndpoint('hydraDx', signal);
+// 	const api = await getApiInstance('hydraDx', signal);
 //     console.log(`[listHydraDxAssets] Assets onhydradx`, api);
 // 	const dictionary = new Map<number, any>();
 
@@ -101,7 +101,7 @@ export function listHydraDxAssets() {
 
 
 // export async function listPolkadexAssets(signal: AbortSignal) {
-// 	const api = await connectToWsEndpoint('polkadex', signal);
+// 	const api = await getApiInstance('polkadex', signal);
 // 	console.log(`Connected to Polkadex`);
 	
 // 	const dictionary = new Map<number, any>();

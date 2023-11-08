@@ -3,27 +3,47 @@ import { CHAIN_METADATA } from "./metadata";
 import { cryptoWaitReady } from "@polkadot/util-crypto";
 import toast from "react-hot-toast";
 
-// Store the connections in a Map
-const connections = new Map();
+// Store the API connections in a global map
+const apiConnections = new Map<string, ApiPromise>();
+// Constant to set max reconnection attempts
+const MAX_RECONNECTION_ATTEMPTS = 3;
+const RECONNECTION_TIMEOUT = 5000; // milliseconds
 
-export default async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
+export async function getApiInstance(chain: string): Promise<ApiPromise> {
+    if (apiConnections.has(chain)) {
+        const api = apiConnections.get(chain);
+        if (api && api.isConnected) {
+            return api;
+        } else {
+            console.log(`Connection to ${chain} lost. Attempting to reconnect...`);
+            // Attempt to reconnect a few times
+            for (let i = 0; i < 3; i++) {
+                try {
+                    await api.connect();
+                    console.log(`Reconnected to ${chain} successfully.`);
+                    return api;
+                } catch (error) {
+                    console.error(`Attempt ${i+1} failed to reconnect to ${chain}:`, error);
+                }
+            }
+            apiConnections.delete(chain); // Cleanup after failed reconnection attempts
+            throw new Error(`Failed to reconnect to ${chain} after several attempts.`);
+        }
+    }
+
+    // Establish a new connection if we don't have one already
+    console.log(`Establishing new connection to ${chain}...`);
+    const api = await connectToWsEndpoint(chain);
+    apiConnections.set(chain, api);
+    return api;
+}
+
+
+  
+export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
   console.log("connectToWsEndpoint chain", chain);
   await cryptoWaitReady();
 
-  // Use existing connection if it's already established
-  if (connections.has(chain)) {
-    const api = connections.get(chain);
-    if (api.isConnected) {
-      console.log(`Using existing connection for chain: ${chain}`);
-      return api;
-    } else {
-      // Clean up the disconnected API instance
-      connections.delete(chain);
-      console.log(`Cleaned up disconnected API instance for chain: ${chain}`);
-    }
-  }
-
-  // Get chain metadata
   const metadata = CHAIN_METADATA[chain];
   if (!metadata || !metadata.endpoints || metadata.endpoints.length === 0) {
     toast.error(`No endpoints found for chain: ${chain}`);
@@ -37,7 +57,22 @@ export default async function connectToWsEndpoint(chain: string): Promise<ApiPro
       const provider = new WsProvider(endpoint);
       const api = await ApiPromise.create({ provider });
       await api.isReady;
-      connections.set(chain, api); // Store the ApiPromise instance
+
+      api.on('disconnected', async () => {
+        console.log(`Disconnected from ${endpoint}. Attempting to reconnect...`);
+        apiConnections.delete(chain); // Delete the existing connection instance
+      
+        // Try to create a new connection
+        try {
+          const newApi = await connectToWsEndpoint(chain);
+          apiConnections.set(chain, newApi);
+          console.log(`Reconnected to ${chain} successfully.`);
+        } catch (reconnectError) {
+          console.error(`Failed to reconnect to ${chain}:`, reconnectError);
+        }
+      });
+
+      apiConnections.set(chain, api);
       console.log("Connected to endpoint", endpoint);
       return api;
     } catch (error) {
@@ -57,3 +92,4 @@ export default async function connectToWsEndpoint(chain: string): Promise<ApiPro
   toast.error("All endpoints failed. Please check your connection and try again.");
   throw lastError;
 }
+

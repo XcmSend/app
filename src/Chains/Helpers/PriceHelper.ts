@@ -1,13 +1,13 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { TradeRouter, CachingPoolService, PoolType } from '@galacticcouncil/sdk';
 
-import connectToWsEndpoint from '../api/connect';
+import { getApiInstance } from '../api/connect';
 import endpoints from '../api/WsEndpoints';
 
 let tradeRouter: { getAllAssets: () => any; getBestSpotPrice: (arg0: string, arg1: string) => any; getBestSell: (arg0: string, arg1: string, arg2: number) => any; };
 
 async function initializeTradeRouter() {
-  const api = await connectToWsEndpoint('hydraDx');
+  const api = await getApiInstance('hydraDx');
 
   console.log(`getHydraDx Initializing PoolService...`);
   const poolService = new CachingPoolService(api);

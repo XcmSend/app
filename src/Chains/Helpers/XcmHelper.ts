@@ -1,4 +1,4 @@
-import connectToWsEndpoint from "../api/connect";
+import { getApiInstance } from "../api/connect";
 import { ChainInfo, listChains, listRelayChains } from "../ChainsInfo"
 
 /*
@@ -14,7 +14,7 @@ returns a list of paraid's
 */
 export async function findIngressPolkadotChannels(paraid: number): Promise<[number]> {
  //  console.log("findIngressPolkadotChannels for hrmp for  paraid", paraid);
-	const api = await connectToWsEndpoint('polkadot');
+	const api = await getApiInstance('polkadot');
   // console.log("findIngressPolkadotChannels for hrmp for  api", api);
 	const Channels = (
         (await api.query.hrmp.hrmpIngressChannelsIndex(paraid)) as any
@@ -24,7 +24,7 @@ export async function findIngressPolkadotChannels(paraid: number): Promise<[numb
 }
 
 export async function findEngressPolkadotChannels(paraid: number): Promise<[number]> {
-	const api = await connectToWsEndpoint('polkadot');
+	const api = await getApiInstance('polkadot');
 	const Channels = (
         (await api.query.hrmp.hrmpEgressChannelsIndex(paraid)) as any
       ).map((a: { toNumber: () => any; }) => a.toNumber());
