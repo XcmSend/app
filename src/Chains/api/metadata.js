@@ -40,11 +40,22 @@ export const CHAIN_METADATA = {
             "wss://rpc.polkadot.io",
             "wss://polkadot.api.onfinality.io/public-ws",
 
+
         ],
         queryBalancePaths: ["system.account"],
         transferFunction: "xcmPallet.limitedReserveTransferAssets",
         nativeAccount: true,
-
+    },
+    Kusama: {
+        chain: "Kusama",
+        endpoints: [
+              "wss://kusama-rpc.dwellir.com",
+            "wss://kusama-rpc.polkadot.io",
+            "wss://kusama.api.onfinality.io/public-ws",
+        ],
+        queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        nativeAccount: true,
     },
     rococo: {
         chain: "Rococo",
