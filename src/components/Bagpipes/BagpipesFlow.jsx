@@ -129,8 +129,7 @@ const BagpipesFlow = () => {
     const navigate = useNavigate(); 
     const location = useLocation();
     const [mode, setMode] = useState('light');
-    const { undo, redo, canUndo, canRedo, takeSnapshot } = useUndoRedo();
-    // console.log("takeSnapshot from useUndoRedo:", takeSnapshot);
+    // console.log("  from useUndoRedo:",  );
     const { theme: appTheme, setTheme: setAppTheme } = useContext(ThemeContext);
     const theme = appTheme === 'light' ? lightTheme : darkTheme;
     
@@ -286,7 +285,7 @@ const BagpipesFlow = () => {
               return;
             }
           
-            takeSnapshot();
+             
        
             // Use the Zustand action instead
             setNodes((prevNodes) => {
@@ -297,12 +296,12 @@ const BagpipesFlow = () => {
           
               return updatedNodes;
             });
-          }, [takeSnapshot, activeScenarioId]);
+          }, [  activeScenarioId]);
 
           
     
-    const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios, takeSnapshot);
-    // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId, takeSnapshot);
+    const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios,  );
+    // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId,  );
 
     const handleConnect = (params) => {
       onConnect(currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario)(params);
@@ -371,7 +370,7 @@ const BagpipesFlow = () => {
         (_, node) => {
           // console.log("Node being dragged:", node);
           const closeEdge = getClosestEdge(node);
-          takeSnapshot();
+           
       
           if (closeEdge && !currentScenarioEdges.some(e =>
               (e.source === closeEdge.source && e.target === closeEdge.target) ||
@@ -388,7 +387,7 @@ const BagpipesFlow = () => {
           updateNodePositionInScenario(activeScenarioId, node.id, node.position);
           // console.log("Updating node position:", activeScenarioId, node.id, node.position);
         },
-        [getClosestEdge, currentScenarioEdges, takeSnapshot, updateNodePositionInScenario, activeScenarioId]
+        [getClosestEdge, currentScenarioEdges,   updateNodePositionInScenario, activeScenarioId]
       );
       
       
@@ -397,7 +396,7 @@ const BagpipesFlow = () => {
       const onNodeDragStop = useCallback(
         (_, node) => {
           const closeEdge = getClosestEdge(node);
-          takeSnapshot();
+           
       
           setEdges(prevEdges => {
             // Remove any temp edges from the list
@@ -430,7 +429,7 @@ const BagpipesFlow = () => {
           setTempEdge(null);
       
         },
-        [getClosestEdge, takeSnapshot, activeScenarioId, addEdgeToScenario]
+        [getClosestEdge,   activeScenarioId, addEdgeToScenario]
       );
       
     
@@ -441,10 +440,10 @@ const BagpipesFlow = () => {
      * @param event {object} - The event data.
      */
     const onDragOver = useCallback((event) => {
-        takeSnapshot();
+         
       event.preventDefault();
       event.dataTransfer.dropEffect = 'move';
-    }, [takeSnapshot]);
+    }, [ ]);
 
     /**
      * Function that handles when something is dropped into the react flow area. 
@@ -454,7 +453,7 @@ const BagpipesFlow = () => {
         const onDrop = useCallback(
         (event) => {
             event.preventDefault();
-            takeSnapshot();
+             
             // The type of the node is determined based on what was dragged and dropped.
             const nodeType = event.dataTransfer.getData('application/reactflow').toLowerCase();
     
@@ -586,12 +585,12 @@ const BagpipesFlow = () => {
             // Call the action to add the node to the current scenario
             addNodeToScenario(activeScenarioId, newNode);
         }},
-        [reactFlowInstance, takeSnapshot, activeScenarioId, addNodeToScenario]
+        [reactFlowInstance,   activeScenarioId, addNodeToScenario]
     );
 
     const onNodesDelete = useCallback(() => {
       // 👇 allow deleting nodes undoable
-      takeSnapshot();
+       
     
       // Gather IDs of selected nodes
       const nodeIdsToDelete = currentScenarioNodes.filter(node => node.selected).map(node => node.id);
@@ -608,12 +607,12 @@ const BagpipesFlow = () => {
       if (nodeIdsToDelete.includes(selectedNodeId)) {
         setSelectedNodeId(null);
       }
-    }, [takeSnapshot, setNodes, deleteNodeFromScenario, activeScenarioId]);
+    }, [  setNodes, deleteNodeFromScenario, activeScenarioId]);
    
     
     const onEdgesDelete = useCallback(() => {
       // Similar to nodes, take a snapshot for undo functionality (assuming you have it for edges too)
-      takeSnapshot();
+       
   
       // Check if an edge is selected
       if (!selectedEdgeId) {
@@ -626,7 +625,7 @@ const BagpipesFlow = () => {
   
       // Clear the selected edge ID from the local state
       setSelectedEdgeId(null);
-  }, [takeSnapshot, setSelectedEdgeId, deleteEdgeFromScenario, activeScenarioId, selectedEdgeId]);
+  }, [  setSelectedEdgeId, deleteEdgeFromScenario, activeScenarioId, selectedEdgeId]);
   
     const onEdgeClick = useCallback((event, edge) => {
       if (selectedEdgeId === edge.id) {
