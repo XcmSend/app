@@ -35,6 +35,13 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
        const goToBagpipes = () => {
         navigate('/builder') ;
       };
+
+
+
+          // Function to navigate to /builder
+    const goToParachains = () => {
+      navigate('/parachains') ;
+      };
   
           // Function to navigate to /builder
     const goToLab = () => {
@@ -53,6 +60,13 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
                 type={'primary'}
               >
                 <span className='button-header-text'>Builder</span>
+              </Button>
+              <Button
+                className='xcm-send-btn  button-header'
+                onClick={goToParachains}
+                type={'primary'}
+              >
+                <span className='button-header-text'>Parachains</span>
               </Button>
               {/* <Button
                 className='xcm-send-btn xcm-send-btn-small-size button-header'

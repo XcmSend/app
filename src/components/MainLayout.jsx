@@ -10,8 +10,13 @@ import TransactionMain from './Bagpipes/CustomNodes/TransactionReview/Transactio
 import CreateFromTemplate from './Bagpipes/TemplateFeatures/CreateFromTemplate';
 import ReactTestFlow from '../ReactTestFlow';
 import Lab from '../pages/Lab/Lab';
+import Parachains from '../pages/Parachains/Parachains';
+
 import ThemeContext from '../contexts/ThemeContext';
 import './toasts/toast.scss';
+
+
+
 
 function MainLayout({ children }) {
     const { theme } = React.useContext(ThemeContext);
@@ -88,6 +93,9 @@ function MainLayout({ children }) {
                  <Route element={<Lab />} 
                  path='/lab' 
                  />
+          <Route path="parachains" element={<Parachains />} />
+
+
                   <Route
                   element={<ReactTestFlow />}
                   path='/test-flow'
