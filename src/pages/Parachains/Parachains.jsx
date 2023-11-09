@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../../components/Bagpipes/hooks';
 import { listChains, listRelayChains } from '../../Chains/ChainsInfo';
 import { listParachainsConnectedToRelay, polkadotGetLeaseTime } from '../../Chains/Helpers/XcmHelper';
+import ThemeContext from '../../contexts/ThemeContext';
+import './Parachains.scss';
 
 function Parachains() {
+    const theme = React.useContext(ThemeContext);
     const { hrmpChannels } = useAppStore((state) => ({
         hrmpChannels: state.hrmpChannels,
     }));
@@ -41,46 +44,32 @@ function Parachains() {
     }, [hrmpChannels]);
 
     return (
-        <div className="bg-gray-100 p-8 h-full">
-            <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-semibold">Parachains</h1>
+        <div className={`${theme}`}>
+        <div className="bagpipes-container bg-gray-300">
+            <div className="header">
+                <h1 className="title">Parachains</h1>
             </div>
-            <table className="min-w-full leading-normal">
+            <table className="bagpipes-table">
                 <thead>
                     <tr>
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Chain Name                        
-                        </th>
-                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Relay Chain
-                        </th>
-                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Lease Period
-                        </th>
-                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            HRMP Channels
-                        </th>
+                        <th className="table-header">Chain Name</th>
+                        <th className="table-header">Relay Chain</th>
+                        <th className="table-header">Lease Period</th>
+                        <th className="table-header">HRMP Channels</th>
                     </tr>
                 </thead>
                 <tbody>
                     {parachains.map((parachain, index) => (
                         <tr key={index}>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                {parachain.display}
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                {parachain.relayChain}
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                {parachain.leasePeriod}
-                            </td>
-                            <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                {parachain.hrmpChannels}
-                            </td>
+                            <td className="table-cell">{parachain.display}</td>
+                            <td className="table-cell">{parachain.relayChain}</td>
+                            <td className="table-cell">{parachain.leasePeriod}</td>
+                            <td className="table-cell">{parachain.hrmpChannels}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+        </div>
         </div>
     );
 }

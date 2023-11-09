@@ -3,10 +3,14 @@ $primary-font: 'Lexend', 'Muli', 'Mulish', sans-serif;
 $unbounded-font: 'Unbounded', sans-serif;
 $chain-node-width: 250px;
 
+
 .light {
     --bg: #fff;
     --bg-accent: #d8d8d8;
+    --bg-accent-darker: darken(var(--bg-accent), 10%)
     --bg-hover: #3b65c9;
+    --bg-lighter: lighten(var(--bg), 5%);
+    --bg-main: rgb(209 213 219);
 
     --primary: #fefefe;
     --node-bg: #dddddd;
@@ -33,8 +37,11 @@ $chain-node-width: 250px;
 
 .dark {
     --bg: #111827;
+    --bg-lighter: lighten(var(--bg), 5%);
     --bg-accent: #1f2b44;
+    --bg-accent-darker: darken(var(--bg-accent), 10%)
     --bg-hover: #3b65c9;
+    --bg-main: rgb(17 24 39);
 
     --primary: #0035a8;
     --node-bg: #1a1a1a;

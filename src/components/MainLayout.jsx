@@ -61,48 +61,25 @@ function MainLayout({ children }) {
 
       {/* <NodeNotifications /> */}
       <Routes>
-        <Route element={<CreateFromTemplate />} path='/create'>
-      <Route path="/create" element={<CreateFromTemplate />} />
-      </Route>
+        {/* Root Route */}
+        <Route path="/" element={<Layout />}>
+          {/* Nested Routes */}
+          <Route index element={<Welcome />} />
+          <Route path="welcome" element={<Welcome />} />
+          <Route path="builder" element={<BagpipesFlowRoute />} />
+          <Route path="wallet-info" element={<WalletInfo />} />
+          <Route path="transaction/review" element={<TransactionMain />} />
+          <Route path="lab" element={<Lab />} />
+          <Route path="parachains" element={<Parachains />} />
+          <Route path="test-flow" element={<ReactTestFlow />} />
+          {/* Uncomment when needed */}
+          {/* <Route path="evm-wallet-info" element={<EvmWalletInfo />} /> */}
+        </Route>
 
-            <Route element={<Layout />} path='/' >
-              <Route
-                  element={<Welcome />}
-                />
-                <Route
-                  element={<Welcome />}
-                  path='/welcome'
-                />
-                <Route
-                  element={<BagpipesFlowRoute />}
-                  path='/builder'
-                  index
-                />
-                <Route
-                  element={<WalletInfo />}
-                  path='/wallet-info'
-                />
-                 <Route
-                  element={<TransactionMain />}
-                  path='/transaction/review'
-                />
-                 <Route element={<Lab />} 
-                 path='/lab' 
-                 />
-                <Route element={<Parachains />} 
-                 path='/parachains' 
-                 />
-                  <Route
-                  element={<ReactTestFlow />}
-                  path='/test-flow'
-                />
-                {/* <Route
-                  element={<EvmWalletInfo />}
-                  path='/evm-wallet-info'
-                /> */}
-              </Route>
+        {/* Other Top-Level Routes */}
+        <Route path="/create" element={<CreateFromTemplate />} />
+      </Routes>
 
-            </Routes>
     </>
   );
 }
