@@ -224,7 +224,10 @@ const handleAcceptTransactions = async () => {
   }, [transactions]);
 
 
-
+  const wrapperSignExtrinsic = (transaction: any, address: string, nonce?: number) => {
+    const currentChain = transaction.formData.source.chain;
+    return signExtrinsic(transaction, address, currentChain, nonce);
+}
 
 
   return (
@@ -238,7 +241,7 @@ const handleAcceptTransactions = async () => {
             transactions={transactions}
             onAccept={handleAcceptTransactions}
             onDecline={handleDeclineTransactions}
-            signExtrinsic={signExtrinsic}
+            signExtrinsic={wrapperSignExtrinsic}
             setSignedExtrinsics={setSignedExtrinsics}
           />
         ) : (

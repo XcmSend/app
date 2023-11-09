@@ -7,7 +7,7 @@ import React, { useState, useRef, useCallback , useEffect, memo, useContext } fr
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactFlow, { useReactFlow, Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
-import { useExecuteChainScenario, useCopyPaste, useUndoRedo, useSaveDiagramState } from './hooks';
+import { useExecuteChainScenario, useSaveDiagramState } from './hooks';
 import useAppStore from '../../store/useAppStore';
 import { generateEdgeId } from './utils/storageUtils';
 import GitInfo from './git_tag';

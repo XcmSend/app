@@ -39,7 +39,11 @@ interface TransactionReviewProps {
   transactions: TransactionProps[];
   onAccept: () => void;
   onDecline: () => void;
-  signExtrinsic: (transaction: any, address: string) => Promise<SubmittableExtrinsic<"promise", ISubmittableResult>>;
+  signExtrinsic: (
+    transaction: any,
+    address: string,
+    nonce?: number
+    ) => Promise<SubmittableExtrinsic<"promise", ISubmittableResult>>;
   setSignedExtrinsics: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
