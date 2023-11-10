@@ -84,11 +84,13 @@ function handlexTransfer(formData) {
     const action = reserverTransferActions[`${source.chain}:${target.chain}`];
 
     if (action) {
+        console.log(`action got!`);
         return action();
     } else {
-        toast("Action data is empty. Did you fetch?")
-        // console.error("Unsupported xTransfer direction.");
-        // throw new Error("Unsupported xTransfer direction.");
+        console.log("Unsupported xTransfer direction.");
+        toast("Action data is empty. Did you fetch?");
+        
+        throw new Error("Unsupported xTransfer direction.");
     }
 }
 
