@@ -5,7 +5,7 @@ import { hexToU8a, isHex, u8aToHex } from "@polkadot/util";
 
 import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
-import connectToWsEndpoint from "../api/connect";
+import { getApiInstance } from "../api/connect";
 import { CHAIN_METADATA } from "../api/metadata";
 import toast, { Toaster } from 'react-hot-toast';
 //import { createType } from '@polkadot/types';
@@ -32,7 +32,7 @@ export function getRawAddress(ss58Address: string): Uint8Array {
 /// ref: https://polkaholic.io/tx/0x47914429bcf15b47f4d202d74172e5fbe876c5ac8b8a968f1db44377906f6654
 /// DOT to assethub
 export async function polkadot_to_assethub(amount: number, address: string) {
-	const api = await connectToWsEndpoint('polkadot');
+	const api = await getApiInstance('polkadot');
 	const paraid = 1000;
   const accountId = api.createType("AccountId32", address).toHex();
 
@@ -55,7 +55,7 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 	];
 
 
-	const tx = await api.tx.xcmPallet.limitedTeleportAssets(
+	const tx = api.tx.xcmPallet.limitedTeleportAssets(
 		{ V3: destination },
 		{ V3: account	 },
 		{ V3: asset },
@@ -67,6 +67,43 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 	return tx;
 }
 
+export async function assethub_to_polkadot(amount: number, address: string) {
+	console.log(`[assethub_to_polkadot] connecting`);
+	const api = await getApiInstance('assetHub'); // Assuming 'connectToWsEndpoint' connects to the parachain
+	const paraid = 1000; // The parachain ID where the assetHub is located, change if different
+	console.log(`[assethub_to_polkadot] connected`);
+	const accountId = api.createType("AccountId32", address).toHex();
+  
+	// Define the destination on the Polkadot Relay Chain
+	const destination = {
+	  parents: 1, // One level up from a parachain to the Relay Chain
+	  interior: { Here: null }, // The destination is the Relay Chain itself
+	};
+  
+	const account = {
+	  parents: 0, // The account is on the Relay Chain (no parent required)
+	  interior: { X1: { AccountId32: { id: accountId, network: null } } },
+	};
+  
+	const asset = [
+	  {
+		id: { Concrete: { parents: 0, interior: "Here" } }, // The asset is on the parachain (origin)
+		fun: { Fungible: amount },
+	  },
+	];
+  
+	// The transaction to teleport assets from assetHub to Polkadot
+	const tx = api.tx.polkadotXcm.limitedTeleportAssets(
+	  { V3: destination },
+	  { V3: account },
+	  { V3: asset },
+	  { fee_asset_item: 0},
+	  { Unlimited: null }, 
+	);
+  
+	return tx;
+  }
+  
 
 function number_to_string(input: number): number {
 	console.log(`number_to_string: `, input);
@@ -83,7 +120,7 @@ function number_to_string(input: number): number {
 // https://assethub-polkadot.subscan.io/extrinsic/4929110-2
 export async function assethub2interlay(assetid: number, amount: number, destaccount: string){
 	const paraid = 2032;
-	const api = await connectToWsEndpoint('assetHub');
+	const api = await getApiInstance('assetHub');
 	const accountido = raw_address_now(destaccount);
 	console.log(`assetid:`, assetid);
 // remove commas in assetid
@@ -134,7 +171,7 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 // not working
 // https://polkaholic.io/tx/0xaa4ccd2b190b9c96d60068ef418860a99b1cea6c220c726284712c081b90766d
 export async function interlay2assethub(assetid: number, amount: number, accountid32: string){
-	const api = await connectToWsEndpoint('interlay');	
+	const api = await getApiInstance('interlay');	
 	const paraid = 1000;
 	const currency_id = {
 		"foreignasset": assetid
@@ -165,7 +202,7 @@ export async function interlay2assethub(assetid: number, amount: number, account
 
 /// Send DOT to a parachain
 export async function genericPolkadotToParachain(paraid: number, amount: number, address: string) {
-	const api = await connectToWsEndpoint('polkadot');
+	const api = await getApiInstance('polkadot');
 	//const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
 	const accountId = api.createType("AccountId32", address).toHex();
 	
@@ -205,7 +242,7 @@ export async function dotToHydraDx(amount: number, targetAddress: string){
     const paraid = 2034; // TODO: call from ChainInfo
 	let api: any;
 	try {
-        api = await connectToWsEndpoint('polkadot');
+        api = await getApiInstance('polkadot');
     } catch (error) {
         // If there's an error connecting, send a toast message and terminate the function
         toast.error("Failed to connect to the endpoint. Please ensure you're connected and try again.");
@@ -263,7 +300,7 @@ export async function dotToHydraDx(amount: number, targetAddress: string){
 
 export async function dotToParachain(amount: number,  targetAddress: string){
   const paraid = 1000;
-	const api = await connectToWsEndpoint('polkadot');
+	const api = await getApiInstance('polkadot');
 //	console.log(`sending dot to parachain`);
 
   const rawTargetAddress = getRawAddress(targetAddress);
@@ -309,7 +346,7 @@ export async function dotToParachain(amount: number,  targetAddress: string){
 // dry run results: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Frpc.hydradx.cloud#/extrinsics/decode and input this: 0x640489010300000300a10f00000000002801010200a10f000000
 // HYDRADX > parachain
 export async function hydraDxToParachain(amount: number, assetId: number, destAccount: string, paraId: number) {
-	const api = await connectToWsEndpoint('hydraDx');
+	const api = await getApiInstance('hydraDx');
 
 
 // 	console.log(`[hydradx to parachain]amount :`, amount);
@@ -363,7 +400,7 @@ function uint8ArrayToHex(uint8Array: Uint8Array): string {
 /// assethub > hydra
 export async function assethub_to_hydra(assetid: number, amount: number, accountId: string) {
 	console.log(`[assethub_to_hydra]`);
-	const api = await connectToWsEndpoint('assetHub');
+	const api = await getApiInstance('assetHub');
 	const paraid = 2034;//hydradx
 	const accountid = raw_address_now(accountId);//uint8ArrayToHex(blake2(getRawAddress(accountid)).map((x, i): number => (x + 256 - ZERO[i]) % 256));
 	const destination = {
@@ -414,7 +451,7 @@ export async function assethub_to_parachain(assetid: string, amount: number, acc
 	//console.log(`[assethub_to_parachain]assetId :`, assetid);
 	//console.log(`[assethub_to_parachain]paraId :`, paraid);
 	
-	const api = await connectToWsEndpoint('assetHub');
+	const api = await getApiInstance('assetHub');
 
 //	const blake2 = (value: Uint8Array): Uint8Array => blake2AsU8a(value, 512);
 //	const ZERO = blake2(new Uint8Array(32))

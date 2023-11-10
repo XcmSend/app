@@ -1,10 +1,19 @@
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { keyring } from '@polkadot/ui-keyring';
 
+let isKeyringInitialized = false;
+
+
 export default async function initializeKeyring() {
+
+    if (isKeyringInitialized) {
+        console.warn("[initializeKeyring] Keyring already initialized.");
+        return;
+      }
+
     console.log("[initializeKeyring] initializeKeyring started");
     try {
-        const injectedExtensions = await web3Enable('bagpipes');
+        const injectedExtensions = await web3Enable('Bagpipes');
         console.log("[initializeKeyring] web3Enable called");
         
         if (injectedExtensions.length === 0) {
@@ -35,6 +44,7 @@ export default async function initializeKeyring() {
             })
         });
         console.log("[initializeKeyring] subscribed to account changes");
+        isKeyringInitialized = true;
         return unsubscribe; // consider returning this to caller to handle unsubscribing
         
 

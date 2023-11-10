@@ -11,7 +11,6 @@ import CreateFromTemplate from './Bagpipes/TemplateFeatures/CreateFromTemplate';
 import ReactTestFlow from '../ReactTestFlow';
 import Lab from '../pages/Lab/Lab';
 import Parachains from '../pages/Parachains/Parachains';
-
 import ThemeContext from '../contexts/ThemeContext';
 import './toasts/toast.scss';
 
@@ -65,10 +64,22 @@ function MainLayout({ children }) {
 
       {/* <NodeNotifications /> */}
       <Routes>
-        <Route element={<CreateFromTemplate />} path='/create'>
-      <Route path="/create" element={<CreateFromTemplate />} />
-      </Route>
+        {/* Root Route */}
+        <Route path="/" element={<Layout />}>
+          {/* Nested Routes */}
+          <Route index element={<Welcome />} />
+          <Route path="welcome" element={<Welcome />} />
+          <Route path="builder" element={<BagpipesFlowRoute />} />
+          <Route path="wallet-info" element={<WalletInfo />} />
+          <Route path="transaction/review" element={<TransactionMain />} />
+          <Route path="lab" element={<Lab />} />
+          <Route path="parachains" element={<Parachains />} />
+          <Route path="test-flow" element={<ReactTestFlow />} />
+          {/* Uncomment when needed */}
+          {/* <Route path="evm-wallet-info" element={<EvmWalletInfo />} /> */}
+        </Route>
 
+<<<<<<< HEAD
             <Route element={<Layout />} path='/' >
               <Route
                   element={<Welcome />}
@@ -105,8 +116,10 @@ function MainLayout({ children }) {
                   path='/evm-wallet-info'
                 /> */}
               </Route>
+        {/* Other Top-Level Routes */}
+        <Route path="/create" element={<CreateFromTemplate />} />
+      </Routes>
 
-            </Routes>
     </>
   );
 }

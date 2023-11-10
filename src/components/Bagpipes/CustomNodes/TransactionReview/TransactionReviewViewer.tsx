@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { getPaymentInfo, PaymentInfo } from '../../../../Chains/Helpers/FeeHelper';
 import { SubmittableExtrinsic } from '@polkadot/api-base/types';
 import { ISubmittableResult } from '@polkadot/types/types';
+import { getApiInstance } from '../../../../Chains/api/connect';
 import ThemeContext from '../../../../contexts/ThemeContext';
 import '../../styles.module.css';
 import '../../../../index.css';
@@ -38,7 +39,11 @@ interface TransactionReviewProps {
   transactions: TransactionProps[];
   onAccept: () => void;
   onDecline: () => void;
-  signExtrinsic: (transaction: any, address: string) => Promise<SubmittableExtrinsic<"promise", ISubmittableResult>>;
+  signExtrinsic: (
+    transaction: any,
+    address: string,
+    nonce?: number
+    ) => Promise<SubmittableExtrinsic<"promise", ISubmittableResult>>;
   setSignedExtrinsics: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
@@ -46,30 +51,46 @@ interface TransactionReviewProps {
 export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactions, onAccept, onDecline, signExtrinsic, setSignedExtrinsics }) => {
   const { theme } = React.useContext(ThemeContext);
   const [fees, setFees] = React.useState<{ [key: string]: PaymentInfo }>({});
+  const feesFetched = React.useRef(false);
+
 
   console.log('transactions', transactions);
 
   useEffect(() => {
+    if (!feesFetched.current) {
     const fetchFees = async () => {
-        const newFees: { [key: string]: PaymentInfo } = {};
+      const newFees: { [key: string]: PaymentInfo } = {};
+      
+      // Process each transaction to fetch its fee information
+      for (const txWithData of transactions) {
+        try {
+          const address = txWithData.formData.source.address.toString();
+          // Get the payment info. If the API is not connected, an error will be thrown
+          const feeInfo = await getPaymentInfo(txWithData.draftedExtrinsic, address, txWithData.formData.source.chain);
+          if (feeInfo) { // If feeInfo is retrieved successfully
+            newFees[txWithData.formData.nodeId] = feeInfo;
+            console.log(`getPaymentInfo Fees for transaction ${txWithData.formData.nodeId}:`, feeInfo); // Log the fee info
 
-        for (let txWithData of transactions) {
-          console.log("txWithData:", txWithData);
-            const feeInfo = await getPaymentInfo(txWithData.draftedExtrinsic, txWithData.formData.source.address, txWithData.formData.source.chain );
-            if (feeInfo) { // Check if feeInfo is defined
-              newFees[txWithData.formData.nodeId] = feeInfo;
-            }        
           }
-
-        setFees(newFees);
+        } catch (error) {
+          console.error(`Failed to fetch fee for transaction ${txWithData.formData.nodeId}: ${error}`);
+          // Optionally, you can set a flag or update a status to reflect that fees could not be fetched
+        }
+      }
+      
+      // Update the state with the new fees, including any that may have failed to fetch
+      setFees(newFees);
     }
-
     fetchFees();
-}, [transactions]);
+  
+    feesFetched.current = true; // Set to true after fetching
+    }
+  }, [transactions]); // This will still run when `transactions` changes
+  
+  
 
   return (
     <div className={`${theme}`}>
-     
       <div className="container">
          <h2 className='m-2 font-semibold'>Review Transactions</h2>
       <div className='m-2'>Check the drafted transactions and accept or cancel them before signing. </div>
@@ -95,7 +116,6 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Target Address:</div> <div><strong> {txWithData.formData.target.address}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Amount: </div> <div><strong>{txWithData.formData.source.amount} {txWithData.formData.source.symbol}</strong> </div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Fees:</div> <div><strong> {fees[txWithData.formData.nodeId]?.partialFee || 'Fetching...'}</strong></div></div>
-
           </div>
           <div className={``}>
         

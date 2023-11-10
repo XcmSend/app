@@ -14,6 +14,7 @@ import { ISubmittableResult } from '@polkadot/types/types';
 import ThemeContext from '../../../../contexts/ThemeContext';
 import getNonce from '../../../../Chains/api/getNonce';
 import '../../../../index.css';
+import { getApiInstance } from '../../../../Chains/api/connect';
 
 
 export default function TransactionMain() {
@@ -49,9 +50,12 @@ export default function TransactionMain() {
 
 
 
-const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", ISubmittableResult>, address: string, nonce?: number) => {
+const signExtrinsic = async (draftedExtrinsic: SubmittableExtrinsic<"promise", ISubmittableResult>, address: string, currentChain: string, nonce?: number) => {
   const signer = walletContext.wallet?.signer;
-  return await signExtrinsicUtil(signer, draftedExtrinsic, address, nonce);
+  console.log("[signExtrinsic] chain:", currentChain);
+  const api = await getApiInstance(currentChain);
+
+  return await signExtrinsicUtil(api, signer, draftedExtrinsic, address, nonce);
 };
 
   const startReview = () => {
@@ -93,11 +97,14 @@ const handleAcceptTransactions = async () => {
   let currentChain: string | undefined;
 
   for (const { draftedExtrinsic, formData } of transactions) {
-      const { nodeId, source, chain } = formData;
+      const { nodeId, source, target } = formData;
+      const chain = source.chain;
+      console.log("[handleAcceptTransactions] signExtrinsic formData:", formData);
   
       // If it's a single transaction, sign without a nonce and continue
       if (transactions.length === 1) {
-          const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address);
+          console.log('signExtrinsic chain in handleAcceptTransactions:', chain);
+          const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address, chain);
           allSignedExtrinsics.push(signedExtrinsic);
           saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
 
@@ -116,12 +123,12 @@ const handleAcceptTransactions = async () => {
       updateTransactionStatus({ draftedExtrinsic, formData }, 'waiting for extrinsic to be signed...');
   
       // Sign with the adjusted nonce
-      const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address, currentNonce);
+      const signedExtrinsic = await signExtrinsic(draftedExtrinsic, source.address, currentChain, currentNonce);
       allSignedExtrinsics.push(signedExtrinsic);
       console.log('All signed extrinsics:', allSignedExtrinsics);
 
       // Increment the signed count
-setSignedCount(prevCount => prevCount + 1);
+      setSignedCount(prevCount => prevCount + 1);
   
       saveSignedExtrinsic(activeScenarioId, nodeId, signedExtrinsic);
   }
@@ -217,7 +224,10 @@ setSignedCount(prevCount => prevCount + 1);
   }, [transactions]);
 
 
-
+  const wrapperSignExtrinsic = (transaction: any, address: string, nonce?: number) => {
+    const currentChain = transaction.formData.source.chain;
+    return signExtrinsic(transaction, address, currentChain, nonce);
+}
 
 
   return (
@@ -231,7 +241,7 @@ setSignedCount(prevCount => prevCount + 1);
             transactions={transactions}
             onAccept={handleAcceptTransactions}
             onDecline={handleDeclineTransactions}
-            signExtrinsic={signExtrinsic}
+            signExtrinsic={wrapperSignExtrinsic}
             setSignedExtrinsics={setSignedExtrinsics}
           />
         ) : (

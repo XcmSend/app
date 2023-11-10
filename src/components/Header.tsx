@@ -31,18 +31,15 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
     const goToBuilder = () => {
       navigate('/builder');
     };
-       // Function to navigate to /builder
-       const goToBagpipes = () => {
-        navigate('/builder') ;
-      };
-
-
-
-          // Function to navigate to /builder
+      // Function to navigate to /builder
+      const goToBagpipes = () => {
+      navigate('/builder') ;
+    };
+    // Function to navigate to /builder
     const goToParachains = () => {
-      navigate('/parachains') ;
-      };
-  
+    navigate('/parachains') ;
+    };
+
           // Function to navigate to /builder
     const goToLab = () => {
       navigate('/lab');
@@ -75,12 +72,12 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
                 >
                 <span className='button-header-text'>Lab</span>
               </Button> */}
-                {/* 
-              <Button
+          
+              {/* <Button
                 className='xcm-send-btn-wallet xcm-send-btn-small-size'
                 onClick={selectWallet.open}
                 type={'primary'}
-              >Select Wallet</Button> */}
+              >Select Wallet</Button>  */}
             </div>
           </div>
         </header>
