@@ -14,9 +14,6 @@ import Parachains from '../pages/Parachains/Parachains';
 import ThemeContext from '../contexts/ThemeContext';
 import './toasts/toast.scss';
 
-
-
-
 function MainLayout({ children }) {
     const { theme } = React.useContext(ThemeContext);
 
@@ -79,43 +76,6 @@ function MainLayout({ children }) {
           {/* <Route path="evm-wallet-info" element={<EvmWalletInfo />} /> */}
         </Route>
 
-<<<<<<< HEAD
-            <Route element={<Layout />} path='/' >
-              <Route
-                  element={<Welcome />}
-                  index
-                />
-                <Route
-                  element={<Welcome />}
-                  path='/welcome'
-                />
-                <Route
-                  element={<WalletInfo />}
-                  path='/wallet-info'
-                />
-                  <Route
-                  element={<BagpipesFlowRoute />}
-                  path='/builder'
-                />
-                 <Route
-                  element={<TransactionMain />}
-                  path='/transaction/review'
-                />
-                 <Route element={<Lab />} 
-                 path='/lab' 
-                 />
-          <Route path="parachains" element={<Parachains />} />
-
-
-                  <Route
-                  element={<ReactTestFlow />}
-                  path='/test-flow'
-                />
-                {/* <Route
-                  element={<EvmWalletInfo />}
-                  path='/evm-wallet-info'
-                /> */}
-              </Route>
         {/* Other Top-Level Routes */}
         <Route path="/create" element={<CreateFromTemplate />} />
       </Routes>
