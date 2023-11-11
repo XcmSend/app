@@ -1,10 +1,9 @@
 // onEdgesChange.js
 import { applyEdgeChanges } from 'reactflow';
 
-const onEdgesChange = (setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios, takeSnapshot) => (changes) => {
+const onEdgesChange = (setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios) => (changes) => {
     console.log("On Edges Change - Changes:", changes);
 
-    takeSnapshot(); // Assuming you want to take a snapshot every time there's a change
 
     const currentScenario = scenarios && scenarios[activeScenarioId];
     if (!currentScenario) {
