@@ -7,6 +7,7 @@
 ![Polkadot](https://img.shields.io/badge/polkadot-E6007A?style=for-the-badge&logo=polkadot&logoColor=white)
 ![Vite ](https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E)
 
+![](/badge_black.svg)
 
 ## Build and run me:    
 ```shell
