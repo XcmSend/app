@@ -31,7 +31,7 @@ export function getRawAddress(ss58Address: string): Uint8Array {
 // working: https://polkadot.subscan.io/xcm_message/polkadot-6cff92a4178a7bf397617201e13f00c4da124981
 /// ref: https://polkaholic.io/tx/0x47914429bcf15b47f4d202d74172e5fbe876c5ac8b8a968f1db44377906f6654
 /// DOT to assethub
-export async function polkadot_to_assethub(amount: number, address: string) {
+export async function polkadot_to_assethub(amount: number, address: string, delay?: number) {
 	const api = await connectToWsEndpoint('polkadot');
 	const paraid = 1000;
   const accountId = api.createType("AccountId32", address).toHex();
@@ -63,6 +63,19 @@ export async function polkadot_to_assethub(amount: number, address: string) {
 		{ Unlimited: 0 },
 
 	);
+
+	if(delay){
+		const future: number = await (await api.query.system.number()).toHuman() as number + delay;
+		const priority = 0;
+			const numberfuture: number = parseInt(future.toString(), 10);
+		const txo = await api.tx.scheduler.schedule(
+			numberfuture, 
+			null,
+			priority,
+			tx
+		);
+		return txo;
+	};
 
 	return tx;
 }
@@ -128,24 +141,6 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 
 		return tx;
 }
-
-
-/// amount of blocks to delay for
-export async function polkadot_schedule(tx: any, blocks: number){
-	const api = await connectToWsEndpoint('polkadot');
-	let callback = api.tx.system.remark('hello from xcmsend');
-	// futureblock = amount of user submited blocks + current latest block nr
-	const future: number = await api.query.system.number() + blocks;
-	const txo = await api.tx.scheduler.schedule(
-		future, 
-		0,
-		callback
-
-	);
-	return txo;
-}
-
-
 
 
 // not working
@@ -218,7 +213,7 @@ export async function genericPolkadotToParachain(paraid: number, amount: number,
 }
 
 // working: https://hydradx.subscan.io/xcm_message/polkadot-047344414db62b7c424c8de9037c5a99edd0794c
-export async function dotToHydraDx(amount: number, targetAddress: string){
+export async function dotToHydraDx(amount: number, targetAddress: string, delay?: number){
     const paraid = 2034; // TODO: call from ChainInfo
 	let api: any;
 	try {
@@ -268,6 +263,19 @@ export async function dotToHydraDx(amount: number, targetAddress: string){
 		{ Unlimited: null }  // weight_limit
 
     );
+	if(delay){
+		const future: number = await (await api.query.system.number()).toHuman() as number + delay;
+		const priority = 0;
+			const numberfuture: number = parseInt(future.toString(), 10);
+		console.log(`future is:`, numberfuture);
+		const txo = await api.tx.scheduler.schedule(
+			numberfuture, 
+			null,
+			priority,
+			tx
+		);
+		return txo;
+	};
  //   console.log(`[dotTohydraDx] tx created!`);
  //   console.log("[dotTohydraDx] tx to hex", tx.toHex());
     //console.log("[dotTohydraDx] tx to human", tx.toHuman());
