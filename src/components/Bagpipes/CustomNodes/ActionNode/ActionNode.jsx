@@ -4,7 +4,6 @@ import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
-import ScheduleSVG from '/clock.jpg';
 import xTransferSVG from '/xTransfer.svg';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from './actionUtils';
@@ -69,7 +68,6 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
-    if (formState.action === 'Schedule') return ScheduleSVG;
     if (formState.action === 'xTransfer') return xTransferSVG;
     return null;
   };
@@ -308,7 +306,6 @@ const toggleDropdown = () => {
         <Selector
           handleDropdownClick={handleDropdownClick}
           SwapSVG={SwapSVG}
-          ScheduleSVG={ScheduleSVG}
           xTransferSVG={xTransferSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
@@ -330,24 +327,6 @@ const toggleDropdown = () => {
         )
       )}
       </div>
-
-
-      {formState.action === 'Schedule' && (
-      <div className='p-2 in-node-border rounded mb-2 '>
-
-        <div className="flex justify-between">
-          <div className="w-3/3 text-gray-400">One block:</div>
-          <div className="w-2/3 font-semibold text-left ">6 seconds</div>
-
-        </div>
-
-        <div className="flex justify-between">
-          <div className="w-1/3 text-xxs text-gray-400">Amount:</div>
-          <div className="w-3/3 font-semibold text-left "><input title="Amount"  min="1" placeholder="1337" type="number"/></div>
-
-        </div>
-      </div>
-    )}
 
 
       {formState.action === 'xTransfer' && currentActionData?.source?.chain && currentActionData?.source?.amount && currentActionData?.source?.symbol && (

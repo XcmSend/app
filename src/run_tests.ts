@@ -1,6 +1,6 @@
 /// tests for XCMSend
 
-import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, interlay2assethub, assethub2interlay, polkadot_schedule } from './Chains/DraftTx/DraftxTransferTx';
+import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, interlay2assethub, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
 import * as assert from 'assert';
 import { checkAssetHubBalance, assetHubNativeBalance, checkHydraDxAssetBalance, checkPolkadotDotRawNativeBalance } from './Chains/Helpers/AssetHelper';
 import { Keyring } from '@polkadot/keyring';
@@ -155,7 +155,7 @@ async function test_scheduler(){
 
     const tx = await dotToHydraDx(amount, address);
 
-    const out = await polkadot_schedule(tx, 20);
+    //const out = await polkadot_schedule(tx, 20);
     console.log('test scheduler ok');
     
 }

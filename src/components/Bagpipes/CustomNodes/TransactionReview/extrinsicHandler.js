@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, polkadot_schedule, polkadot_to_assethub, interlay2assethub, assethub2interlay } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, assethub_to_hydra, polkadot_to_assethub, interlay2assethub, assethub2interlay } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 

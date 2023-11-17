@@ -387,7 +387,7 @@ function uint8ArrayToHex(uint8Array: Uint8Array): string {
 
 /// assethub > hydra
 export async function assethub_to_hydra(assetid: number, amount: number, accountId: string) {
-	console.log(`[assethub_to_hydra]`);
+	//console.log(`[assethub_to_hydra]`);
 	const api = await connectToWsEndpoint('assetHub');
 	const paraid = 2034;//hydradx
 	const accountid = raw_address_now(accountId);//uint8ArrayToHex(blake2(getRawAddress(accountid)).map((x, i): number => (x + 256 - ZERO[i]) % 256));
