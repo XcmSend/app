@@ -66,10 +66,12 @@ export async function polkadot_to_assethub(amount: number, address: string, dela
 	);
 
 	if(delay){
-		const future: number = await (await api.query.system.number()).toHuman() as number + delay;
+		const future: number = await (await api.query.system.number()).toHuman() as number;
 		const priority = 0;
-			const numberfuture: number = parseInt(future.toString(), 10);
-		const txo = await api.tx.scheduler.schedule(
+			const numberfuture: number = parseInt(future.toString().replace(/,/g, ''))  + delay;
+			console.log(`og future: `, future);
+			console.log(`future is:`, numberfuture);
+			const txo = await api.tx.scheduler.schedule(
 			numberfuture, 
 			null,
 			priority,
@@ -302,9 +304,9 @@ export async function dotToHydraDx(amount: number, targetAddress: string, delay?
 
     );
 	if(delay){
-		const future: number = await (await api.query.system.number()).toHuman() as number + delay;
+		const future: number = await (await api.query.system.number()).toHuman() as number;
 		const priority = 0;
-			const numberfuture: number = parseInt(future.toString(), 10);
+			const numberfuture: number = parseInt(future.toString().replace(/,/g, ''))  + delay;
 		console.log(`future is:`, numberfuture);
 		const txo = await api.tx.scheduler.schedule(
 			numberfuture, 
