@@ -71,6 +71,9 @@ const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdo
                     </span>
                     </Tippy>
                 </div> 
+
+            
+
                 <div onClick={() => handleDropdownClick('xTransfer')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
                     <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
 

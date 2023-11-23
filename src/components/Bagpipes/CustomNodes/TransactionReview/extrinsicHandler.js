@@ -1,4 +1,4 @@
-import { dotToHydraDx, hydraDxToParachain, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, hydraDxToParachain, polkadot_to_assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -26,7 +26,8 @@ function handlexTransfer(formData) {
     const chains = listChains();
     const source = formData.source;
     const target = formData.target;
-
+    const delay = formData.source.delay;
+    console.log(`[handlexTransfer] delay is:`, delay);
     // check if the asset is native or on-chain asset. 
     // Retrieve token decimals for the source chain
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
@@ -43,6 +44,12 @@ function handlexTransfer(formData) {
     const reserverTransferActions = {
         'polkadot:hydraDx': () => {
             console.log("handlexTransfer for Polkadot to HydraDx...");
+            if(delay) {
+                const numberValue = Number(delay);
+                if (numberValue >= 1){
+                    return dotToHydraDx(submittableAmount, target.address, numberValue);
+                };
+            };
             return dotToHydraDx(submittableAmount, target.address);
         },
         'hydraDx:assetHub': () => {
@@ -51,6 +58,12 @@ function handlexTransfer(formData) {
             return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
         'polkadot:assetHub': () => {
+            if(delay) {
+                const numberValue = Number(delay);
+                if (numberValue >= 1){
+                    return polkadot_to_assethub(submittableAmount, target.address, numberValue);
+                };
+            };
             console.log("handlexTransfer for Polkadot to AssetHub...");
             return polkadot_to_assethub(submittableAmount, target.address);
         },

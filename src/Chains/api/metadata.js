@@ -36,11 +36,10 @@ export const CHAIN_METADATA = {
     polkadot: {
         chain: "Polkadot",
         endpoints: [
-              "wss://polkadot-rpc.dwellir.com",
             "wss://rpc.polkadot.io",
+            "wss://polkadot-rpc.dwellir.com",
             "wss://polkadot.api.onfinality.io/public-ws",
-
-
+            "wss://rpc.ibp.network/polkadot", 
         ],
         queryBalancePaths: ["system.account"],
         transferFunction: "xcmPallet.limitedReserveTransferAssets",
@@ -52,6 +51,7 @@ export const CHAIN_METADATA = {
               "wss://kusama-rpc.dwellir.com",
             "wss://kusama-rpc.polkadot.io",
             "wss://kusama.api.onfinality.io/public-ws",
+
         ],
         queryBalancePaths: ["system.account"],
         transferFunction: "xcmPallet.limitedReserveTransferAssets",

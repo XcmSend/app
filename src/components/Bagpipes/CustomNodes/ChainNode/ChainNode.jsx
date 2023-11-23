@@ -58,6 +58,7 @@ const ChainNode = ({ data, isConnectable }) => {
       },
       address: "",
       amount: null,
+      delay: null,
       contact: null
   };
   const [formState, setFormState] = useState(savedState || initialState);
@@ -158,6 +159,15 @@ const ChainNode = ({ data, isConnectable }) => {
           ...prev,
           [field]: value
       }));
+  };
+
+
+  const handleDelayChange = async (e) => {
+    const delayamount = e.target.value;
+    
+    // Update the chain in the form state
+    handleFormChange("delay", delayamount);
+   // setIsLoading(true);
   };
 
   const handleChainChange = async (e) => {
@@ -376,7 +386,16 @@ useEffect(() => {
           </div>
         )}
       </div>
-  
+
+      {formState.chain == 'polkadot' && (
+      <div class="mb-2 in-node-border p-2 rounded"  onChange={handleDelayChange}  value={formState.delay}>
+        <h3 class="text-xxs node-input primary-font mb-1 flex items-center justify-between">Delay amount of blocks<div class="flex items-center primary-font">
+          </div></h3>
+          <div class="unbounded-black">
+            <input class="unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector" type="number" placeholder="0" min="0"/>
+        </div></div> )}
+
+
       {formState.chain && (
         <div className="flex flex-col items-start mb-2 in-node-border p-2 rounded">
           <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>

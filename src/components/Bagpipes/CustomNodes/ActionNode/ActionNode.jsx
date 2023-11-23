@@ -329,7 +329,6 @@ const toggleDropdown = () => {
       </div>
 
 
-
       {formState.action === 'xTransfer' && currentActionData?.source?.chain && currentActionData?.source?.amount && currentActionData?.source?.symbol && (
       <div className='p-2 in-node-border rounded mb-2 '>
         <div className="flex justify-between">
