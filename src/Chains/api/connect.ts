@@ -41,7 +41,7 @@ export async function getApiInstance(chain: string): Promise<ApiPromise> {
 
   
 export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
-  console.log("connectToWsEndpoint chain", chain);
+  // console.log("connectToWsEndpoint chain", chain);
   await cryptoWaitReady();
 
   const metadata = CHAIN_METADATA[chain];
@@ -53,13 +53,13 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
   let lastError: any;
   for (const endpoint of metadata.endpoints) {
     try {
-      console.log("Attempting to connect to endpoint", endpoint);
+     //  console.log("Attempting to connect to endpoint", endpoint);
       const provider = new WsProvider(endpoint);
-      const api = await ApiPromise.create({ provider });
+      const api = await ApiPromise.create({ provider, noInitWarn: true });
       await api.isReady;
 
       api.on('disconnected', async () => {
-        console.log(`Disconnected from ${endpoint}. Attempting to reconnect...`);
+     //    console.log(`Disconnected from ${endpoint}. Attempting to reconnect...`);
         apiConnections.delete(chain); // Delete the existing connection instance
       
         // Try to create a new connection
@@ -73,11 +73,11 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
       });
 
       apiConnections.set(chain, api);
-      console.log("Connected to endpoint", endpoint);
+     // console.log("Connected to endpoint", endpoint);
       return api;
     } catch (error) {
       lastError = error;
-      console.error(`Failed to connect to endpoint ${endpoint}:`, error);
+    //   console.error(`Failed to connect to endpoint ${endpoint}:`, error);
 
       if (error.message.includes("Insufficient resources")) {
         toast.error(`Endpoint ${endpoint} has insufficient resources.`);

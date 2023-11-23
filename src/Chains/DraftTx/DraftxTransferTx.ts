@@ -120,13 +120,13 @@ export async function assethub_to_polkadot(amount: number, address: string) {
   
 
 function number_to_string(input: number): number {
-	console.log(`number_to_string: `, input);
+	//console.log(`number_to_string: `, input);
 	const numberWithCommas = input.toString();
 	const numberWithNoCommas = numberWithCommas.replace(/,/g, ''); // Remove the commas
-	console.log(`number_to_string numberWithNoCommas: `, numberWithNoCommas);
+	//console.log(`number_to_string numberWithNoCommas: `, numberWithNoCommas);
 // Using parseInt to convert to an integer
 	const integerNumber = parseInt(numberWithNoCommas, 10); // The second argument (10) specifies the base (decimal) for parsing.
-	console.log(`number_to_string integerNumber: `, integerNumber);
+//	console.log(`number_to_string integerNumber: `, integerNumber);
 
 	return integerNumber;
 }
@@ -136,7 +136,7 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 	const paraid = 2032;
 	const api = await getApiInstance('assetHub');
 	const accountido = raw_address_now(destaccount);
-	console.log(`assetid:`, assetid);
+	//console.log(`assetid:`, assetid);
 // remove commas in assetid
 	
 // 
@@ -167,7 +167,7 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 
 	};
 
-	console.log(`asset: `, asset);
+	//console.log(`asset: `, asset);
 
 	const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
 		{ V2: destination },

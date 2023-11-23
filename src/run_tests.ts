@@ -174,12 +174,12 @@ You can broadcast each tx, by feeding the tx into the broadcast_run_tx function
 async function main() {
     console.log('Running tests');
     console.log('Running Balance tests');
-  //  await test_balances();
+   await test_balances();
     console.log('running transaction tests');
- //   await test_transfers();
+    await test_transfers();
     console.log('Checking XCM channels');
- //   await check_open_channels();
-
+    await check_open_channels();
+    console.log(`Running scheduler tests`);
     await test_scheduler();
 
     console.log('test completed');
