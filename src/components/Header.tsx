@@ -31,11 +31,15 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
     const goToBuilder = () => {
       navigate('/builder');
     };
-       // Function to navigate to /builder
-       const goToBagpipes = () => {
-        navigate('/builder') ;
-      };
-  
+      // Function to navigate to /builder
+      const goToBagpipes = () => {
+      navigate('/builder') ;
+    };
+    // Function to navigate to /builder
+    const goToParachains = () => {
+    navigate('/parachains') ;
+    };
+
           // Function to navigate to /builder
     const goToLab = () => {
       navigate('/lab');
@@ -54,6 +58,13 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
               >
                 <span className='button-header-text'>Builder</span>
               </Button>
+              <Button
+                className='xcm-send-btn  button-header'
+                onClick={goToParachains}
+                type={'primary'}
+              >
+                <span className='button-header-text'>Parachains</span>
+              </Button>
               {/* <Button
                 className='xcm-send-btn xcm-send-btn-small-size button-header'
                 onClick={goToLab}
@@ -61,12 +72,12 @@ function Header ({ open, theme }: Props): React.ReactElement<Props> {
                 >
                 <span className='button-header-text'>Lab</span>
               </Button> */}
-                {/* 
-              <Button
+          
+              {/* <Button
                 className='xcm-send-btn-wallet xcm-send-btn-small-size'
                 onClick={selectWallet.open}
                 type={'primary'}
-              >Select Wallet</Button> */}
+              >Select Wallet</Button>  */}
             </div>
           </div>
         </header>

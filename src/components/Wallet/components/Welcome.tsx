@@ -15,7 +15,7 @@ function Welcome (): React.ReactElement {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(walletContext); // Add this line to see the state of walletContext
+    console.log(walletContext); 
 
     if (walletContext.wallet && walletContext.walletType === 'substrate') {
       navigate('/builder');

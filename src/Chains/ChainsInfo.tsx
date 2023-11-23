@@ -38,6 +38,30 @@ export function listChains() {
       };
       chainList[0] = Polkadot;
 
+      const Kusama: ChainInfo = {
+        name: 'kusama',
+        display: 'Kusama',
+        paraid: 2,
+        prefix: 2,
+        token_decimals: 12,
+        logo: '/chains/kusama.svg',
+        parachain: false,
+        relay: true,
+      };
+      chainList[2] = Kusama;
+
+      const Kabocha: ChainInfo = {
+        name: 'kusama',
+        display: 'Kusama',
+        paraid: 27,
+        prefix: 27,
+        token_decimals: 12,
+        logo: '/chains/kusama.svg',
+        parachain: true,
+        relay: false,
+      };
+      chainList[2] = Kabocha;
+
       const HydraDX: ChainInfo = {
         name: 'hydraDx',
         display: 'Hydra DX',

@@ -214,7 +214,6 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
                 // if it's the last iteration and set executionCycleFinished accordingly
                 executionCycleFinished = index === orderedList.length - 1; 
                 
-
                 updateEdgeStyleForNode(currentNode.id, 'default_connected');
 
                 break;

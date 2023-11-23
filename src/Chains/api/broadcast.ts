@@ -1,7 +1,7 @@
 // broadcast.ts
 
 import { ApiPromise } from '@polkadot/api';
-import connectToWsEndpoint from "./connect";
+import { getApiInstance } from "./connect";
 import { CHAIN_METADATA } from './metadata';
 import toast from 'react-hot-toast';
 
@@ -15,7 +15,7 @@ export async function broadcastToChain(chain: string, signedExtrinsic: any): Pro
     let api: ApiPromise;
     
     try {
-        api = await connectToWsEndpoint(chain);
+        api = await getApiInstance(chain);
     } catch (error) {
         toast.error("Failed to connect to the endpoint. Please ensure you're connected and try again.");
         throw error;
@@ -31,6 +31,7 @@ export async function broadcastToChain(chain: string, signedExtrinsic: any): Pro
                 }
 
                 if (status.isInBlock) {
+                    console.log(`Transaction included at blockHash ${status.asInBlock}`);
                     toast.success(`Transaction included at blockHash ${status.asInBlock} `, { id: 'transaction-included' });
                 } else if (status.isFinalized) {
                     toast.success(`Transaction finalized at blockHash ${status.asFinalized}`, { id: 'transaction-finalized' });

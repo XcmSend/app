@@ -1,0 +1,44 @@
+@import '../../variables.scss';
+
+.bagpipes-container {
+    padding: 2rem;
+    height: 100%;
+    background-color: var(--bg-main) !important;
+    color: var(--color);
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--color);
+        }
+    }
+
+    .bagpipes-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--bg-lighter); // Slightly lighter than the page background
+
+        .table-header {
+            padding: 1rem;
+            border-bottom: 2px solid var(--border-color);
+            background: var(--bg-accent-darker); // Darker background for headers
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: bold;
+            color: var(--node-input-title);
+        }
+
+        .table-cell {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--primary);
+            font-size: 0.875rem;
+        }
+    }
+}
