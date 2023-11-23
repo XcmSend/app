@@ -52,7 +52,7 @@ export function useOutsideAlerter(ref: React.RefObject<HTMLElement>, callback: (
   }
   
 
-const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, ScheduleSVG, xTransferSVG }, ref) => {
+const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, xTransferSVG }, ref) => {
       const { theme } = React.useContext(ThemeContext);
 
 

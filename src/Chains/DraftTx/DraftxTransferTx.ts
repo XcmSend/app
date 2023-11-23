@@ -33,7 +33,7 @@ export function getRawAddress(ss58Address: string): Uint8Array {
 /// DOT to assethub
 
 export async function polkadot_to_assethub(amount: number, address: string, delay?: number) {
-	const api = await connectToWsEndpoint('polkadot');
+	const api = await getApiInstance('polkadot');
 	const paraid = 1000;
   const accountId = api.createType("AccountId32", address).toHex();
 
