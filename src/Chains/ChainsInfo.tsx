@@ -66,7 +66,7 @@ export function listChains() {
         name: 'hydraDx',
         display: 'Hydra DX',
         paraid: 2034,
-        prefix: 0,
+        prefix: 63,
         token_decimals: 12,
         logo: '/chains/hydradx.svg',
         relayParent: 'polkadot',
@@ -78,7 +78,7 @@ export function listChains() {
         name: 'interlay',
         display: 'Interlay',
         paraid: 2032,
-        prefix: 0,
+        prefix: 2032,
         token_decimals: 12,
         logo: '/chains/interlay.svg',
         relayParent: 'polkadot',
@@ -86,6 +86,19 @@ export function listChains() {
         
       };
       chainList[2032] = interlay;
+
+      const moonbeam: ChainInfo = {
+        name: 'moonbeam', 
+        display: "Moonbeam",
+        paraid: 2004,
+        prefix: 1284, 
+        token_decimals: 12,
+        logo: '/chains/moonbeam.svg',
+        relayParent: 'polkadot',
+        parachain: true,
+      };
+
+      chainList[2004] = moonbeam;
 
       const assethub: ChainInfo = {
         name: 'assetHub',
@@ -142,6 +155,8 @@ export enum supported_Polkadot_Chains {
   polkadot,
   hydradx,
   assethub,
+  interlay,
+  moonbeam
 }
 
 /// send the 90% of the dot to be converted to USDT, the rest will be sent 

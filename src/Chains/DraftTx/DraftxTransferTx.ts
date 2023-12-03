@@ -183,6 +183,11 @@ export async function assethub2interlay(assetid: number, amount: number, destacc
 }
 
 
+// moonbeam
+
+export async function assethub2moonbeam() {}
+
+
 // not working
 // https://polkaholic.io/tx/0xaa4ccd2b190b9c96d60068ef418860a99b1cea6c220c726284712c081b90766d
 export async function interlay2assethub(assetid: number, amount: number, accountid32: string){

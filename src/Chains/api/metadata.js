@@ -33,6 +33,18 @@ export const CHAIN_METADATA = {
         nativeAccount: true,
 
     },
+    moonbeam: {
+        chain: "moonbeam",
+        endpoints: [
+            "wss://moonbeam-rpc.dwellir.com",
+            "wss://moonbeam.unitedbloc.com",
+            "wss://wss.api.moonbeam.network"
+        ],
+        queryAssetPaths: ["assets.metadata"], 
+        queryBalancePaths: ["system.account", "tokens.accounts"],
+//        transferFunction: ,
+        nativeAccount: true,
+    },
     polkadot: {
         chain: "Polkadot",
         endpoints: [
