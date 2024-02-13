@@ -12,6 +12,8 @@
 ## Documentation:   
 [https://xcmsend.github.io/](https://xcmsend.github.io/)   
 
+## Live instance:   
+[alpha.bagpipes.io](https://alpha.bagpipes.io)  
 
 
 ## Build and run me:    
