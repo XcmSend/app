@@ -24,7 +24,6 @@ export interface xTransferAction {
   target: ActionData;
 }
 
-
 export interface TransferAction {
   actionType: 'transfer';
   source: ActionData;

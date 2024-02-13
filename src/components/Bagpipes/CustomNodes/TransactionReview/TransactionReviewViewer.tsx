@@ -123,7 +123,7 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
        
         </div>
       ))}
-       <button className={`button mr-2 font-bold`} onClick={onAccept}>Approve all</button>
+       <button className={`button mr-2 font-bold`} onClick={onAccept}>Approve All</button>
          <button className={`button`} onClick={onDecline}>Cancel</button>
     </div>
     </div>

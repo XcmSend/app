@@ -1,0 +1,144 @@
+
+ 
+
+.add-item {
+    font-size: 12px !important;
+    padding: 0 !important;
+    background: none !important;
+    color: rgb(57, 57, 57) !important;
+    min-width: none;
+    align-items: left;
+    margin-top: 15px;
+
+    &:hover {
+        background: none !important;
+        color: rgb(57, 57, 57) !important;
+        border: 0px solid rgba(255, 255, 255, 0) !important;
+    }
+
+    &:focus {
+        background: none !important;
+        color: rgb(57, 57, 57) !important;
+        border: 0px solid rgba(255, 255, 255, 0) !important;
+    }
+}
+
+.add-item-icon {
+    background: rgb(39, 39, 250);
+    margin-right: 5px;
+    padding:2px;
+    border-radius: 5px;
+}
+
+.item-container {
+
+    .ant-collapse-item {
+  padding: none !important; /* Add padding */
+    border: none !important; /* Remove borders */
+
+}
+
+.ant-collapse .ant-collapse-icon-position-start .ant-collapse-content .ant-collapse-content-box {
+    padding: 5px !important;
+    border: none !important;
+    
+}
+    
+.ant-collapse-content-box {
+    border: none !important;
+    }
+    
+    
+    
+    .ant-input {
+    
+        border-radius: 5px !important; /* Slightly rounded borders */
+    padding: 10px !important; /* Add some padding */
+        &:focus {
+            border-color: rgb(18, 0, 0);
+        }
+    }
+    
+ .ant-collapse-header,
+     .ant-collapse-content {
+        border: none !important; /* Remove borders */
+        padding: 5px !important; /* Add padding */
+    
+    }
+    
+}
+
+.collapsible-field-container {
+
+    .ant-collapse-item {
+  padding: none !important; /* Add padding */
+    border: none !important; /* Remove borders */
+
+
+}
+
+.ant-collapse .ant-collapse-icon-position-start .ant-collapse-content .ant-collapse-content-box {
+    padding: 5px !important;
+    border: none !important;
+    
+    }
+
+.ant-collapse-content-box {
+    border: none !important;
+    }
+    
+    
+    
+    .ant-input {
+    
+        border-radius: 5px !important; /* Slightly rounded borders */
+    padding: 10px !important; /* Add some padding */
+        &:focus {
+            border-color: rgb(18, 0, 0);
+        }
+    }
+    
+     .ant-collapse-header,
+    .ant-collapse-content {
+        border: 0px solid white !important; 
+        padding: 5px !important; 
+    
+    }
+
+    .ant-select-slection-item {
+        width: 200px !important;
+    }
+    .collapsable-select-option {
+        width: 200px !important;
+    }
+       
+}
+    .ant-select-selection-item {
+        font-weight:500 !important;
+    }
+
+.custom-input, .custom-input-container {
+    border: 1px solid #ccc;
+    padding: 5px;
+    min-height: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+}
+  
+  .pill {
+    padding: 3px 5px;
+    margin-right: 5px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+  }
+
+  .editable-input {
+    width: 300px;
+    margin: 0px !important;
+    padding: 10px 5px   !important;
+  }
+  

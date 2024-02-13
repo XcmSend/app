@@ -1,11 +1,12 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
-import React, { useCallback, useEffect, useState } from 'react';
+
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { windowReload } from '../../../utils/window';
 import { getWalletBySource } from '../wallet-connect/src/dotsama/wallets';
-// import { getEvmWalletBySource } from '@subwallet/wallet-connect/evm/evmWallets';
-import { Wallet, WalletAccount } from '../wallet-connect/src/types';
+import { getEvmWalletBySource } from '../wallet-connect/src/evm/evmWallets';
+import { EvmWallet, Wallet, WalletAccount } from '../wallet-connect/src/types';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { OpenSelectWallet, WalletContext, WalletContextInterface } from '../contexts';
 
@@ -16,13 +17,11 @@ interface Props {
 export function WalletContextProvider ({ children }: Props) {
   const [walletKey, setWalletKey] = useLocalStorage('wallet-key');
   const [walletType, setWalletType] = useLocalStorage('wallet-type', 'substrate');
-  const [currentWallet, setCurrentWallet] = useState<Wallet | undefined>(getWalletBySource(walletKey));
+  const [currentWallet, setCurrentWallet] = useState<Wallet | EvmWallet | undefined>(getWalletBySource(walletKey));
   const [isSelectWallet, setIsSelectWallet] = useState(false);
-  const [accounts, setAccounts] = useState<WalletAccount[]>([]);
+  const [isWalletSelected, setIsWalletSelected] = useState(false);
 
-  useEffect(() => {
-    console.log('isSelectWallet changed:', isSelectWallet);
-  }, [isSelectWallet]);
+  const [accounts, setAccounts] = useState<WalletAccount[]>([]);
 
   const afterSelectWallet = useCallback(
     async (wallet: Wallet) => {
@@ -39,41 +38,43 @@ export function WalletContextProvider ({ children }: Props) {
 
       await wallet.enable();
       setWalletKey(wallet.extensionName);
+      setIsWalletSelected(true);
 
       await afterSelectWallet(wallet);
     },
     [afterSelectWallet, currentWallet, setWalletKey]
   );
 
-  // const afterSelectEvmWallet = useCallback(
-  //   async (wallet: EvmWallet) => {
-  //     await wallet?.enable(); // Quick call extension?.request({ method: 'eth_requestAccounts' });
-  //   },
-  //   []
-  // );
+  const afterSelectEvmWallet = useCallback(
+    async (wallet: EvmWallet) => {
+      await wallet?.enable(); // Quick call extension?.request({ method: 'eth_requestAccounts' });
+    },
+    []
+  );
 
-  // const selectEvmWallet = useCallback(
-  //   async (wallet: EvmWallet) => {
-  //     await afterSelectEvmWallet(wallet);
+  const selectEvmWallet = useCallback(
+    async (wallet: EvmWallet) => {
+      await afterSelectEvmWallet(wallet);
 
-  //     setCurrentWallet(currentWallet);
+      setCurrentWallet(currentWallet);
 
-  //     setWalletKey(wallet.extensionName);
+      setWalletKey(wallet.extensionName);
+      setIsWalletSelected(true);
 
-  //     windowReload();
-  //   },
-  //   [afterSelectEvmWallet, currentWallet, setWalletKey]
-  // );
+      windowReload();
+    },
+    [afterSelectEvmWallet, currentWallet, setWalletKey]
+  );
 
   const walletContext = {
     wallet: getWalletBySource(walletKey),
-    // evmWallet: getEvmWalletBySource(walletKey),
+    evmWallet: getEvmWalletBySource(walletKey),
     accounts,
-    setWallet: (wallet: Wallet | undefined, walletType: 'substrate' | 'evm') => {
+    setWallet: (wallet: Wallet | EvmWallet | undefined, walletType: 'substrate' | 'evm') => {
       if (walletType === 'substrate') {
         wallet && selectWallet(wallet as Wallet);
       } else {
-        // wallet && selectEvmWallet(wallet as EvmWallet);
+        wallet && selectEvmWallet(wallet as EvmWallet);
       }
 
       wallet && setWalletType(walletType);
@@ -84,7 +85,6 @@ export function WalletContextProvider ({ children }: Props) {
   const selectWalletContext = {
     isOpen: isSelectWallet,
     open: () => {
-      console.log("Open called inside provider");
       setIsSelectWallet(true);
     },
     close: () => {
@@ -104,17 +104,17 @@ export function WalletContextProvider ({ children }: Props) {
           }
         }, 150);
       } else {
-        // const evmWallet = getEvmWalletBySource(walletKey);
+        const evmWallet = getEvmWalletBySource(walletKey);
 
-        // evmWallet && evmWallet?.isReady.then(() => {
-        //   afterSelectEvmWallet(evmWallet).catch(console.error);
-        // });
+        evmWallet && evmWallet?.isReady.then(() => {
+          afterSelectEvmWallet(evmWallet).catch(console.error);
+        });
       }
     },
-    [ afterSelectWallet, walletKey, walletType]
+    [afterSelectEvmWallet, afterSelectWallet, walletKey, walletType]
   );
 
-  return <WalletContext.Provider value={walletContext as unknown as WalletContextInterface}>
+  return <WalletContext.Provider value={walletContext as WalletContextInterface}>
     <OpenSelectWallet.Provider value={selectWalletContext}>
       {children}
     </OpenSelectWallet.Provider>

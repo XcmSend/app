@@ -1,8 +1,13 @@
 @import "../../variables.scss";
 
-.wallet-header-wrapper {
-  border-bottom: 1px solid #151A30;
-  z-index: 10;
+.header-wrapper {
+  width: 100% !important; 
+  z-index: 1000;
+
+}
+
+.boxed-container {
+  width: 100%;
 }
 
 .button-header {
@@ -62,6 +67,8 @@
     margin-left:0;
     left:25px;
     top:20px;
+    height: 30px !important;
+    width: 30px !important;
   }
 }
 

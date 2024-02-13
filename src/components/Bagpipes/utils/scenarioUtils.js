@@ -106,3 +106,5 @@ export function processScenarioData(diagramData) {
     // Return both sorted nodes and edges
     return { nodes: sortedNodes, edges };
 }
+
+

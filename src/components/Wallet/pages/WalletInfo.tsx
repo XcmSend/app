@@ -1,7 +1,7 @@
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Wallet } from '@subwallet/wallet-connect/types';
+import { Wallet } from '../wallet-connect/src/types';
 import React, { useContext } from 'react';
 
 import AccountList from '../components/AccountList';

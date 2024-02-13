@@ -18,7 +18,7 @@ import { ChainToastContent, ActionToastContent } from '../../toasts/CustomToastC
 const useExecuteChainScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteChainScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteChainScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeExecutionStatus } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -33,6 +33,7 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
       setExecutionState: state.setExecutionState,
       saveTriggerNodeToast: state.saveTriggerNodeToast,
       updateEdgeStyleForNode: state.updateEdgeStyleForNode,
+      updateNodeExecutionStatus: state.updateNodeExecutionStatus,
 
       
     }));
@@ -40,7 +41,8 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
     const [nodeContentMap, setNodeContentMap] = useState({}); 
     const [nodeContentHistory, setNodeContentHistory] = useState({});
     const [lastReceived, setLastReceived] = useState({});
-    
+    const [executionStatuses, setExecutionStatuses] = useState({});
+
     const prevExecutionIdRef = useRef(null);  
 
     const executedIds = useRef(new Set()).current;
@@ -81,13 +83,34 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
     if (executedIds.has(executionId)) {
         console.log(`Already executed scenario for executionId: ${executionId}. Skipping...`);
         return;
-      }
-      toast('Starting Workflow Execution...', { 
+    }
+
+    // Check if executionId and activeScenarioId are already set
+    if (!executionId || !activeScenarioId) {
+        console.error('Execution ID or Active Scenario ID not set. Cannot proceed with execution.');
+        return;
+    }
+
+    // Prepare initial executionData
+    // Assuming you might want to initialize with empty or placeholder data
+    const initialExecutionData = {
+        // Example initialization - adjust according to your actual data needs
+        timestamp: new Date().toISOString(),
+        status: 'initialized', // Placeholder status
+        nodes: {}, // Assuming a structure where you track data per node
+    };
+
+    // Initialize execution data in the store
+    console.log(`Initializing execution for ID: ${executionId} with initial data`);
+    saveExecution(executionId, initialExecutionData);
+
+
+    toast('Starting Workflow Execution...', { 
         id: 'workflow-start',
         duration: 5000,
-    
     });
-      console.log('[executeChainScenario] Starting Workflow Execution...');
+
+    console.log('[executeChainScenario] Starting Workflow Execution...');
     // setLoading(true);
 
     // Clear the nodeContentMap before starting a new execution
@@ -128,6 +151,11 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
             return;
         }
 
+        // Initialize execution data in the store with nodes
+        console.log(`Initializing execution for ID: ${executionId} with initial node data`);
+        saveExecution(executionId);
+
+
         // Validate the diagramData
         diagramData = validateDiagramData(diagramData);
                 
@@ -167,56 +195,67 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
 
                 break;
 
-            case 'action':
-                console.log('executeChainScenario currentNode position:', currentNode.position);
-                updateEdgeStyleForNode(currentNode.id, 'executing');
-
-
-                toast('Executing action!', {
-                    icon: '💥',
-                    id: 'execution-action',
-                    data: {
-                        position: currentNode.position
-                    },
-                    visible: true,
-                    zIndex: 100000,
-                });
-
-                currentNode.data.triggerToast = true;
-                saveTriggerNodeToast(activeScenarioId, currentNode.id, true);
-                 // Zoom into the current node
-                 await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
-            
-
-                console.log('executeChainScenario currentNode:', executionState, currentNode.id);
-
-                // Retrieve the signedExtrinsic from the current node data
-                const formData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData || null;
-                const signedExtrinsic = formData?.signedExtrinsic || null;
-                const actionData = formData?.actionData || null; 
-                const sourceChain = actionData?.source?.chain || null;
-                const targetChain = actionData?.target?.chain || null;  
-                const sourceAsset = actionData?.source?.asset || null;
-                const targetAsset = actionData?.target?.asset || null;
-
-                // TODO: if action type is swap then show swap stuff and if type is xTransfer show xTransfer stuff    
-
-
-                console.log('executeChainScenario Signed Extrinsic:', signedExtrinsic);
-                console.log('executeChainScenario Chain:', sourceChain);
-
-                if(signedExtrinsic) {
-                    await broadcastToChain(sourceChain, signedExtrinsic); 
-                }
-                toast(<ActionToastContent type={actionData.actionType} message={`executeChainScenario Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
-
-                console.log('executeChainScenario Broadcasted to Chain:', signedExtrinsic );
-                // if it's the last iteration and set executionCycleFinished accordingly
-                executionCycleFinished = index === orderedList.length - 1; 
+                case 'action':
+                    console.log('executeChainScenario currentNode position:', currentNode.position);
+                    updateEdgeStyleForNode(currentNode.id, 'executing');
                 
-                updateEdgeStyleForNode(currentNode.id, 'default_connected');
-
-                break;
+                    toast('Executing action!', {
+                        icon: '💥',
+                        id: 'execution-action',
+                        data: {
+                            position: currentNode.position
+                        },
+                        visible: true,
+                        zIndex: 100000,
+                    });
+                
+                    currentNode.data.triggerToast = true;
+                    saveTriggerNodeToast(activeScenarioId, currentNode.id, true);
+                
+                    // Zoom into the current node
+                    await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
+                
+                    console.log('executeChainScenario currentNode:', executionState, currentNode.id);
+                
+                    // Retrieve the signedExtrinsic and other necessary data
+                    const formData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData || null;
+                    const signedExtrinsic = formData?.signedExtrinsic || null;
+                    const sourceChain = formData?.actionData?.source?.chain || null;
+                
+                    try {
+                        await broadcastToChain(sourceChain, signedExtrinsic, {
+                            onInBlock: (blockHash) => {
+                                toast.success(`Transaction included at blockHash: ${blockHash}`);
+                                // Update global state in Zustand store
+                                updateNodeExecutionStatus(activeScenarioId, executionId, nodeId, { inBlock: blockHash });
+                            },
+                            onFinalized: (blockHash) => {
+                                toast.success(`Transaction finalized at blockHash: ${blockHash}`);
+                                // Update global state in Zustand store
+                                updateNodeExecutionStatus(activeScenarioId, executionId, nodeId, { finalized: blockHash });
+                            },
+                            onError: (error) => {
+                                toast.error(`Action execution failed: ${error.message}`);
+                                setLoading(false);
+                                // Update global state in Zustand store
+                                updateNodeExecutionStatus(activeScenarioId, executionId, nodeId, { error: error.message });
+                            },
+                        });
+                    } catch (error) {
+                        // This catch block is for handling errors not caught by the onError callback, e.g., network issues
+                        toast.error(`Error broadcasting transaction: ${error.message}`);
+                        setLoading(false);
+                    }
+                
+                    toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
+                
+                    console.log('Broadcasted to Chain:', signedExtrinsic);
+                    // Check if it's the last iteration to set executionCycleFinished accordingly
+                    executionCycleFinished = index === orderedList.length - 1;
+                
+                    updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                
+                    break;                
             }
 
                // Hold view
@@ -229,24 +268,11 @@ const useExecuteChainScenario = (nodes, setNodes, instance) => {
         }
 
 
-      if (executionCycleFinished) {
-         toast.success('Workflow Execution Completed! The execution cycle has finished.', { id: 'execution-finished' });
-         setLoading(false); 
-      }
-
-            if (executionId) {
-
-              const currentDateTime = new Date().toISOString();
-
-              const executionData = {
-                  timestamp: currentDateTime,
-                  nodeContentMap: { ...nodeContentMap },
-              };
-              console.log('Saving execution data...');
-              saveExecution(executionId, executionData);
-            } else {
-              console.error('No executionId received from the server. Cannot save execution.');
-          }
+        if (executionCycleFinished) {
+            toast.success('Workflow Execution Completed! The execution cycle has finished.', { id: 'execution-finished' });
+            setLoading(false); 
+            setExecutionState('idle');
+        }
         } catch (error) {
             console.error('An error occurred while executing the workflow:', error);
         } finally {

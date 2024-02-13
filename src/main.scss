@@ -1,4 +1,4 @@
-@import "variables";
+@import "./variables";
 
 .button {
     background-color: var(--button-bg);
@@ -8,11 +8,11 @@
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    font-family: $primary-font;
+    font-family: $primary-font !important;
     
-    &:hover {
-      background-color: darken($primary-color, 10%);
-    }
+    // &:hover {
+    //   background-color: darken($primary-color, 10%);
+    // }
   
     &:active {
       background-color: darken($primary-color, 20%);

@@ -1,7 +1,7 @@
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { addWallet } from '@subwallet/wallet-connect/dotsama/wallets';
+import { addWallet } from '../src/dotsama/wallets';
 
 // @ts-ignore
 import SubWalletLogo from './ExampleWallet.svg';

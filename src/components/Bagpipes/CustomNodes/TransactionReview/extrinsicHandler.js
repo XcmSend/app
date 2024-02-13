@@ -1,8 +1,8 @@
-import { dotToHydraDx, hydraDxToParachain, polkadot_to_assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
-import { getTokenDecimalsByChainName } from "../../../../Chains/Helpers/AssetHelper";
+import { dotToHydraDx, hydraDxToParachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
-// import { hydradx_omnipool_sell } from "../../../Chains/DraftTx/DraftSwapTx";
+import { hydradx_omnipool_sell } from "../../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
 import { account } from "@polkadot/api-derive/balances";
 
@@ -27,7 +27,7 @@ function handlexTransfer(formData) {
     const source = formData.source;
     const target = formData.target;
     const delay = formData.source.delay;
-    console.log(`[handlexTransfer] delay is:`, delay);
+
     // check if the asset is native or on-chain asset. 
     // Retrieve token decimals for the source chain
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
@@ -43,19 +43,19 @@ function handlexTransfer(formData) {
     // Define a map for each xTransfer action
     const reserverTransferActions = {
         'polkadot:hydraDx': () => {
-            console.log("handlexTransfer for Polkadot to HydraDx...");
             if(delay) {
                 const numberValue = Number(delay);
                 if (numberValue >= 1){
                     return dotToHydraDx(submittableAmount, target.address, numberValue);
                 };
             };
+            console.log("handlexTransfer for Polkadot to HydraDx...");
             return dotToHydraDx(submittableAmount, target.address);
         },
         'hydraDx:assetHub': () => {
             console.log("handlexTransfer for HydraDx to AssetHub...");
-            const paraid = 1000;
-            return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
+
+            return hydradx_to_assethub(source.amount, target.assetId, source.assetId, target.address);
         },
         'polkadot:assetHub': () => {
             if(delay) {
@@ -66,7 +66,7 @@ function handlexTransfer(formData) {
             };
             console.log("handlexTransfer for Polkadot to AssetHub...");
             return polkadot_to_assethub(submittableAmount, target.address);
-        },
+        }, 
         'assetHub:polkadot': () => {
             console.log("handlexTransfer for AssetHub to Polkadot...");
             return assethub_to_polkadot(submittableAmount, target.address);
@@ -74,7 +74,9 @@ function handlexTransfer(formData) {
         'hydraDx:polkadot': () => {
             console.log("handlexTransfer for HydraDx to Polkadot...");
             const paraid = 0;
-            return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
+            const hamount = source.amount * (10 ** 10); // DOT asset on hydra has 10 decimals
+            return hydradx_to_polkadot(hamount, target.address);
+            //return hydraDxToParachain(submittableAmount, source.assetId, target.chain, paraid);
         },
 
         'assetHub:interlay': () => {
@@ -86,6 +88,14 @@ function handlexTransfer(formData) {
                 // 'interlay:assethub': () => {
                 //     return interlay2assethub(source.assetId, submittableAmount, target.address);
                 //    },
+
+        // ROC transfer, todo add transfer logo
+        'rococo:rococo_assethub': () => {
+            console.log(`rococo to rococo assethub transfer`);
+            const amount = submittableAmount;
+            const dest = target.address;
+            return roc2assethub(amount, dest);
+        },
 
         'assetHub:hydraDx': () => {
             console.log("handlexTransfer forAssetHub to HydraDx...");
@@ -112,18 +122,24 @@ function handlexTransfer(formData) {
 function handleSwap(formData) {
     const source = formData.source;
     const target = formData.target;
-
+    console.log(`handle swap form data:`, formData);
       // Retrieve token decimals for the source chain
       const tokenDecimals = getTokenDecimalsByChainName(source.chain);
 
-      // Adjust the source amount according to the token decimals
+           // Adjust the source amount according to the token decimals
       const submittableAmount = source.amount * (10 ** tokenDecimals);
-
-
+        const assetin = source.assetId;
+        const assetout = target.assetId;
+        const amount = submittableAmount;
+        //const minBuyAmount = set as recieve amount ;
+      /// assetin = asset you have on your account
+/// assetout = asset you want to swap to
+/// amount = amount of assetin you want to swap to assetout
+/// minBuyAmount = minimum amount to buy, note: tx will fail if this is set to 0 or to low
       // TODO: handle swaps
     if (source.chain === 'hydraDx' && target.chain === 'hydraDx') {
-        // hydradx_omnipool_sell hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
-        return true;
+        return hydradx_omnipool_sell(assetin, assetout, source.amount, submittableAmount);  //hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
+       //  true;
     }
     throw new Error("You can only swap from hydradx to hydradx");
 }

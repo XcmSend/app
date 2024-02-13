@@ -1,9 +1,9 @@
 // @ts-nocheck
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @bagpipes/xcm-send author Ramsey Ajram (https://decentration.org)
 // SPDX-License-Identifier: Apache-2.0
 // @ts-nocheck
 
-import React, { useState, useRef, useCallback , useEffect, memo, useContext } from 'react';
+import React, { useState, useRef, useCallback , useEffect, memo, useContext,  } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ReactFlow, { useReactFlow, Panel, MiniMap, Controls, Background, BackgroundVariant, applyNodeChanges, useStoreApi, EdgeLabelRenderer } from 'reactflow';
 // import AuthService from '../../services/AuthService';
@@ -13,25 +13,27 @@ import { generateEdgeId } from './utils/storageUtils';
 import GitInfo from './git_tag';
 import { useDebounce } from 'use-debounce';
 import TextUpdaterNode from './TextupdaterNode';
-import Sidebar from './Sidebar';
+import Toolbar from '../Toolbar/Toolbar';
 import FormGroupNode from './FormGroupNode';
-import OpenAINode from './CustomNodes/OpenAINode';
-import ChainNode from './CustomNodes/ChainNode/ChainNode';
-import ActionNode from './CustomNodes/ActionNode/ActionNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import OpenAINodeForm from './Forms/OpenAINodeForm/OpenAINodeForm';
+import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
+import RenderNodeForm from './Forms/RenderNodeForm';
 import { initialEdges, initialNodes } from './nodes.jsx';
 import PlayButton from './buttons/PlayButton';
 import StartButton from './buttons/StartButton';
 import SendButton from './buttons/SendButton';
+import CreateUiButton from './buttons/CreateUiButton';
 import { startDraftingProcess } from './utils/startDraftingProcess';
+import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
 import { useCreateScenario } from './hooks/useCreateScenario';
 import CreateTemplateLink from './TemplateFeatures/CreateTemplateLink';
 import { v4 as uuidv4 } from 'uuid';
 import styled, { ThemeProvider } from 'styled-components';
+import { useTippy } from '../../contexts/tooltips/TippyContext';
 import ThemeContext from '../../contexts/ThemeContext';
 import { lightTheme, darkTheme } from './theme';
+import { CreateButton } from './buttons/CreateButton';
 import { node } from 'stylis';
 import transformOrderedList from '../toasts/utils/transformOrderedList';
 import { getOrderedList } from './hooks/utils/scenarioExecutionUtils';
@@ -39,7 +41,9 @@ import OrderedListContent from '../toasts/OrderedListContent';
 import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/';
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
+import { getNodeConfig } from './nodeConfigs';
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
+import TopBar from './TopBar/TopBar';
 import './utils/getAllConnectedNodes';
 
 
@@ -74,9 +78,19 @@ const proOptions = { hideAttribution: true };
 const nodeTypes = { 
   textUpdater: TextUpdaterNode, 
   formGroup: FormGroupNode,
-  openAi: OpenAINode,
+  
   chain: ChainNode,
   action: ActionNode,
+  router: RouterNode,
+  webhook: WebhookNode,
+  websocket: WebsocketNode,
+  api: APINode,
+  http: HttpNode,
+  code: CodeNode,
+  schedule: ScheduleNode,
+  discord: DiscordNode,
+  delay: DelayNode,
+  openAi: OpenAINode,
 };
 
 const edgeTypes = {
@@ -89,6 +103,7 @@ const getId = (nodeType) => `${nodeType}_${uuidv4().substr(0, 6)}`;
 const BagpipesFlow = () => {
 
   const reactFlowWrapper = useRef(null);
+  const { showTippy, tippyProps } = useTippy();
 
     const { scenarios, activeScenarioId, addScenario, setActiveScenarioId, saveScenario, saveDiagramData, addNodeToScenario, addEdgeToScenario, deleteNodeFromScenario, deleteEdgeFromScenario, updateNodePositionInScenario, updateNodesInScenario, setSelectedNodeInScenario, setSelectedEdgeInScenario, nodeConnections, setNodes, setEdges, setNodeConnections, tempEdge, setTempEdge, loading, transactions, setTransactions, shouldExecuteChainScenario, toggleExecuteChainScenario, executionId, setExecutionState, setToastPosition } = useAppStore(state => ({
       scenarios: state.scenarios,
@@ -128,7 +143,7 @@ const BagpipesFlow = () => {
 
     const navigate = useNavigate(); 
     const location = useLocation();
-    const [mode, setMode] = useState('light');
+    // const [mode, setMode] = useState('light');
     // console.log("  from useUndoRedo:",  );
     const { theme: appTheme, setTheme: setAppTheme } = useContext(ThemeContext);
     const theme = appTheme === 'light' ? lightTheme : darkTheme;
@@ -138,6 +153,7 @@ const BagpipesFlow = () => {
     // const [nodeConnections, setNodeConnections] = useState({});
     // const [nodes, setNodes] = useNodesState([]);
     // const [edges, setEdges] = useEdgesState([]);
+
     const [reactFlowInstance, setReactFlowInstance] = useState(null);
     const [inputVariablesByEdgeId, setInputVariablesByEdgeId] = useState({});
     const [maxNodeId, setMaxNodeId] = useState(0);
@@ -147,6 +163,7 @@ const BagpipesFlow = () => {
 
     const { executeChainScenario, nodeContentMap, stopExecution } = useExecuteChainScenario(currentScenarioNodes, setNodes, instance);
 
+    const createScenario = useCreateScenario();
 
 
     // // Related to proximity connections 
@@ -382,14 +399,30 @@ const BagpipesFlow = () => {
             setTempEdge(closeEdge);
             // console.log("Added temp edge:", closeEdge);
           } 
+
+          // Update Tippy position if it's visible and associated with the current node
+          if (tippyProps.visible && tippyProps.nodeId === node.id) {
+            const newTippyPosition = calculateTippyPosition(node, reactFlowInstance);
+            showTippy(null, node.id, newTippyPosition, tippyProps.content);
+                }
       
           // Existing logic for updating node position in the scenario
           updateNodePositionInScenario(activeScenarioId, node.id, node.position);
           // console.log("Updating node position:", activeScenarioId, node.id, node.position);
         },
-        [getClosestEdge, currentScenarioEdges,   updateNodePositionInScenario, activeScenarioId]
+        [getClosestEdge, currentScenarioEdges,   updateNodePositionInScenario, activeScenarioId, tippyProps, showTippy]
       );
       
+
+      const onZoomOrPan = useCallback(() => {
+        if (reactFlowInstance && tippyProps.visible && tippyProps.nodeId) {
+          const node = reactFlowInstance.getNode(tippyProps.nodeId);
+          if (node) {
+            const newTippyPosition = calculateTippyPosition(node, reactFlowInstance);
+            showTippy(null, node.id, newTippyPosition, tippyProps.content);
+          }
+        }
+      }, [reactFlowInstance, tippyProps, showTippy]);
       
       
   
@@ -455,10 +488,9 @@ const BagpipesFlow = () => {
             event.preventDefault();
              
             // The type of the node is determined based on what was dragged and dropped.
-            const nodeType = event.dataTransfer.getData('application/reactflow').toLowerCase();
+            const type = event.dataTransfer.getData('application/reactflow');
     
             const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-            const type = event.dataTransfer.getData('application/reactflow');
         
             if (typeof type === 'undefined' || !type) {
             return;
@@ -469,122 +501,11 @@ const BagpipesFlow = () => {
             y: event.clientY - reactFlowBounds.top,
             });
 
-        
-            // Handle formGroup node
-            if (type === 'formGroup') {
-            // formGroup node data
-            const data = {
-                label: 'Form Group',
-                image: './.svg',
-                name: "Form Group Example",
-                fields: [
-                { label: "Field 1", type: "text" },
-                { label: "Field 2", type: "number" },
-                ]
-            };
-        
-            // formGroup node creation
-            const groupId = getId();
-            const nodesToAdd = [
-                {
-                id: groupId,
-                type,
-                position,
-                data,
-                style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-                }
-            ];
-        
-            // setNodes((nds) => nds.concat(nodesToAdd));
-            addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'openAi') {
+            const newNode = getNodeConfig(type, position, getId);
 
-              
-            // openAi node data
-            const data = {
-                label: 'Open AI',
-                image: './openai.svg',
-                name: "OpenAI",
-                fields: [
-                { label: "Field 1", type: "text" },
-                { label: "Field 2", type: "number" },
-                ]
-            };
-            // openAi node creation
-            const nodeId = getId();
-            const newNode = {
-                id: getId(nodeType),          
-                type,
-                position,
-                data,
-                style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-            };
-            // setNodes((nds) => nds.concat(newNode));
-            // Call the action to add the node to the current scenario
+  
             addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'chain') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Chain',
-                  image: './chain.svg',
-                  name: "Chain",
-                  fields: [
-                  { label: "Field 1", type: "text" },
-                  { label: "Field 2", type: "number" },
-                  ]
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            } else if (type === 'action') {
-
-              
-              // Chain node data
-              const data = {
-                  label: 'Action',
-                  image: './action.svg',
-                  name: "Action",
-                  fields: [
-                  { label: "Field 1", type: "text" },
-                  { label: "Field 2", type: "number" },
-                  ]
-              };
-              // Chain node creation
-              const nodeId = getId();
-              const newNode = {
-                  id: getId(nodeType),          
-                  type,
-                  position,
-                  data,
-                  style: { backgroundColor: 'rgba(255, 0, 0, 0)', width: 100, height: 100 },
-              };
-              // setNodes((nds) => nds.concat(newNode));
-              // Call the action to add the node to the current scenario
-              addNodeToScenario(activeScenarioId, newNode);
-            }
-            else {
-            // other node creation
-            const newNode = {
-            id: getId(nodeType),          
-            type,
-            position,
-            data: { label: `${type}` },
-            };
-            setNodes((nds) => nds.concat(newNode));
-            // Call the action to add the node to the current scenario
-            addNodeToScenario(activeScenarioId, newNode);
-        }},
+        },
         [reactFlowInstance,   activeScenarioId, addNodeToScenario]
     );
 
@@ -835,24 +756,24 @@ const handleDraftTransactions = async () => {
         
     return (
 
-      <div className="bagpipe-flow-canvass" style={{ width: '100vw', height: '1000px' }}>
+      <div className="bagpipes" >
 
 
         <ThemeProvider theme={theme}>
             <Panel position="top-center">   
             {/* <CreateTemplateLink scenarioId={activeScenarioId} /> */}
        
-                {/* <button className="bg-slate-900  p-3 text-white" onClick={toggleMode}>light / dark</button> */}
             </Panel>
-            <div className="bagpipe">
         
-            <div style={{ height: 800 }} className="reactflow-wrapper" ref={reactFlowWrapper}>
+            <div className="" ref={reactFlowWrapper}>
               <ReactFlowStyled
                   nodes={currentScenarioNodes}
                   edges={combinedEdges}
                   onNodesChange={onNodesChange}
                   onEdgesChange={handleEdgesChange}
                   onConnect={handleConnect}
+                  onMoveEnd={onZoomOrPan}
+                  onZoomEnd={onZoomOrPan}
                   onInit={setReactFlowInstance}
                   onDrop={onDrop}
                   onDragOver={onDragOver}
@@ -874,7 +795,7 @@ const handleDraftTransactions = async () => {
               {/* <MiniMap /> */}
               {/* <Background id="1" gap={10} color="#f1f1f1" variant={BackgroundVariant.Lines} /> 
              <Background id="2" gap={100} offset={1} color="#ccc" variant={BackgroundVariant.Lines} />  */}
-              <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bg-gray-300" : "bg-gray-900"} variant={BackgroundVariant.Dots} />
+              <Background color={theme.dots} className={theme.bg === lightTheme.bg ? "bagpipes-bg" : "bagpipes-bg-dark"} variant={BackgroundVariant.Dots} />
               <ControlsStyled />
               <EdgeLabelRenderer type='' />
               {/* <Panel position="bottom-center">
@@ -888,38 +809,42 @@ const handleDraftTransactions = async () => {
                 </div>
 
             </Panel> */}
-            </ReactFlowStyled>
-           
-            {shouldExecuteChainScenario ? (
-              <SendButton executeChainScenario={handleExecuteChainScenario} />
-            ) : (
-              <StartButton draftTransactions={handleDraftTransactions} />
 
-            )}
+            
+
+          
+            <TopBar createScenario={createScenario} handleExecuteChainScenario={handleExecuteChainScenario} handleDraftTransactions={handleDraftTransactions} shouldExecuteChainScenario={shouldExecuteChainScenario} />
+            <Toolbar />
+            </ReactFlowStyled>
+            
+           
         
             {/* <PlayButton executeScenario={executeChainScenario} stopExecution={stopExecution} disabled={loading} /> */}
              
             {/* <GitInfo /> */}
 
+      
+
             </div>
-            <Sidebar />
+            <div className='absolute top-0 right-0 flex justify between'>
             {/* {modalNodeId && currentScenarioNodes && currentScenarioEdges && (
-                <OpenAINodeForm
-                  nodeId={modalNodeId}
-                  nodes={currentScenarioNodes}
-                  edges={currentScenarioEdges}
-                  nodeConnections={nodeConnections}
-                  setNodes={setNodes}
-                  setEdges={setEdges}
-                  onNodesChange={onNodesChange}
-                  setModalNodeId={setModalNodeId}
-                />
-       
-              )} */}
-            </div>
+          <RenderNodeForm
+            visible={Boolean(modalNodeId)}
+            nodeId={modalNodeId}
+            nodes={currentScenarioNodes}
+            edges={currentScenarioEdges}
+            setNodes={setNodes}
+            setEdges={setEdges}
+            onNodesChange={onNodesChange}
+            setModalNodeId={setModalNodeId}
+          />
+      )} */}
+              </div>
     </ThemeProvider>
+   
+    
     </div>
-  
+
     );
   }
   

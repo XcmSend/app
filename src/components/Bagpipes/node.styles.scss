@@ -1,24 +1,12 @@
 @import "../../variables";
 
 
-// .react-flow__renderer {
-//   transition: transform 0.5s ease !important;
-// }
+.react-flow__renderer {
+  height: 100%;
+}
 
-.react-flow__node-openAi.selectable, .react-flow__node-openAi.selectable:focus {
-    border: 3px solid #ffffff !important;
-    box-shadow: -7px 15px 10px 3px #7c7c7c18 !important;
-  }
   
-  .react-flow__node-openAi {
-    background-color: var(--node-bg);
-    border-color: #e2e2e2;
-    color: #333;
-    border-radius :10px !important;
-    font-family: $primary-font, sans-serif;
-    font-size: xx-small;
-    min-width:200px !important;
-  }
+
 
   .react-flow__node-chain {
     background-color: var(--button-bg) !important;
@@ -39,7 +27,7 @@
     // background-color: #ffffff00 !important;
     border-color:var(--border-color);
     color: var(--node-color) !important;
-    border-radius: 8px !important;
+    border-radius: 12px !important;
     font-family: $primary-font, sans-serif;
     font-size: x-small;
     width:fit-content !important;
@@ -50,39 +38,48 @@
   }
 
   .react-flow__node  {
-    outline: 1px solid rgba(195, 195, 195, 0.535) !important;
-    border-radius: 12px !important;
+    // outline: 1px solid rgba(188, 188, 188, 0.212) !important;
     background-color: var(--node-bg);
     color: var(--node-color) !important;
-    box-shadow: 8px 8px 10px 5px var(--box-shadow-color) !important;
+    box-shadow: 10px 20px 10px 10px var(--box-shadow-color) !important;
     font-family: $primary-font, sans-serif;
     /* border: 3px solid black !important; */
+    outline: 15px solid transparent; /* Transparent outline by default */
+    transition: outline 0.5s ease, box-shadow 0.3s ease; /* Adjust the duration (0.3s) and timing function (ease) as needed */
+
+
   }
   .react-flow__node.selected  {
-    outline: 2px solid rgba(20, 255, 51, 0.535) !important;
+    outline: 20px solid rgba(1, 179, 24, 0.203) !important;
     border-radius: 12px !important;
-
+  
     /* border: 3px solid black !important; */
   }
 
-  .react-flow__node:focus  {
-    outline: 2px solid rgba(20, 255, 51, 0.535) !important;
+  .react-flow__node.selected  {
+    outline: 20px solid rgba(1, 179, 24, 0.203) !important;
     border-radius: 12px !important;
-
+  
     /* border: 3px solid black !important; */
   }
-
-
 
   .react-flow__node:target {
     outline: 3px solid rgba(20, 255, 51, 0.535)  !important;
     /* border: 3px solid black !important; */
   }
 
-  .react-flow__node:hover {
-    // outline: 3px solid rgba(255, 141, 251, 0.535) !important;
-    /* border: 3px solid black !important; */
-    // box-shadow: 10px 10px 10px 10px #bdbdbd44 !important;
+  .react-flow__node:hover, .react-flow__node-chain:hover {
+    outline: 15px solid rgba(198, 213, 38, 0.418) !important;
+  }
+
+  .react-flow__node-webhook.selected,.react-flow__node-websocket.selected, .react-flow__node-router.selected, .react-flow__node-api.selected,  .react-flow__node-http.selected,  .react-flow__node-code.selected, .react-flow__node-schedule.selected, .react-flow__node-discord.selected, .react-flow__node-openAi.selected, .react-flow__node-telegram.selected, .react-flow__node-slack.selected, .react-flow__node-twitter.selected, .react-flow__node-github.selected, .react-flow__node-google.selected{
+    outline: 20px solid rgba(1, 179, 24, 0.203) !important;
+    border-radius: 50px !important;
+  }
+
+  .react-flow__node-chain.selected, .react-flow__node-action.selected {
+    outline: 20px solid rgba(1, 179, 24, 0.203) !important;
+
   }
 
   .react-flow__handle {
@@ -95,7 +92,7 @@
     background: rgb(189, 196, 204) !important;
     border: 1px solid black !important;
     /* color: black; */
-    border-radius: 100%;
+    border-radius: 14px;
     margin-left: -5px;
     margin-right: -5px
 }
@@ -131,6 +128,10 @@
     color: rgb(112, 112, 112);
   }
 
+  .node-title-circle {
+    margin-bottom: -10px !important;
+  }
+
   .node-name:hover {
     text-decoration: underline !important;
   }
@@ -159,6 +160,26 @@ background-color: white !important;
     color: var(--node-input-title);
   }
 
+  .node-form-input {
+    color: var(--node-input-title);
+  }
+
+  .form-selection {
+    margin-bottom: 20px;
+    width: 100%;
+    border: 1px solid rgb(200, 200, 200);
+    padding: 10px 10px 20px 10px;
+    border-radius: 10px;
+
+
+    h3 {
+      margin-bottom: 10px;
+      color: black;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
   .update-text {
     color: white;
   }
@@ -167,12 +188,30 @@ background-color: white !important;
     background-color: var(--node-bg) !important;
     border-radius: 12px !important;
     color: var(--node-color) !important;
-    
+    // min-width: 200px !important;
     width: 100%;
     height: 100%;
     // overflow-wrap: break-word;
     padding: 5px;
-    box-shadow: 8px 8px 10px 5px var(--box-shadow-color) !important;
+    box-shadow: 8px 8px 8px 2px var(--box-shadow-color) !important;
+    
+    /* ...any other necessary styles... */
+
+    &:hover {
+      box-shadow: 10px 10px 10px 10px var(--box-shadow-color) !important;
+    }
+  } 
+
+  .action-node {
+    background-color: var(--node-bg) !important;
+    border-radius: 12px !important;
+    color: var(--node-color) !important;
+    min-width: 200px !important;
+    width: 100%;
+    height: 100%;
+    // overflow-wrap: break-word;
+    padding: 5px 10px 5px 10px;
+    box-shadow: 8px 8px 8px 2px var(--box-shadow-color) !important;
     
     /* ...any other necessary styles... */
 
@@ -241,6 +280,7 @@ background-color: white !important;
   .in-node-border {
     border: 1px solid var(--border-color) !important;
     border-radius: 4px !important;
+    // background: var(--node-bg);
   }
 
   .whole-number {
@@ -250,13 +290,13 @@ background-color: white !important;
   .background {
     background: var(--bg);  
   }
-
-
-
   .hovering:hover {
     background: var(--bg-hover) !important;
   }
 
   .action-type {
-    border-radius: 8px !important;
+    border-radius: 7px !important;
+    min-width: 100px !important;
+    padding: 8px;
+  
   }

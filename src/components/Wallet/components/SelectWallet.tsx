@@ -1,16 +1,15 @@
 // @ts-nocheck
 
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 import React, { useCallback } from 'react';
 
 import { getWallets } from '../wallet-connect/src/dotsama/wallets';
-// import { getEvmWallets } from '@subwallet/wallet-connect/evm/evmWallets';
-// import { EvmWallet, Wallet } from '@subwallet/wallet-connect/types';
-import { Wallet } from '@subwallet/wallet-connect/types';
-
+import { getEvmWallets } from '../wallet-connect/src/evm/evmWallets';
+import { EvmWallet, Wallet } from '../wallet-connect/src/types';
 
 import './styles/SelectWallet.scss';
+import ThemeContext from '../../../contexts/ThemeContext';
 
 interface Props {
   onSelectWallet: (walletKey: string, walletType?: 'substrate' | 'evm') => void,
@@ -19,7 +18,8 @@ interface Props {
 
 function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {
   const dotsamaWallets = getWallets();
-  // const evmWallets = getEvmWallets();
+  const evmWallets = getEvmWallets();
+  const { theme } = React.useContext(ThemeContext);
 
   const onClickDotsamaWallet = useCallback(
     (wallet: Wallet ) => {
@@ -43,7 +43,7 @@ function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {
     [onSelectWallet]
   );
 
-  const walletItem: (wallet: Wallet, onSelect: (wallet: Wallet|EvmWallet) => () => void) => React.ReactElement = (wallet, onSelect) => (
+  const walletItem: (wallet: Wallet, onSelect: (wallet: Wallet | EvmWallet) => () => void) => React.ReactElement = (wallet, onSelect) => (
     <div
       className={'wallet-item'}
       key={wallet.extensionName}
@@ -85,7 +85,7 @@ function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {
         <div className='wallet-cat-title'>
           EVM Wallets
         </div>
-        {/* {evmWallets.map((wallet) => (walletItem(wallet, onClickEvmWallet)))} */}
+        {evmWallets.map((wallet) => (walletItem(wallet, onClickEvmWallet)))}
       </div>
     </div>
   </div>;
