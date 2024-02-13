@@ -13,6 +13,16 @@ export const CHAIN_ASSETS = {
             },
             {
                 "asset": {
+                    "name": "HydraDX",
+                    "assetType": "Token",
+                    "existentialDeposit": "1,000,000,000,000",
+                    "xcmRateLimit": null,
+                    "symbol": "HDX"
+                },
+                "assetId": "0"
+            },
+            {
+                "asset": {
                     "name": "Ethereum (Moonbeam Wormhole)",
                     "assetType": "Token",
                     "existentialDeposit": "5,390,835,579,515",

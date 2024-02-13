@@ -2,7 +2,7 @@ import { ActionData, SwapAction, xTransferAction, TransferAction, ActionType }  
 
 export function convertFormStateToActionType(formState: any, assetIn: any, assetOut: any): ActionType | null {
   if (!formState.action) return null;
-  console.log(`formstate: `, formState);
+  
   const actionDataIn: ActionData = {
     chain: assetIn?.chain,
     display: assetIn?.display,
@@ -14,7 +14,7 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
     source: assetIn?.source,
     actionType: assetIn?.actionType
   };
-  console.log(`asset out:`, assetOut);
+  
   const actionDataOut: ActionData = {
     chain: assetOut?.chain,
     assetId: assetOut?.asset?.assetId,

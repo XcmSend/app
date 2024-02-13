@@ -1,7 +1,6 @@
 import { applyNodeChanges } from 'reactflow';
 
-const onNodesChange = (set, get, takeSnapshot, activeScenarioId) => (changes) => {
-    takeSnapshot();
+const onNodesChange = (set, get, activeScenarioId) => (changes) => {
     set((state) => {
       const currentScenario = state.scenarios[activeScenarioId];
       if (!currentScenario) return state; // Handle error if needed

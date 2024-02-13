@@ -1,0 +1,11 @@
+.main-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+  }
+  
+  .main-content {
+    flex-grow: 1; /* Takes up the available space */
+    width: 100%; /* Ensures it fills the container */
+    height: 100% !important; /* Ensures it fills the container */
+  }

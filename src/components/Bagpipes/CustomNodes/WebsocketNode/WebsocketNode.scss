@@ -1,0 +1,41 @@
+@import '../../../../variables.scss';
+
+// .nodeBody {
+//     box-shadow: 0 14px 9px rgba(118, 118, 118, 0.1), 10px 10px 10px rgba(0, 0, 0, 0.08);
+//   }
+
+  .react-flow__node-websocket {
+    background-color: var(--node-bg);
+    border-radius:1000px !important;
+    font-family: $primary-font, sans-serif;
+    font-size: xx-small;
+
+    &:hover {
+        box-shadow: 8px 8px 10px 5px var(--box-shadow-color) !important;
+    }
+  }
+
+  .websocket {
+    align-items: center;
+    min-width: 200px;
+    text-align: center;
+  }
+
+  .node-description {
+    min-width: 200px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .websocket-chain-logo {
+    position: absolute;
+    top: -10px;
+    right: 0;
+    height: 25px;
+    width: 25px;
+    margin-right: 5px;
+    border-radius: 300px;
+    border: 1px solid #c1c1c1;
+    box-shadow: 8px 8px 10px 5px var(--box-shadow-color) !important;
+    outline: 3px solid rgba(0, 197, 26, 0.426)  !important;
+  }

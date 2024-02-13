@@ -1,22 +1,24 @@
+@import '../../../../variables.scss';
+
 .select-wallet-modal {
   width: 570px !important;
 }
 
 .select-wallet-modal .ant-modal-content {
-  color: #FFF;
-  background-color: #020412;
+  color: var(--color);
+  background-color: var(--bg);
   border-radius: 15px;
 }
 
 .select-wallet-modal .ant-modal-header {
-  background-color: #020412;
+  background-color: var(--bg);
   border-radius: 15px 15px 0 0;
   border-bottom: 1px solid #151A30;
   padding: 20px;
 }
 
 .select-wallet-modal .ant-modal-close {
-  color: #FFF;
+  color:var(--color);
   top: 20px;
   right: 10px;
 }
@@ -34,7 +36,7 @@
 }
 
 .select-wallet-modal .ant-modal-title {
-  color: #FFF;
+  color: var(--color);
   font-size: 20px;
   line-height: 32px;
 }
@@ -100,6 +102,6 @@
   }
 
   &:hover {
-    background-color: #151A30;
+    background-color: var(--bg);
   }
 }

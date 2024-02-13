@@ -26,41 +26,17 @@ export function listChains() {
     // dict[paraid] = ChainInfo
     const chainList: Record<number, ChainInfo> = {};
 
-    const Polkadot: ChainInfo = {
-        name: 'polkadot',
-        display: 'Polkadot',
-        paraid: 0,
-        prefix: 0,
+      const AssetHub: ChainInfo = {
+        name: 'assetHub',
+        display: 'Asset Hub (Polkadot)',
+        paraid: 1000,
+        prefix: 63,
         token_decimals: 10,
-        logo: '/chains/polkadot.svg',
-        parachain: false,
-        relay: true,
+        logo: '/chains/assethub.svg',
+        relayParent: 'polkadot',
+        parachain: true
       };
-      chainList[0] = Polkadot;
-
-      const Kusama: ChainInfo = {
-        name: 'kusama',
-        display: 'Kusama',
-        paraid: 2,
-        prefix: 2,
-        token_decimals: 12,
-        logo: '/chains/kusama.svg',
-        parachain: false,
-        relay: true,
-      };
-      chainList[2] = Kusama;
-
-      const Kabocha: ChainInfo = {
-        name: 'kusama',
-        display: 'Kusama',
-        paraid: 27,
-        prefix: 27,
-        token_decimals: 12,
-        logo: '/chains/kusama.svg',
-        parachain: true,
-        relay: false,
-      };
-      chainList[2] = Kabocha;
+      chainList[1000] = AssetHub;
 
       const HydraDX: ChainInfo = {
         name: 'hydraDx',
@@ -74,7 +50,7 @@ export function listChains() {
       };
       chainList[2034] = HydraDX;
 
-      const interlay: ChainInfo = {
+      const Interlay: ChainInfo = {
         name: 'interlay',
         display: 'Interlay',
         paraid: 2032,
@@ -85,23 +61,57 @@ export function listChains() {
         parachain: true,
         
       };
-      chainList[2032] = interlay;
+      chainList[2032] = Interlay;
 
-      const assethub: ChainInfo = {
-        name: 'assetHub',
-        display: 'Asset Hub (Polkadot)',
-        paraid: 1000,
-        prefix: 63,
-        token_decimals: 10,
-        logo: '/chains/assethub.svg',
-        relayParent: 'polkadot',
-        parachain: true
-
-
+      const Kabocha: ChainInfo = {
+        name: 'kabocha',
+        display: 'Kabocha',
+        paraid: 27,
+        prefix: 27,
+        token_decimals: 12,
+        logo: '/chains/kabocha.svg',
+        parachain: true,
+        relay: false,
       };
-      chainList[1000] = assethub;
+      chainList[27] = Kabocha;
 
-      const rococo: ChainInfo = {
+      const Kusama: ChainInfo = {
+        name: 'kusama',
+        display: 'Kusama',
+        paraid: 2,
+        prefix: 2,
+        token_decimals: 12,
+        logo: '/chains/kusama.svg',
+        parachain: false,
+        relay: true,
+      };
+      chainList[2] = Kusama;
+
+      const Moonbeam: ChainInfo = {
+        name: 'moonbeam',
+        display: 'Moonbeam',
+        paraid: 2004,
+        prefix: 1284,
+        token_decimals: 12,
+        logo: '/chains/moonbeam.svg',
+        parachain: true,
+        relay: false,
+      };
+      chainList[2004] = Moonbeam;
+
+      const Polkadot: ChainInfo = {
+        name: 'polkadot',
+        display: 'Polkadot',
+        paraid: 0,
+        prefix: 0,
+        token_decimals: 10,
+        logo: '/chains/polkadot.svg',
+        parachain: false,
+        relay: true,
+      };
+      chainList[0] = Polkadot;
+
+      const Rococo: ChainInfo = {
         name: 'rococo',
         display: 'Rococo',
         paraid: 0,
@@ -112,9 +122,9 @@ export function listChains() {
         relay: true,
 
       };
-      chainList[10000] = rococo;
+      chainList[10000] = Rococo;
 
-      const sora_roc: ChainInfo = {
+      const Sora: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
         paraid: 12011, // change me
@@ -124,7 +134,21 @@ export function listChains() {
         relayParent: 'rococo',
         parachain: true
       };
-      chainList[2011] = sora_roc;
+      chainList[2011] = Sora;
+      // only rococo > rococo assethub transfers is supported 
+      const RococoAssethub: ChainInfo = {
+        name: 'rococo_assethub',
+        display: 'Rococo Assethub',
+        paraid: 3000, // fake
+        prefix: 42, 
+        token_decimals: 12,
+        logo: '/chains/assethub.svg',
+        relayParent: 'rococo',
+        parachain: true 
+      };
+
+      chainList[3000] = RococoAssethub;// fake paraid
+
 
     return chainList;
 }

@@ -16,6 +16,7 @@ import getNonce from '../../../../Chains/api/getNonce';
 import '../../../../index.css';
 import { getApiInstance } from '../../../../Chains/api/connect';
 
+import './TransactionMain.scss';
 
 export default function TransactionMain() {
   const { theme } = useContext(ThemeContext);
@@ -232,11 +233,13 @@ const handleAcceptTransactions = async () => {
 
   return (
     <>
-      <div>
+      <div className='transaction-review-container'>
         
         <button className={`button ${theme}`} onClick={backToBuilder}>Back</button>
   
         {isReviewingTransactions ? (
+        <div className="">
+
           <TransactionReview
             transactions={transactions}
             onAccept={handleAcceptTransactions}
@@ -244,6 +247,7 @@ const handleAcceptTransactions = async () => {
             signExtrinsic={wrapperSignExtrinsic}
             setSignedExtrinsics={setSignedExtrinsics}
           />
+          </div>
         ) : (
           <div className="transaction-signature-status">
             {signedCount < transactions.length 

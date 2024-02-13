@@ -1,0 +1,112 @@
+@import '../../../variables.scss';  
+
+
+@keyframes slideIn {
+    from {right: -250px;}
+    to {right: 0;}
+    }
+  
+  @keyframes slideOut {
+    from { right: 0;}
+    to {right: -250px;}
+  }
+  
+  .node-form {
+    width: 300px  !important;
+    height: 100vh;
+    background: #ffffff;
+    overflow: auto;
+    position: fixed;
+    top: 70px;
+    right: -300px;
+    border: 1px solid #e5e5e5;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards; /* This ensures the element remains in its final state */
+  }
+  
+  
+  .node-form.visible {
+    right: 0 !important; /* Slide in to be fully visible */
+  }
+
+  .form-header {
+    padding: 8px 0px 8px 0px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgb(112, 112, 112);
+    display: flex;
+    justify-content: space-between;
+    align-items: top;
+    border-bottom: 1px solid rgb(235, 235, 235);
+    min-width: 250px
+  }
+
+  .form-header-button {
+    padding: 0px 7px;
+    border: none;
+
+    &:hover {
+      border: none;
+      color: gray;
+    }
+  }
+
+  .field-info {
+    font-size: 10px;
+    color: rgb(92, 92, 92);
+    font-weight: 400;
+  }
+
+  .collapsible-field {
+    margin: 10px;
+  }
+
+  .form-footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
+  }
+  
+  .toggle-container {
+    flex: 1; // This ensures that the toggle container takes up space even when empty
+  }
+  
+  .buttons-container {
+    display: flex;
+  }
+  
+
+  .custom-collapse .ant-collapse-header, .custom-collapse .ant-collapse-content {
+    background-color: #ffffff; /* Custom background color */
+    border-radius: 4px; /* Rounded corners */
+    /* Add more styling as needed */
+    border: none !important;
+  }
+  
+  .custom-collapse .ant-collapse-icon-position-left .ant-collapse-header {
+    padding-left: 30px; /* Adjust padding if necessary */
+    border: none !important;
+  }
+
+ 
+.pill-style {
+  border-radius: 10px;
+  padding: 0px 5px;
+  margin: 5px 5px;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgb(112, 112, 112);
+  background-color: rgb(235, 235, 235);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20px;
+} 
+
+.form-container {
+  max-height: 80vh; /* 80% of the viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+}

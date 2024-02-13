@@ -4,7 +4,7 @@ import '../../node.styles.scss';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css'; 
 import 'tippy.js/themes/light.css';
-import { iIcon } from '../../../Icons/icons';
+import { iIcon } from '../../../Icons/icons'
 
 // Props type definition
 type SelectorProps = {
@@ -71,9 +71,6 @@ const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdo
                     </span>
                     </Tippy>
                 </div> 
-
-            
-
                 <div onClick={() => handleDropdownClick('xTransfer')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
                     <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
 

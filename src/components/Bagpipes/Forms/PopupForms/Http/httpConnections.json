@@ -1,0 +1,80 @@
+{
+    "sections": [
+        {
+            "title": "Connection Type",
+            "fields": [
+            {
+                "key": "connectionType",
+                "type": "select",
+                "label": "Connection Type",
+                "default": "httpRequest",
+                "options": [
+                {
+                    "label": "HTTP Request",
+                    "description": "Make a basic HTTP request to a URL with no authentication.",
+                    "value": "httpRequest",
+                    "children": [
+                    "standardHttpParams",
+                    "advancedSettings"
+                    ]
+                },
+                {
+                    "label": "Make a Basic Auth Request",
+                    "description": "Make a basic HTTP request with basic authentication.",
+                    "value": "basicAuthHttpRequest",
+                    "children": [
+                    "basicAuth",
+                    "standardHttpParams",
+                    "advancedSettings"
+                    ]
+                },
+                {
+                    "label": "Make a Request with a Client Certificate",
+                    "description": "Make a basic HTTP request with a client certificate.",
+                    "value": "clientCertHttpRequest",
+                    "children": [
+                    "clientAuthCert",
+                    "standardHttpParams",
+                    "advancedSettings"
+                    ]
+                },
+                {
+                    "label": "Make an API key Auth Request",
+                    "description": "Make a basic HTTP request with an API key.",
+                    "value": "apiKeyAuthHttpRequest",
+                    "children": [
+                    "apiKeyAuth",
+                    "standardHttpParams",
+                    "advancedSettings"
+                    ]
+                },
+                {
+                    "label": "Retrieve a Resource from a URL",
+                    "description": "Retrieve a resource from a URL, such as donwloading a file.",
+                    "value": "urlResourceRequest",
+                    "children": [
+                    "url"
+                    ]
+                },
+                {
+                    "label": "Resolve a URL target",
+                    "description": "Resolve a URL to its final destination.",
+                    "value": "urlResolveRequest",
+                    "children": [
+                    "url"
+                    ]
+                },
+                {
+                    "label": "Retrieve headers",
+                    "description": "Retrieve just the headers from a URL.",
+                    "value": "headersRequest",
+                    "children": [
+                    "sourceModule"
+                    ]
+                }
+                ]
+            }
+            ]
+        }
+    ]
+}

@@ -1,8 +1,8 @@
-// Copyright 2019-2023 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2023 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 import React from 'react';
-import { Wallet, WalletAccount } from '@subwallet/wallet-connect/types';
-import { EvmWallet } from '@subwallet/wallet-connect/types';
+import { Wallet, WalletAccount } from '../wallet-connect/src/types';
+import { EvmWallet } from '../wallet-connect/src/types';
 
 export interface WalletContextInterface {
   wallet?: Wallet,
@@ -10,13 +10,15 @@ export interface WalletContextInterface {
   accounts: WalletAccount[],
   setWallet: (wallet: Wallet | EvmWallet | undefined, walletType: 'substrate'|'evm') => void
   walletType: 'substrate'|'evm';
+  isWalletSelected: boolean;
 }
 
 export const WalletContext = React.createContext<WalletContextInterface>({
   accounts: [],
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setWallet: (wallet: any, walletType: 'substrate'|'evm') => {},
-  walletType: 'substrate'
+  walletType: 'substrate',
+  isWalletSelected: false
 });
 
 interface OpenSelectWalletInterface {

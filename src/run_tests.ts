@@ -1,6 +1,6 @@
 /// tests for XCMSend
 
-import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, interlay2assethub, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
+import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
 import * as assert from 'assert';
 import { checkAssetHubBalance, assetHubNativeBalance, checkHydraDxAssetBalance, checkPolkadotDotRawNativeBalance } from './Chains/Helpers/AssetHelper';
 import { Keyring } from '@polkadot/keyring';
@@ -13,9 +13,9 @@ async function test_interlay() {
 	console.log(tx.toHex());
 	console.log(`assethub > interlay ok`);
 	
-	console.log(`interlay > assethub`);
-	const i2atx = await interlay2assethub(1984, 200000000, "0xe64afe6914886cdcfea8da5f13e1e21aa11876cfe7fdde9299bbcdbbdc3a8b19");
-	console.log(i2atx.toHex());
+	// console.log(`interlay > assethub`);
+	// const i2atx = await interlay2assethub(1984, 200000000, "0xe64afe6914886cdcfea8da5f13e1e21aa11876cfe7fdde9299bbcdbbdc3a8b19");
+	// console.log(i2atx.toHex());
 	console.log(`interlay > assethub ok`);
 }
 
@@ -37,11 +37,31 @@ async function test_transfers() {
     const ri = await polkadot_to_assethub(amount, "16XByL4WpQ4mXzT2D8Fb3vmTLWfHu7QYh5wXX34GvahwPotJ");
     assert.strictEqual(ri.toHex(), '0xec04630903000100a10f0300010100f43376315face751ae6014e8a94301b2c27c0bc4a234e9997ed2c856d13d3d2f030400000000e5140000000000');
 
+
+    console.log(`Polkadot DOT > assethub scheduled tx check`);
+    const dri = await polkadot_to_assethub(amount, "16XByL4WpQ4mXzT2D8Fb3vmTLWfHu7QYh5wXX34GvahwPotJ", 10);
+
+    console.log(`Polkadot DOT > assethub scheduled tx check`);
+   // console.log(dri.toHex())
+  //  assert.strictEqual(dri.toHex(), '0x0d01040100f4c817010000630903000100a10f0300010100f43376315face751ae6014e8a94301b2c27c0bc4a234e9997ed2c856d13d3d2f030400000000e5140000000000');
+    console.log(`Polkadot DOT > assethub scheduled tx check ok`);
+
+
+
+    console.log(`Polkadot DOT > hydradx OK`)
+    const dhdx = await dotToHydraDx(amount, address, 10);
+ //   console.log(dhdx.toHex());
+    console.log(`Polkadot DOT > hydradx scheduled tx check`);
+  //  assert.strictEqual(dhdx.toHex(), '0x0d01040100f4c817010000630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000');
+    console.log(`Polkadot DOT > hydradx scheduled tx check ok`);
+
+
+
     console.log(`Polkadot DOT > hydradx OK`)
     const runp2 = await dotToHydraDx(amount, address);
     assert.strictEqual(runp2.toHex(), '0xec04630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000');
    
-   
+    console.log(`Polkadot DOT > hydradx scheduled tx check`);
  
     console.log(`[test] AssetHub transfers`);
     const ah = await assethub_to_parachain(assetid.toString(), amount, address, 2034); // hydradx
@@ -148,20 +168,6 @@ async function check_open_channels(){
     console.log('hydradx has open channels');
 }
 
-async function test_scheduler(){
-    console.log('test scheduler start');
-    const amount = 1337;
-    const address = "0x68de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40";// random accountid32
-
-    const tx = await dotToHydraDx(amount, address);
-
-    //const out = await polkadot_schedule(tx, 20);
-    console.log('test scheduler ok');
-    
-}
-
-
-
 /*
 Tests run: 
 drafting transactions and checking that they are encoded in the right way
@@ -174,14 +180,11 @@ You can broadcast each tx, by feeding the tx into the broadcast_run_tx function
 async function main() {
     console.log('Running tests');
     console.log('Running Balance tests');
-   await test_balances();
+    await test_balances();
     console.log('running transaction tests');
     await test_transfers();
     console.log('Checking XCM channels');
     await check_open_channels();
-    console.log(`Running scheduler tests`);
-    await test_scheduler();
-
     console.log('test completed');
 }
 

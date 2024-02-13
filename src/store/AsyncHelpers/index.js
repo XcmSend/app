@@ -87,8 +87,8 @@ export const loadScenarioAsync = async (scenarioId) => {
 
   export const deleteScenarioAsync = async (_id) => {
     try {
-      const success = await ScenarioService.deleteScenario(_id);
-      console.log('Server response:', success);
+      // const success = await ScenarioService.deleteScenario(_id);
+      // console.log('Server response:', success);
       // if (success) {
         // Remove scenario from Zustand state
         useAppStore.getState().deleteScenario(_id);
@@ -163,3 +163,4 @@ export const loadScenarioAsync = async (scenarioId) => {
     // updateLocalStorage();
   }
   
+

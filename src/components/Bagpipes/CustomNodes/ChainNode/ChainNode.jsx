@@ -7,7 +7,6 @@ import useExecuteScenario from '../../hooks/useExecuteScenario';
 import AccountDropdown from './AccountDropdown';
 import useAppStore from '../../../../store/useAppStore';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
-
 import AddContacts from './AddContacts'
 import {  getAssetOptions } from './options';
 import { listChains } from '../../../../Chains/ChainsInfo';
@@ -17,6 +16,7 @@ import BalanceTippy from './BalanceTippy';
 import ThemeContext from '../../../../contexts/ThemeContext';
 import { buildHrmp } from '../../../../Chains/Helpers/XcmHelper';
 import { mapToObject } from '../../utils/storageUtils';
+import { ChainIcon } from '../../../Icons/icons';
 import '../../node.styles.scss';
 
 import 'antd/dist/antd.css';
@@ -27,6 +27,7 @@ import '../../../../main.scss';
 import '/plus.svg'
 
 const ChainNode = ({ data, isConnectable }) => {
+  console.log('ChainNode data', data);
   const { theme } = useContext(ThemeContext);
   const { nodeContent } = data;
   const socket = useContext(SocketContext);
@@ -85,6 +86,7 @@ const ChainNode = ({ data, isConnectable }) => {
     const chainInfo = ChainInfoList.find(info => info.name === chainName);
     return chainInfo ? chainInfo.paraid : null;
   }
+  
 
   const sourceChainName = scenarios[activeScenarioId]?.diagramData?.nodes[previousNodeIndex]?.formData?.chain;
   const sourceChainId = chainNameToId(sourceChainName);
@@ -161,14 +163,13 @@ const ChainNode = ({ data, isConnectable }) => {
       }));
   };
 
-
   const handleDelayChange = async (e) => {
     const delayamount = e.target.value;
     
     // Update the chain in the form state
     handleFormChange("delay", delayamount);
-   // setIsLoading(true);
   };
+
 
   const handleChainChange = async (e) => {
     const selectedChainName = e.target.value;
@@ -337,7 +338,10 @@ useEffect(() => {
 
   return (
     <div className={`${theme} custom-node shadow-lg text-xs p-4`}>
-      <h1 className="text-xxs node-input primary-font mb-1">{nodeId}</h1>
+      <div className='flex justify-between m-1'>
+        <ChainIcon className="h-4 w-4" fillColor='rgb(156 163 175' />
+        <div className="text-xxs node-input primary-font mb-1">{nodeId}</div>
+      </div>
       {selectedChainLogo && (
           <div className="chain-logo-container mb-2 mt-2 flex justify-center">
             <img src={selectedChainLogo} alt={`${formState.chain} Logo`} className="chain-logo w-12 h-12" /> 
@@ -355,7 +359,7 @@ useEffect(() => {
                 value={formState.chain}  // sets the value for the dropdown from the state
             >
                 <option value="" selected>Select chain</option>
-                {filteredChainInfoList.map((ChainInfo, index) => (
+                {ChainInfoList.map((ChainInfo, index) => (
                   <option key={ChainInfo.name} value={ChainInfo.name}>
                     {ChainInfo.display}
                   </option>
@@ -386,16 +390,7 @@ useEffect(() => {
           </div>
         )}
       </div>
-
-      {formState.chain == 'polkadot' && (
-      <div class="mb-2 in-node-border p-2 rounded"  onChange={handleDelayChange}  value={formState.delay}>
-        <h3 class="text-xxs node-input primary-font mb-1 flex items-center justify-between">Delay amount of blocks<div class="flex items-center primary-font">
-          </div></h3>
-          <div class="unbounded-black">
-            <input class="unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector" type="number" placeholder="0" min="0"/>
-        </div></div> )}
-
-
+  
       {formState.chain && (
         <div className="flex flex-col items-start mb-2 in-node-border p-2 rounded">
           <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>
@@ -409,7 +404,15 @@ useEffect(() => {
           <AddContacts />
         </div>
       )}
-  
+      {/* Hide delay for now until we have the side form working, and scheduler is in the pallet / parameters area.  */}
+        {/* {formState.chain == 'polkadot' && (
+      <div class="mb-2 in-node-border p-2 rounded"  onChange={handleDelayChange}  value={formState.delay}>
+        <h3 class="text-xxs node-input primary-font mb-1 flex items-center justify-between">Delay amount of blocks<div class="flex items-center primary-font">
+          </div></h3>
+          <div class="unbounded-black">
+            <input class="unbounded-black text-xl text-black pl-1 in-node-border border-gray-300 rounded amount-selector" type="number" placeholder="0" min="0"/>
+        </div></div> )} */}
+
       {formState.chain && contacts.length > 0 && (
         <div className="mb-2 in-node-border p-2 rounded flex flex-col items-start justify-start">
             <h3 className="text-xxs node-input primary-font mb-2 self-start">Contacts</h3>

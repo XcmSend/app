@@ -21,6 +21,34 @@ export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
     return newText;
 }
 
+export const findUpstreamNodes = (orderedList, nodeId) => {
+    const currentNodeIndex = orderedList.findIndex(nodeIdInList => nodeIdInList === nodeId);
+
+    if (currentNodeIndex === -1) {
+      console.error("Current node not found in the ordered list.");
+      return [];
+    }
+  
+    // All nodes before the current node are considered upstream
+    return orderedList.slice(0, currentNodeIndex);
+  };
+
+//   export const extractEventDataFromNodes = (nodes) => {
+//     return nodes.flatMap(node => {
+//       // Focus on the 'query' object inside 'eventData'
+//       const queryData = node.formData?.eventData?.query || {};
+//       return Object.entries(queryData).map(([key, value]) => ({
+//         // Define the structure of your pills here
+//         id: `${node.id}_${key}`, // Unique ID combining node ID and key
+//         label: key, // The key is used as the label of the pill
+//         value: value, // The value of the query parameter
+//         // other properties as needed
+//       }));
+//     });
+//   };
+  
+  
+
 // export function getOrderedList(edges) {
 //     let orderedList = [];
 

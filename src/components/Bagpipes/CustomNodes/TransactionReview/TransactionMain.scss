@@ -1,0 +1,10 @@
+@import '../../../../variables.scss';
+
+.container {
+  
+  }
+
+  .transaction-review-container {
+    overflow-y: auto; /* Enables vertical scrolling */
+    max-height: 90vh; /* Adjust the height as needed */
+}

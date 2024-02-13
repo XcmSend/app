@@ -1,0 +1,77 @@
+
+User
+ok now we have received the object, we would like to:
+
+- use the object to determine the data structure, and use that data structure as potential variables in other nodes of the workflow. 
+-  create an execution entry and store it there
+
+0
+: 
+content
+: 
+""
+created_at
+: 
+"2023-12-01 09:41:52"
+custom_action_output
+: 
+[]
+files
+: 
+[]
+headers
+: 
+{connection: Array(1), content-length: Array(1), accept-encoding: Array(1), host: Array(1), postman-token: Array(1), …}
+hostname
+: 
+"webhook.site"
+ip
+: 
+"2.27.59.192"
+method
+: 
+"POST"
+query
+: 
+data
+: 
+"structure"
+test
+: 
+"hi there 3"
+[[Prototype]]
+: 
+Object
+request
+: 
+null
+size
+: 
+0
+sorting
+: 
+1701423712350760
+team_id
+: 
+17763
+time
+: 
+0.0006539821624755859
+token_id
+: 
+"52a2489e-bc5d-448c-88b7-6de2c843da52"
+type
+: 
+"web"
+updated_at
+: 
+"2023-12-01 09:41:52"
+url
+: 
+"https://webhook.site/52a2489e-bc5d-448c-88b7-6de2c843da52?test=hi%20there%203&data=structure"
+user_agent
+: 
+"PostmanRuntime/7.33.0"
+uuid
+: 
+"cb99e89e-c7fd-4e36-9299-d474f604dad7"

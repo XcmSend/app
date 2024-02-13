@@ -1,7 +1,7 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { WalletInfo } from '@subwallet/wallet-connect/types';
+import { WalletInfo } from '../../types';
 
 // @ts-ignore
 import FearlessWalletLogo from './FearlessWalletLogo.svg';

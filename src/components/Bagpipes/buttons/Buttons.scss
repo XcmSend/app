@@ -1,0 +1,99 @@
+@import '../../../variables.scss';
+
+
+.start-stop-create-button {
+  display: flex;
+  align-items: center; /* Vertically center the items */
+  justify-content: center; /* Horizontally center the items */
+  // background-color: $lighter-primary-color;
+
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  z-index: 1000;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  // min-width: 130px;
+    background-color: $lighter-primary-color;
+
+
+  &:hover {
+    background-color: darken(#007bff, 10%);
+    color: white !important;
+  }
+}
+
+
+@keyframes pulsate {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes rapidShake {
+  0%, 100% { 
+    transform: translateX(0) rotate(0); 
+  }
+  10%, 30%, 50%, 70%, 90% { 
+    transform: translateX(-5px) rotate(-3deg); 
+  }
+  20%, 40%, 60%, 80% { 
+    transform: translateX(5px) rotate(3deg); 
+  }
+}
+
+
+
+
+.idle-pulsate {
+  animation: pulsate 1s infinite;
+}
+
+.idle-shake {
+  animation: shake 0.5s infinite;
+}
+
+
+@keyframes movingGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.idle-moving-gradient {
+  background: linear-gradient(45deg, #6dd5ed, #2193b0, #6dd5ed);
+  background-size: 200% 200%;
+  animation: movingGradient 3s ease infinite;
+}
+
+.idle-effects {
+  background: linear-gradient(45deg, #6dd5ed, #2193b0, #6dd5ed);
+  background-size: 200% 200%;
+  animation: 
+    movingGradient 3s ease infinite,
+    pulsate 1s infinite,
+    rapidShake 0.1s 10 8s; /* Shake 10 times (1s total) after an 8s delay */
+}
+
+/* Override animations on hover */
+.idle-effects:hover {
+  animation-name: movingGradient;
+}
+
+.sending-effects {
+  background: linear-gradient(45deg, #a18cd1, #fbc2eb);
+  background-size: 200% 200%;
+  animation: movingGradient 3s ease infinite;
+}
+
+
+.tippy-inner {
+  min-width: 200px;
+}

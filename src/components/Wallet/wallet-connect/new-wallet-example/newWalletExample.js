@@ -1,5 +1,5 @@
 "use strict";
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 exports.__esModule = true;
 exports.doAddWallet = void 0;

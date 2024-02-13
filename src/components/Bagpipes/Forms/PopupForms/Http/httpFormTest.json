@@ -1,0 +1,16 @@
+{
+    "sections": [
+
+      {
+        "title": "URL",
+        "fields": [
+          {
+            "key": "url",
+            "type": "input",
+            "label": "URL"
+          }
+        ]
+      }
+   
+    ]
+  }

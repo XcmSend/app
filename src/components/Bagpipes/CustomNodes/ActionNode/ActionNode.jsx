@@ -5,12 +5,22 @@ import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
+
+// $DED animation
+import DEDPNG from './../../../../assets/DED.png';
+//import FloatingImage from './FloatingImage';
+
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
 import Selector, { useOutsideAlerter } from './Selector';
+import ActionNodeForm from '../../Forms/PopupForms/Action/ActionNodeForm';
 import toast from 'react-hot-toast';
 import ThemeContext from '../../../../contexts/ThemeContext';
+import { ActionIcon } from '../../../Icons/icons';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css'; 
+import 'tippy.js/themes/light.css';
 
 import '../../../../index.css';
 import '../../node.styles.scss';
@@ -50,6 +60,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [actionData, setActionData] = useState({});
   const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
   const currentActionData = currentNode?.formData?.actionData;
+  console.log('ActionNode currentActionData:', currentActionData);
   const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
@@ -72,9 +83,6 @@ export default function ActionNode({ children, data, isConnectable }) {
     return null;
   };
 
-  
-
-
 
   const fetchActionInfo = async (currentNodeId) => {
     if (isFetchingActionData) return;  
@@ -89,15 +97,18 @@ export default function ActionNode({ children, data, isConnectable }) {
 
         // Now that you have the asset node IDs, derive the assetInFormData and assetOutFormData
         const assetInFormData = nodes.find(node => node.id === assetInNodeId)?.formData;
+        console.log('ActionNode fetchActionInfo assetInFormData:', assetInFormData);
         const assetOutFormData = nodes.find(node => node.id === assetOutNodeId)?.formData;
-
+        console.log(`assetOutFormData:`, assetOutFormData);
         const assetInId = assetInFormData?.asset?.assetId;
         const assetOutId = assetOutFormData?.asset?.assetId;
         const amount = assetInFormData?.amount;
+
         
         if(formState.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
           console.log('fetchActionInfo Fetching for swap');
             const fetchedPriceInfo = await getHydraDxSellPrice(assetInId, assetOutId, amount);
+            console.log('fetchActionInfo fetchedPriceInfo:', fetchedPriceInfo);
             setPriceInfoMap(prevMap => ({
                 ...prevMap,
                 [nodeId]: fetchedPriceInfo
@@ -210,32 +221,6 @@ export default function ActionNode({ children, data, isConnectable }) {
     }
   }, [formState, assetInFormData, assetOutFormData]);
 
-
-//   useEffect(() => {
-//     console.log('ActionNode currentNode:', currentNode);
-//     if (currentNode.data.triggerToast) {
-//         const nodeRect = nodeRef.current.getBoundingClientRect();
-//         const x = window.scrollX - 100 // position of the node relative to the document
-//         const y = window.scrollY - 130// position of the node relative to the document
-//         console.log('Calculated X:', x, 'Calculated Y:', y);
-        
-
-//         toast('Executing action node!', {
-//             icon: '💥',
-//             data: {
-//                 position: { x, y },
-//                 theme: theme  
-//             },
-//             visible: true,
-//             zIndex: 100000,
-//             styleClass: 'node-notifications'
-            
-//           });
-
-//         saveTriggerNodeToast(activeScenarioId, nodeId, false);
-//     }
-// }, [data.triggerToast, data.position, nodeRef, activeScenarioId, nodeId]);
-
 const handleDropdownClick = (value) => {
   console.log("[handleDropdownClick] Selected value clicked:", value);
   setDropdownVisible(false);
@@ -276,22 +261,34 @@ const toggleDropdown = () => {
 
   return (
     <>
+    {/* <Tippy
+    content={<ActionNodeForm />}
+    interactive={true}
+    trigger="click"
+    placement="auto"
+    reference={nodeRef}
+    theme="light"
+  > */}
       
-    <div ref={nodeRef} className={`${theme} custom-node rounded-lg shadow-lg text-xs flex flex-col justify-start bg-gray-100 primary-font`}>
- 
-          <h1 className="text-xxs text-gray-400 primary-font mb-2">{nodeId}</h1>
+    <div ref={nodeRef} className={`${theme} action-node rounded-lg shadow-lg text-xs flex flex-col justify-start primary-font`}>
+      <div className='flex m-1 justify-between'>
+        <ActionIcon className='h-3 w-4' fillColor='rgb(156 163 175' />
+        {/* <div className=" text-xxs text-gray-400 "> {data.name}</div> */}
+        <div className=" text-xxs text-gray-400">{nodeId}</div>
+
+      </div>
 
       <Handle id="a" type="target" position={Position.Left} isConnectable={isConnectable} className='' />
       <Handle id="b" type="source" position={Position.Right} isConnectable={isConnectable} className=''  />
-    <div  className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
-      <div className="text-gray-400 mb-2 text-xxs"> {data.name}</div>
+      <div  className='p-3 in-node-border rounded flex justify-center flex-col items-center mb-3'>
+        
 
       
       
 
       {/* Custom dropdown */}
       <div className="relative">
-        <div className="action-type flex justify-between items-center in-node-border py-1 px-2 rounded cursor-pointer text-xs ml-2 mr-2 font-semibold bg-white" onClick={toggleDropdown}>
+        <div className="action-type flex justify-between items-center in-node-border rounded cursor-pointer text-xs ml-2 mr-2 font-semibold bg-white" onClick={toggleDropdown}>
           {formState.action ? (
             <img src={getActionImage()} alt={formState.action} className="w-12 h-12 p-1 mx-auto" />
           ) : (
@@ -309,6 +306,7 @@ const toggleDropdown = () => {
           xTransferSVG={xTransferSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
+          handleOnClick={true}
         />
 
         </div>
@@ -329,12 +327,30 @@ const toggleDropdown = () => {
       </div>
 
 
+
       {formState.action === 'xTransfer' && currentActionData?.source?.chain && currentActionData?.source?.amount && currentActionData?.source?.symbol && (
       <div className='p-2 in-node-border rounded mb-2 '>
         <div className="flex justify-between">
           <div className="w-1/3 text-xxs text-gray-400">From:</div>
           <div className="w-2/3 font-semibold text-left ">{currentActionData.source.chain}</div>
         </div>
+
+          { currentActionData.source.chain == 'rococo' && (
+           
+           <div 
+           style={{
+            position: 'fixed',
+            top: '90%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 9999, 
+            animation: 'oscillate 2s linear infinite',
+          }}
+           >
+
+             <img alt="DED logo" title="DED logo" src="https://xcmsend.github.io/img/DED.png" /> 
+         </div>
+          )}
 
         <div className="flex justify-between">
           <div className="w-1/3 text-xxs text-gray-400">To:</div>
@@ -348,18 +364,14 @@ const toggleDropdown = () => {
       </div>
     )}
 
-
-
-
-
     <button 
       onClick={() => fetchActionInfo(nodeId)} 
-      className="flex  justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
+      className="fetch-action flex justify-center align-center font-bold py-1 px-1 mb-1 in-node-border-gray-300 hover:in-node-border-green rounded" 
       >
        { isFetchingActionData ? (
           <div className="small-spinner"></div>
         ) : (
-          <img className="h-4 w-4" src="/refresh.svg" alt="refresh icon" />
+          <img className="h-4 w-4" src="/refresh-white.svg" alt="refresh icon" />
         )}
 
     </button>
@@ -381,6 +393,7 @@ const toggleDropdown = () => {
         {data.children}
       </div>
     </div>
+    {/* </Tippy> */}
     </>
   );
 }

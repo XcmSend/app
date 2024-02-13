@@ -1,6 +1,11 @@
 const transformOrderedList = (orderedList, nodes) => {
     return orderedList.map(id => {
         const node = nodes.find(node => node.id === id);
+        if (!node) {
+            console.error(`Node with id ${id} not found.`);
+            return null;
+        }
+
         if (node.type === 'chain') {
             return {
                 type: 'chain',

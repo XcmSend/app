@@ -1,0 +1,53 @@
+@import '../../variables.scss';
+
+.toolbar-node {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 100px; // 20px margin from the bottom
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: $primary-color; // Theme-based background
+    padding: 10px 20px;
+    border-radius: 16px; // Rounded edges
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); // Subtle shadow for depth
+    z-index: 1000; // Ensure it's above other elements
+}
+
+.toolbar-icon {
+  display: flex;
+  flex-direction: column;
+  margin: 0 10px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 400;
+  color: white;
+
+    svg {
+      width: 24px; // Adjust as needed
+      height: 24px; // Adjust as needed
+      margin-bottom: 4px;
+    }
+
+    &:hover {
+      transform: translateY(-5px); // Lift effect on hover
+      // color: var(----color); // Change color on hover for better visibility
+    }
+}
+
+// Media query for responsiveness
+@media (max-width: 600px) {
+  .toolbar-node {
+    width: 90%;
+  }
+}
+
+.tippy-node {
+  // min-width:500px;
+}
+
+.action-image {
+  width:500px !important;
+}

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
 import onEdgesChange from './onEdgesChange';
 
-const useOnEdgesChange = (set, get, setInputVariablesByEdgeId, inputVariablesByEdgeId, updateEdgesInScenario, scenarioId, takeSnapshot) => {
+const useOnEdgesChange = (set, get, setInputVariablesByEdgeId, inputVariablesByEdgeId, updateEdgesInScenario, scenarioId) => {
   return useCallback(
-    onEdgesChange(set, get, setInputVariablesByEdgeId, inputVariablesByEdgeId, updateEdgesInScenario, scenarioId, takeSnapshot),
-    [set, get, setInputVariablesByEdgeId, inputVariablesByEdgeId, updateEdgesInScenario, scenarioId, takeSnapshot]
+    onEdgesChange(set, get, setInputVariablesByEdgeId, inputVariablesByEdgeId, updateEdgesInScenario, scenarioId),
+    [set, get, setInputVariablesByEdgeId, inputVariablesByEdgeId, updateEdgesInScenario, scenarioId]
   );
 };
 

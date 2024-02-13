@@ -3,7 +3,7 @@ import { WalletContext } from '../../../Wallet/contexts';
 import '../../../../index.css';
 import '../../node.styles.scss';
 import './AccountDropdown.scss';
-import { WalletAccount } from '@subwallet/wallet-connect/types';
+import { WalletAccount } from '../../../Wallet/wallet-connect/src/types';
 import { listChains } from '../../../../Chains/ChainsInfo';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 
@@ -49,11 +49,11 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
   };
 
   return (
-    <div className="select-container font-semibold">
+    <div className="select-container">
       <select 
         value={selectedAccount || ""}
         onChange={handleChange}
-        className='border border-gray-300 p-2 rounded-md w-full'
+        className='border border-gray-300 p-2 rounded-md w-full font-semibold'
       >
         <option className="" value="">Select Address</option>
         {walletContext.accounts.map(acc => (

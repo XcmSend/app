@@ -1304,7 +1304,7 @@ button:focus-visible {
 
 .bagpipe .reactflow-wrapper {
   flex-grow: 1;
-  height: 100%;
+  height: 100%  ;
 }
 
 .bagpipe .selectall {
