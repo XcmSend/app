@@ -1,8 +1,9 @@
 // @ts-nocheck
 import React, { useEffect } from 'react';
-import NodeForm from '../NodeForm';
+import NodeForm from '../NodeForm.tsx';
+import './OpenAINodeForm.scss';
 
-const OpenAINodeForm = ({ nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes, formState }) => {
+const OpenAINodeForm = ({ visible, nodeId, nodes, edges, onNodesChange, setModalNodeId, inputNodes, formState }) => {
   console.log('OpenAINodeForm rendered for nodeId:', nodeId);
 
   useEffect(() => {
@@ -13,6 +14,7 @@ const OpenAINodeForm = ({ nodeId, nodes, edges, onNodesChange, setModalNodeId, i
   return (
     <div className="main-font">
     <NodeForm
+      visible={visible} 
       nodeId={nodeId}
       nodes={nodes}
       edges={edges}

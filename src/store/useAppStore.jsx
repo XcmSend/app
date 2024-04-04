@@ -18,11 +18,23 @@ const defaultState = {
   chainAddresses: [],
   isModaVisible: false,
   transactions: [],
-  shouldExecuteChainScenario: false,
-  executionState: 'idle', // can be 'idle', 'sending', 'stopped'
+  shouldExecuteFlowScenario: false,
+  executionState: 'idle', // can be 'idle', 'executing', 'stopped'
   toastPosition: null,
   hrmpChannels: {},
   currentNodeState: 'default_connected',
+  selectedWebhook: null,
+  webhooks: [],
+  webhookDecision: {
+    isPending: false,
+    nodeId: null,
+    decision: null, // 'processNow' or 'waitForNew', null initially
+  },
+  decisionPrompt: { nodeId: null, show: false },
+  isLoadingNode: false,
+  isExecuting: false,
+  nodeLoadingStates: {},
+  
 };
 
 const useAppStore = create(
@@ -33,13 +45,15 @@ const useAppStore = create(
       setCsrfToken: (token) => set(() => ({ csrfToken: token })),
       setUserMetadata: (metadata) => set({ userMetadata: metadata }),
       setLoading: (state) => set({ loading: state }),
-      setActiveExecutionId: (executionId) => {
-        set(() => {
-          return { activeExecutionId: executionId };
-        });
-      },
       setTransactions: (transactions) => set({ transactions }),
       setExecutionId: (id) => set( { executionId: id }),
+      setIsExecuting: (isExecuting) => {
+        console.log("[setIsExecuting] Called with:", isExecuting);
+        set(() => ({ isExecuting }));
+
+      },
+      startExecution: () => set(() => ({ isExecuting: true })),
+      stopExecution: () => set(() => ({ isExecuting: false })),
       setTempEdge: (tempEdge) => set({ tempEdge }),
       setIsModalVisible: (visibility) => set({ isModalVisible: visibility }),
       setActiveScenarioId: (scenarioId) => {
@@ -50,14 +64,60 @@ const useAppStore = create(
             return { activeScenarioId: scenarioId };
         });
       },
+      setActiveExecutionId: (executionId) => {
+        
+        set(() => {
+            console.log("[setActiveExecutionId] Updated activeScenarioId:", executionId);
+            return { activeExecutionId: executionId };
+        });
+      },
+      // setWebhookDecisionPending: (isPending, nodeId) => set(() => ({
+      //   webhookDecision: { isPending: isPending, nodeId: nodeId, showPrompt: isPending },
+      // })),      
+      // setWebhookUserDecision: (decision) => set((state) => ({
+      //   webhookDecision: { ...state.webhookDecision, isPending: false, decision: decision },
+      // })),
 
+      setWebhookUserDecision: (decision, nodeId) => set(state => {
+        // Update the state to reflect the user's decision
+        const execution = state.scenarios[state.activeScenarioId]?.executions[state.executionId];
+        if (execution && execution[nodeId]) {
+          execution[nodeId].webhookEventStatus.userDecision = decision;
+          // Additional logic to handle the decision, if necessary
+        }
+      }),
+      
+      setWebhookDecisionPending: (isPending, nodeId) => set(state => {
+        // Update the state to reflect whether a decision is pending
+        const execution = state.scenarios[state.activeScenarioId]?.executions[state.executionId];
+        if (execution && execution[nodeId]) {
+          execution[nodeId].webhookEventStatus.isPending = isPending;
+        }
+      }),
+
+      
+      setShowDecisionPrompt: (nodeId, show) => set(() => ({
+        decisionPrompt: { nodeId: nodeId, show: show },
+      })),
+
+      setIsLoadingNode: (nodeId, isLoading) => {
+      set((state) => ({
+
+        nodeLoadingStates: {
+          ...state.nodeLoadingStates,
+          [nodeId]: isLoading,
+        },
+      }))
+      console.log("[setIsLoadingNode] Called with:", { nodeId, isLoading })
+
+    },
       setNodeContentMap: (contentMap) => {
         set({ nodeContentMap: contentMap });
-    },
+      },
 
-    setToastPosition: (position) => set(state => ({ toastPosition: position })),
+      setToastPosition: (position) => set(state => ({ toastPosition: position })),
 
-    setNodes: (newStateOrUpdater) => {
+      setNodes: (newStateOrUpdater) => {
         set((prevState) => {
             const currentScenario = prevState.scenarios[prevState.activeScenarioId];
             if (!currentScenario || !currentScenario.diagramData) {
@@ -88,9 +148,9 @@ const useAppStore = create(
                 }
             };
         });
-    },
+      },
 
-    setEdges: (newStateOrUpdater) => {
+      setEdges: (newStateOrUpdater) => {
         set((prevState) => {
             const currentScenario = prevState.scenarios[prevState.activeScenarioId];
             if (!currentScenario || !currentScenario.diagramData) {
@@ -121,39 +181,40 @@ const useAppStore = create(
                 }
             };
         });
-    },
+      },
         
-    // setNodeConnections: (newConnections) => set({ nodeConnections: newConnections }),
-    toggleExecuteChainScenario: () => set((state) => ({ shouldExecuteChainScenario: !state.shouldExecuteChainScenario })),
-    setExecutionState: (newState) => set((state) => ({ executionState: newState })),
+      // setNodeConnections: (newConnections) => set({ nodeConnections: newConnections }),
+      toggleExecuteFlowScenario: () => set((state) => ({ shouldExecuteFlowScenario: !state.shouldExecuteFlowScenario })),
+      setExecutionState: (newState) => set((state) => ({ executionState: newState })),
 
 
-    addScenario: (scenarioId, scenario) => {
-      // Log the action initiation with its parameters
-      console.log("[addScenario] Called with:", { scenarioId, scenario });
+      addScenario: (scenarioId, scenario) => {
+        // Log the action initiation with its parameters
+        console.log("[addScenario] Called with:", { scenarioId, scenario });
+        
+        if (!scenarioId) {
+          console.error("[addScenario] Attempt to add scenario with empty ID");
+          return;
+        }
       
-      if (!scenarioId) {
-        console.error("[addScenario] Attempt to add scenario with empty ID");
-        return;
-      }
+        set((state) => {
+          const newScenario = {
+            ...scenario, 
+            version: 0, // Initialize version
+            executions: {}
+          };
+      
+          const newState = {
+            scenarios: {
+              ...state.scenarios,
+              [scenarioId]: newScenario
+            }
+          };
     
-      set((state) => {
-        const newScenario = {
-          ...scenario, 
-          version: 0, // Initialize version
-          executions: {}
-        };
-    
-        const newState = {
-          scenarios: {
-            ...state.scenarios,
-            [scenarioId]: newScenario
-          }
-        };
-    
-        // Log the updated state (or a part of it)
-        console.log("[addScenario] Updated scenarios:", newState.scenarios);
-        return newState;
+          // Log the updated state (or a part of it)
+          console.log("[addScenario] Updated scenarios:", newState.scenarios);
+          
+          return newState;
       });
 
         // // Check if the number of scenarios exceeds 3
@@ -166,7 +227,6 @@ const useAppStore = create(
     
         
     saveScenario: (scenarioId, diagramData) => {
-      console.log("[saveScenario] Called with:", { scenarioId, diagramData });
 
       if (!scenarioId) {
           console.error('[saveScenario] Scenario ID is missing or incorrect. Cannot save scenario.');
@@ -185,8 +245,6 @@ const useAppStore = create(
                   version
               }
           };
-          console.log("[saveScenario] Updated scenarios:", updatedScenarios);
-          console.log("[saveScenario] Updated scenario:", updatedScenarios[scenarioId].version);
           return { scenarios: updatedScenarios };
       });
     },
@@ -234,7 +292,6 @@ const useAppStore = create(
       if (selectedScenario && (!selectedScenario.nodeContent || !selectedScenario.formState)) {
          loadScenarioAsync(scenarioId);  // Assume this function fetches the missing data and updates the Zustand store
       }
-
       return true;
     },
     
@@ -278,10 +335,14 @@ const useAppStore = create(
       }));
     },
 
-    saveExecution: (executionId) => {
-      console.log("[saveExecution] Attempting to save execution:", executionId);
-    
-      const activeScenarioId = get().activeScenarioId;
+    saveExecution: (newExecutionId) => {
+      const { activeScenarioId } = get();
+
+      set({ executionId: newExecutionId });
+
+      console.log("[saveExecution] Attempting to save execution:", newExecutionId);
+  
+      console.log("[saveExecution] Current Execution ID:", newExecutionId);
       console.log("[saveExecution] Active Scenario ID:", activeScenarioId);
     
       if (!activeScenarioId) {
@@ -308,13 +369,14 @@ const useAppStore = create(
             nodeId: node.id,
             timestamp: new Date().toISOString(), // You can modify this if needed
             nodeContent: node.data?.nodeContent || '', // Safely fetching nodeContent
-            nodeType: node.type
+            nodeType: node.type,
+            responseData: {}
           };
         });
     
         // Prepare the final execution data structure
         const executionData = {
-          [executionId]: nodeExecutionData
+          [newExecutionId]: nodeExecutionData
         };
     
         console.log("[saveExecution] Execution Data:", executionData);
@@ -420,10 +482,143 @@ const useAppStore = create(
                 [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
             };
 
-            console.log("[saveNodeFormData] Updated scenarios:", updatedScenarios, scenarioId);
+            console.log("[saveNodeFormData] Updated scenarios:", nodes, scenarioId);
             return { scenarios: updatedScenarios };
         });
     },
+
+    saveNodeEventData: (scenarioId, nodeId, eventData) => {
+      console.log("[saveNodeEventData] Called with:", { scenarioId, nodeId, eventData });
+
+      // Checking for potential issues
+      if (!scenarioId || !nodeId) {
+          console.error("[saveNodeEventData] Scenario ID or Node ID is missing. Cannot save node form data.");
+          return;
+      }
+
+      set((state) => {
+        const scenario = state.scenarios[scenarioId];
+        if (!scenario) {
+          console.error(`[saveNodeEventData] Scenario with ID ${scenarioId} not found.`);
+          return;
+        }
+    
+        // Update the specific node with new eventData
+        const updatedNodes = scenario.diagramData.nodes.map((node) =>
+          node.id === nodeId ? { ...node, eventData: { ...node.eventData, ...eventData } } : node
+        );
+    
+        return {
+          scenarios: {
+            ...state.scenarios,
+            [scenarioId]: {
+              ...scenario,
+              diagramData: {
+                ...scenario.diagramData,
+                nodes: updatedNodes,
+              },
+            },
+          },
+        };
+      });
+    },
+
+
+    // Assuming this function is updated to accept a scenarioId as well
+    updateNodeResponseData: (scenarioId, executionId, nodeId, statusUpdate) => {
+      set((state) => {
+        console.log("[updateNodeResponseData] Called with:", { scenarioId, executionId, nodeId, statusUpdate });
+        const scenario = state.scenarios[scenarioId];
+        if (!scenario || !scenario.executions || !scenario.executions[executionId]) {
+          console.error(`[updateNodeResponseData] Execution with ID ${executionId} not found in scenario ${scenarioId}.`);
+          return;
+        }
+    
+        const node = scenario.executions[executionId][nodeId];
+        if (!node) {
+          console.error(`[updateNodeResponseData] Node with ID ${nodeId} not found in execution ${executionId}.`);
+          return;
+        }
+    
+        // Append new status event updates without overwriting previous ones
+        const updateExecutionResponseData = {
+          ...node.responseData,
+          eventUpdates: [
+            ...(node.responseData.eventUpdates || []), // Ensure there's a default array to append to
+            {
+              timestamp: new Date().toISOString(),
+              ...statusUpdate,
+            },
+          ],
+        };
+    
+        // Using a more immutable approach to update the state
+        return {
+          scenarios: {
+            ...state.scenarios,
+            [scenarioId]: {
+              ...scenario,
+              executions: {
+                ...scenario.executions,
+                [executionId]: {
+                  ...scenario.executions[executionId],
+                  [nodeId]: {
+                    ...node,
+                    responseData: updateExecutionResponseData,
+                  },
+                },
+              },
+            },
+          },
+        };
+      });
+    },
+    
+    updateNodeWebhookEventStatus: (scenarioId, executionId, nodeId, { hasPreviousEvents, userDecision }) => {
+      set((state) => {
+        console.log("[updateNodeWebhookEventStatus] Called with:", { scenarioId, executionId, nodeId, hasPreviousEvents, userDecision });
+        const scenario = state.scenarios[scenarioId];
+        if (!scenario || !scenario.executions || !scenario.executions[executionId]) {
+          console.error(`[updateNodeWebhookEventStatus] Execution with ID ${executionId} not found in scenario ${scenarioId}.`);
+          return;
+        }
+    
+        const node = scenario.executions[executionId][nodeId];
+        if (!node) {
+          console.error(`[updateNodeWebhookEventStatus] Node with ID ${nodeId} not found in execution ${executionId}.`);
+          return;
+        }
+    
+        // Update the node with the new webhook event status
+        const updateWebhookEventStatus = {
+          ...node.webhookEventStatus, // Ensure existing status is preserved
+          hasPreviousEvents: hasPreviousEvents,
+          userDecision: userDecision,
+        };
+    
+        // Using a more immutable approach to update the state
+        return {
+          scenarios: {
+            ...state.scenarios,
+            [scenarioId]: {
+              ...scenario,
+              executions: {
+                ...scenario.executions,
+                [executionId]: {
+                  ...scenario.executions[executionId],
+                  [nodeId]: {
+                    ...node,
+                    webhookEventStatus: updateWebhookEventStatus,
+                  },
+                },
+              },
+            },
+          },
+        };
+      });
+    },
+    
+    
 
     saveTriggerNodeToast: (scenarioId, nodeId, shouldTrigger) => {
       console.log("[triggerNodeToast] Called with:", { scenarioId, nodeId, shouldTrigger });
@@ -487,23 +682,29 @@ const useAppStore = create(
       }
   
       set((state) => {
-          const scenario = state.scenarios[scenarioId];
-          
+        const scenarios = { ...state.scenarios };
+        const scenario = scenarios[scenarioId];
+
           if (!scenario) {
               console.error(`[saveSignedExtrinsic] Scenario with ID ${scenarioId} not found.`);
               return;
           }
   
           const nodes = scenario.diagramData.nodes.map((node) => {
-              if (node.id === nodeId) {
-                  const updatedFormData = { ...node.formData, signedExtrinsic };
-                  return { ...node, formData: updatedFormData };
-              }
-              return node;
+            if (node.id === nodeId) {
+              return {
+                ...node,
+                extrinsics: { 
+                  signedExtrinsic, 
+                  isUsed: false 
+                }
+              };
+            }
+            return node;
           });
   
           const updatedScenarios = {
-              ...state.scenarios,
+              ...scenarios,
               [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
           };
   
@@ -512,7 +713,34 @@ const useAppStore = create(
       });
   },
 
+  markExtrinsicAsUsed: (scenarioId, nodeId) => {
+    set((state) => {
+      const scenarios = { ...state.scenarios };
+      const scenario = scenarios[scenarioId];
+      
+      if (!scenario) {
+        console.error(`[markExtrinsicAsUsed] Scenario with ID ${scenarioId} not found.`);
+        return;
+      }
+      
+      const nodes = scenario.diagramData.nodes.map((node) => {
+        if (node.id === nodeId && node.extrinsics?.signedExtrinsic) {
+          return {
+            ...node,
+            extrinsics: { 
+              ...node.extrinsics, 
+              isUsed: true 
+            }
+          };
+        }
+        return node;
+      });
+  
+      return { scenarios: { ...scenarios, [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } } } };
+    });
+  },
 
+  
     addNodeToScenario: (scenarioId, newNode) => {
       console.log("[addNodeToScenario] Called with:", { scenarioId, newNode });
 
@@ -885,7 +1113,101 @@ const useAppStore = create(
       // Return the updated state
       return { scenarios: { ...state.scenarios, [activeScenarioId]: updatedScenario } };
     });
-  }, 
+  },
+  
+  setSelectedWebhookInNode: (scenarioId, nodeId, webhookName, webhookUuid) => {
+    if (!scenarioId || !nodeId) {
+      console.error("[setSelectedWebhookInNode] Missing scenarioId or nodeId.");
+      return;
+    }
+  
+    set((state) => {
+      const currentScenario = state.scenarios[scenarioId];
+      if (!currentScenario) {
+        console.error("[setSelectedWebhookInNode] Scenario not found for scenarioId:", scenarioId);
+        return;
+      }
+  
+      const updatedNodes = currentScenario.diagramData.nodes.map((node) =>
+        node.id === nodeId ? { ...node, selectedWebhook: webhookName, uuid: webhookUuid } : node
+      );
+  
+      return {
+        scenarios: {
+          ...state.scenarios,
+          [scenarioId]: {
+            ...currentScenario,
+            diagramData: {
+              ...currentScenario.diagramData,
+              nodes: updatedNodes,
+            },
+          },
+        },
+      };
+    });
+  },
+
+  saveWebhook: (webhook) => {
+    set((state) => {
+      const existingWebhook = state.webhooks.find(w => w.uuid === webhook.uuid);
+      if (existingWebhook) {
+        // Update existing webhook
+        return {
+          webhooks: state.webhooks.map(w => w.uuid === webhook.uuid ? webhook : w)
+        };
+      } else {
+        // Add new webhook
+        return { webhooks: [...state.webhooks, webhook] };
+      }
+    });
+  },
+
+  clearSignedExtrinsic: (scenarioId, nodeId) => {
+    set((state) => {
+      const scenarios = { ...state.scenarios };
+      const scenario = scenarios[scenarioId];
+  
+      if (!scenario) {
+        console.error(`[clearUsedSignedExtrinsic] Scenario with ID ${scenarioId} not found.`);
+        return state; // Early return with unchanged state if the scenario is not found.
+      }
+  
+      // Map through the nodes, removing signedExtrinsic for those where isUsed === true
+      const nodes = scenario.diagramData.nodes.map(node => {
+        console.log(`[clearUsedSignedExtrinsic] Clearing signedExtrinsic for node ${nodeId} as it's marked as used.`);
+
+        if (node.id === nodeId && node.extrinsics?.isUsed) {
+          // If isUsed is true, we remove the signedExtrinsic
+          const { signedExtrinsic, ...restExtrinsics } = node.extrinsics;
+          console.log(`[clearUsedSignedExtrinsic] Clearing signedExtrinsic for node ${node.id} as it's marked as used.`);
+          return { ...node, extrinsics: { ...restExtrinsics, isUsed: null } }; // Optionally reset isUsed
+        }
+        return node; // Return the node unchanged if isUsed is not true
+      });
+  
+      // Update the scenario with the modified list of nodes
+      const updatedScenario = {
+        ...scenario,
+        diagramData: { ...scenario.diagramData, nodes }
+      };
+  
+      return {
+        ...state,
+        scenarios: {
+          ...scenarios,
+          [scenarioId]: updatedScenario
+        }
+      };
+    });
+  },
+  
+  
+
+
+
+
+  
+  
   }
 )
 ),

@@ -107,7 +107,7 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
               <pre>{JSON.stringify(txWithData.draftedExtrinsic.toHuman(), null, 2)}</pre>
             </JSONContainer>
             <div className='mt-3 mb-3 transaction-review-data'>
-              <div className='flex flex-row '><div className=' transaction-name w-1/3'>Action Type:</div> <div><strong>{txWithData.formData.actionType}</strong></div></div>
+              <div className='flex flex-row'><div className='transaction-name w-1/3'>Action Type:</div> <div><strong>{txWithData.formData.actionType}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Source Chain: </div> <div><strong>{txWithData.formData.source.chain}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Source AssetId: </div> <div><strong>{txWithData.formData.source.assetId}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Source Address: </div> <div><strong>{txWithData.formData.source.address}</strong></div></div>
@@ -123,7 +123,7 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
        
         </div>
       ))}
-       <button className={`button mr-2 font-bold`} onClick={onAccept}>Approve all</button>
+       <button className={`button mr-2 font-bold`} onClick={onAccept}>Approve All</button>
          <button className={`button`} onClick={onDecline}>Cancel</button>
     </div>
     </div>

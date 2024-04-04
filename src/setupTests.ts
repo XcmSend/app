@@ -1,5 +1,5 @@
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024 Bagpipes license, see LICENSE.md 
+
 
 // jest-dom adds custom jest matchers for asserting on DOM nodes.
 // allows you to do things like:

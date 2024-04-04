@@ -13,7 +13,7 @@ const assetHubAssets = {
     asset: {
         name: 'assetHubDot',
         symbol: 'DOT',
-        description: 'AssetHub (DOT)',
+        description: 'AssetHub (Polkadot)',
     },
     assetId: 1000,
 };
@@ -22,10 +22,21 @@ const interlayAssets = {
     asset: {
         name: 'interlayDot',
         symbol: 'DOT',
-        description: 'Interlay (DOT)',
+        description: 'Interlay (Polkadot)',
     },
     assetId: 1000,
 };
+
+const turingAssets = {
+    asset: {
+        name: 'turingKus',
+        symbol: 'TUR',
+        description: 'Turing (Kusama)',
+    },
+    assetId: 2114,
+};
+
+
 
 
 const rococoAssets = {
@@ -66,17 +77,22 @@ export const getAssetOptions = async (selectedChain, signal) => {
   let assets;
   switch(selectedChain) {
       case 'hydraDx':
-          assets = await listHydraDxAssets();
+            assets = await listHydraDxAssets();
           break;
       case 'assetHub':
-          assets = await listAssetHubAssets();
+            assets = await listAssetHubAssets();
            // Append assetHubAssets to the fetched assets list
-           assets.push(assetHubAssets);
+            assets.push(assetHubAssets);
           break;
-    case 'interlay':
-        assets = await listInterlayAssets();
-        assets.push(interlayAssets);
-        break;
+      case 'interlay':
+            assets = await listInterlayAssets();
+            assets.push(interlayAssets);
+          break;
+
+        case 'turing':
+          assets = [turingAssets];
+          break;
+
       case 'polkadot':
           assets = [dotAssets];
           break;

@@ -1,7 +1,11 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+// Copyright 2024 Bagpipes license, see LICENSE.md 
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+import * as buffer from 'buffer';
+window.Buffer = buffer.Buffer;
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

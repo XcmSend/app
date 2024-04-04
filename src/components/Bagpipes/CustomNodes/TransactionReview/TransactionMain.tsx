@@ -16,10 +16,11 @@ import getNonce from '../../../../Chains/api/getNonce';
 import '../../../../index.css';
 import { getApiInstance } from '../../../../Chains/api/connect';
 
+import './TransactionMain.scss';
 
 export default function TransactionMain() {
   const { theme } = useContext(ThemeContext);
-  const { scenarios, activeScenarioId, transactions, setTransactions, saveSignedExtrinsic, setNodes, nodes, toggleExecuteChainScenario, setExecutionId, executionId } = useAppStore(state => ({
+  const { scenarios, activeScenarioId, transactions, setTransactions, saveSignedExtrinsic, setNodes, nodes, toggleExecuteFlowScenario, setExecutionId, executionId } = useAppStore(state => ({
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
     transactions: state.transactions,
@@ -27,7 +28,7 @@ export default function TransactionMain() {
     saveSignedExtrinsic: state.saveSignedExtrinsic,
     setNodes: state.setNodes,
     nodes: state.nodes,
-    toggleExecuteChainScenario: state.toggleExecuteChainScenario,
+    toggleExecuteFlowScenario: state.toggleExecuteFlowScenario,
     setExecutionId: state.setExecutionId,
     executionId: state.executionId
   }));
@@ -144,7 +145,7 @@ const handleAcceptTransactions = async () => {
       setExecutionId(executionId);
 
       // Signal that we should execute the scenario
-      toggleExecuteChainScenario();
+      toggleExecuteFlowScenario();
 
   
       // Once all are signed, proceed to the execution phase
@@ -232,11 +233,13 @@ const handleAcceptTransactions = async () => {
 
   return (
     <>
-      <div>
+      <div className='transaction-review-container'>
         
         <button className={`button ${theme}`} onClick={backToBuilder}>Back</button>
   
         {isReviewingTransactions ? (
+        <div className="">
+
           <TransactionReview
             transactions={transactions}
             onAccept={handleAcceptTransactions}
@@ -244,6 +247,7 @@ const handleAcceptTransactions = async () => {
             signExtrinsic={wrapperSignExtrinsic}
             setSignedExtrinsics={setSignedExtrinsics}
           />
+          </div>
         ) : (
           <div className="transaction-signature-status">
             {signedCount < transactions.length 

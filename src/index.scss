@@ -1,15 +1,21 @@
 @import "variables";
 body {
   margin: 0;
-  font-family: $primary-font;
+  font-family: $primary-font !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #020412;
 }
 
-#root {
+html, body, #root {
+  width: 100%;
   height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow: hidden !important;
 }
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -18,19 +24,27 @@ code {
 
 .xcm-send-btn-wallet {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #0059ff;
-  border: none;
+  align-items: center; /* Vertically center the items */
+  justify-content: center; /* Horizontally center the items */
+  // background-color: $lighter-primary-color;
+  color: white;
+  font-weight: 500;
+  padding: 0.5rem 0.8rem;
   border-radius: 8px;
-  height: auto;
-  outline: 0;
-  box-shadow: none;
-
-  &:hover, &:focus, &:active {
-    background-color: #226fff;
+  z-index: 1000;
+  transition: background-color 0.3s;
+  cursor: pointer;
+  // min-width: 130px;
+    background-color: $lighter-primary-color;
+  
+  
+  &:hover {
+    background-color: darken(#007bff, 10%);
+    color: white !important;
   }
-}
+  }
+
+
 
 .xcm-send-btn {
   color: rgb(0, 0, 0) !important;
@@ -124,4 +138,30 @@ code {
 
 .default_connected {
   color: var(--default_edge);
+}
+
+.custom-switch .ant-switch-handle {
+  width: 10px; /* Decrease the handle width */
+  height: 10px; 
+  top: 3px; /* Adjust vertically if needed */
+  left: 3px; /* Adjust for initial position */
+}
+
+.custom-switch {
+  min-width: 25px !important; /* Increase the switch width */
+  height: 16px !important; /* Adjust the switch height if needed */
+  border-radius: 4px !important; /* Less rounded corners */
+}
+
+.custom-switch.ant-switch-checked .ant-switch-handle {
+  left: 20px !important; /* Adjust for position when switched on */
+}
+
+.lab-buttons {
+  background-color: $primary-color;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding:  7px;
+  cursor: pointer;
 }

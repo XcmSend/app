@@ -1,0 +1,272 @@
+---
+sections:
+- title: Connection Type
+  sectionStatus: master
+  fields:
+  - key: connectionType
+    type: select
+    label: Connection Type
+    options:
+    - label: HTTP Request
+      default: true
+      description: Make a basic HTTP request to a URL with no authentication.
+      value: httpRequest
+      filters:
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
+    - label: Make a Basic Auth Request
+      description: Make a basic HTTP request with basic authentication.
+      value: basicAuthHttpRequest
+      filters:
+      - pointerKey: basicAuth
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
+    - label: Make a Request with a Client Certificate
+      description: Make a basic HTTP request with a client certificate.
+      value: clientCertHttpRequest
+      filters:
+      - pointerKey: clientAuthCert
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
+    - label: Make an API key Auth Request
+      description: Make a basic HTTP request with an API key.
+      value: apiKeyAuthHttpRequest
+      filters:
+      - pointerFieldGroup: standardHttpParams
+      - pointerFieldGroup: advancedSettings
+      - pointerKey: apiKeyAuth
+    - label: Retrieve a Resource from a URL
+      description: Retrieve a resource from a URL, such as donwloading a file.
+      value: urlResourceRequest
+      filters:
+      - pointerKey: url
+    - label: Resolve a URL target
+      description: Resolve a URL to its final destination.
+      value: urlResolveRequest
+      filters:
+      - pointerKey: url
+    - label: Retrieve headers
+      description: Retrieve just the headers from a URL.
+      value: headersRequest
+      filters:
+      - pointerKey: sourceModule
+- title: URL
+  fields:
+  - key: url
+    type: input
+    label: URL
+    hasToggle: false
+    fieldGroup: standardHttpParams
+    description: Enter a URL endpoing to make an HTTP request.
+- title: Serialize URL
+  fields:
+  - key: serializeUrl
+    type: radio
+    label: Serialize URL
+    advanced: true
+    default: false
+- title: Method
+  fields:
+  - key: method
+    type: select
+    label: Method
+    fieldGroup: standardHttpParams
+    hasToggle: true
+    options:
+    - label: GET
+      value: get
+    - label: POST
+      value: post
+    - label: PUT
+      value: put
+    - label: DELETE
+      value: delete
+    - label: PATCH
+      value: patch
+    - label: HEAD
+      value: head
+    - label: OPTIONS
+      value: options
+- title: Headers
+  fields:
+  - key: headers
+    type: items
+    label: Headers
+    hasToggle: true
+    fieldGroup: standardHttpParams
+- title: Query Parameters
+  fields:
+  - key: queryParameters
+    type: items
+    label: Query Parameters
+    hasToggle: true
+    fieldGroup: standardHttpParams
+- title: Body Type
+  fields:
+  - key: bodyType
+    type: select
+    label: Body Type
+    fieldGroup: standardHttpParams
+    options:
+    - label: Empty
+      value: empty
+    - label: Raw
+      value: raw
+      children:
+      - title: Content Type
+        fields:
+        - key: contentType
+          type: select
+          parentKey: bodyType
+          parentValue: raw
+          label: Content Type
+          fieldGroup: standardHttpParams
+          options:
+          - label: Text (text/plain)
+            value: text
+          - label: JSON (application/json)
+            value: json
+          - label: XML (application/xml)
+            value: xml
+          - label: HTML (text/html)
+            value: html
+          - label: Custom
+            value: custom
+            children:
+            - title: Value
+              fields:
+              - key: value
+                type: input
+                label: Value
+                parentKey: contentType
+                parentValue: custom
+                fieldGroup: standardHttpParams
+      - title: Request Content
+        fields:
+        - key: requestContent
+          type: input
+          label: Request Content
+          parentValue: raw
+          parentKey: bodyType
+          fieldGroup: standardHttpParams
+    - label: Multipart Form Data
+      value: form-data
+      children:
+      - title: Body Fields Items
+        fields:
+        - key: bodyFieldsItems
+          type: items
+          label: Fields
+          hasToggle: true
+          fieldTypes: true
+          parentValue: form-data
+          parentKey: bodyType
+          fieldGroup: standardHttpParams
+    - label: Form URL Encoded
+      value: url-encoded
+      children:
+      - title: Body Fields (File and Text)
+        fields:
+        - key: bodyFieldsFileText
+          type: items
+          label: Fields
+          hasToggle: true
+          parentValue: url-encoded
+          parentKey: bodyType
+          fieldGroup: standardHttpParams
+- title: Parse response
+  fields:
+  - key: parseResponse
+    type: radio
+    label: Parse response
+    description: Automatically converts and parses JSON and XML responses so you don't
+      need to use a parser. Before you can use parsed JSON or XML content, you need
+      to run the http module once manually.
+    default: false
+    fieldGroup: standardHttpParams
+- title: User Name
+  fields:
+  - key: userName
+    type: input
+    label: User name
+    advanced: true
+- title: Password
+  fields:
+  - key: password
+    type: input
+    label: Password
+    advanced: true
+- title: Timeout
+  fields:
+  - key: timeout
+    type: input
+    label: Timeout
+    advanced: true
+- title: Share cookies with other HTTP modules
+  fields:
+  - key: shareCookies
+    type: radio
+    label: Share cookies with other HTTP modules
+    advanced: true
+    default: false
+- title: Self-signed certificate
+  fields:
+  - key: selfSignedCertificate
+    type: fileUpload
+    label: Self-signed certificate
+    advanced: true
+- title: Reject unverified certificates
+  fields:
+  - key: rejectUnverifiedCertificates
+    type: radio
+    label: Reject unverified certificates
+    advanced: true
+    default: true
+- title: Follow redirects
+  fields:
+  - key: followRedirects
+    type: radio
+    label: Follow redirects
+    advanced: true
+    default: true
+    children:
+    - title: Follow all redirects
+      fields:
+      - key: followAllRedirects
+        type: radio
+        label: Follow all redirects
+        advanced: true
+        default: false
+        parentKey: followRedirects
+        parentValue: true
+- title: Disable Serialization of Duplicated Query Strings
+  fields:
+  - key: disableSerializedQuery
+    type: radio
+    defualt:
+    label: Disable serialization of duplicated queries with same key names as arrays?
+    description: If disabled, the query string will be serialized as `key=value1&key=value2`
+      instead of `key[]=value1&key[]=value2`.
+    advanced: true
+- title: Request compressed content
+  fields:
+  - key: requestCompressedContent
+    type: radio
+    label: Request compressed content
+    description: Adds an Accept-Encoding header.
+    advanced: true
+    default: true
+- title: Use Mutual TLS
+  fields:
+  - key: useMutualTLS
+    type: radio
+    label: Use Mutual TLS
+    advanced: true
+    default: true
+- title: Evaluate All States as Errors
+  fields:
+  - key: evaluateErrors
+    type: radio
+    label: Evaluate all states as errors (except for 2xx and 3xx)
+    advanced: true
+    default: false

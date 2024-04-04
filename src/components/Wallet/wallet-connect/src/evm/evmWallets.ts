@@ -1,9 +1,9 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { BaseEvmWallet } from '@subwallet/wallet-connect/evm/BaseEvmWallet';
-import { PREDEFINED_EVM_WALLETS } from '@subwallet/wallet-connect/evm/predefinedWallet';
-import { EvmWallet, EvmWalletInfo } from '@subwallet/wallet-connect/types';
+import { BaseEvmWallet } from './BaseEvmWallet';
+import { PREDEFINED_EVM_WALLETS } from './predefinedWallet';
+import { EvmWallet, EvmWalletInfo } from '../types';
 
 const evmWallets: EvmWallet[] = [];
 

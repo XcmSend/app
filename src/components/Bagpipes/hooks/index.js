@@ -2,6 +2,6 @@
 import useAppStore from "../../../store/useAppStore";
 import useSaveDiagramState from "./useSaveDiagramState";
 import useExecuteScenario from "./useExecuteScenario";
-import useExecuteChainScenario from "./useExecuteChainScenario";
+import useExecuteFlowScenario from "./useExecuteFlowScenario";
 
-export { useAppStore, useSaveDiagramState, useExecuteScenario, useExecuteChainScenario}
+export { useAppStore, useSaveDiagramState, useExecuteScenario, useExecuteFlowScenario}

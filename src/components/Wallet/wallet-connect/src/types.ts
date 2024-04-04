@@ -51,23 +51,23 @@ export interface Wallet extends WalletInfo, WalletMethods {
 
   provider: InjectedProvider | undefined;
 }
-// export interface EvmWalletMethods {
-//   request<T>(args: RequestArguments): Promise<Maybe<T>>;
-//   enable(): Promise<boolean>
-// }
+export interface EvmWalletMethods {
+  request<T>(args: RequestArguments): Promise<Maybe<T>>;
+  enable(): Promise<boolean>
+}
 
-// export interface EvmWalletInfo extends WalletInfo {
-//   isSetGlobalString: string;
-//   initEvent?: string
-// }
+export interface EvmWalletInfo extends WalletInfo {
+  isSetGlobalString: string;
+  initEvent?: string
+}
 
-// export interface EvmWallet extends EvmWalletInfo, EvmWalletMethods {
-//   installed: boolean;
-//   extension: MetaMaskInpageProvider | undefined;
-//   isReady: Promise<MetaMaskInpageProvider | undefined>;
-// }
+export interface EvmWallet extends EvmWalletInfo, EvmWalletMethods {
+  installed: boolean;
+  extension: MetaMaskInpageProvider | undefined;
+  isReady: Promise<MetaMaskInpageProvider | undefined>;
+}
 
-// // EVM request method callback event params
-// export interface EvmConnectParams {
-//   chainId: string;
-// }
+// EVM request method callback event params
+export interface EvmConnectParams {
+  chainId: string;
+}
