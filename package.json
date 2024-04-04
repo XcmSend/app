@@ -6,13 +6,13 @@
     "Filip Kalebo <filip@rustsyndi.cat>"
   ],
   "private": true,
-  "version": "0.0.8",
+  "version": "0.0.9",
   "license": "Bagpipes License",
   "type": "module",
   "scripts": {
     "gen-gitinfo": "echo export default \"\\\"$(git rev-parse HEAD)\\\"\"  > src/components/Bagpipes/_git_commit.js",
     "build:tailwind": "npx tailwindcss -c ./tailwind.config.js -i ./src/index.css -o dist/output.css",
-    "dev": "yarn build:tailwind && vite --force",
+    "dev": "npm run build:tailwind && vite --force",
     "build": "tsc && npm run build:tailwind && vite build ",
     "test": "npx tsx src/run_tests.ts",
     "format": "npx prettier --write 'src/*/*/*.ts'",
