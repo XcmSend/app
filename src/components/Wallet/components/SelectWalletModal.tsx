@@ -1,8 +1,8 @@
-// Copyright 2019-2022 @bagpipes/xcm-send authors & contributors
+// Copyright 2019-2022 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
-import { getEvmWalletBySource } from '@subwallet/wallet-connect/evm/evmWallets';
+import { getWalletBySource } from '../wallet-connect/src/dotsama/wallets';
+import { getEvmWalletBySource } from '../wallet-connect/src/evm/evmWallets';
 import { Modal } from 'antd';
 import React, { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';

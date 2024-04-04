@@ -4,24 +4,29 @@ import 'reactflow/dist/style.css';
 // onConnect.js
 import { addEdge } from 'reactflow';
 
+// let edgeLabel = "Default Label";
+let edgeLabel = "";
+
+
 export const EDGE_STYLES = {
   default: {
     style: {
       stroke: 'gray',
-      strokeWidth: 3,
+      strokeWidth: 1,
     },
     animated: true,
     markerEnd: {
-      // type: MarkerType.ArrowClosed,
+      type: MarkerType.ArrowClosed,
       color: 'gray',
       strokeWidth: 2,
     },
+    type: 'step',
     label: 'Edge Label',
   },
   executing: {
     style: {
       stroke: 'green',
-      strokeWidth: 7,
+      strokeWidth: 3,
     },
     animated: true,
     markerEnd: {
@@ -34,19 +39,21 @@ export const EDGE_STYLES = {
 
   default_connected: {
     style: {
-      stroke: ``,
-      strokeWidth: 2
+      stroke: `green`,
+      strokeWidth: 2,
     },
     // animated: true,
     markerEnd: {
-      // type: MarkerType.Arrow,
-      color: ``,
+      type: MarkerType.Arrow,
+      // color: ``,
       strokeWidth: 1
     },
-    // type: 'arrow',
-    // label: 'Edge Label',
+    type: 'arrow',
+    label: edgeLabel,
+    labelShowBg: true,
+    labelStyle: {backgroundColor: 'green'}, 
     focusable: true,
-    label: '',
+    type: 'simplebezier',
 
   
   }

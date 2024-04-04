@@ -4,8 +4,8 @@ import { getAllConnectedNodes } from '../../utils/getAllConnectedNodes';
 import RichTextEditor from '../../RichTextEditor/RichTextEditor';
 
 const Prompt = ({ nodeId, edges, inputNodes, setInputNodes, formState, setFormState, richTextEditorRef }) => {
-  console.log('formState in PROMPT:', formState); // Add this line
-
+  console.log('formState in PROMPT:', formState); 
+  
   useEffect(() => {
     if (nodeId && edges) {
       const connectedNodeIds = getAllConnectedNodes(nodeId, edges);

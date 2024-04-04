@@ -6,12 +6,13 @@
 
 .main-layout {
   height: 100%;
+  width: 100%;
 }
 
 .main-content {
-  height: 100%;
-  position: relative;
-  overflow: auto;
+  height: 100vh;
+  position: absolute !important;
+  overflow: hidden;
 }
 
 .main-content.-dark {

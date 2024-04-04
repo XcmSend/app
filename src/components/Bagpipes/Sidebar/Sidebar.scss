@@ -1,0 +1,127 @@
+@import '../../../variables.scss';
+
+
+// .chat-container {
+//     display: flex;
+//     height: 100vh;
+//   }
+  
+.sidebar {
+  // width: 50px; /* Initial minimized width */
+  transition: width 0.5s ease;
+  z-index: 1000 !important;
+  height: 100%;
+  overflow: hidden; /* Hide content that overflows during transition */
+}
+
+.sidebar-content {
+  width: 100%; /* Full-width */
+  // text-align: center; /* Center text */
+  transition: width 0.5s ease; /* Smooth transition for width */
+  z-index: 1000 !important;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.5s ease; /* Transition for hover effect */
+  width: 100%;
+  z-index: 1000 !important;
+  background-color: var(--bg);
+  padding-right: 10px;
+  display: flex;
+
+
+
+
+  &:hover {
+    // box-shadow: 0 0 0 2px rgb(54, 54, 54); /* Gray border-like shadow */
+    border-radius: 5px; /* Optional for rounded corners */
+      min-width: 150px;
+
+  }
+}
+
+.sidebar-item a {
+  text-decoration: none;
+  color: inherit; /* Inherit color from parent */
+  display: flex;
+  align-items: center;
+  z-index: 1000 !important;
+
+
+}
+
+.sidebar-text {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  color: rgb(43, 43, 43);
+  // transition: opacity 0.5s ease;
+  margin-left: 10px;
+  z-index: 1000 !important;
+
+}
+
+.sidebar:hover .sidebar-text {
+  opacity: 1;
+  z-index: 1000 !important;
+
+}
+
+
+/* Keep the icons always visible */
+.sidebar-icon {
+  min-width: 30px; /* Adjust as needed */
+  z-index: 1000 !important;
+
+}
+
+  
+  .chat-area {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-left: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+  }
+  
+  .branch-bar {
+    width: 50px; /* Initial minimized width */
+    background-color: #f4f4f4;
+    transition: width 0.3s;
+  }
+  
+  .branch-bar:hover {
+    width: 1000px; /* Expanded width */
+  }
+  
+  .input-container {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 100px); /* Assuming 50px is the width of each sidebar */
+    background-color: #ffffff;
+    border-top: 1px solid #e0e0e0;
+    padding: 10px;
+  }
+  
+  input-container textarea {
+    flex: 1;
+    resize: vertical; /* This makes the textarea vertically resizable */
+    padding: 10px;
+    margin-right: 10px;
+  }
+  
+  .input-container button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+  

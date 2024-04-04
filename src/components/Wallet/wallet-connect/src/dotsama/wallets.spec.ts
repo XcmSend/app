@@ -1,8 +1,8 @@
 // Copyright 2019-2022 @subwallet/wallet-connect authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { addWallet, getWalletBySource, getWallets } from '@subwallet/wallet-connect/dotsama/wallets';
-import { WalletInfo } from '@subwallet/wallet-connect/types';
+import { addWallet, getWalletBySource, getWallets } from './wallets';
+import { WalletInfo } from '../types';
 
 describe('Test Wallets Methods', () => {
   it('Test getWallets', () => {

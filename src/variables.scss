@@ -1,5 +1,6 @@
 $primary-color: #007bff;
-$primary-font: 'Lexend', 'Muli', 'Mulish', sans-serif;
+$lighter-primary-color: #2990ff;
+$primary-font: 'Lexend', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 $unbounded-font: 'Unbounded', sans-serif;
 $chain-node-width: 250px;
 
@@ -23,15 +24,16 @@ $chain-node-width: 250px;
     --controls-border: #ddd;
     --button-bg: #{$primary-color};
     --node-handle: #181818;
-    --node-input-title:rgb(156 163 175);
+    --node-input-title:rgb(77, 77, 77);
     --color: rgb(19, 19, 19);
     --border-color: rgb(202, 202, 202); 
     --button-bg-hover: darken(#{$primary-color}, 10%);
-    --box-shadow-color: #bdbdbd44;
+    --box-shadow-color: #b3b3b344;
     --toast-bg: #b9b9b9;
     --toast-bg-accent: #5182f6;
     --default-edge: black;
     --button-color: white;
+    --node-perimeter: white;
     
 }
 
@@ -63,4 +65,5 @@ $chain-node-width: 250px;
     --toast-bg-accent: #1c4cbe;
     --default-edge: white;
     --button-color: white;
+    --node-perimeter: black;
 }

@@ -2,6 +2,8 @@
   
   .lab-container {
      padding: 20px;
+     flex-grow: 1; /* Takes up the available space */
+     width: 100%;
    }
   
   .lab-top-bar {
@@ -30,7 +32,7 @@
     &:hover {
       // Reduced scaling
       transform: scale(1.02);
-      background-color: white;
+      background-color: var(--bg);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
   }
@@ -59,22 +61,12 @@
     text-align: center;
     margin-top: 20px;
   }
-  
-
-  .edit-button-right {
-    background-color: $primary-color;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-  }
 
   .close-button-right {
     background-color: $primary-color;
     color: white;
     border: none;
-    border-radius: 50px;
+    border-radius: 5px;
     padding: 5px 5px;
     cursor: pointer;
    
@@ -130,3 +122,48 @@
       background-color: #f2f2f2;
     }
   }
+
+  .scenario-container {
+    // Other styles for scenario-container
+  
+    .execution-section {
+      // Styles for each execution section
+      margin-bottom: 20px; // Example spacing
+  
+      .dropdown-button {
+        // Styles for the dropdown button
+      }
+  
+      .node-table {
+        width: 100%; // Make table stretch the full width
+        border-collapse: collapse; // Optional: for styling
+  
+        th, td {
+          border: 1px solid #ddd; // Optional: for styling
+          padding: 8px; // Optional: for styling
+        }
+  
+        th {
+          background-color: #f2f2f2; // Optional: header background
+          text-align: left; // Optional: align header text
+        }
+  
+        .node-execution-details-row {
+          td {
+            padding: 0; // Removes padding for the detail row's cell
+          }
+  
+          .node-execution-details {
+            // Styles for the execution details container
+            padding: 10px; // Adds padding within the details container
+            // More styling for the execution details as needed
+          }
+        }
+      }
+  
+      .node-detail-toggle {
+        // Styles for the toggle button
+      }
+    }
+  }
+  

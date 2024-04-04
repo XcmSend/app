@@ -106,3 +106,199 @@ export function processScenarioData(diagramData) {
     // Return both sorted nodes and edges
     return { nodes: sortedNodes, edges };
 }
+
+export function processAndSanitizeFormData(formData, executionData, upstreamNodeIds) {
+    // Define the pill regex pattern
+    const pillRegex = /<span[^>]*data-id="([^"]+)"[^>]*data-nodeindex="(\d+)"[^>]*>([^<]+)<\/span>/g;
+
+    // Sanitize and remove unnecessary HTML tags, except for <span class="pill">...
+    function sanitizeValue(value) {
+        let sanitizedValue = value.replace(/<div[^>]*>(.*?)<\/div>/g, "$1");
+        sanitizedValue = sanitizedValue.replace(/<span(?![^>]*class="pill")[^>]*>(.*?)<\/span>/g, "$1");
+        return sanitizedValue;
+    }
+
+    // Replace pills with their actual values from execution data
+    function replacePills(value) {
+        return value.replace(pillRegex, (match, dataId, nodeIndexStr) => {
+            const nodeIndex = parseInt(nodeIndexStr, 10) - 1;
+            if (nodeIndex < 0 || nodeIndex >= upstreamNodeIds.length) {
+                console.error(`Node index ${nodeIndex} out of bounds for upstream nodes.`);
+                return match; // Return original pill markup if nodeIndex is out of bounds
+            }
+
+            const nodeId = upstreamNodeIds[nodeIndex];
+            const eventData = executionData[nodeId]?.responseData?.eventUpdates?.slice(-1)[0]?.eventData;
+            if (!eventData) {
+                console.error(`No eventData found for node: ${nodeId}`);
+                return match; // Return original pill markup if no event data found
+            }
+
+            const pathParts = dataId.split('.');
+            let actualValue = eventData;
+            for (const part of pathParts) {
+                if (actualValue && actualValue.hasOwnProperty(part)) {
+                    actualValue = actualValue[part];
+                } else {
+                    console.error(`Path not found in eventData for node ${nodeId}: ${dataId}`);
+                    return match; // Return original pill markup if path not found
+                }
+            }
+
+            return typeof actualValue === 'object' ? JSON.stringify(actualValue) : actualValue;
+        });
+    }
+
+    // Recursively apply sanitization and pill replacement to strings, arrays, and object values
+    function recursiveProcess(value) {
+        if (typeof value === 'string') {
+            let sanitizedValue = sanitizeValue(value);
+            return replacePills(sanitizedValue);
+        } else if (Array.isArray(value)) {
+            return value.map(item => {
+                if (typeof item === 'object') {
+                    return recursiveProcess(item); // Recursively process each item if it's an object
+                } else if (typeof item === 'string') {
+                    return recursiveProcess(item); // Apply pill replacement directly if it's a string
+                }
+                return item;
+            });
+        } else if (typeof value === 'object' && value !== null) {
+            const processedObject = {};
+            for (const [key, val] of Object.entries(value)) {
+                processedObject[key] = recursiveProcess(val); // Apply recursively for nested objects
+            }
+            return processedObject;
+        }
+        return value; // Non-string, non-array, and non-object values are returned as-is
+    }
+
+    // Apply the recursive processing to each field in formData
+    const processedFormData = {};
+    for (const [key, value] of Object.entries(formData)) {
+        processedFormData[key] = recursiveProcess(value);
+    }
+
+    return processedFormData;
+}
+
+
+export function sanitizeFormData(formData) {
+    const cleanFormData = {};
+    Object.keys(formData).forEach(key => {
+        const value = formData[key];
+        if (typeof value === 'string') {
+            // Remove all <div> tags and their content
+            let sanitizedValue = value.replace(/<div[^>]*>(.*?)<\/div>/g, "$1");
+            
+            // Remove all <span> tags except those with class="pill"
+            sanitizedValue = sanitizedValue.replace(/<span(?![^>]*class="pill")[^>]*>(.*?)<\/span>/g, "$1");
+
+            cleanFormData[key] = sanitizedValue;
+        } else {
+            // For non-string fields, copy as is
+            cleanFormData[key] = value;
+        }
+    });
+    console.log('Sanitized form data:', cleanFormData);
+    return cleanFormData;
+}
+
+
+export function parseAndReplacePillsInFormData(formData, executionData, upstreamNodeIds) {
+    const pillRegex = /<span[^>]*data-id="([^"]+)"[^>]*data-nodeindex="(\d+)"[^>]*>([^<]+)<\/span>/g;
+
+    function getLatestEventDataForNode(nodeId) {
+        // Assuming the latest event update is the last item in the eventUpdates array
+        return executionData[nodeId]?.responseData?.eventUpdates?.slice(-1)[0]?.eventData;
+    }
+
+    function replacePills(value) {
+        return value.replace(pillRegex, (match, dataId, nodeIndexStr) => {
+            const nodeIndex = parseInt(nodeIndexStr, 10) - 1; // Convert 1-based index to 0-based
+            if (nodeIndex < 0 || nodeIndex >= upstreamNodeIds.length) {
+                console.error(`Node index ${nodeIndex} out of bounds for upstream nodes.`);
+                return match; // Return original pill markup if nodeIndex is out of bounds
+            }
+
+            const nodeId = upstreamNodeIds[nodeIndex];
+            const latestEventData = getLatestEventDataForNode(nodeId);
+            if (!latestEventData) {
+                console.error(`No eventData found for node: ${nodeId}`);
+                return match; // Return original pill markup if no event data found
+            }
+
+            // Navigate through the eventData based on dataId
+            const pathParts = dataId.split('.');
+            let actualValue = latestEventData;
+            for (const part of pathParts) {
+                if (actualValue && actualValue.hasOwnProperty(part)) {
+                    actualValue = actualValue[part];
+                } else {
+                    console.error(`Path not found in eventData for node ${nodeId}: ${dataId}`);
+                    return match; // Return original pill markup if path not found
+                }
+            }
+
+            console.log(`Replacement found for ${dataId} in node ${nodeId}:`, actualValue);
+            return typeof actualValue === 'object' ? JSON.stringify(actualValue) : actualValue;
+        });
+    }
+
+    // Recursively apply pill replacement to strings, arrays, and object values
+    function applyReplacement(value) {
+        if (typeof value === 'string') {
+            return replacePills(value);
+        } else if (Array.isArray(value)) {
+            return value.map(item => applyReplacement(item));
+        } else if (typeof value === 'object' && value !== null) {
+            return Object.entries(value).reduce((acc, [key, val]) => {
+                acc[key] = applyReplacement(val);
+                return acc;
+            }, {});
+        }
+        return value;
+    }
+
+    // Apply pill replacement to each field in formData
+    return Object.entries(formData).reduce((acc, [key, value]) => {
+        acc[key] = applyReplacement(value);
+        return acc;
+    }, {});
+}
+
+
+
+//     // Apply pill replacement to each field in formData
+//     const parsedFormData = {};
+//     Object.entries(formData).forEach(([key, value]) => {
+//         if (typeof value === 'string') {
+//             parsedFormData[key] = replacePills(value, upstreamNodeIds);
+//         } else if (Array.isArray(value)) {
+//             // If value is an array, apply replacePills to each element
+//             parsedFormData[key] = value.map(item => typeof item === 'string' ? replacePills(item) : item);
+//         } else {
+//             // Non-string and non-array values are copied as-is
+//             parsedFormData[key] = value;
+//         }
+//     });
+
+//     return parsedFormData;
+// }
+
+
+export function getUpstreamNodeIds(orderedList, currentNodeId) {
+    const currentIndex = orderedList.indexOf(currentNodeId);
+    if (currentIndex === -1) {
+        console.error(`Node ID ${currentNodeId} not found in the ordered list.`);
+        return [];
+    }
+
+    // Slice the ordered list up to the current index to get all upstream node IDs
+    const upstreamNodeIds = orderedList.slice(0, currentIndex);
+    console.log('Upstream node IDs:', upstreamNodeIds);
+    return upstreamNodeIds;
+}
+
+
+

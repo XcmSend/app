@@ -11,12 +11,11 @@ import useAppStore from '../../../store/useAppStore';
 const useExecuteScenario = (nodes, setNodes) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setActiveExecutionId, setExecutionId, updateNodeContent, setLoading, loading} = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading} = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
       executionId: state.executionId,
-      setActiveExecutionId: state.setActiveExecutionId,
       setExecutionId: state.setExecutionId,
       updateNodeContent: state.updateNodeContent,
       setLoading: state.setLoading,

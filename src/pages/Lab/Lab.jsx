@@ -13,9 +13,13 @@ import ScenarioService from '../../services/ScenarioService';
 import toast from 'react-hot-toast';
 import { v4 as uuidv4 } from 'uuid';
 import { useCreateScenario } from '../../components/Bagpipes/hooks/useCreateScenario';
+import ThemeContext from '../../contexts/ThemeContext';
+import Toggle from '../../components/Bagpipes/Forms/Toggle';
+import { Button } from 'antd';
+import { GenerateLinkButton } from '../../components/Bagpipes/buttons';
 
 function Lab() {
-    const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, activeExecutionId, setActiveExecutionId, loadScenario } = useAppStore((state) => ({
+    const { scenarios, addScenario, setActiveScenarioId, activeScenarioId, setNodeContentMap, loadScenario } = useAppStore((state) => ({
         scenarios: state.scenarios,
         addScenario: state.addScenario,
         setActiveScenarioId: state.setActiveScenarioId,
@@ -27,7 +31,24 @@ function Lab() {
     const navigate = useNavigate();
     const createScenario = useCreateScenario();
     const [templateScenarioId, setTemplateScenarioId] = useState(null);
+    const { theme } = React.useContext(ThemeContext);
+    const [persistedScenarios, setPersistedScenarios] = useState({});
 
+
+    const togglePersistScenario = async (scenarioId, e) => {
+      e.stopPropagation(); // Prevent triggering navigation or other buttons
+      const newState = !persistedScenarios[scenarioId];
+      const success = await persistScenarioAsync(scenarioId, newState);
+      if (success) {
+        setPersistedScenarios({
+          ...persistedScenarios,
+          [scenarioId]: newState,
+        });
+      } else {
+        // Handle error, maybe show a toast notification
+        console.error('Error persisting scenario state');
+      }
+    };
 
     // const saveScenario = (scenarioId) => {
     //     const scenarioToSave = scenarios[scenarioId];
@@ -39,82 +60,76 @@ function Lab() {
     //     }
     //   };
     
-    
-      const editScenario = async (scenarioId) => {
-        const loadSuccess = await loadScenarioAsync(scenarioId);
+    const editScenario = async (scenarioId) => {
+      const loadSuccess = await loadScenarioAsync(scenarioId);
+      
+      if (loadSuccess) {
+        console.log("[editScenario] active scenario id in edit scenario", activeScenarioId);
+        loadScenario(scenarioId);
+        setActiveScenarioId(scenarioId);
+
+
+        navigate('/builder');
+      } else {
+        console.log("Scenario could not be loaded."); // Or some other error handling
+        toast.error("Scenario could not be loaded."); // Or some other error handling
+
+      }
+    };
         
-        if (loadSuccess) {
-          console.log("[editScenario] active scenario id in edit scenario", activeScenarioId);
-          loadScenario(scenarioId);
-          setActiveScenarioId(scenarioId);
+    return (
+      <div className={`${theme} lab-container p-8 h-full`}>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-semibold">Lab</h1>
+          <button 
+            className="button bg-blue-500 flex items-center"
+            onClick={createScenario}
+          >
+            <span className='mr-2'><PlusIcon className='' fillColor='white' /></span>Create New Scenario
+          </button>
+        </div>
+        {templateScenarioId && <CreateTemplateLink scenarioId={templateScenarioId} />}
 
-
-          navigate('/builder');
-        } else {
-          console.log("Scenario could not be loaded."); // Or some other error handling
-          toast.error("Scenario could not be loaded."); // Or some other error handling
-
-        }
-      };
         
-          
-    
+        <div>
+          {Object.entries(scenarios).length > 0 ? (
+            Object.entries(scenarios).map(([scenarioId, scenario]) => (
+              scenario ? (
+                <div key={scenarioId} className="scenario-card relative cursor-pointer" onClick={() => navigate(`/scenario/${scenarioId}`)} >
+                  <div className="scenario-content">
+                    <div className=''>{scenario.name}</div>
+                    <div className="">Scenario {scenarioId} </div>
+                    <GenerateLinkButton scenarioId={scenarioId} />
 
-          return (
-            <div className="bg-gray-100 p-8 h-full">
-              <div className="flex justify-between items-center mb-8">
-                <h1 className="text-2xl font-semibold">Lab</h1>
-                <button 
-                  className="button flex items-center"
-                  onClick={createScenario}
-                >
-                   {PlusIcon}
-                  Create New Scenario
-                </button>
-              </div>
-              {templateScenarioId && <CreateTemplateLink scenarioId={templateScenarioId} />}
-
-              
-              <div>
-                {Object.entries(scenarios).length > 0 ? (
-                  Object.entries(scenarios).map(([scenarioId, scenario]) => (
-                    scenario ? (
-                      <div 
-                        key={scenarioId}
-                        className="scenario-card relative cursor-pointer"
-                        onClick={() => navigate(`/scenario/${scenarioId}`)}
-                      >
-                        <div className="scenario-content">
-                        <div className=''>{scenario.name}</div>
-                          <div className="">Scenario {scenarioId} </div>
-
-                          <CreateTemplateLink scenarioId={scenarioId} />
-
-                        
-                          <button 
-                            className="edit-button-right flex items-center"
-                            onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
-                          >
-                            {EditIcon}
-                            Edit
-                          </button>
-                          <button 
-                            className="close-button-right flex items-center"
-                            onClick={(e) => { e.stopPropagation(); deleteScenarioAsync(scenarioId); }}
-                          >
-                            <CloseIcon />
-                           
-                          </button>
-                        </div>
-                      </div>
-                    ) : null
-                  ))
-                ) : (
-                  <p>No scenarios available. Create a new one to get started. </p>
-                )}
-              </div>
-            </div>
-          );
-        }
+                    <div onClick={(e) => e.stopPropagation()}>
+                    <Toggle
+                      title="Persist Scenario"
+                      isToggled={!!persistedScenarios[scenarioId]}
+                      onToggleChange={(checked) => handleToggleChange(scenarioId, checked)}
+                    />
+                    </div>
+                    <button 
+                      className="lab-buttons  hover:bg-blue-700 flex items-center"
+                      onClick={(e) => { e.stopPropagation(); editScenario(scenarioId); }}
+                    >
+                      <EditIcon className='h-4 w-4' />
+                    </button>
+                    <button 
+                      className="close-button-right flex items-center"
+                      onClick={(e) => { e.stopPropagation(); deleteScenarioAsync(scenarioId); }}
+                    >
+                    <CloseIcon />
+                    </button>
+                  </div>
+                </div>
+              ) : null
+            ))
+          ) : (
+            <p>No scenarios available. Create a new one to get started. </p>
+          )}
+        </div>
+      </div>
+    );
+}
         
-        export default Lab;
+  export default Lab;

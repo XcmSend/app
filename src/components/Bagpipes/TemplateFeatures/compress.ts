@@ -18,7 +18,7 @@ export async function compressString(input: string): Promise<string> {
     const shortUrl = await saveUrl(base64encoded);
     console.log('saved link: ', shortUrl);
 
-    return shortUrl;
+    return shortUrl.shortUrl;
   } catch (error) {
     console.error('Error compressing string:', error);
     return ''; // Return an empty string or handle the error as needed
@@ -33,15 +33,15 @@ function addPadding(base64String: string): string {
 }
 
   export async function decompressString(compressedInput: string): Promise<string> {
-    console.log(`decompressing string`);
-    console.log(`got input:`, compressedInput);
+   //  console.log(`decompressing string`);
+   //  console.log(`got input:`, compressedInput);
     try {
       const expandedUrl = await getUrl(compressedInput);
-      console.log(`expanded url:`, expandedUrl);
-      console.log(`0 expanded url:`, expandedUrl.longUrl.longUrl);
+     //  console.log(`expanded url:`, expandedUrl);
+      // console.log(`0 expanded url:`, expandedUrl.longUrl);
    
-      const newinput = expandedUrl.longUrl.longUrl;
-      console.log(`newinput:`, newinput);
+      const newinput = expandedUrl;
+     // console.log(`newinput:`, newinput);
       const in2 = addPadding(newinput);
       // Ensure that the base64 string is properly formatted
       const formattedInput = in2.replace(/[^A-Za-z0-9+/]/g, '');
@@ -55,7 +55,7 @@ function addPadding(base64String: string): string {
       );
 
       const decompressed = pako.inflate(uint8Array, { to: 'string' });
-      console.log(`calling get url`);
+     //  console.log(`calling get url`);
 
       return decompressed;
     } catch (error) {

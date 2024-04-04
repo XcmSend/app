@@ -1,3 +1,8 @@
+
+import WebhooksService from '../../../../services/WebhooksService';
+import useAppStore  from '../../../../store/useAppStore';
+
+
 export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
     let newText = text;
 
@@ -20,6 +25,34 @@ export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
 
     return newText;
 }
+
+export const findUpstreamNodes = (orderedList, nodeId) => {
+    const currentNodeIndex = orderedList.findIndex(nodeIdInList => nodeIdInList === nodeId);
+
+    if (currentNodeIndex === -1) {
+      console.error("Current node not found in the ordered list.");
+      return [];
+    }
+  
+    // All nodes before the current node are considered upstream
+    return orderedList.slice(0, currentNodeIndex);
+  };
+
+//   export const extractEventDataFromNodes = (nodes) => {
+//     return nodes.flatMap(node => {
+//       // Focus on the 'query' object inside 'eventData'
+//       const queryData = node.formData?.eventData?.query || {};
+//       return Object.entries(queryData).map(([key, value]) => ({
+//         // Define the structure of your pills here
+//         id: `${node.id}_${key}`, // Unique ID combining node ID and key
+//         label: key, // The key is used as the label of the pill
+//         value: value, // The value of the query parameter
+//         // other properties as needed
+//       }));
+//     });
+//   };
+  
+  
 
 // export function getOrderedList(edges) {
 //     let orderedList = [];
@@ -137,3 +170,133 @@ export async function smoothZoom(instance, targetZoomLevel, duration = 500) {
         requestAnimationFrame(animateZoom);
     });
 };
+
+
+
+/**
+ * Fetches the execution data for a given node within the active scenario.
+ * 
+ * @param {Object} scenarios - The scenarios object containing all scenario data.
+ * @param {string} activeScenarioId - The ID of the currently active scenario.
+ * @param {string} nodeId - The ID of the node for which to fetch execution data.
+ * @returns {Object|null} The execution data for the given node, or null if not found.
+ */
+export function fetchNodeExecutionData(scenarios, activeScenarioId, nodeId) {
+    // Ensure the active scenario exists
+    const activeScenario = scenarios[activeScenarioId];
+    if (!activeScenario || !activeScenario.executions) {
+        console.error(`Active scenario with ID ${activeScenarioId} not found or does not contain executions.`);
+        return null;
+    }
+
+    // Loop through each execution within the active scenario to find the node's execution data
+    for (const executionId of Object.keys(activeScenario.executions)) {
+        const execution = activeScenario.executions[executionId];
+        if (execution && execution[nodeId]) {
+            return execution[nodeId]; // Return the execution data for the node
+        }
+    }
+
+    // If the function reaches this point, no execution data was found for the node
+    console.error(`Execution data for node with ID ${nodeId} not found in active scenario.`);
+    return null;
+}
+
+
+export const processWebhookEvent = (webhookEventData, webhookFetchStartTime) => {
+    const fetchStartTimeUTC = webhookFetchStartTime.getTime() + (webhookFetchStartTime.getTimezoneOffset() * 60000);
+    console.log('Comparing against fetch start time:', fetchStartTimeUTC);
+
+    const newWebhookEvent = webhookEventData.data.find(event => {
+        const eventCreatedAtUTC = new Date(event.created_at).getTime();
+        console.log('Event created at:', eventCreatedAtUTC);
+        return eventCreatedAtUTC > fetchStartTimeUTC;
+        ;
+    });
+
+    // If a new event is found, process it
+    if (newWebhookEvent) {
+        const processedEventData = {
+            query: newWebhookEvent.query, 
+            content: parseWebhookContent(newWebhookEvent.content), 
+            headers: newWebhookEvent.headers,
+            method: newWebhookEvent.method,
+            createdAt: newWebhookEvent.created_at,
+        };
+        return { processedEventData, isNewEvent: true };
+    }
+    // Return the most recent event but indicate it's not new
+    const mostRecentEvent = webhookEventData.data[0]; // Assuming data is sorted by created_at
+    const processedMostRecentEventData = {
+        query: mostRecentEvent.query, 
+        content: parseWebhookContent(mostRecentEvent.content), 
+        headers: mostRecentEvent.headers,
+        method: mostRecentEvent.method,
+        createdAt: mostRecentEvent.created_at,
+    };
+    return { processedEventData: processedMostRecentEventData, isNewEvent: false };
+};
+
+
+export const waitForNewWebhookEvent = async (uuid, webhookFetchStartTime, nodeId) => {
+    let foundNewEvent = false;
+    let processedEventData = null;
+
+    while (!foundNewEvent && useAppStore.getState().isExecuting && useAppStore.getState().nodeLoadingStates[nodeId]) {
+        const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
+        const { processedEventData: newEventData, isNewEvent } = processWebhookEvent(webhookData, webhookFetchStartTime);
+
+        if (isNewEvent) {
+            foundNewEvent = true;
+            processedEventData = newEventData;
+            break; // Exit the loop if a new event is found
+        }
+
+        // Wait for a specified interval before polling again
+        await new Promise(resolve => setTimeout(resolve, 2000)); // Wait for 5 seconds before the next poll
+
+        // // Here, add a check to see if execution has been stopped
+        // if (!useAppStore.getState().isExecuting || !useAppStore.getState().nodeLoadingStates[nodeId]) {
+        //     useAppStore.getState().setIsLoadingNode(nodeId, false);
+        //     console.log("Execution stopped, exiting the waiting loop.");
+        //     return null; // Exit the function as the execution has been stopped
+        // }
+    }
+
+    return processedEventData;
+};
+
+
+
+const parseWebhookContent = (content) => {
+    try {
+        return JSON.parse(content);
+    } catch (error) {
+        console.error('Error parsing webhook content:', error);
+        return {}; 
+    }
+};
+
+
+// export async function waitForNewWebhookEvent(uuid, startTime, attempt = 0) {
+//     const MAX_ATTEMPTS = 10; 
+//     const RETRY_DELAY = 60000; 
+
+//     if (attempt >= MAX_ATTEMPTS) {
+//         console.log('Max attempts to fetch new webhook event reached.');
+//         return null; 
+//     }
+
+//     const webhookData = await WebhooksService.fetchLatestFromWebhookSite(uuid);
+//     const { processedEventData, isNewEvent } = processWebhookEvent(webhookData, startTime);
+
+//     if (isNewEvent) {
+//         return processedEventData; 
+//     } else {
+//         console.log(`Attempt ${attempt + 1}: Waiting for new webhook event...`);
+//         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
+//         return waitForNewWebhookEvent(uuid, startTime, attempt + 1);
+//     }
+// }
+
+

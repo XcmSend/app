@@ -3,6 +3,26 @@ export const CHAIN_ASSETS = {
         "assets": [
             {
                 "asset": {
+                    "name": "DED Token",
+                    "assetType": "External",
+                    "existentialDeposit": "10,000",
+                    "xcmRateLimit": null,
+                    "symbol": "DED"
+                },
+                "assetId": "1,000,019"
+            },
+            {
+                "asset": {
+                    "name": "Pink Token",
+                    "assetType": "External",
+                    "existentialDeposit": "1",
+                    "xcmRateLimit": null,
+                    "symbol": "PINK"
+                },
+                "assetId": "1,000,021"
+            },
+            {
+                "asset": {
                     "name": "USD Coin (Acala Wormhole)",
                     "assetType": "Token",
                     "existentialDeposit": "10,000",
@@ -10,6 +30,16 @@ export const CHAIN_ASSETS = {
                     "symbol": "USDC"
                 },
                 "assetId": "7"
+            },
+            {
+                "asset": {
+                    "name": "HydraDX",
+                    "assetType": "Token",
+                    "existentialDeposit": "1,000,000,000,000",
+                    "xcmRateLimit": null,
+                    "symbol": "HDX"
+                },
+                "assetId": "0"
             },
             {
                 "asset": {
@@ -350,6 +380,16 @@ export const CHAIN_ASSETS = {
     },
     "assetHub": {
         "assets": [
+            {
+                "asset": {
+                    "deposit": "2,007,400,000",
+                    "name": "DED Token",
+                    "symbol": "DED",
+                    "decimals": "10",
+                    "isFrozen": false
+                },
+                "assetId": "30",
+            },
             {
                 "asset": {
                     "deposit": "20,085,000,000",

@@ -1,166 +1,231 @@
 //@ts-nocheck
-import { getApiInstance } from '../api/connect';
-import { ChainInfo, listChains } from '../ChainsInfo'; 
-import { listInterlayAssets } from '../Assets/listAssetsForChain';
-import { adjustBalance, parseBalanceString, formatToFourDecimals, toUnit} from '../utils/utils'
+import { getApiInstance } from "../api/connect";
+import { ChainInfo, listChains } from "../ChainsInfo";
+import { listInterlayAssets } from "../Assets/listAssetsForChain";
+import {
+  adjustBalance,
+  parseBalanceString,
+  formatToFourDecimals,
+  toUnit,
+} from "../utils/utils";
 import { ApiPromise } from "@polkadot/api";
-import { string } from 'slate';
+import { string } from "slate";
 import { getRawAddress } from "../DraftTx/DraftxTransferTx";
 
-interface AssetResponseObject {
-    nonce: number;
-    consumers: number;
-    providers: number;
-    sufficients: number;
-    data: {
-      free: number;
-      reserved: number;
-      miscFrozen: number;
-      feeFrozen: number;
-      total: number;
-    };
-  }
- 
-function isAssetResponseObject(obj: any): obj is AssetResponseObject {
-    return (
-      typeof obj === 'object' &&
-      obj !== null &&
-      'nonce' in obj &&
-      'consumers' in obj &&
-      'providers' in obj &&
-      'sufficients' in obj &&
-      'data' in obj
-    );
-  }
 
-/// convert assethub's asset balance response
-interface  AssetHubAssetBalance {
-  balance: number;
-  status: string;
-  reason: string,
-  extra: string
+interface BaseBalance {
+  free: number;
+  reserved: number;
+  total: number;
+  frozen?: number; 
 }
 
-function  isAssetHubAssetBalance(obj: any): obj is  AssetHubAssetBalance {
+interface AssetResponseBalance extends BaseBalance {
+  miscFrozen: number;
+  feeFrozen: number;
+}
+
+interface AssetMetadata {
+  symbol: string;
+  decimals: number;
+}
+
+// For types with unique properties, extend the base type
+interface AssetHubAssetBalance extends BaseBalance {
+  status: string;
+  reason: string;
+  extra: string;
+}
+
+interface AssetBalanceInfo extends BaseBalance {
+  assetDecimals?: number;
+  chain: string;
+  accountId: string;
+  assetId: number;
+}
+
+
+
+interface AssetResponseObject {
+  nonce: number;
+  consumers: number;
+  providers: number;
+  sufficients: number;
+  data: {
+    free: number;
+    reserved: number;
+    miscFrozen: number;
+    feeFrozen: number;
+    total: number;
+  };
+}
+
+function isAssetResponseObject(obj: any): obj is AssetResponseObject {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    'balance' in obj &&
-    'status' in obj &&
-    'reason' in obj &&
-    'extra' in obj
+    "nonce" in obj &&
+    "consumers" in obj &&
+    "providers" in obj &&
+    "sufficients" in obj &&
+    "data" in obj
   );
 }
 
+/// convert assethub's asset balance response
+interface AssetHubAssetBalance {
+  balance: number;
+  status: string;
+  reason: string;
+  extra: string;
+}
+
+function isAssetHubAssetBalance(obj: any): obj is AssetHubAssetBalance {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "balance" in obj &&
+    "status" in obj &&
+    "reason" in obj &&
+    "extra" in obj
+  );
+}
 
 /// check the balance of an asset on interlay
 /// returns { free: '304', reserved: '0', frozen: '0' }
-export async function checkInterlayAssetBalance(assetid: number | string, account_id: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, frozen?: number, assetDecimals?: number }> {
+export async function checkInterlayAssetBalance(
+  assetid: number | string,
+  account_id: string,
+  signal?: AbortSignal
+): Promise<{
+  free: number;
+  reserved: number;
+  total: number;
+  frozen?: number;
+  assetDecimals?: number;
+}> {
+    // If assetId is 0, fetch the native balance.
+    //if (assetid === 0 || assetid === "0") {
+    // return hydraDxNativeBalance(account_id_32);
+    // }
 
-  // If assetId is 0, fetch the native balance.
-  //if (assetid === 0 || assetid === "0") {
-   // return hydraDxNativeBalance(account_id_32);
- // }
+    let api: any;
+    let hdxBalance: any;
+    let assetDecimals: number;
 
-  let api: any;
-  let hdxBalance: any;
-  let assetDecimals: number;
-
-  const account_id_32 = getRawAddress(account_id);
-  try {
-    const asset =  {
-      "foreignasset": assetid
-    };
-      api = await getApiInstance('interlay', signal);
+    const account_id_32 = getRawAddress(account_id);
+    try {
+      const asset = {
+        foreignasset: assetid,
+      };
+      api = await getApiInstance("interlay", signal);
       hdxBalance = await api.query.tokens.accounts(account_id_32, asset);
-  } catch (error) {
-      console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
+    } catch (error) {
+      console.error(
+        `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
+        error
+      );
       return { free: 0, reserved: 0, total: 0 };
-  }
-  
-  const stringBalance = hdxBalance.toHuman();
-  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+    }
 
-  try {
-    const assetlist = listInterlayAssets();
+    const stringBalance = hdxBalance.toHuman();
+    //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
 
-    const assetWithAssetId2 = assetlist.find(asset => asset.assetId === assetid.toString());
-    const decimals = parseInt(assetWithAssetId2.asset.decimals, 10);
-  
+    try {
+      const assetlist = listInterlayAssets();
+
+      const assetWithAssetId2 = assetlist.find(
+        (asset) => asset.assetId === assetid.toString()
+      );
+      const decimals = parseInt(assetWithAssetId2.asset.decimals, 10);
+
       assetDecimals = decimals;
-      
-    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-     //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
-  } catch (error) {
+
+      //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
+      //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    } catch (error) {
       console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
       // You might want to set a default or throw an error here
-      assetDecimals = 12; 
-  }
+      assetDecimals = 12;
+    }
 
-  if (isOrmlTokensAccountData(hdxBalance)) {
+    if (isOrmlTokensAccountData(hdxBalance)) {
       const bal_obj: OrmlTokensAccountData = hdxBalance;
       //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
       return {
-          free: bal_obj.free,
-          reserved: bal_obj.reserved,
-          frozen: bal_obj.frozen,
-          total: bal_obj.free + bal_obj.reserved + bal_obj.frozen,
-          assetDecimals
+        free: bal_obj.free,
+        reserved: bal_obj.reserved,
+        frozen: bal_obj.frozen,
+        total: bal_obj.free + bal_obj.reserved + bal_obj.frozen,
+        assetDecimals,
       };
-  }
-  return { free: 0, reserved: 0, total: 0 };
+    }
+    return { free: 0, reserved: 0, total: 0 };
 }
-
 
 // check asset balance on polkadot assethub
-export async function checkAssetHubBalance(assetid: number, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, assetDecimals?: number }> {
-  let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ''), 10);
- // console.log(`checkAssetHubBalance accountId`, account_id_32);
-  if (cleanAssetId === 1000) {
+export async function checkAssetHubBalance(
+    assetid: number,
+    account_id_32: string,
+    signal?: AbortSignal
+): Promise<{
+    free: number;
+    reserved: number;
+    total: number;
+    assetDecimals?: number;
+}> {
+    let cleanAssetId = parseInt(assetid.toString().replace(/,/g, ""), 10);
+    // console.log(`checkAssetHubBalance accountId`, account_id_32);
+    if (cleanAssetId === 1000) {
       // If assetId is 3, then we need to check assetHubNativeBalance
       const nativeBal = await assetHubNativeBalance(account_id_32);
-    //  console.log(`AssetHub Native Balance:`, nativeBal);
+      //  console.log(`AssetHub Native Balance:`, nativeBal);
       // Assuming native balance is provided in the same format, return it
       return {
-          free: nativeBal.free,
-          reserved: nativeBal.reserved,
-          total: nativeBal.total,   
+        free: nativeBal.free,
+        reserved: nativeBal.reserved,
+        total: nativeBal.total,
       };
-  }
+    }
 
-  // For other assetIds, continue checking balance as before
-  const api = await getApiInstance('assetHub', signal);
-  const assetDecimals = await api.query.assets.metadata(cleanAssetId).then((meta: { decimals: any; }) => meta.decimals.toNumber());
-  const balance = await api.query.assets.account(cleanAssetId, account_id_32);
-  const b3 = balance.toHuman();
+    // For other assetIds, continue checking balance as before
+    const api = await getApiInstance("assetHub", signal);
+    const assetDecimals = await api.query.assets
+      .metadata(cleanAssetId)
+      .then((meta: { decimals: any }) => meta.decimals.toNumber());
+    const balance = await api.query.assets.account(cleanAssetId, account_id_32);
+    const b3 = balance.toHuman();
 
-  //console.log(`checkAssetHubBalance balance`, balance);
-  
-  if (isAssetHubAssetBalance(b3)) {
+    //console.log(`checkAssetHubBalance balance`, balance);
+
+    if (isAssetHubAssetBalance(b3)) {
       const bal_obj: AssetHubAssetBalance = b3;
-     // console.log(`checkAssetHubBalance balance object`, bal_obj);
+      // console.log(`checkAssetHubBalance balance object`, bal_obj);
       return {
-          free: bal_obj.balance,
-          reserved: 0,
-          total: bal_obj.balance,
-          assetDecimals
+        free: bal_obj.balance,
+        reserved: 0,
+        total: bal_obj.balance,
+        assetDecimals,
       };
-  } 
-  return { free: 0, reserved: 0, total: 0, assetDecimals };
+    }
+    return { free: 0, reserved: 0, total: 0, assetDecimals };
 }
 
-export async function assetHubNativeBalance(accountid: string): Promise<{ free: number, reserved: number, total: number }> {
-  const api = await getApiInstance('assetHub');
+export async function assetHubNativeBalance(
+  accountid: string
+): Promise<{ free: number; reserved: number; total: number }> {
+  const api = await getApiInstance("assetHub");
   const result = await generic_check_native_balance(api, accountid);
   // Compute total by aggregating all balance types
-  const total = result.free + result.reserved + result.miscFrozen + result.feeFrozen;
+  const total =
+    result.free + result.reserved + result.miscFrozen + result.feeFrozen;
   // Assuming generic_check_native_balance returns the balance object as { free, reserved, total }
- // console.log(`assetHubNativeBalance:`, result);
-  
+  // console.log(`assetHubNativeBalance:`, result);
+
   return {
     free: result.free,
     reserved: result.reserved,
-    total: total
+    total: total,
   };
 }
 
@@ -172,18 +237,28 @@ interface OrmlTokensAccountData {
 
 function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
   return (
-    typeof obj === 'object' &&
+    typeof obj === "object" &&
     obj !== null &&
-    'free' in obj &&
-    'reserved' in obj &&
-    'frozen' in obj
-        );
+    "free" in obj &&
+    "reserved" in obj &&
+    "frozen" in obj
+  );
 }
 
-export async function checkHydraDxAssetBalance(assetid: number | string, account_id_32: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number, frozen?: number, assetDecimals?: number }> {
-   // console.log(`checkHydraDxAssetBalance accountId`, account_id_32);
-   // console.log(`checkHydraDxAssetBalance assetId`, assetid);
-   // console.log('checkHydraDxAssetBalance typeof asset id',typeof assetid);
+export async function checkHydraDxAssetBalance(
+  assetid: number | string,
+  account_id_32: string,
+  signal?: AbortSignal
+): Promise<{
+  free: number;
+  reserved: number;
+  total: number;
+  frozen?: number;
+  assetDecimals?: number;
+}> {
+  // console.log(`checkHydraDxAssetBalance accountId`, account_id_32);
+  // console.log(`checkHydraDxAssetBalance assetId`, assetid);
+  // console.log('checkHydraDxAssetBalance typeof asset id',typeof assetid);
 
   // If assetId is 0, fetch the native balance.
   if (assetid === 0 || assetid === "0") {
@@ -194,84 +269,96 @@ export async function checkHydraDxAssetBalance(assetid: number | string, account
   let hdxBalance: any;
   let assetDecimals: number;
 
-   // console.log(`checkHydraDxAssetBalance trying to connect`);
+  // console.log(`checkHydraDxAssetBalance trying to connect`);
 
   try {
-      api = await getApiInstance('hydraDx', signal);
-      hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
+    api = await getApiInstance("hydraDx", signal);
+    hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
   } catch (error) {
-      console.error(`Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`, error);
-      return { free: 0, reserved: 0, total: 0 };
+    console.error(
+      `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
+      error
+    );
+    return { free: 0, reserved: 0, total: 0 };
   }
-  
+
   const stringBalance = hdxBalance.toHuman();
   //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
 
   try {
-      // Get the asset's metadata
-      const metadata = await api.query.assetRegistry.assetMetadataMap(assetid);
+    // Get the asset's metadata
+    const metadata = await api.query.assetRegistry.assets(assetid);
 
-      if (metadata && metadata.__internal__raw && metadata.__internal__raw.decimals) {
-        assetDecimals = metadata.__internal__raw.decimals;
-      } else {
-        throw new Error('Decimals not found in metadata');
-      }
+    if (
+      metadata &&
+      metadata.__internal__raw &&
+      metadata.__internal__raw.decimals
+    ) {
+      assetDecimals = metadata.__internal__raw.decimals;
+    } else {
+      throw new Error("Decimals not found in metadata");
+    }
     //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
-     //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+    //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
   } catch (error) {
-      console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
-      // You might want to set a default or throw an error here
-      assetDecimals = 12; 
+    console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
+    // You might want to set a default or throw an error here
+    assetDecimals = 12;
   }
 
   if (isOrmlTokensAccountData(hdxBalance)) {
-      const bal_obj: OrmlTokensAccountData = hdxBalance;
-      //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
-      return {
-          free: bal_obj.free,
-          reserved: bal_obj.reserved,
-          frozen: bal_obj.frozen,
-          total: bal_obj.free + bal_obj.reserved + bal_obj.frozen,
-          assetDecimals
-      };
+    const bal_obj: OrmlTokensAccountData = hdxBalance;
+    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    return {
+      free: bal_obj.free,
+      reserved: bal_obj.reserved,
+      frozen: bal_obj.frozen,
+      total: bal_obj.free + bal_obj.reserved + bal_obj.frozen,
+      assetDecimals,
+    };
   }
   return { free: 0, reserved: 0, total: 0 };
 }
 
-
 /// returns the raw balance of the native dot token
-export async function checkPolkadotDotRawNativeBalance(accountId: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+export async function checkPolkadotDotRawNativeBalance(
+  accountId: string,
+  signal?: AbortSignal
+): Promise<{ free: number; reserved: number; total: number }> {
   let bal: any;
   let bal3: any;
   if (accountId) {
-    const api = await getApiInstance('polkadot', signal);
+    const api = await getApiInstance("polkadot", signal);
     bal = await api.query.system.account(accountId);
   }
   bal3 = bal.toHuman();
 
   if (isAssetResponseObject(bal3)) {
-      const bal2: AssetResponseObject = bal3;
-      return {
-          free: bal2.data.free,
-          reserved: bal2.data.reserved,
-          total: bal2.data.total
-      };
+    const bal2: AssetResponseObject = bal3;
+    return {
+      free: bal2.data.free,
+      reserved: bal2.data.reserved,
+      total: bal2.data.total,
+    };
   }
   return { free: 0, reserved: 0, total: 0 };
 }
 
 /// returns the raw balance of the native dot token
-async function checkRococoRocRawNativeBalance(accountid: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
-  const api = await getApiInstance('rococo', signal);
+async function checkRococoRocRawNativeBalance(
+  accountid: string,
+  signal?: AbortSignal
+): Promise<{ free: number; reserved: number; total: number }> {
+  const api = await getApiInstance("rococo", signal);
   const bal = await api.query.system.account(accountid);
   const bal3 = bal.toHuman();
   if (isAssetResponseObject(bal3)) {
-      const bal2: AssetResponseObject = bal3;
-      return {
-          free: bal2.data.free,
-          reserved: bal2.data.reserved,
-          total: bal2.data.total
-      };
+    const bal2: AssetResponseObject = bal3;
+    return {
+      free: bal2.data.free,
+      reserved: bal2.data.reserved,
+      total: bal2.data.total,
+    };
   }
   return { free: 0, reserved: 0, total: 0 };
 }
@@ -283,17 +370,22 @@ assetRegistry.assetMetadataMap(5)
   decimals: 10
 }
 */
-async function getHydradxAssetSymbolDecimals(assetid: number){
-    const api = await getApiInstance('hydraDx');
-    const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
-    return resp;
+export async function getHydradxAssetSymbolDecimals(assetid: number) {
+  console.log(`getHydradxAssetSymbolDecimals assetid`, assetid);
+  const api = await getApiInstance("hydraDx");
+  const resp = (
+    await api.query.assetRegistry.assets(assetid)
+  ).toHuman();
+  return resp;
 }
 
 export function getTokenDecimalsByChainName(chainName: string): number {
   const chainList = listChains();
-  const selectedChain = Object.values(chainList).find(chain => chain.name === chainName);
+  const selectedChain = Object.values(chainList).find(
+    (chain) => chain.name === chainName
+  );
   if (!selectedChain) {
-      throw new Error(`Chain not found: ${chainName}`);
+    throw new Error(`Chain not found: ${chainName}`);
   }
   return selectedChain.token_decimals;
 }
@@ -301,30 +393,41 @@ export function getTokenDecimalsByChainName(chainName: string): number {
 // generic function to check native account balance
 async function generic_check_native_balance(api: ApiPromise, address: string) {
   // convert address to pubkey
- // const accountId = api.createType("account_id_32", address).toHex();
-  const bal= await api.query.system.account(address); // Codec type
+  // const accountId = api.createType("account_id_32", address).toHex();
+  const bal = await api.query.system.account(address); // Codec type
   const bal3 = await bal.toHuman();
   if (isAssetResponseObject(bal3)) {
-      const bal2: AssetResponseObject = bal3;
+    const bal2: AssetResponseObject = bal3;
 
-      return { free: bal3.data.free, reserved: bal3.data.reserved, miscFrozen:  bal3.data.miscFrozen , feeFrozen: bal3.data.feeFrozen} 
-        }
-    return {free: 0, reserved: 0, miscFrozen: 0, feeFrozen: 0};
+    return {
+      free: bal3.data.free,
+      reserved: bal3.data.reserved,
+      miscFrozen: bal3.data.miscFrozen,
+      feeFrozen: bal3.data.feeFrozen,
+    };
+  }
+  return { free: 0, reserved: 0, miscFrozen: 0, feeFrozen: 0 };
 }
 
-async function hydraDxNativeBalance(address: string): Promise<{ free: number, reserved: number, total: number, frozen?: number }> {
-  const api = await getApiInstance('hydraDx');
+async function hydraDxNativeBalance(
+  address: string
+): Promise<{ free: number; reserved: number; total: number; frozen?: number }> {
+  const api = await getApiInstance("hydraDx");
   const result = await generic_check_native_balance(api, address);
 
   // assuming generic_check_native_balance returns an object like:
   // { free: number, reserved: number, miscFrozen: number, feeFrozen: number }
-  const total = result.free + result.reserved + (result.miscFrozen || 0) + (result.feeFrozen || 0);
+  const total =
+    result.free +
+    result.reserved +
+    (result.miscFrozen || 0) +
+    (result.feeFrozen || 0);
 
   return {
-      free: result.free,
-      reserved: result.reserved,
-      total: total
-      // can include miscFrozen and feeFrozen if they are relevant for hydraDx
+    free: result.free,
+    reserved: result.reserved,
+    total: total,
+    // can include miscFrozen and feeFrozen if they are relevant for hydraDx
   };
 }
 
@@ -338,29 +441,43 @@ interface AssethubAssetMetadata {
 }
 
 function isAssethubAssetMetadata(obj: any): obj is AssethubAssetMetadata {
-return (
-  typeof obj === 'object' &&
-  obj !== null &&
-  'deposit' in obj &&
-  'name' in obj &&
-  'decimals' in obj &&
-  'isFrozen' in obj
-      );
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "deposit" in obj &&
+    "name" in obj &&
+    "decimals" in obj &&
+    "isFrozen" in obj
+  );
 }
 
-// get asset metadata 
+// get asset metadata
 // output:  {"deposit":"u128","name":"Bytes","symbol":"Bytes","decimals":"u8","isFrozen":"bool"}
 async function get_assethub_asset_metadata(assetid: number) {
-const api = await getApiInstance('assetHub');
-const quuery = await api.query.asset.metadat(assetid);
+  const api = await getApiInstance("assetHub");
+  const quuery = await api.query.asset.metadat(assetid);
 
-if (isAssethubAssetMetadata(quuery)){
-  const data: AssethubAssetMetadata = quuery
-  return { "deposit": data.deposit, "name": data.name, "symbol": data.symbol, "decimals": data.decimals, "isFrozen": data.isFrozen};
+  if (isAssethubAssetMetadata(quuery)) {
+    const data: AssethubAssetMetadata = quuery;
+    return {
+      deposit: data.deposit,
+      name: data.name,
+      symbol: data.symbol,
+      decimals: data.decimals,
+      isFrozen: data.isFrozen,
+    };
+  }
+
+  return {
+    deposit: 0,
+    name: "not found",
+    symbol: "NOT FOUND",
+    decimals: 0,
+    isFrozen: false,
+  };
 }
 
-return  {"deposit":0 ,"name":"not found","symbol":"NOT FOUND","decimals":0,"isFrozen":false}
-}
+
 
 
 /*
@@ -370,26 +487,41 @@ assetRegistry.assetMetadataMap(5)
   decimals: 10
 }
 */
-async function get_hydradx_asset_symbol_decimals(assetid: number){
-  const api = await getApiInstance('hydraDx');
-  const resp = (await api.query.assetRegistry.assetMetadataMap(assetid)).toHuman();
+export async function get_hydradx_asset_symbol_decimals(assetid: number) {
+  const api = await getApiInstance("hydraDx");
+  const resp: any = (
+    await api.query.assetRegistry.assets(assetid)
+  ).toHuman();
   return resp;
 }
 
+// Utility function to format balance
+function formatBalance(balance: number, decimals: number = 4): string {
+  return balance.toFixed(decimals);
+}
 
-export async function getAssetBalanceForChain(chain: string, assetId: number, accountId: string, signal?: AbortSignal): Promise<{ free: string, reserved: string, total: string, info: { chain: string, accountId: string, assetId: number, tokenDecimals: number } }> {
+export async function getAssetBalanceForChain(
+  chain: string,
+  assetId: number,
+  accountId: string,
+  signal?: AbortSignal
+  ): Promise<AssetBalanceInfo> {
+
   console.log(`getAssetBalanceForChain chain`, chain);
   let assetDecimals: number | undefined;
 
-
-  const sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ''), 10);
-  let balances: { free: number, reserved: number, total?: number, frozen?: number } | undefined;
+  const sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ""), 10);
+  let balances:
+    | { free: number; reserved: number; total?: number; frozen?: number }
+    | undefined;
 
   if (signal && signal.aborted) {
-    throw new Error('Operation was aborted');
+    throw new Error("Operation was aborted");
   }
 
-  console.log(`Fetching asset balance for chain: ${chain}, assetId: ${assetId}, accountId: ${accountId}`);
+  console.log(
+    `Fetching asset balance for chain: ${chain}, assetId: ${assetId}, accountId: ${accountId}`
+  );
 
   switch (chain) {
     case "polkadot":
@@ -397,25 +529,33 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
       break;
 
     case "hydraDx":
-      const hydraBalanceInfo = await checkHydraDxAssetBalance(assetId, accountId, signal);
+      const hydraBalanceInfo = await checkHydraDxAssetBalance( assetId, accountId, signal
+      );
       balances = hydraBalanceInfo;
-      console.log(`getAssetBalanceForChain hydra balanceInfo`, hydraBalanceInfo);
-      assetDecimals = hydraBalanceInfo.assetDecimals;  
-      console.log(`getAssetBalanceForChain hydra assetDecimals`, assetDecimals);    
-    break;
+      console.log(
+        `getAssetBalanceForChain hydra balanceInfo`,
+        hydraBalanceInfo
+      );
+      assetDecimals = hydraBalanceInfo.assetDecimals;
+      console.log(`getAssetBalanceForChain hydra assetDecimals`, assetDecimals);
+      break;
 
     case "interlay":
       balances = await checkInterlayAssetBalance(assetId, accountId);
-      assetDecimals = balances.assetDecimals;  
-    break;
+      assetDecimals = balances.assetDecimals;
+      break;
 
     case "assetHub":
-      const assetHubBalanceInfo = await checkAssetHubBalance(assetId, accountId, signal);
+      const assetHubBalanceInfo = await checkAssetHubBalance(
+        assetId,
+        accountId,
+        signal
+      );
       balances = assetHubBalanceInfo;
       console.log(`getAssetBalanceForChain balanceInfo`, assetHubBalanceInfo);
-      assetDecimals = assetHubBalanceInfo.assetDecimals;  
-      console.log(`getAssetBalanceForChain assetDecimals`, assetDecimals);    
-    break;
+      assetDecimals = assetHubBalanceInfo.assetDecimals;
+      console.log(`getAssetBalanceForChain assetDecimals`, assetDecimals);
+      break;
 
     case "rococo":
       balances = await checkRococoRocRawNativeBalance(accountId, signal);
@@ -425,7 +565,8 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
       throw new Error(`Unsupported chain: ${chain}`);
   }
 
-  const processedBalances = processChainSpecificBalances(chain, balances, assetDecimals);
+  const processedBalances: BaseBalance = processChainSpecificBalances(chain, balances, assetDecimals);
+
 
   const tokenDecimals = getTokenDecimalsByChainName(chain);
   const adjustedTrimmedBalances = {
@@ -436,23 +577,26 @@ export async function getAssetBalanceForChain(chain: string, assetId: number, ac
       chain,
       accountId,
       assetId: sanitizedAssetId,
-      tokenDecimals
-    }
+      tokenDecimals,
+    },
   };
 
   return adjustedTrimmedBalances;
 }
 
-function processChainSpecificBalances(chain: string, balances: { free: number, reserved: number, total?: number, frozen?: number }, assetDecimals?: number): { free: string, reserved: string, total: string } {
-  
+function processChainSpecificBalances(
+  chain: string,
+  balances: { free: number; reserved: number; total?: number; frozen?: number },
+  assetDecimals?: number
+): { free: string; reserved: string; total: string } {
   const tokenDecimals = assetDecimals || getTokenDecimalsByChainName(chain);
-console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
+  console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
   let freeInUnits: number;
   let reservedInUnits: number;
   let totalInUnits: number;
   let balanceInfo: any;
 
-
+  console.log(`going to switch`);
   switch (chain) {
     case "polkadot":
       // Processing logic specific to Polkadot (if different from default)
@@ -464,43 +608,56 @@ console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
     case "hydraDx":
       // Process balances for HydraDx
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
-      reservedInUnits = toUnit(balances.reserved, assetDecimals || tokenDecimals);
+      reservedInUnits = toUnit(
+        balances.reserved,
+        assetDecimals || tokenDecimals
+      );
       totalInUnits = freeInUnits + reservedInUnits;
       break;
-      
+
     case "interlay":
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
-      reservedInUnits = toUnit(balances.reserved, assetDecimals || tokenDecimals);
+      reservedInUnits = toUnit(
+        balances.reserved,
+        assetDecimals || tokenDecimals
+      );
       totalInUnits = freeInUnits + reservedInUnits;
       break;
     case "assetHub":
       // Process balances for assetHub
 
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
-      reservedInUnits = toUnit(balances.reserved, assetDecimals || tokenDecimals);
+      reservedInUnits = toUnit(
+        balances.reserved,
+        assetDecimals || tokenDecimals
+      );
       totalInUnits = freeInUnits + reservedInUnits;
       break;
 
     default:
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
-      reservedInUnits = toUnit(balances.reserved, assetDecimals || tokenDecimals);
+      reservedInUnits = toUnit(
+        balances.reserved,
+        assetDecimals || tokenDecimals
+      );
       totalInUnits = freeInUnits + reservedInUnits;
   }
-
+  console.log(`okayy`);
   const adjustedBalances = {
     free: formatToFourDecimals(freeInUnits.toString()),
     reserved: formatToFourDecimals(reservedInUnits.toString()),
     total: formatToFourDecimals(totalInUnits.toString()),
   };
 
- 
   return adjustedBalances;
 }
 
-
-
 // get the system account balance in a generic way
-export async function genericRawNativeBalance(api: ApiPromise,accountId: string, signal?: AbortSignal): Promise<{ free: number, reserved: number, total: number }> {
+export async function genericRawNativeBalance(
+  api: ApiPromise,
+  accountId: string,
+  signal?: AbortSignal
+): Promise<{ free: number; reserved: number; total: number }> {
   let bal: any;
   let bal3: any;
   if (accountId) {
@@ -509,12 +666,12 @@ export async function genericRawNativeBalance(api: ApiPromise,accountId: string,
   bal3 = bal.toHuman();
 
   if (isAssetResponseObject(bal3)) {
-      const bal2: AssetResponseObject = bal3;
-      return {
-          free: bal2.data.free,
-          reserved: bal2.data.reserved,
-          total: bal2.data.total
-      };
+    const bal2: AssetResponseObject = bal3;
+    return {
+      free: bal2.data.free,
+      reserved: bal2.data.reserved,
+      total: bal2.data.total,
+    };
   }
   return { free: 0, reserved: 0, total: 0 };
 }

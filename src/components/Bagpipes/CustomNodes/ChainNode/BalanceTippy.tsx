@@ -1,5 +1,4 @@
-// Copyright 2017-2022 @bagpipes/xcm-send authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// Copyright 2024 Bagpipes license, see LICENSE.md 
 
 // BalanceTippy.tsx
 import React from 'react';

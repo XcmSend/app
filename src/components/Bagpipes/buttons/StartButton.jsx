@@ -1,17 +1,26 @@
 // @ts-nocheck
 import React from 'react';
 import { PlayIcon } from '../../Icons/icons';
+import Tippy from '@tippyjs/react';
+import 'tippy.js/dist/tippy.css';
+import './Buttons.scss';
+import Button from './Button.jsx';
+import { buttonDescriptions}  from './buttonDescriptions';
 
-const StartButton = ({ draftTransactions }) => {
+const StartButton = ({ startScenario }) => {
     return (
-        <button 
-        className="fixed right-10 bottom-10 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center" 
-        onClick={draftTransactions} 
-            style={{ zIndex: 1000 }}
-        >
+        <Tippy theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.runOnce}>
+            <button 
+                className="top-bar-buttons start-button text-white flex items-center" 
+                onClick={startScenario} 
+                style={{ zIndex: 1000 }}
+            >
+            
             <PlayIcon />
-            Start
-        </button>
+            {/* <span className='ml-2 '>Start Draft</span> */}
+            {/* Draft */}
+            </button>
+        </Tippy>
     );
 }
 

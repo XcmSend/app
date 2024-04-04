@@ -3,6 +3,37 @@ import { prepareTransactionsForReview } from "../CustomNodes/TransactionReview/t
 import { extrinsicHandler } from "../CustomNodes/TransactionReview/extrinsicHandler";
 import { useAppStore } from "../hooks";
 
+export const preProcessDraftTransactions = async (activeScenarioId, scenarios, isActionDataComplete) => {
+    const actionNodes = scenarios[activeScenarioId]?.diagramData?.nodes?.filter(node => node.type === 'action');
+    
+    if (!actionNodes || actionNodes.length === 0) {
+        throw new Error('No action nodes found.');
+    }
+  
+    if (actionNodes.some(node => !isActionDataComplete(node))) {
+        throw new Error('Incomplete data in some action nodes. Please review and complete all fields.');
+    }
+  
+    // Start the drafting process and return a promise that either resolves with the transactions
+    // or rejects after a timeout.
+    return new Promise(async (resolve, reject) => {
+       const timeoutId = setTimeout(() => {
+             reject(new Error('Drafting is taking longer than expected. Please refresh the page and try again.'));
+         }, 10000); // 10 seconds timeout
+  
+        try {
+            const result = await startDraftingProcess(activeScenarioId, scenarios);
+            clearTimeout(timeoutId); // Clear the timeout if drafting succeeds in time
+            resolve(result);
+        } catch (error) {
+            clearTimeout(timeoutId); // Clear the timeout if there's an error
+            reject(error);
+        }
+    });
+  };
+
+  
+
 export const startDraftingProcess = async (activeScenarioId, scenarios) => {
     console.log('[startDraftingProcess] Starting the drafting process...', activeScenarioId);
     if (activeScenarioId && scenarios[activeScenarioId]?.diagramData) {
