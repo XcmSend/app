@@ -1,4 +1,4 @@
-import { listAssetHubAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
+import { listAssetHubAssets, listTuringAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
 
 const dotAssets = {
   asset: {
@@ -90,7 +90,8 @@ export const getAssetOptions = async (selectedChain, signal) => {
           break;
 
         case 'turing':
-          assets = [turingAssets];
+          assets = listTuringAssets();
+
           break;
 
       case 'polkadot':

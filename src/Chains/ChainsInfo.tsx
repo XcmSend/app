@@ -136,6 +136,9 @@ export function listChains() {
       };
       chainList[10000] = Rococo;
 
+  
+
+      /*
       const Sora: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
@@ -147,6 +150,8 @@ export function listChains() {
         parachain: true
       };
       chainList[2011] = Sora;
+/* */
+
       // only rococo > rococo assethub transfers is supported 
       const RococoAssethub: ChainInfo = {
         name: 'rococo_assethub',

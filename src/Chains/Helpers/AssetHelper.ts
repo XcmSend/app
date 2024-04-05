@@ -245,6 +245,93 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
   );
 }
 
+export async function checkTuringAssetBalance(
+  assetid: number | string,
+  account_id_32: string,
+  signal?: AbortSignal
+): Promise<{
+  free: number;
+  reserved: number;
+  total: number;
+  frozen?: number;
+  assetDecimals?: number;
+}> {
+  // If assetId is 0, fetch the native balance.
+  if (assetid === 0 || assetid === "0") {
+    const api7 = await getApiInstance("turing");
+    const result = await generic_check_native_balance(api7, account_id_32);
+    const total =
+    result.free +
+    result.reserved +
+    (result.miscFrozen || 0) +
+    (result.feeFrozen || 0);
+
+  return {
+    free: result.free,
+    reserved: result.reserved,
+    total: total,
+    // can include miscFrozen and feeFrozen if they are relevant for hydraDx
+  };
+  }
+
+  let api: any;
+  let hdxBalance: any;
+  let assetDecimals: number;
+
+  // console.log(`checkHydraDxAssetBalance trying to connect`);
+
+  try {
+    api = await getApiInstance("turing", signal);
+    hdxBalance = await api.query.tokens.accounts(account_id_32, assetid);
+  } catch (error) {
+    console.error(
+      `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
+      error
+    );
+    return { free: 0, reserved: 0, total: 0 };
+  }
+
+  const stringBalance = hdxBalance.toHuman();
+  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+
+  try {
+    // Get the asset's metadata
+    const metadata = await api.query.assetRegistry.assets(assetid);
+
+    if (
+      metadata &&
+      metadata.__internal__raw &&
+      metadata.__internal__raw.decimals
+    ) {
+      assetDecimals = metadata.__internal__raw.decimals;
+    } else {
+      throw new Error("Decimals not found in metadata");
+    }
+    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
+    //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+  } catch (error) {
+    console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
+    // You might want to set a default or throw an error here
+    assetDecimals = 12;
+  }
+
+  if (isOrmlTokensAccountData(hdxBalance)) {
+    const bal_obj: OrmlTokensAccountData = hdxBalance;
+    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    return {
+      free: bal_obj.free,
+      reserved: bal_obj.reserved,
+      frozen: bal_obj.frozen,
+      total: bal_obj.free + bal_obj.reserved + bal_obj.frozen,
+      assetDecimals,
+    };
+  }
+  return { free: 0, reserved: 0, total: 0 };
+}
+
+
+
+
 export async function checkHydraDxAssetBalance(
   assetid: number | string,
   account_id_32: string,
@@ -542,6 +629,11 @@ export async function getAssetBalanceForChain(
 
     case "interlay":
       balances = await checkInterlayAssetBalance(assetId, accountId);
+      assetDecimals = balances.assetDecimals;
+      break;
+
+    case "turing":
+      balances = await checkTuringAssetBalance(assetId, accountId);
       assetDecimals = balances.assetDecimals;
       break;
 
