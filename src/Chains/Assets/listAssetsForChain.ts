@@ -16,8 +16,6 @@ export function listAssetHubAssets() {
   }));
 }
 
-
-
 export function listTuringAssets() {
   const assets = CHAIN_ASSETS.turing.assets;
 
@@ -53,7 +51,7 @@ async function listInterlayAssetReal() {
         assetId: id.toHuman(),
       };
       dictionary.set(id.toHuman() as number, myasset);
-    }
+    },
   );
   const valuesArray = Array.from(dictionary.values());
   return valuesArray;
@@ -128,29 +126,27 @@ export function listHydraDxAssets() {
 
 // }
 
+async function export_turing_assets() {
+  const wsProvider = new WsProvider("wss://rpc.turing.oak.tech");
+  const api = await ApiPromise.create({ provider: wsProvider });
 
-async function export_turing_assets(){
-const wsProvider = new WsProvider('wss://rpc.turing.oak.tech');
-const api = await ApiPromise.create({ provider: wsProvider });
-
-
-    const dictionary = new Map<number, any>();
-    const assets = await api.query.assetRegistry.metadata.entries();
-    assets.forEach(
-      ([
-        {
-          args: [id],
-        },
-        asset,
-      ]) => {
-     //   console.log(`asset is:`, asset);
-        const myasset = {
-          asset: asset.toHuman(),
-          assetId: id.toHuman(),
-        };
-        dictionary.set(id.toHuman() as number, myasset);
-      }
-    );
-    const valuesArray = Array.from(dictionary.values());
-    return valuesArray;
-  }
+  const dictionary = new Map<number, any>();
+  const assets = await api.query.assetRegistry.metadata.entries();
+  assets.forEach(
+    ([
+      {
+        args: [id],
+      },
+      asset,
+    ]) => {
+      //   console.log(`asset is:`, asset);
+      const myasset = {
+        asset: asset.toHuman(),
+        assetId: id.toHuman(),
+      };
+      dictionary.set(id.toHuman() as number, myasset);
+    },
+  );
+  const valuesArray = Array.from(dictionary.values());
+  return valuesArray;
+}

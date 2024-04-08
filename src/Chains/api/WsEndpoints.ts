@@ -24,7 +24,6 @@ const endpoints = {
   },
   turing: {
     default: "wss://rpc.turing.oak.tech",
-  
   },
   hydradx: {},
   assetHub: {},
