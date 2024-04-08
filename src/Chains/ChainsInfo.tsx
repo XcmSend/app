@@ -136,6 +136,9 @@ export function listChains() {
       };
       chainList[10000] = Rococo;
 
+  
+
+      /*
       const Sora: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
@@ -147,6 +150,8 @@ export function listChains() {
         parachain: true
       };
       chainList[2011] = Sora;
+/* */
+
       // only rococo > rococo assethub transfers is supported 
       const RococoAssethub: ChainInfo = {
         name: 'rococo_assethub',
@@ -161,6 +166,18 @@ export function listChains() {
 
       chainList[3000] = RococoAssethub;// fake paraid
 
+      const KusamaAssethub: ChainInfo = {
+        name: 'kusama_assethub',
+        display: 'Assethub (Kusama)',
+        paraid: 3000, // fake
+        prefix: 42,  // change me
+        token_decimals: 12, //change me
+        logo: '/chains/assethub.svg',
+        relayParent: 'kusama',
+        parachain: true 
+      };
+
+    chainList[9999] = KusamaAssethub;//fake paraid
 
     return chainList;
 }

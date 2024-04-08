@@ -20,6 +20,15 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
+    turing: {
+        chain: "turing",
+        endpoints: [
+            "wss://rpc.turing.oak.tech"
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account" ,"tokens.accounts"],
+        nativeAccount: true
+    },
     hydraDx: {
         chain: "HydraDX",
         endpoints: [
@@ -73,6 +82,11 @@ export const CHAIN_METADATA = {
     //    queryAssetPaths: ["assets.metadata"],  
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
+    },
+    kusama_assethub: {
+        chain: "Kusama Assethub",
+        endpoints: [],
+        queryBalancePaths: [],
     },
     sora: {
         chain: "Sora",

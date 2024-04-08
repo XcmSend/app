@@ -336,6 +336,43 @@ export async function interlay2assethub(
   return tx;
 }
 
+// ksm to tur
+export async function generic_kusama_to_parachain(
+  paraid: number,
+  amount: number,
+  address: string
+) {
+  const api = await getApiInstance("kusama");
+  const accountId = api.createType("AccountId32", address).toHex();
+  const destination = {
+    parents: 0,
+    interior: {
+      X1: {
+        Parachain: paraid,
+      },
+    },
+  };
+  const targetAccount = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: accountId } } },
+  };
+
+  const asset = [
+    {
+      id: { Concrete: { parents: 0, interior: "Here" } },
+      fun: { Fungible: amount },
+    },
+  ];
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+    { V3: destination },
+    { V3: targetAccount },
+    { V3: asset },
+    0,
+    { Unlimited: null } // weight_limit
+  );
+  return tx;
+}
+
 /// Send DOT to a parachain
 export async function genericPolkadotToParachain(
   paraid: number,
@@ -574,6 +611,93 @@ function uint8ArrayToHex(uint8Array: Uint8Array): string {
     hex += byte.toString(16).padStart(2, "0");
   }
   return hex;
+}
+
+export async function polkadot_assethub_to_kusama_assethub(
+  amount: number,
+  accountid: string
+) {
+  const myaccount = getRawAddress(accountid);
+
+  const api = await getApiInstance("assetHub");
+
+  const destination = {
+    parents: 2,
+    interior: {
+      X2: [
+        { GlobalConsensus: { Kusama: null } },
+        { Parachain: 1000 }, // assethub
+      ],
+    },
+  };
+
+  const account = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: myaccount, network: null } } },
+  };
+
+  const asset = {
+    id: {
+      Concrete: {
+        parents: 1,
+        interior: {
+          Here: null,
+        },
+      },
+    },
+    fun: { Fungible: amount },
+  };
+
+  const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: [asset] },
+    0,
+    { Unlimited: 0 }
+  );
+  return tx;
+}
+
+// send TUR native from turing to mangatax
+export async function turing2mangata(amount: number, accountido: string) {
+  // const wsProvider = new WsProvider('wss://rpc.turing.oak.tech');
+  const api = await getApiInstance("turing");
+  const accountid = raw_address_now(accountido);
+  const parachainid = 2114; // mangatax
+
+  const asset = {
+    id: {
+      Concrete: {
+        parents: 1,
+        interior: {
+          X1: { Parachain: parachainid },
+        },
+      },
+    },
+    fun: { Fungible: amount.toString() },
+  };
+  console.log(`asset:`, asset);
+  const destination = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 2110 }, // turing paraid
+        {
+          accountId32: {
+            network: null,
+            id: accountid,
+          },
+        },
+      ],
+    },
+  };
+
+  const tx = await api.tx.xTokens.transferMultiasset(
+    { V3: asset },
+    { V3: destination },
+    { Limited: { proof_size: 0, ref_time: 4000000000 } }
+  );
+  return tx;
 }
 
 /// assethub > hydra

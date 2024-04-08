@@ -264,117 +264,229 @@ export const CHAIN_ASSETS = {
         ]
 
     },
+
+
+    "kusama_assethub": {
+        "assets":[
+            {
+                "asset": {
+                    "decimals": '12',
+                    "name": 'DOT',
+                    "symbol": 'DOT',
+                    "existentialDeposit": '500,000,000,000',
+              },
+              "assetId": '2'
+            }
+        ]
+    },
+    "turing": {
+    "assets": [
+  
+      
+        {
+            "asset": {
+                "decimals": '12',
+                "name": 'Heiko',
+                "symbol": 'HKO',
+                "existentialDeposit": '500,000,000,000',
+          },
+          "assetId": '5'
+        },
+        {
+          "asset": {
+            "decimals": '18',
+            "name": 'Shiden',
+            "symbol": 'SDN',
+            "existentialDeposit": '10,000,000,000,000,000',
+          },
+          "assetId": '8'
+        },
+        {
+          "asset": {
+            "decimals": '12',
+            "name": 'Kusama',
+            "symbol": 'KSM',
+            "existentialDeposit": '100,000,000',
+          },
+          "assetId": '1'
+        },
+        {
+          "asset": {
+            "decimals": '18',
+            "name": 'Moonriver',
+            "symbol": 'MOVR',
+            "existentialDeposit": '0',
+          },
+          "assetId": '9'
+        },
+        {
+          "asset": {
+            "decimals": '12',
+            "name": 'AUSD',
+            "symbol": 'AUSD',
+            "existentialDeposit": '10,000,000,000',
+          },
+          "assetId": '2'
+        },
+        {
+          "asset": {
+            "decimals": '18',
+            "name": 'Mangata X',
+            "symbol": 'MGX',
+            "existentialDeposit": '0',
+          },
+          "assetId": '10'
+        },
+        {
+          "asset": {
+            "decimals": '10',
+            "name": 'Native',
+            "symbol": 'TUR',
+            "existentialDeposit": '100,000,000',
+          },
+          "assetId": '0'
+        },
+        {
+          "asset": {
+            "decimals": '12',
+            "name": 'SKSM',
+            "symbol": 'SKSM',
+            "existentialDeposit": '500,000,000',
+          },
+          "assetId": '6'
+        },
+        {
+          "asset": {
+            "decimals": '12',
+            "name": 'Karura',
+            "symbol": 'KAR',
+            "existentialDeposit": '100,000,000,000',
+          },
+          "assetId": '3'
+        },
+        {
+          "asset": {
+            "decimals": '12',
+            "name": 'Liquid KSM',
+            "symbol": 'LKSM',
+            "existentialDeposit": '500,000,000',
+          },
+          "assetId": '4'
+        }
+      ]      
+},
+
     "interlay": {
         "assets": [
                 {
-                    asset: {
+                    "asset": {
                         "decimals": '18',
                         "name": 'Wrapped BNB',
                     "symbol": 'WBNB.wh',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '7'
+                  "assetId": '7'
                 },
                 {
-                  asset: {
-                    decimals: '18',
-                    name: 'tBTC v2',
+                  "asset": {
+                    "decimals": '18',
+                    "name": 'tBTC v2',
                     "symbol": 'TBTC.wh',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '5'
+                  "assetId": '5'
                 },
                 {
-                  asset: {
-                    decimals: '6',
-                    name: 'USD Coin',
+                  "asset": {
+                    "decimals": '6',
+                    "name": 'USD Coin',
                     "symbol": 'USDC.wh',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '8'
+                  "assetId": '8'
                 },
                 {
-                  asset: {
-                    decimals: '10',
-                    name: 'Liquid DOT',
+                  "asset": {
+                    "decimals": '10',
+                    "name": 'Liquid DOT',
                     "symbol": 'LDOT',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '1'
+                  "assetId": '1'
                 },
                 {
-                  asset: {
-                    decimals: '8',
-                    name: 'Wrapped BTC',
+                  "asset": {
+                    "decimals": '8',
+                    "name": 'Wrapped BTC',
                     "symbol": 'WBTC.wh',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '9'
+                  "assetId": '9'
                 },
                 {
-                  asset: {
-                    decimals: '6',
-                    name: 'Tether USD',
+                  "asset": {
+                    "decimals": '6',
+                    "name": 'Tether USD',
                     "symbol": 'USDT',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '2'
+                  "assetId": '2'
                 },
                 {
-                  asset: {
-                    decimals: '18',
-                    name: 'Glimmer',
+                  "asset": {
+                    "decimals": '18',
+                    "name": 'Glimmer',
                     "symbol": 'GLMR',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '10'
+                  "assetId": '10'
                 },
                 {
-                  asset: {
-                    decimals: '18',
-                    name: 'Wrapped Ether',
+                  "asset": {
+                    "decimals": '18',
+                    "name": 'Wrapped Ether',
                     "symbol": 'WETH.wh',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '6'
+                  "assetId": '6'
                 },
                 {
-                  asset: {
-                    decimals: '12',
-                    name: 'Bifrost Native Coin',
+                  "asset": {
+                    "decimals": '12',
+                    "name": 'Bifrost Native Coin',
                     "symbol": 'BNC',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '11'
+                  "assetId": '11'
                 },
                 {
-                  asset: {
-                    decimals: '10',
-                    name: 'Voucher DOT',
+                  "asset": {
+                    "decimals": '10',
+                    "name": 'Voucher DOT',
                     "symbol": 'VDOT',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '3'
+                  "assetId": '3'
                 },
                 {
-                  asset: {
-                    decimals: '18',
-                    name: 'Dai Stablecoin',
+                  "asset": {
+                    "decimals": '18',
+                    "name": 'Dai Stablecoin',
                     "symbol": 'DAI.wh',
                     "existentialDeposit": '0',
 
                   },
-                  assetId: '4'
+                  "assetId": '4'
                 }
               ]
     },

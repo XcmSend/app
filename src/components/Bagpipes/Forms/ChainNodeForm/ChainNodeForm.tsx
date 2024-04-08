@@ -390,6 +390,7 @@ useEffect(() => {
             <select className="asset-selector text-black font-semibold in-node-border border-gray-300 p-2 bg-white" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
               <option value="">Select an asset</option>
                {assetsForChain.map(asset => (
+                //console.log(`asset is:`, asset)
                    <option key={asset.assetId} value={asset.asset.name}>
                     {asset.asset.symbol} | {asset.asset.name} | AssetId: {asset.assetId}
                    </option>
