@@ -126,6 +126,7 @@ export function listHydraDxAssets() {
 
 // }
 
+/*
 async function export_turing_assets() {
   const wsProvider = new WsProvider("wss://rpc.turing.oak.tech");
   const api = await ApiPromise.create({ provider: wsProvider });
@@ -150,3 +151,4 @@ async function export_turing_assets() {
   const valuesArray = Array.from(dictionary.values());
   return valuesArray;
 }
+*/
