@@ -51,7 +51,7 @@ async function listInterlayAssetReal() {
         assetId: id.toHuman(),
       };
       dictionary.set(id.toHuman() as number, myasset);
-    },
+    }
   );
   const valuesArray = Array.from(dictionary.values());
   return valuesArray;
@@ -145,7 +145,7 @@ async function export_turing_assets() {
         assetId: id.toHuman(),
       };
       dictionary.set(id.toHuman() as number, myasset);
-    },
+    }
   );
   const valuesArray = Array.from(dictionary.values());
   return valuesArray;

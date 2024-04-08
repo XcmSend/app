@@ -18,7 +18,7 @@ export async function hydradx_omnipool_sell(
   assetin: string,
   assetout: string,
   rawamount: number,
-  submitamount: number,
+  submitamount: number
 ) {
   const api = await getApiInstance("hydraDx");
   const pinfo = await getHydraDxSellPrice(assetin, assetout, rawamount);
@@ -36,7 +36,7 @@ export async function hydradx_omnipool_sell(
     assetout,
     rawamount,
     minBuyAmount,
-    submitamount,
+    submitamount
   );
 
   // two options for swaps, omnipool sell or router sell
@@ -55,7 +55,7 @@ export async function hydradx_omnipool_sell(
         assetin,
         assetout,
         submitamount,
-        minBuyAmount,
+        minBuyAmount
       );
       console.log(`omnipool tx drafted`);
       console.log(tx.toHex());
@@ -66,7 +66,7 @@ export async function hydradx_omnipool_sell(
       assetout.toString(),
       submitamount.toString(),
       minBuyAmount / 10000,
-      route,
+      route
     );
     console.log(`selltx router.sell drafted`);
   }

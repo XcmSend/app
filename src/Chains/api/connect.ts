@@ -25,13 +25,13 @@ export async function getApiInstance(chain: string): Promise<ApiPromise> {
         } catch (error) {
           console.error(
             `Attempt ${i + 1} failed to reconnect to ${chain}:`,
-            error,
+            error
           );
         }
       }
       apiConnections.delete(chain); // Cleanup after failed reconnection attempts
       throw new Error(
-        `Failed to reconnect to ${chain} after several attempts.`,
+        `Failed to reconnect to ${chain} after several attempts.`
       );
     }
   }
@@ -63,7 +63,7 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
 
       api.on("disconnected", async () => {
         console.log(
-          `Disconnected from ${endpoint}. Attempting to reconnect...`,
+          `Disconnected from ${endpoint}. Attempting to reconnect...`
         );
         apiConnections.delete(chain); // Delete the existing connection instance
 
@@ -90,14 +90,14 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
         toast.error(`Endpoint ${endpoint} closed the connection abnormally.`);
       } else {
         toast.error(
-          `Failed to connect to endpoint ${endpoint}. Trying next...`,
+          `Failed to connect to endpoint ${endpoint}. Trying next...`
         );
       }
     }
   }
 
   toast.error(
-    "All endpoints failed. Please check your connection and try again.",
+    "All endpoints failed. Please check your connection and try again."
   );
   throw lastError;
 }

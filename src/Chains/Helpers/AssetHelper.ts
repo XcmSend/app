@@ -93,7 +93,7 @@ function isAssetHubAssetBalance(obj: any): obj is AssetHubAssetBalance {
 export async function checkInterlayAssetBalance(
   assetid: number | string,
   account_id: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{
   free: number;
   reserved: number;
@@ -120,7 +120,7 @@ export async function checkInterlayAssetBalance(
   } catch (error) {
     console.error(
       `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
-      error,
+      error
     );
     return { free: 0, reserved: 0, total: 0 };
   }
@@ -132,7 +132,7 @@ export async function checkInterlayAssetBalance(
     const assetlist = listInterlayAssets();
 
     const assetWithAssetId2 = assetlist.find(
-      (asset) => asset.assetId === assetid.toString(),
+      (asset) => asset.assetId === assetid.toString()
     );
     const decimals = parseInt(assetWithAssetId2.asset.decimals, 10);
 
@@ -164,7 +164,7 @@ export async function checkInterlayAssetBalance(
 export async function checkAssetHubBalance(
   assetid: number,
   account_id_32: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{
   free: number;
   reserved: number;
@@ -209,7 +209,7 @@ export async function checkAssetHubBalance(
 }
 
 export async function assetHubNativeBalance(
-  accountid: string,
+  accountid: string
 ): Promise<{ free: number; reserved: number; total: number }> {
   const api = await getApiInstance("assetHub");
   const result = await generic_check_native_balance(api, accountid);
@@ -245,7 +245,7 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
 export async function checkTuringAssetBalance(
   assetid: number | string,
   account_id_32: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{
   free: number;
   reserved: number;
@@ -283,7 +283,7 @@ export async function checkTuringAssetBalance(
   } catch (error) {
     console.error(
       `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
-      error,
+      error
     );
     return { free: 0, reserved: 0, total: 0 };
   }
@@ -329,7 +329,7 @@ export async function checkTuringAssetBalance(
 export async function checkHydraDxAssetBalance(
   assetid: number | string,
   account_id_32: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{
   free: number;
   reserved: number;
@@ -358,7 +358,7 @@ export async function checkHydraDxAssetBalance(
   } catch (error) {
     console.error(
       `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
-      error,
+      error
     );
     return { free: 0, reserved: 0, total: 0 };
   }
@@ -404,7 +404,7 @@ export async function checkHydraDxAssetBalance(
 /// returns the raw balance of the native dot token
 export async function checkPolkadotDotRawNativeBalance(
   accountId: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{ free: number; reserved: number; total: number }> {
   let bal: any;
   let bal3: any;
@@ -428,7 +428,7 @@ export async function checkPolkadotDotRawNativeBalance(
 /// returns the raw balance of the native dot token
 async function checkRococoRocRawNativeBalance(
   accountid: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{ free: number; reserved: number; total: number }> {
   const api = await getApiInstance("rococo", signal);
   const bal = await api.query.system.account(accountid);
@@ -461,7 +461,7 @@ export async function getHydradxAssetSymbolDecimals(assetid: number) {
 export function getTokenDecimalsByChainName(chainName: string): number {
   const chainList = listChains();
   const selectedChain = Object.values(chainList).find(
-    (chain) => chain.name === chainName,
+    (chain) => chain.name === chainName
   );
   if (!selectedChain) {
     throw new Error(`Chain not found: ${chainName}`);
@@ -489,7 +489,7 @@ async function generic_check_native_balance(api: ApiPromise, address: string) {
 }
 
 async function hydraDxNativeBalance(
-  address: string,
+  address: string
 ): Promise<{ free: number; reserved: number; total: number; frozen?: number }> {
   const api = await getApiInstance("hydraDx");
   const result = await generic_check_native_balance(api, address);
@@ -578,7 +578,7 @@ export async function getAssetBalanceForChain(
   chain: string,
   assetId: number,
   accountId: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<AssetBalanceInfo> {
   console.log(`getAssetBalanceForChain chain`, chain);
   let assetDecimals: number | undefined;
@@ -593,7 +593,7 @@ export async function getAssetBalanceForChain(
   }
 
   console.log(
-    `Fetching asset balance for chain: ${chain}, assetId: ${assetId}, accountId: ${accountId}`,
+    `Fetching asset balance for chain: ${chain}, assetId: ${assetId}, accountId: ${accountId}`
   );
 
   switch (chain) {
@@ -605,12 +605,12 @@ export async function getAssetBalanceForChain(
       const hydraBalanceInfo = await checkHydraDxAssetBalance(
         assetId,
         accountId,
-        signal,
+        signal
       );
       balances = hydraBalanceInfo;
       console.log(
         `getAssetBalanceForChain hydra balanceInfo`,
-        hydraBalanceInfo,
+        hydraBalanceInfo
       );
       assetDecimals = hydraBalanceInfo.assetDecimals;
       console.log(`getAssetBalanceForChain hydra assetDecimals`, assetDecimals);
@@ -630,7 +630,7 @@ export async function getAssetBalanceForChain(
       const assetHubBalanceInfo = await checkAssetHubBalance(
         assetId,
         accountId,
-        signal,
+        signal
       );
       balances = assetHubBalanceInfo;
       console.log(`getAssetBalanceForChain balanceInfo`, assetHubBalanceInfo);
@@ -649,7 +649,7 @@ export async function getAssetBalanceForChain(
   const processedBalances: BaseBalance = processChainSpecificBalances(
     chain,
     balances,
-    assetDecimals,
+    assetDecimals
   );
 
   const tokenDecimals = getTokenDecimalsByChainName(chain);
@@ -671,7 +671,7 @@ export async function getAssetBalanceForChain(
 function processChainSpecificBalances(
   chain: string,
   balances: { free: number; reserved: number; total?: number; frozen?: number },
-  assetDecimals?: number,
+  assetDecimals?: number
 ): { free: string; reserved: string; total: string } {
   const tokenDecimals = assetDecimals || getTokenDecimalsByChainName(chain);
   console.log(`processChainSpecificBalances tokenDecimals`, tokenDecimals);
@@ -694,7 +694,7 @@ function processChainSpecificBalances(
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
       reservedInUnits = toUnit(
         balances.reserved,
-        assetDecimals || tokenDecimals,
+        assetDecimals || tokenDecimals
       );
       totalInUnits = freeInUnits + reservedInUnits;
       break;
@@ -703,7 +703,7 @@ function processChainSpecificBalances(
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
       reservedInUnits = toUnit(
         balances.reserved,
-        assetDecimals || tokenDecimals,
+        assetDecimals || tokenDecimals
       );
       totalInUnits = freeInUnits + reservedInUnits;
       break;
@@ -713,7 +713,7 @@ function processChainSpecificBalances(
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
       reservedInUnits = toUnit(
         balances.reserved,
-        assetDecimals || tokenDecimals,
+        assetDecimals || tokenDecimals
       );
       totalInUnits = freeInUnits + reservedInUnits;
       break;
@@ -722,7 +722,7 @@ function processChainSpecificBalances(
       freeInUnits = toUnit(balances.free, assetDecimals || tokenDecimals);
       reservedInUnits = toUnit(
         balances.reserved,
-        assetDecimals || tokenDecimals,
+        assetDecimals || tokenDecimals
       );
       totalInUnits = freeInUnits + reservedInUnits;
   }
@@ -740,7 +740,7 @@ function processChainSpecificBalances(
 export async function genericRawNativeBalance(
   api: ApiPromise,
   accountId: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<{ free: number; reserved: number; total: number }> {
   let bal: any;
   let bal3: any;

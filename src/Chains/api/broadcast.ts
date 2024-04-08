@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 export async function broadcastToChain(
   chain: string,
   signedExtrinsic: any,
-  { onInBlock, onFinalized, onError }, // Add callback parameters
+  { onInBlock, onFinalized, onError } // Add callback parameters
 ): Promise<void> {
   let api: ApiPromise;
   console.log(`broadcasting`);
@@ -29,7 +29,9 @@ export async function broadcastToChain(
     signedExtrinsic
       .send(({ status, events, dispatchError }) => {
         if (dispatchError) {
-          const errorMessage = `Transaction error: ${dispatchError.message || dispatchError.toString()}`;
+          const errorMessage = `Transaction error: ${
+            dispatchError.message || dispatchError.toString()
+          }`;
           onError?.(errorMessage);
           console.log(`mega error:`);
           console.log(errorMessage);
@@ -39,12 +41,12 @@ export async function broadcastToChain(
 
         if (status.isInBlock) {
           console.log(
-            `Transaction included at blockHash ${status.asInBlock.toString()}`,
+            `Transaction included at blockHash ${status.asInBlock.toString()}`
           );
           onInBlock?.(status.asInBlock.toString());
         } else if (status.isFinalized) {
           console.log(
-            `Transaction finalized at blockHash ${status.asFinalized.toString()}`,
+            `Transaction finalized at blockHash ${status.asFinalized.toString()}`
           );
           onFinalized?.(status.asFinalized.toString());
           resolve();
@@ -57,7 +59,9 @@ export async function broadcastToChain(
         }
       })
       .catch((error) => {
-        const errorMessage = `Error broadcasting transaction: ${error.message || error.toString()}`;
+        const errorMessage = `Error broadcasting transaction: ${
+          error.message || error.toString()
+        }`;
         onError?.(errorMessage);
         console.log(`mega error 3:`);
 

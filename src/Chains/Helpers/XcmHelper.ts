@@ -13,7 +13,7 @@ returns a list of paraid's
 ]
 */
 export async function findIngressPolkadotChannels(
-  paraid: number,
+  paraid: number
 ): Promise<[number]> {
   //  console.log("findIngressPolkadotChannels for hrmp for  paraid", paraid);
   const api = await getApiInstance("polkadot");
@@ -26,7 +26,7 @@ export async function findIngressPolkadotChannels(
 }
 
 export async function findEngressPolkadotChannels(
-  paraid: number,
+  paraid: number
 ): Promise<[number]> {
   const api = await getApiInstance("polkadot");
   const Channels = (
@@ -40,7 +40,7 @@ export async function findEngressPolkadotChannels(
 /// input: source chain paraid, dest chain paraid
 export async function polkadotParachainChannelCheck(
   sourceparaid: number,
-  destchain: number,
+  destchain: number
 ): Promise<boolean> {
   const s_ingress = await findIngressPolkadotChannels(sourceparaid);
   const s_egress = await findEngressPolkadotChannels(sourceparaid);
@@ -63,7 +63,7 @@ export async function inAndOutChannels(paraid: number): Promise<number[]> {
     //  console.log(`Egress hrmp channels for paraid ${paraid}:`, s_egress);
 
     const paraid_map: number[] = s_ingress.filter((num) =>
-      s_egress.includes(num),
+      s_egress.includes(num)
     );
     //  console.log(`Filtered channels for hrmp for  paraid ${paraid}:`, paraid_map);
 
@@ -76,11 +76,11 @@ export async function inAndOutChannels(paraid: number): Promise<number[]> {
 
 export function listParachainsConnectedToRelay(
   relayName: string,
-  chains: Record<number, ChainInfo>,
+  chains: Record<number, ChainInfo>
 ): ChainInfo[] {
   // console.log("listParachainsConnectedToRelay for hrmp", chains);
   return Object.values(chains).filter(
-    (chain) => chain.relayParent === relayName,
+    (chain) => chain.relayParent === relayName
   );
 }
 
@@ -99,7 +99,7 @@ export async function buildHrmp(): Promise<Record<number, number[]>> {
     // console.log(`buildHrmp processing ${relayChain.name} with paraid ${relayChain.paraid}`);
 
     const parachains = Object.values(chainlist).filter(
-      (chain) => chain.relayParent === relayChain.name,
+      (chain) => chain.relayParent === relayChain.name
     );
     console.log(`buildHrmp ${relayChain.name} parachains`, parachains);
 
