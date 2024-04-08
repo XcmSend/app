@@ -613,11 +613,62 @@ function uint8ArrayToHex(uint8Array: Uint8Array): string {
   return hex;
 }
 
+
+export async function polkadot_assethub_to_kusama_assethub(amount: number, accountid: string) {
+  const myaccount = getRawAddress(accountid);
+ 
+  const api = await getApiInstance("assetHub");
+
+  const destination = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 1000 }, // assethub
+        { GlobalConsensus: { Kusama: null } },
+      ],
+    },
+  };
+
+
+
+
+  const account = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: myaccount, network: null } } },
+  };
+
+
+
+
+
+ const asset = {
+    id: {
+      Concrete: {
+        parents: 1,
+        interior: {
+        	"Here": null,
+        },
+      },
+    },
+    fun: { Fungible: amount },
+
+  };
+
+  const tx = api.tx.polkadotXcm.limitedReserveTransferAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: [asset] },
+    0,
+    { Unlimited: 0 },
+  );
+  return tx;
+}
+
 // send TUR native from turing to mangatax
-async function turing2mangata(amount: number, accountido: string) {
+export async function turing2mangata(amount: number, accountido: string) {
   // const wsProvider = new WsProvider('wss://rpc.turing.oak.tech');
   const api = await getApiInstance("turing");
-
+  const accountid = raw_address_now(accountido); 
   const parachainid = 2114; // mangatax
 
   const asset = {
@@ -640,7 +691,7 @@ async function turing2mangata(amount: number, accountido: string) {
         {
           accountId32: {
             network: null,
-            id: accountido,
+            id: accountid,
           },
         },
       ],

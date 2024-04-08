@@ -265,6 +265,20 @@ export const CHAIN_ASSETS = {
 
     },
 
+
+    "kusama_assethub": {
+        "assets":[
+            {
+                "asset": {
+                    "decimals": '12',
+                    "name": 'DOT',
+                    "symbol": 'DOT',
+                    "existentialDeposit": '500,000,000,000',
+              },
+              "assetId": '2'
+            }
+        ]
+    },
     "turing": {
     "assets": [
   

@@ -83,6 +83,11 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
+    kusama_assethub: {
+        chain: "Kusama Assethub",
+        endpoints: [],
+        queryBalancePaths: [],
+    },
     sora: {
         chain: "Sora",
         endpoints: [
