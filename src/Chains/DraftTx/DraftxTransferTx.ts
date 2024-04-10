@@ -658,6 +658,52 @@ export async function polkadot_assethub_to_kusama_assethub(
   return tx;
 }
 
+// https://turing.subscan.io/extrinsic/4825155-2
+export async function turing2moonriver(accountido: string, amount: number) {
+
+  const api = await getApiInstance("turing");
+  const accountme = getRawAddress(accountido);
+  const asset = {
+    id: {
+      Concrete: {
+
+       
+        interior: {
+          X1: { Parachain: 2114 },
+        },
+      parents: 1,
+
+      },
+    },
+    fun: { Fungible: amount.toString() },
+  };
+
+  const destination = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 2023 }, // Moonriver paraid
+        {
+          accountid32: {
+            network: null,
+            id: accountme,//convertAccountId32ToAccountId20(accountido),
+          },
+        },
+      ],
+    },
+  };
+
+  const tx = await api.tx.xTokens.transferMultiasset(
+    { V3: asset },
+    { V3: destination },
+    { Unlimited: null }
+  );
+  return tx;
+
+
+}
+
+
 // send TUR native from turing to mangatax
 export async function turing2mangata(amount: number, accountido: string) {
   // const wsProvider = new WsProvider('wss://rpc.turing.oak.tech');

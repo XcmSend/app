@@ -25,6 +25,17 @@ export function listTuringAssets() {
   }));
 }
 
+
+export function listmangataxAssets() {
+  const assets = CHAIN_ASSETS.mangatax.assets;
+
+  return assets.map((assetData: { asset: any; assetId: any }) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
+
 export function listInterlayAssets() {
   const assets = CHAIN_ASSETS.interlay.assets;
 

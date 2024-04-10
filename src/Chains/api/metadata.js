@@ -20,6 +20,16 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
+    mangatax: {
+        chain: "mangatax",
+        endpoints: [
+            "wss://kusama-archive.mangata.online",
+            "wss://kusama-rpc.mangata.online",
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
     turing: {
         chain: "turing",
         endpoints: [

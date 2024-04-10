@@ -1,4 +1,4 @@
-import { dotToHydraDx, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, turing2moonriver, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
@@ -85,6 +85,9 @@ function handlexTransfer(formData) {
             return assethub2interlay(source.assetId, tetherAmount, target.address);
         },
 
+        'turing:moonriver': () => {
+            return turing2moonriver(target.account, submittableAmount);
+        },
 
         'assetHub:kusama_assethub': () => {
             console.log(`Polkadot assethub to kusama assethub`);
