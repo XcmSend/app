@@ -327,6 +327,7 @@ export async function checkTuringAssetBalance(
   // If assetId is 0, fetch the native balance.
   if (assetid === 0 || assetid === "0") {
     const api7 = await getApiInstance("turing");
+    
     const result = await generic_check_native_balance(api7, account_id_32);
     const total =
       result.free +

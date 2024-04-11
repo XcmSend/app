@@ -6,6 +6,7 @@ import endpoints from "../api/WsEndpoints";
 import { ChainInfo, listChains } from "../ChainsInfo";
 import { getApiInstance } from "../api/connect";
 import { get_hydradx_asset_symbol_decimals } from "../Helpers/AssetHelper";
+import { substrate_address_to_evm } from "../Helpers/txHelper";
 import { CHAIN_METADATA } from "../api/metadata";
 import toast, { Toaster } from "react-hot-toast";
 //import { createType } from '@polkadot/types';
@@ -662,7 +663,8 @@ export async function polkadot_assethub_to_kusama_assethub(
 export async function turing2moonriver(accountido: string, amount: number) {
 
   const api = await getApiInstance("turing");
-  const accountme = getRawAddress(accountido);
+  const accountme = substrate_address_to_evm(accountido); // convert to evm address
+
   const asset = {
     id: {
       Concrete: {
@@ -684,9 +686,9 @@ export async function turing2moonriver(accountido: string, amount: number) {
       X2: [
         { Parachain: 2023 }, // Moonriver paraid
         {
-          accountid32: {
+          AccountKey20: { // change me 
             network: null,
-            id: accountme,//convertAccountId32ToAccountId20(accountido),
+            key: accountme,//convertAccountId32ToAccountId20(accountido),
           },
         },
       ],
@@ -702,6 +704,34 @@ export async function turing2moonriver(accountido: string, amount: number) {
 
 
 }
+
+export async function mangata2turing(amount: number, accountido: string, assetid: number) {
+  const api = await getApiInstance("mangatax");
+  const accountid = getRawAddress(accountido);
+  const dest = {
+    parents: 1,
+    interior: {
+      X2: [
+        { Parachain: 2114 }, // oak paraid
+        {
+          accountId32: {
+            network: null,
+            id: accountid,
+          },
+        },
+      ],
+    },
+  };
+
+  const tx = await api.tx.xTokens.transfer(
+    { currency_id: assetid },
+    { amount: amount},
+    { V3: dest }, 
+    { Limited: { proof_size: 0, ref_time: 4000000000} }
+  );
+    return tx;
+}
+
 
 
 // send TUR native from turing to mangatax

@@ -104,7 +104,7 @@ export function listChains() {
         display: 'Moonriver (Kusama)',
         paraid: 2023,
         prefix: 42, 
-        token_decimals: 12, 
+        token_decimals: 18, 
         logo: '/chains/moonriver.svg',
         parachain: true, 
         relayParent: "kusama",

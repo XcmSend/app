@@ -6,7 +6,7 @@
     "Filip Kalebo <filip@rustsyndi.cat>"
   ],
   "private": true,
-  "version": "0.0.9",
+  "version": "0.1.1",
   "license": "Bagpipes License",
   "type": "module",
   "scripts": {
