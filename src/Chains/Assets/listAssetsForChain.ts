@@ -25,7 +25,6 @@ export function listTuringAssets() {
   }));
 }
 
-
 export function listmangataxAssets() {
   const assets = CHAIN_ASSETS.mangatax.assets;
 
@@ -34,7 +33,6 @@ export function listmangataxAssets() {
     assetId: assetData.assetId,
   }));
 }
-
 
 export function listInterlayAssets() {
   const assets = CHAIN_ASSETS.interlay.assets;

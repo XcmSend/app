@@ -667,17 +667,14 @@ export async function moonriver2turing(accountidme: string, amount: number) {
   const asset = {
     id: {
       Concrete: {
-      
         interior: {
           X1: { Parachain: 2114 },
         },
-      parents: 1,
-
+        parents: 1,
       },
     },
     fun: { Fungible: amount.toString() },
   };
- 
 
   const dest = {
     parents: 1,
@@ -685,43 +682,37 @@ export async function moonriver2turing(accountidme: string, amount: number) {
       X2: [
         { Parachain: 2114 }, // Moonriver paraid
         {
-          Accountid32: { // change me 
+          Accountid32: {
+            // change me
             network: null,
-            id: accountid,//convertAccountId32ToAccountId20(accountido),
+            id: accountid, //convertAccountId32ToAccountId20(accountido),
           },
         },
       ],
     },
   };
 
-
   const tx = await api.tx.xTokens.transferMultiasset(
-    { V2: asset }, 
-    { v2: dest},
-    { Unlimited: null} 
-    );
+    { V2: asset },
+    { v2: dest },
+    { Unlimited: null }
+  );
 
   return tx;
-
-
 }
 
 // https://turing.subscan.io/extrinsic/4825155-2
 export async function turing2moonriver(accountido: string, amount: number) {
-
   const api = await getApiInstance("turing");
   const accountme = substrate_address_to_evm(accountido); // convert to evm address
 
   const asset = {
     id: {
       Concrete: {
-
-       
         interior: {
           X1: { Parachain: 2114 },
         },
-      parents: 1,
-
+        parents: 1,
       },
     },
     fun: { Fungible: amount.toString() },
@@ -733,9 +724,10 @@ export async function turing2moonriver(accountido: string, amount: number) {
       X2: [
         { Parachain: 2023 }, // Moonriver paraid
         {
-          AccountKey20: { // change me 
+          AccountKey20: {
+            // change me
             network: null,
-            key: accountme,//convertAccountId32ToAccountId20(accountido),
+            key: accountme, //convertAccountId32ToAccountId20(accountido),
           },
         },
       ],
@@ -748,11 +740,13 @@ export async function turing2moonriver(accountido: string, amount: number) {
     { Unlimited: null }
   );
   return tx;
-
-
 }
 
-export async function mangata2turing(amount: number, accountido: string, assetid: number) {
+export async function mangata2turing(
+  amount: number,
+  accountido: string,
+  assetid: number
+) {
   const api = await getApiInstance("mangatax");
   const accountid = getRawAddress(accountido);
   const dest = {
@@ -772,14 +766,12 @@ export async function mangata2turing(amount: number, accountido: string, assetid
 
   const tx = await api.tx.xTokens.transfer(
     { currency_id: assetid },
-    { amount: amount},
-    { V3: dest }, 
-    { Limited: { proof_size: 0, ref_time: 4000000000} }
+    { amount: amount },
+    { V3: dest },
+    { Limited: { proof_size: 0, ref_time: 4000000000 } }
   );
-    return tx;
+  return tx;
 }
-
-
 
 // send TUR native from turing to mangatax
 export async function turing2mangata(amount: number, accountido: string) {

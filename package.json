@@ -15,7 +15,7 @@
     "dev": "npm run build:tailwind && vite --force",
     "build": "tsc && npm run build:tailwind && vite build ",
     "test": "npx tsx src/run_tests.ts",
-    "format": "npx prettier --write 'src/*/*/*.ts'",
+    "format": "npx prettier --write 'src/*/*/*.ts' && npx prettier --write 'src/*.ts'",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
