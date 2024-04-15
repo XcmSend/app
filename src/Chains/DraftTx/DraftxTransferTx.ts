@@ -799,7 +799,7 @@ export async function turing2mangata(amount: number, accountido: string) {
     },
     fun: { Fungible: amount.toString() },
   };
-  console.log(`asset:`, asset);
+  //console.log(`asset:`, asset);
   const destination = {
     parents: 1,
     interior: {

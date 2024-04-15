@@ -485,11 +485,11 @@ export async function check_tur_on_moonriver(accounteth: string){
   const balance = await api.query.assets.account(tur_assetid, accounteth);
   const b3 = balance.toHuman();
 
-  console.log(`check moonriver Balance balance`, balance);
+ // console.log(`check moonriver Balance balance`, balance);
 
   if (isAssetHubAssetBalance(b3)) {
     const bal_obj: AssetHubAssetBalance = b3;
-   console.log(`check moonriver Balance balance object`, bal_obj);
+  //  console.log(`check moonriver Balance balance object`, bal_obj);
     return {
         free: bal_obj.balance,
         reserved: 0,

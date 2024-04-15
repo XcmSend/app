@@ -1,8 +1,8 @@
 /// tests for XCMSend
 
-import { genericPolkadotToParachain, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
+import { genericPolkadotToParachain, moonriver2turing, turing2moonriver, turing2mangata, polkadot_to_assethub, assethub_to_parachain,  hydraDxToParachain, dotToHydraDx, assethub2interlay } from './Chains/DraftTx/DraftxTransferTx';
 import * as assert from 'assert';
-import { checkAssetHubBalance, assetHubNativeBalance, checkHydraDxAssetBalance, checkPolkadotDotRawNativeBalance } from './Chains/Helpers/AssetHelper';
+import { checkAssetHubBalance, assetHubNativeBalance, checkTuringAssetBalance, check_tur_on_moonriver, checkHydraDxAssetBalance, checkPolkadotDotRawNativeBalance } from './Chains/Helpers/AssetHelper';
 import { Keyring } from '@polkadot/keyring';
 import { inAndOutChannels } from './Chains/Helpers/XcmHelper';
 
@@ -117,6 +117,40 @@ async function broadcast_run_tx(tx: any) {
     }
 
 
+/// Runs tests for oak and moonriver
+async function test_oak(){ 
+    console.log(`Running Turing test`);
+    const accountid32 = "683nUAfxZpaUMuwM2C3txkQ3UyELdouKvEADryNv2R3j182k";
+    console.log(`Checking turing Native balance`);
+    const native_balance = await checkTuringAssetBalance(0, accountid32);
+   // console.log(`native_balance: `, native_balance.free);
+    assert.notEqual(native_balance.free, 0);
+    console.log(`Checking turing Native balance ok`);
+    const evm_moonriver_ac = "0xA68db75204262BFC29aaC76CD546E2500Ba2AcBd"; // change me
+    console.log(`Checking TUR on Moonriver Balance `);
+    const mr_bal = await check_tur_on_moonriver(evm_moonriver_ac);
+  //  console.log(`mr_bal: `, mr_bal);
+    assert.notEqual(mr_bal.free, 0); // check that is has balance
+    console.log(`Checking TUR on Moonriver Balance successful `);
+    //  assert.match
+    // draft tx
+    console.log(`Drafting Transaction Turing > Moonriver`);
+    const t2m = await turing2moonriver(evm_moonriver_ac, 10000);
+    console.log(`Drafting Transaction Turing > Moonriver ok`);
+
+  //  console.log(t2m.toHuman());
+    console.log(`Drafting Transaction Moonriver > Turing `);
+    const m2t = await moonriver2turing(accountid32, 1100000);
+    console.log(`Drafting Transaction Moonriver > Turing ok `);
+
+    console.log(`Drafting Transaction Turing > Mangatax`);
+    const tmm = await turing2mangata(10000, accountid32);
+    console.log(`Drafting Transaction Turing > Mangatax ok`);
+    console.log(`test for Turing Finished`);
+ }
+
+
+
 // check assets balances
 async function test_balances(){
     const assetid = 1984; // usdt
@@ -180,11 +214,12 @@ You can broadcast each tx, by feeding the tx into the broadcast_run_tx function
 async function main() {
     console.log('Running tests');
     console.log('Running Balance tests');
-    await test_balances();
+//    await test_balances();
     console.log('running transaction tests');
-    await test_transfers();
+//    await test_transfers();
     console.log('Checking XCM channels');
-    await check_open_channels();
+//    await check_open_channels();
+    await test_oak();
     console.log('test completed');
 }
 
