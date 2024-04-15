@@ -1,10 +1,11 @@
-import { dotToHydraDx, turing2moonriver, mangata2turing, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 
 import { hydradx_omnipool_sell } from "../../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
 import { account } from "@polkadot/api-derive/balances";
+import { evm } from "@polkadot/types/interfaces/definitions";
 
 export async function extrinsicHandler(actionType, formData) {
     
@@ -85,6 +86,12 @@ function handlexTransfer(formData) {
             return assethub2interlay(source.assetId, tetherAmount, target.address);
         },
 /**/
+        'moonriver:turing': () => {
+        //    if not address is evm, break 
+        //    {moonbeam_address_eth_warn && <p>invalid address</p>}
+                return moonriver2turing(target.address, submittableAmount/100000000);
+        },
+
         // needs evm accountid20
         'turing:moonriver': () => {
             return turing2moonriver(target.account, submittableAmount);

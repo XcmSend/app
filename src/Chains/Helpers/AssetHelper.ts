@@ -11,6 +11,8 @@ import {
 import { ApiPromise } from "@polkadot/api";
 import { string } from "slate";
 import { getRawAddress } from "../DraftTx/DraftxTransferTx";
+import { Asset } from "@galacticcouncil/sdk";
+import { Outlet } from "react-router-dom";
 
 interface BaseBalance {
   free: number;
@@ -76,6 +78,9 @@ interface AssetHubAssetBalance {
   reason: string;
   extra: string;
 }
+
+// moonriver assets pallet
+
 
 function isAssetHubAssetBalance(obj: any): obj is AssetHubAssetBalance {
   return (
@@ -473,6 +478,31 @@ export async function checkHydraDxAssetBalance(
   return { free: 0, reserved: 0, total: 0 };
 }
 
+// input 0x eth account
+export async function check_tur_on_moonriver(accounteth: string){
+  const tur_assetid = "133300872918374599700079037156071917454";
+  const api = await getApiInstance('moonriver');
+  const balance = await api.query.assets.account(tur_assetid, accounteth);
+  const b3 = balance.toHuman();
+
+  console.log(`check moonriver Balance balance`, balance);
+
+  if (isAssetHubAssetBalance(b3)) {
+    const bal_obj: AssetHubAssetBalance = b3;
+   console.log(`check moonriver Balance balance object`, bal_obj);
+    return {
+        free: bal_obj.balance,
+        reserved: 0,
+    };
+  }
+  console.log(`moonriver returning 0`);
+  return {
+    free: 0,
+    reserved: 0
+  };
+
+}
+
 /// returns the raw balance of the native dot token
 export async function checkPolkadotDotRawNativeBalance(
   accountId: string,
@@ -654,8 +684,14 @@ export async function getAssetBalanceForChain(
 ): Promise<AssetBalanceInfo> {
   console.log(`getAssetBalanceForChain chain`, chain);
   let assetDecimals: number | undefined;
-
-  const sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ""), 10);
+  console.log(`getAssetBalanceForChain assetId, accountId: `, assetId, accountId);
+  var sanitizedAssetId;
+  if (chain == 'moonriver'){
+    sanitizedAssetId = assetId;
+  } else {
+    sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ""), 10);
+  };
+  
   let balances:
     | { free: number; reserved: number; total?: number; frozen?: number }
     | undefined;
@@ -698,8 +734,11 @@ export async function getAssetBalanceForChain(
       assetDecimals = balances.assetDecimals;
       break;
 
- //   case "":
-//      balances = await
+    case "moonriver":
+      console.log(`moonriver check tur!`);
+      balances = await check_tur_on_moonriver(accountId);
+      assetDecimals = 10;
+      break;
 
     case "assetHub":
       const assetHubBalanceInfo = await checkAssetHubBalance(

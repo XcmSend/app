@@ -1,4 +1,4 @@
-import { listAssetHubAssets, listTuringAssets, listmangataxAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
+import { listAssetHubAssets, listMoonRiverAssets, listTuringAssets, listmangataxAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
 
 const dotAssets = {
   asset: {
@@ -87,6 +87,10 @@ export const getAssetOptions = async (selectedChain, signal) => {
       case 'mangatax':
         assets = await listmangataxAssets();
         //assets.push(myassets);
+        break;
+
+    case 'moonriver':
+        assets = listMoonRiverAssets();
         break;
 
       case 'interlay':

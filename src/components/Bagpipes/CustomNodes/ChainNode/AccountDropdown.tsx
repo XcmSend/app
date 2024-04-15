@@ -29,12 +29,20 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
         onSelect(matchedAccount.address);
     }
     
-    // console.log("Selected:", matchedAccount);
-    // console.log("Selected Address:", selectedAccount);
+    console.log("Selected:", matchedAccount);
+   console.log("Selected Address:", selectedAccount);
 };
 
-
+// todo: proper validate address type
   const displayAddress = (address: string, prefix: number) => {
+    // evm
+    console.log(`displaying address:`, address);
+    if (address.startsWith("0x")) {
+      return address;
+    }
+  
+
+    // Substrate 
     const encodedAddress = encodeAddress(decodeAddress(address), prefix);
     const start = encodedAddress.slice(0, 6); 
     const end = encodedAddress.slice(-4); 

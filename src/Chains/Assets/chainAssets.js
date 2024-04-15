@@ -419,6 +419,20 @@ export const CHAIN_ASSETS = {
           ]
     },
 
+    "moonriver": {
+        "assets": [
+          {
+            "asset": {
+                "decimals": '10',
+                "name": 'Turing',
+                "symbol": 'TUR',
+                "existentialDeposit": '500,000,000,00', // change me
+          },
+          "assetId": '133300872918374599700079037156071917454'
+        },
+        ]
+    },
+
     "turing": {
     "assets": [
   

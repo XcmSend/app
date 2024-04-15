@@ -67,6 +67,16 @@ async function listInterlayAssetReal() {
   const valuesArray = Array.from(dictionary.values());
   return valuesArray;
 }
+
+export function listMoonRiverAssets() {
+  const assets = CHAIN_ASSETS.moonriver.assets;
+  console.log(`listing moonriver assets`);
+  return assets.map((assetData) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
 export function listHydraDxAssets() {
   const assets = CHAIN_ASSETS.hydraDx.assets;
 
