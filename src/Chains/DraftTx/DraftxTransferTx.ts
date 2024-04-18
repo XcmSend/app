@@ -704,7 +704,17 @@ export async function moonriver2turing(accountidme: string, amount: number) {
 // https://turing.subscan.io/extrinsic/4825155-2
 export async function turing2moonriver(accountido: string, amount: number) {
   const api = await getApiInstance("turing");
-  const accountme = substrate_address_to_evm(accountido); // convert to evm address
+  var accountme;
+  console.log(`turing2moonriver input:`, accountido, amount);
+  // monkey patch validate eth address
+  if (accountido.startsWith("0x")) {
+    accountme = accountido; 
+    
+  } else {
+    
+    accountme = substrate_address_to_evm(accountido);
+  };
+   // convert to evm address
 
   const asset = {
     id: {
