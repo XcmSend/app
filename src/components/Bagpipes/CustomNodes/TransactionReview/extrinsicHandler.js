@@ -94,7 +94,7 @@ function handlexTransfer(formData) {
 
         // needs evm accountid20
         'turing:moonriver': () => {
-            return turing2moonriver(target.account, submittableAmount);
+            return turing2moonriver(target.address, submittableAmount);
         },
 
         'assetHub:kusama_assethub': () => {
