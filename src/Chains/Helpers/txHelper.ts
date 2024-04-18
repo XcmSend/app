@@ -5,6 +5,21 @@ import { genericRawNativeBalance } from "./AssetHelper";
 import { getApiInstance } from "../api/connect";
 import { supported_Polkadot_Chains } from "../ChainsInfo";
 import endpoints from "../api/WsEndpoints";
+import { addressToEvm } from "@polkadot/util-crypto";
+
+const u8aToHex = (bytes: number[] | Uint8Array): string => {
+  const arr = bytes instanceof Uint8Array ? Array.from(bytes) : bytes;
+  return (
+    "0x" +
+    arr.reduce((str, byte) => str + byte.toString(16).padStart(2, "0"), "")
+  );
+};
+
+// convert ss58 accountid32 to accountid20(evm)
+export function substrate_address_to_evm(accountid32: string): string {
+  const byteArray = addressToEvm(accountid32);
+  return u8aToHex(byteArray); // return the hex version of the address
+}
 
 /// spawn a subscription and wait until balance on destination
 /// account has been updated

@@ -11,6 +11,8 @@ import {
 import { ApiPromise } from "@polkadot/api";
 import { string } from "slate";
 import { getRawAddress } from "../DraftTx/DraftxTransferTx";
+import { Asset } from "@galacticcouncil/sdk";
+import { Outlet } from "react-router-dom";
 
 interface BaseBalance {
   free: number;
@@ -77,6 +79,8 @@ interface AssetHubAssetBalance {
   extra: string;
 }
 
+// moonriver assets pallet
+
 function isAssetHubAssetBalance(obj: any): obj is AssetHubAssetBalance {
   return (
     typeof obj === "object" &&
@@ -86,6 +90,76 @@ function isAssetHubAssetBalance(obj: any): obj is AssetHubAssetBalance {
     "reason" in obj &&
     "extra" in obj
   );
+}
+
+export async function checkmangataxAssetBalance(
+  assetid: number | string,
+  account_id: string,
+  signal?: AbortSignal
+): Promise<{
+  free: number;
+  reserved: number;
+  total: number;
+  frozen?: number;
+  assetDecimals?: number;
+}> {
+  // If assetId is 0, fetch the native balance.
+  //if (assetid === 0 || assetid === "0") {
+  // return hydraDxNativeBalance(account_id_32);
+  // }
+
+  let api: any;
+  let hdxBalance: any;
+  let assetDecimals: number;
+
+  const account_id_32 = getRawAddress(account_id);
+  try {
+    const asset = {
+      foreignasset: assetid,
+    };
+    api = await getApiInstance("mangatax", signal);
+    hdxBalance = await api.query.tokens.accounts(account_id_32, asset);
+  } catch (error) {
+    console.error(
+      `Error retrieving balance for asset ID ${assetid} and account ${account_id_32}:`,
+      error
+    );
+    return { free: 0, reserved: 0, total: 0 };
+  }
+
+  const stringBalance = hdxBalance.toHuman();
+  //  console.log(`checkHydraDxAssetBalance Raw HDX Balance:`, stringBalance);
+
+  try {
+    const assetlist = listInterlayAssets();
+
+    const assetWithAssetId2 = assetlist.find(
+      (asset) => asset.assetId === assetid.toString()
+    );
+    const decimals = parseInt(assetWithAssetId2.asset.decimals, 10);
+
+    assetDecimals = decimals;
+
+    //    console.log(`checkHydraDxAssetBalance metadata`, metadata);
+    //   console.log(`checkHydraDxAssetBalance assetDecimals`, assetDecimals);
+  } catch (error) {
+    console.error(`Error retrieving metadata for asset ID ${assetid}:`, error);
+    // You might want to set a default or throw an error here
+    assetDecimals = 12;
+  }
+
+  if (isOrmlTokensAccountData(hdxBalance)) {
+    const bal_obj: OrmlTokensAccountData = hdxBalance;
+    //  console.log(`checkHydraDxAssetBalance bal obj`, bal_obj.toString());
+    return {
+      free: bal_obj.free,
+      reserved: bal_obj.reserved,
+      frozen: bal_obj.frozen,
+      total: bal_obj.free + bal_obj.reserved + bal_obj.frozen,
+      assetDecimals,
+    };
+  }
+  return { free: 0, reserved: 0, total: 0 };
 }
 
 /// check the balance of an asset on interlay
@@ -256,6 +330,7 @@ export async function checkTuringAssetBalance(
   // If assetId is 0, fetch the native balance.
   if (assetid === 0 || assetid === "0") {
     const api7 = await getApiInstance("turing");
+
     const result = await generic_check_native_balance(api7, account_id_32);
     const total =
       result.free +
@@ -399,6 +474,30 @@ export async function checkHydraDxAssetBalance(
     };
   }
   return { free: 0, reserved: 0, total: 0 };
+}
+
+// input 0x eth account
+export async function check_tur_on_moonriver(accounteth: string) {
+  const tur_assetid = "133300872918374599700079037156071917454";
+  const api = await getApiInstance("moonriver");
+  const balance = await api.query.assets.account(tur_assetid, accounteth);
+  const b3 = balance.toHuman();
+
+  // console.log(`check moonriver Balance balance`, balance);
+
+  if (isAssetHubAssetBalance(b3)) {
+    const bal_obj: AssetHubAssetBalance = b3;
+    //  console.log(`check moonriver Balance balance object`, bal_obj);
+    return {
+      free: bal_obj.balance,
+      reserved: 0,
+    };
+  }
+  console.log(`moonriver returning 0`);
+  return {
+    free: 0,
+    reserved: 0,
+  };
 }
 
 /// returns the raw balance of the native dot token
@@ -582,8 +681,18 @@ export async function getAssetBalanceForChain(
 ): Promise<AssetBalanceInfo> {
   console.log(`getAssetBalanceForChain chain`, chain);
   let assetDecimals: number | undefined;
+  console.log(
+    `getAssetBalanceForChain assetId, accountId: `,
+    assetId,
+    accountId
+  );
+  var sanitizedAssetId;
+  if (chain == "moonriver") {
+    sanitizedAssetId = assetId;
+  } else {
+    sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ""), 10);
+  }
 
-  const sanitizedAssetId = parseInt(assetId.toString().replace(/,/g, ""), 10);
   let balances:
     | { free: number; reserved: number; total?: number; frozen?: number }
     | undefined;
@@ -624,6 +733,12 @@ export async function getAssetBalanceForChain(
     case "turing":
       balances = await checkTuringAssetBalance(assetId, accountId);
       assetDecimals = balances.assetDecimals;
+      break;
+
+    case "moonriver":
+      console.log(`moonriver check tur!`);
+      balances = await check_tur_on_moonriver(accountId);
+      assetDecimals = 10;
       break;
 
     case "assetHub":

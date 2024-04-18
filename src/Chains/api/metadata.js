@@ -20,6 +20,27 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
+    mangatax: {
+        chain: "mangatax",
+        endpoints: [
+            "wss://kusama-archive.mangata.online",
+            "wss://kusama-rpc.mangata.online",
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
+    moonriver: {
+        chain: "moonriver",
+        endpoints: [
+            "wss://moonriver-rpc.dwellir.com",
+            "wss://wss.api.moonriver.moonbeam.network"
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account" ,"assets.accounts"],
+        nativeAccount: true
+    },
+
     turing: {
         chain: "turing",
         endpoints: [
@@ -45,8 +66,8 @@ export const CHAIN_METADATA = {
     polkadot: {
         chain: "Polkadot",
         endpoints: [
-            "wss://rpc.polkadot.io",
             "wss://polkadot-rpc.dwellir.com",
+            "wss://rpc.polkadot.io",
             "wss://polkadot.api.onfinality.io/public-ws",
 
 

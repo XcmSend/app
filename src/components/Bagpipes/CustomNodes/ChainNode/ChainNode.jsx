@@ -105,6 +105,14 @@ const ChainNode = ({ data, isConnectable }) => {
       return chainInfo.name.toLowerCase() === "rococo";
   });
   }
+  var moonbeam_address_eth_warn = false;
+
+ // if (scenarios[activeScenarioId]?.diagramData?.nodes[currentNodeIndex]?.formData?.chain == 'moonriver')
+//  {
+ //   moonbeam_address_eth_warn = true;
+ // }
+ 
+
 
   if (sourceChainName == 'sora') {
     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
@@ -148,13 +156,13 @@ const ChainNode = ({ data, isConnectable }) => {
   
   // Assuming we have some function to fetch addresses from the extension
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
-
+  console.log(`extensionAddresses:`, extensionAddresses);
 
 
   // Filtered assets based on the selected chain
   const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
   const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
-    // console.log('ChainInfoList', ChainInfoList)
+     console.log('ChainInfoList', ChainInfoList)
 
     const handleFormChange = (field, value) => {
       setFormState(prev => ({
@@ -334,8 +342,8 @@ useEffect(() => {
 
     return () => controller.abort();
 }, [formState.chain, formState.asset, formState.address]);
-
-
+  console.log(`eth warn: `, moonbeam_address_eth_warn);
+  console.log(`assetsForChain: `, assetsForChain);
   return (
     <div className={`${theme} custom-node shadow-lg text-xs p-4`}>
       <div className='flex justify-between m-1'>
@@ -394,6 +402,7 @@ useEffect(() => {
       {formState.chain && (
         <div className="flex flex-col items-start mb-2 in-node-border p-2 rounded">
           <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>
+          
           <div className="flex items-center text-black justify-start  w-full">
             <AccountDropdown 
                 selectedChainName={formState.chain}
@@ -402,7 +411,9 @@ useEffect(() => {
             />
           </div>
           <AddContacts />
+         {moonbeam_address_eth_warn && <b class="items-center">EVM wallets only</b>}
         </div>
+        
       )}
       {/* Hide delay for now until we have the side form working, and scheduler is in the pallet / parameters area.  */}
         {/* {formState.chain == 'polkadot' && (

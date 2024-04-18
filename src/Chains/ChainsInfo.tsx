@@ -99,6 +99,33 @@ export function listChains() {
       };
       chainList[2004] = Moonbeam;
 
+      const Moonriver: ChainInfo = {
+        name: 'moonriver',
+        display: 'Moonriver (Kusama)',
+        paraid: 2023,
+        prefix: 42, 
+        token_decimals: 18, 
+        logo: '/chains/moonriver.svg',
+        parachain: true, 
+        relayParent: "kusama",
+        relay: false
+      };
+      chainList[2023] = Moonriver;
+
+      const MangataX: ChainInfo = {
+        name: "mangatax",
+        display: "MangataX (Kusama)",
+        paraid: 2110,
+        prefix: 42,
+        token_decimals: 12,
+        logo: '/chains/mangata.png',
+        parachain: true, 
+        relayParent: "kusama",
+        relay: false
+      };
+
+      chainList[2110] = MangataX;
+
       const Turing: ChainInfo = {
         name: 'turing',
         display: 'Turing (Kusama)',

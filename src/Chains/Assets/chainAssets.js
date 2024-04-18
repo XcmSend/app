@@ -279,6 +279,160 @@ export const CHAIN_ASSETS = {
             }
         ]
     },
+
+    "mangatax": {
+        "assets":  [
+            {
+              "asset": {
+                "decimals": '6',
+                "name": 'Tether USD',
+                "symbol": 'USDT',
+                "existentialDeposit": '0',
+              },
+              "assetId": '30'
+            },
+          
+            {
+              "asset": {
+                "decimals": '10',
+                "name": 'Turing native token',
+                "symbol": 'TUR',
+                "existentialDeposit": '0',
+              },
+              "assetId": '7'
+            },
+          
+            {
+              "asset": {
+                "decimals": '18',
+                "name": 'Zenlink',
+                "symbol": 'ZLK',
+                "existentialDeposit": '0',
+              },
+              "assetId": '26'
+            },
+          
+            {
+              "asset": {
+                "decimals": '18',
+                "name": 'Moonriver',
+                "symbol": 'MOVR',
+                "existentialDeposit": '0',
+              },
+              "assetId": '39'
+            },
+            {
+              "asset": {
+                "decimals": '18',
+                "name": 'Ether',
+                "symbol": 'ETH',
+                "existentialDeposit": '0',
+              },
+              "assetId": '1'
+            },
+          
+            {
+              "asset": {
+                "decimals": '12',
+                "name": 'Voucher Slot KSM',
+                "symbol": 'vsKSM',
+                "existentialDeposit": '0',
+              },
+              "assetId": '16'
+            },
+            {
+              "asset": {
+                "decimals": '12',
+                "name": 'Bifrost Native Token',
+                "symbol": 'BNC',
+                "existentialDeposit": '0',
+              },
+              "assetId": '14'
+            },
+          
+            {
+              "asset": {
+                "decimals": '10',
+                "name": 'RMRK.app',
+                "symbol": 'RMRK',
+                "existentialDeposit": '0',
+              },
+              "assetId": '31'
+            },
+          
+            {
+              "asset": {
+                "decimals": '12',
+                "name": 'Voucher KSM',
+                "symbol": 'vKSM',
+                "existentialDeposit": '0',
+              },
+              "assetId": '15'
+            },
+              {
+              "asset": {
+                "decimals": '18',
+                "name": 'Mangata',
+                "symbol": 'MGX',
+                "existentialDeposit": '0',
+                 },
+              "assetId": '0'
+            },
+            {
+              "asset": {
+                "decimals": '12',
+                "name": 'Karura',
+                "symbol": 'KAR',
+                "existentialDeposit": '0',         
+              },
+              "assetId": '6'
+            },
+            {
+              "asset": {
+                "decimals": '12',
+                "name": 'Imbue',
+                "symbol": 'IMBU',
+                "existentialDeposit": '0',
+              },
+              "assetId": '11'
+            },
+          
+            {
+              "asset": {
+                "decimals": '12',
+                "name": 'Voucher BNC',
+                "symbol": 'vBNC',
+                "existentialDeposit": '0',
+              },
+              "assetId": '23'
+            },
+            {
+              "asset": {
+                "decimals": '12',
+                "name": 'Kusama Native',
+                "symbol": 'KSM',
+                "existentialDeposit": '0',
+              },
+              "assetId": '4'
+            }
+          
+          ]
+    },
+
+    "moonriver": {
+        "assets": [
+          {
+            "asset": {
+                "decimals": '10',
+                "name": 'Turing',
+                "symbol": 'TUR',
+                "existentialDeposit": '500,000,000,00', // change me
+          },
+          "assetId": '133300872918374599700079037156071917454'
+        },
+        ]
+    },
+
     "turing": {
     "assets": [
   

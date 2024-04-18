@@ -78,7 +78,7 @@ export async function connectToWsEndpoint(chain: string): Promise<ApiPromise> {
       });
 
       apiConnections.set(chain, api);
-      console.log("Connected to endpoint", endpoint);
+      //console.log("Connected to endpoint", endpoint);
       return api;
     } catch (error) {
       lastError = error;

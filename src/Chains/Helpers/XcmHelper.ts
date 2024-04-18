@@ -12,6 +12,20 @@ returns a list of paraid's
   2101, 2104
 ]
 */
+
+export async function findIngressKusamaChannels(
+  paraid: number
+): Promise<[number]> {
+  //  console.log("findIngressPolkadotChannels for hrmp for  paraid", paraid);
+  const api = await getApiInstance("kusama");
+  // console.log("findIngressPolkadotChannels for hrmp for  api", api);
+  const Channels = (
+    (await api.query.hrmp.hrmpIngressChannelsIndex(paraid)) as any
+  ).map((a: { toNumber: () => any }) => a.toNumber());
+
+  return Channels;
+}
+
 export async function findIngressPolkadotChannels(
   paraid: number
 ): Promise<[number]> {
@@ -24,6 +38,19 @@ export async function findIngressPolkadotChannels(
 
   return Channels;
 }
+export async function findEngressKusamachannels(
+  paraid: number
+): Promise<[number]> {
+  const api = await getApiInstance("kusama");
+  const Channels = (
+    (await api.query.hrmp.hrmpEgressChannelsIndex(paraid)) as any
+  ).map((a: { toNumber: () => any }) => a.toNumber());
+
+  return Channels;
+}
+
+
+
 
 export async function findEngressPolkadotChannels(
   paraid: number
@@ -35,6 +62,21 @@ export async function findEngressPolkadotChannels(
 
   return Channels;
 }
+
+export async function KusamaParachainChannelCheck(
+  sourceparaid: number,
+  destchain: number
+): Promise<boolean> {
+  const s_ingress = await findIngressKusamaChannels(sourceparaid);
+  const s_egress = await findEngressKusamachannels(sourceparaid);
+
+  if (s_ingress.includes(destchain) && s_egress.includes(destchain)) {
+    return true;
+  }
+
+  return false;
+}
+
 
 /// take input chain and dest chain and check if they got open hrmp channels
 /// input: source chain paraid, dest chain paraid
