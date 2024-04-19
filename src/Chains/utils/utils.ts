@@ -39,7 +39,7 @@ export function toUnit(
   balance: string | number,
   token_decimals: number
 ): number {
-  // console.log('[toUnit] balance', balance, token_decimals);
+   console.log('[toUnit] balance', balance, token_decimals);
   if (balance === null || balance === undefined) {
     throw new Error("Received invalid balance: null or undefined");
   }

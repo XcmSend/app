@@ -316,6 +316,34 @@ function isOrmlTokensAccountData(obj: any): obj is OrmlTokensAccountData {
   );
 }
 
+
+export async function checkDOT_kusama_assethub(account_id_32: string):   {
+  balance: number,
+  free: number, 
+  total: number, 
+  status: string,
+  assetDecimals?: number;
+  reason?: string,
+  extra?: string
+} {
+  const api = await getApiInstance("kusama_assethub");
+
+  const accountid = getRawAddress(account_id_32);
+  const foreignAssetAccount = await api.query.foreignAssets.account(
+    { parents: 2, interior: { X1: { GlobalConsensus: "Polkadot" } } },
+    accountid
+);
+const resp = foreignAssetAccount.toHuman();;
+  return  {
+    balance: resp.balance,
+    free: resp.balance, 
+    total: resp.balance,
+    status: resp.status,
+    assetDecimals: 12,
+    };
+  
+}
+
 export async function checkTuringAssetBalance(
   assetid: number | string,
   account_id_32: string,
@@ -735,6 +763,12 @@ export async function getAssetBalanceForChain(
       assetDecimals = balances.assetDecimals;
       break;
 
+    case "kusama_assethub":
+     // console.log(`kusama_assethub detected`);
+      balances = await checkDOT_kusama_assethub(accountId);
+    //  console.log(`returning:`, balances);
+      break;
+
     case "moonriver":
       console.log(`moonriver check tur!`);
       balances = await check_tur_on_moonriver(accountId);
@@ -748,9 +782,9 @@ export async function getAssetBalanceForChain(
         signal
       );
       balances = assetHubBalanceInfo;
-      console.log(`getAssetBalanceForChain balanceInfo`, assetHubBalanceInfo);
+ //     console.log(`getAssetBalanceForChain balanceInfo`, assetHubBalanceInfo);
       assetDecimals = assetHubBalanceInfo.assetDecimals;
-      console.log(`getAssetBalanceForChain assetDecimals`, assetDecimals);
+ //     console.log(`getAssetBalanceForChain assetDecimals`, assetDecimals, balances);
       break;
 
     case "rococo":
@@ -821,6 +855,12 @@ function processChainSpecificBalances(
         assetDecimals || tokenDecimals
       );
       totalInUnits = freeInUnits + reservedInUnits;
+      break;
+    case "kusama_assethub":
+     // console.log(`kusama assethub assethelper`);
+      freeInUnits = toUnit(balances.free, 10);
+      reservedInUnits = 0;
+      totalInUnits = freeInUnits;
       break;
     case "assetHub":
       // Process balances for assetHub

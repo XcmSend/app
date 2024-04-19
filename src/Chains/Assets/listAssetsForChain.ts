@@ -16,6 +16,18 @@ export function listAssetHubAssets() {
   }));
 }
 
+
+
+export function listkusama_assethubAssets() {
+  const assets = CHAIN_ASSETS.kusama_assethub.assets;
+
+  return assets.map((assetData: { asset: any; assetId: any }) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
+
 export function listTuringAssets() {
   const assets = CHAIN_ASSETS.turing.assets;
 
