@@ -659,6 +659,86 @@ export async function polkadot_assethub_to_kusama_assethub(
   return tx;
 }
 
+// Paseo relay chain
+
+// works with this input
+// const amount = 94250842200;
+//const account = "0xf621771ddf37d482210b8c59617952eb1c2b40cfec55df47215231365186a057";
+export async function paseo2assethub(amount: number, accountdest: string) {
+  const api = await getApiInstance("paseo");
+  const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
+  const destination = {
+    interior: { X1: { Parachain: 1000 } },
+    parents: 0,
+  };
+  const account = {
+    interior: {
+      X1: {
+        Accountid32: {
+          id: accountid,
+          network: null,
+        },
+      },
+    },
+  };
+  const asset = {
+    fun: {
+      Fungible: amount,
+    },
+    id: {
+      Concrete: {
+        parents: 0,
+        interior: {
+          Here: null,
+        },
+      },
+    },
+  };
+
+  const tx = api.tx.xcmPallet.limitedTeleportAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: [asset] },
+    0,
+    { Unlimited: null }
+  );
+  return tx;
+}
+
+export async function assethub2paseo(amount: number, accountdest: string) {
+  const api = await getApiInstance("paseo_assethub");
+  console.log(`[assethub2paseo] connected`);
+  const accountId = api
+    .createType("AccountId32", getRawAddress(accountdest))
+    .toHex();
+  const destination = {
+    parents: 1,
+    interior: { Here: null },
+  };
+
+  const account = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: accountId, network: null } } },
+  };
+
+  const asset = [
+    {
+      id: { Concrete: { parents: 1, interior: "Here" } }, // The asset is on the parachain (origin)
+      fun: { Fungible: amount },
+    },
+  ];
+
+  const tx = api.tx.polkadotXcm.limitedTeleportAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: asset },
+    { fee_asset_item: 0 },
+    { Unlimited: null }
+  );
+
+  return tx;
+}
+
 // https://moonriver.subscan.io/block/0xdc22e440ade2ebc6a5c3c07db1ab05f84f762f3b7a011f07b1fcc4cfbe68198a
 // correct with talisman polkadot wallet: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fmoonriver.public.curie.radiumblock.co%2Fws#/extrinsics/decode/0x6a0101000101000921000700e40b54020101020009210100ca477d2ed3c433806a8ce7969c5a1890187d765ab8080d3793b49b42aa9e805f00
 export async function moonriver2turing(accountidme: string, amount: number) {
@@ -708,13 +788,11 @@ export async function turing2moonriver(accountido: string, amount: number) {
   console.log(`turing2moonriver input:`, accountido, amount);
   // monkey patch validate eth address
   if (accountido.startsWith("0x")) {
-    accountme = accountido; 
-    
+    accountme = accountido;
   } else {
-    
     accountme = substrate_address_to_evm(accountido);
-  };
-   // convert to evm address
+  }
+  // convert to evm address
 
   const asset = {
     id: {

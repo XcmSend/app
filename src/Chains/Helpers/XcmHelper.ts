@@ -49,9 +49,6 @@ export async function findEngressKusamachannels(
   return Channels;
 }
 
-
-
-
 export async function findEngressPolkadotChannels(
   paraid: number
 ): Promise<[number]> {
@@ -76,7 +73,6 @@ export async function KusamaParachainChannelCheck(
 
   return false;
 }
-
 
 /// take input chain and dest chain and check if they got open hrmp channels
 /// input: source chain paraid, dest chain paraid

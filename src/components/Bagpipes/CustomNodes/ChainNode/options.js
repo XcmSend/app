@@ -1,4 +1,4 @@
-import { listAssetHubAssets, listkusama_assethubAssets, listMoonRiverAssets, listTuringAssets, listmangataxAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
+import { listAssetHubAssets, listPaseoAssets, listkusama_assethubAssets, listMoonRiverAssets, listTuringAssets, listmangataxAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
 
 const dotAssets = {
   asset: {
@@ -37,7 +37,14 @@ const turingAssets = {
 };
 
 
-
+const PaseoAssets = {
+    asset: {
+      name: 'Paseo Native PAS',
+      symbol: 'PAS',
+      description: 'Paseo PAS',
+    },
+    assetId: 0,
+  };
 
 const rococoAssets = {
   asset: {
@@ -56,6 +63,10 @@ export const assetOptions = [
     {
         chain: 'rococo',
         assets: [rococoAssets], 
+    },
+    {
+        chain: 'paseo',
+        assets: [PaseoAssets], 
     },
     {
         chain: 'hydraDx',
@@ -101,9 +112,12 @@ export const getAssetOptions = async (selectedChain, signal) => {
     case 'kusama_assethub':
         assets = listkusama_assethubAssets();
         break;
+    case 'paseo':
+        assets = listPaseoAssets();
+        break; 
     
-        case 'turing':
-          assets = listTuringAssets();
+    case 'turing':
+      assets = listTuringAssets();
 
           break;
 

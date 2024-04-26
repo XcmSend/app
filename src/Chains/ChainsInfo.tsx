@@ -126,6 +126,32 @@ export function listChains() {
 
       chainList[2110] = MangataX;
 
+
+      const Paseo: ChainInfo = {
+        name: 'paseo',
+        display: 'Paseo (Testnet Relay Chain)',
+        paraid: 0,
+        prefix: 1,
+        token_decimals: 10,
+        logo: '/chains/paseo.png',
+        relayParent: 'paseo',
+        parachain: false
+      };
+      chainList[999] = Paseo;
+
+     const PaseoAssethub: ChainInfo = {
+        name: 'paseo_assethub',
+        display: 'Paseo Assethub(Testnet)',
+        paraid: 1000,
+        prefix: 1,
+        token_decimals: 10,
+        logo: '/chains/assethub.svg',
+        relayParent: 'paseo',
+        parachain: true
+      };
+      chainList[9990] = PaseoAssethub;
+
+
       const Turing: ChainInfo = {
         name: 'turing',
         display: 'Turing (Kusama)',
