@@ -1,6 +1,7 @@
 import { dotToHydraDx, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
+import { isEthereumAddress } from '@polkadot/util-crypto';
 
 import { hydradx_omnipool_sell } from "../../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
@@ -87,13 +88,19 @@ function handlexTransfer(formData) {
         },
 /**/
         'moonriver:turing': () => {
+
         //    if not address is evm, break 
         //    {moonbeam_address_eth_warn && <p>invalid address</p>}
                 return moonriver2turing(target.address, submittableAmount/100000000);
         },
 
-        // needs evm accountid20
+
         'turing:moonriver': () => {
+            // verify that users has selected an eth address
+            if (!isEthereumAddress(target.address)) {
+                throw new Error("Only allowed to send to ethereum addresses when sending to moonriver");
+            };
+
             return turing2moonriver(target.address, submittableAmount);
         },
 
