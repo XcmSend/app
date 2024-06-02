@@ -41,6 +41,26 @@ export const CHAIN_METADATA = {
         nativeAccount: true
     },
 
+    paseo: {
+        chain: "paseo",
+        endpoints: [
+            "wss://paseo-rpc.dwellir.com",
+            "wss://rpc.ibp.network/paseo"
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true
+    },
+
+    paseo_assethub: {
+        chain: "paseo_assethub",
+        endpoints: [
+            "wss://asset-hub-paseo-rpc.dwellir.com",
+            "wss://sys.dotters.network/asset-hub-paseo"
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true
+    },
+
     turing: {
         chain: "turing",
         endpoints: [
