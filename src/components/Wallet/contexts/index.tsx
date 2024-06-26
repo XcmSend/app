@@ -1,8 +1,8 @@
 // Copyright 2019-2023 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 import React from 'react';
-import { Wallet, WalletAccount } from '../wallet-connect/src/types';
-import { EvmWallet } from '../wallet-connect/src/types';
+import { Wallet, WalletAccount } from '../connect-wallet/src/types';
+import { EvmWallet } from '../connect-wallet/src/types';
 
 export interface WalletContextInterface {
   wallet?: Wallet,

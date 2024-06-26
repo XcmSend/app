@@ -100,29 +100,21 @@ const ChainNode = ({ data, isConnectable }) => {
 
   console.log(`sourceChainName:`, sourceChainName);
 
-  if (sourceChainName == 'rococo') {
-    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-      return chainInfo.name.toLowerCase() === "rococo";
-  });
-  }
-  var moonbeam_address_eth_warn = false;
+//   if (sourceChainName == 'rococo') {
+//     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+//       return chainInfo.name.toLowerCase() === "rococo";
+//   });
+//   }
 
- // if (scenarios[activeScenarioId]?.diagramData?.nodes[currentNodeIndex]?.formData?.chain == 'moonriver')
-//  {
- //   moonbeam_address_eth_warn = true;
- // }
- 
+//   if (sourceChainName == 'sora') {
+//     filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+//       return chainInfo.name.toLowerCase() === "rococo";
+//   });
+//   }
 
-
-  if (sourceChainName == 'sora') {
-    filteredChainInfoList = ChainInfoList.filter(chainInfo => {
-      return chainInfo.name.toLowerCase() === "rococo";
-  });
-  }
-
- // filteredChainInfoList = ChainInfoList.filter(chainInfo => {
- //    return chainInfo.name.toLowerCase() === "rococo" | hrmpForSource.length === 0 || hrmpForSource.includes(12011);
- //});
+//  filteredChainInfoList = ChainInfoList.filter(chainInfo => {
+//     return chainInfo.name.toLowerCase() === "rococo" | hrmpForSource.length === 0 || hrmpForSource.includes(12011);
+//  });
 
   // Log a warning if the HRMP channels list is empty
   if (hrmpForSource.length === 0) {
@@ -154,15 +146,14 @@ const ChainNode = ({ data, isConnectable }) => {
     return [];
   };
   
-  // Assuming we have some function to fetch addresses from the extension
+  // function to fetch addresses from the extension
   const extensionAddresses = useMemo(() => fetchAddressesFromExtension(), []);
-  console.log(`extensionAddresses:`, extensionAddresses);
 
 
   // Filtered assets based on the selected chain
   const assetsForSelectedChain = assetOptions.find(option => option.chain === formState.chain)?.assets || [];
   const filteredAssets = Array.isArray(assetsForSelectedChain) ? assetsForSelectedChain : [assetsForSelectedChain];
-     console.log('ChainInfoList', ChainInfoList)
+    console.log('ChainInfoList', ChainInfoList)
 
     const handleFormChange = (field, value) => {
       setFormState(prev => ({
@@ -315,6 +306,7 @@ const ChainNode = ({ data, isConnectable }) => {
   const fetchBalance = async (signal) => {
     try {
       setIsFetchingBalance(true);
+      console.log('Fetching balance for:', formState.chain, formState.asset.assetId, formState.address);
       const fetchedBalance = await getAssetBalanceForChain(formState.chain, formState.asset.assetId, formState.address, signal); 
       if (!signal.aborted) {
         setBalance(fetchedBalance);
@@ -330,20 +322,20 @@ const ChainNode = ({ data, isConnectable }) => {
     }
 };
 
-useEffect(() => {
-    const controller = new AbortController();
-    const signal = controller.signal;
+  useEffect(() => {
+      const controller = new AbortController();
+      const signal = controller.signal;
 
-    if (formState.chain && formState.asset && formState.address) {
+      if (formState.chain && formState.asset && formState.address) {
 
-    fetchBalance(signal);
+      fetchBalance(signal);
 
-    }
+      }
 
-    return () => controller.abort();
-}, [formState.chain, formState.asset, formState.address]);
-  console.log(`eth warn: `, moonbeam_address_eth_warn);
-  console.log(`assetsForChain: `, assetsForChain);
+      return () => controller.abort();
+  }, [formState.chain, formState.asset, formState.address]);
+
+
   return (
     <div className={`${theme} custom-node shadow-lg text-xs p-4`}>
       <div className='flex justify-between m-1'>
@@ -367,7 +359,10 @@ useEffect(() => {
                 value={formState.chain}  // sets the value for the dropdown from the state
             >
                 <option value="" selected>Select chain</option>
+                
+                {/* to filter chains for possible connections {filteredChainInfoList.map((ChainInfo, index) => ( */}
                 {ChainInfoList.map((ChainInfo, index) => (
+
                   <option key={ChainInfo.name} value={ChainInfo.name}>
                     {ChainInfo.display}
                   </option>
@@ -376,7 +371,7 @@ useEffect(() => {
           </div>
         </div>
         <div className="in-node-border p-2 rounded mb-2 ">
-        {formState.chain && (
+        {formState.chain &&  (
           <div className="asset-selection mb-2">
             <h3 className="text-xxs node-input primary-font mb-1">Asset</h3>
             {isLoading ? (
@@ -402,7 +397,6 @@ useEffect(() => {
       {formState.chain && (
         <div className="flex flex-col items-start mb-2 in-node-border p-2 rounded">
           <h3 className="text-xxs node-input primary-font mb-2 self-start ">Addresses</h3>
-          
           <div className="flex items-center text-black justify-start  w-full">
             <AccountDropdown 
                 selectedChainName={formState.chain}
@@ -411,9 +405,7 @@ useEffect(() => {
             />
           </div>
           <AddContacts />
-         {moonbeam_address_eth_warn && <b class="items-center">EVM wallets only</b>}
         </div>
-        
       )}
       {/* Hide delay for now until we have the side form working, and scheduler is in the pallet / parameters area.  */}
         {/* {formState.chain == 'polkadot' && (

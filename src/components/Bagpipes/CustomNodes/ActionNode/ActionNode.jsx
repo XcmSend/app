@@ -5,6 +5,7 @@ import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
+import RemarkSVG from '/remark.svg';
 
 // $DED animation
 import DEDPNG from './../../../../assets/DED.png';
@@ -80,6 +81,8 @@ export default function ActionNode({ children, data, isConnectable }) {
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
     if (formState.action === 'xTransfer') return xTransferSVG;
+    if (formState.action === "remark") return RemarkSVG;
+    if (formState.action === "Remark") return RemarkSVG;
     return null;
   };
 
@@ -221,6 +224,25 @@ export default function ActionNode({ children, data, isConnectable }) {
       }
     }, [formState, assetInFormData, assetOutFormData]);
 
+// store the system remark message
+  const setRemark = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+    console.log(`setting remark value `);
+    const newone = currentNodeFormData.actionData;
+    newone.source.target = value.target.value; // append the message as source.target value
+    console.log(`newone newActionData: `, newone);
+    console.log(`got input value: `, value.target.value);
+    const newActionData = false;
+ // newActionData.source.target = value;
+  console.log(`wrote new`);
+  if (newone) {
+    setActionData({ [nodeId]: newActionData });
+    console.log("[setRemark] Constructed action data : ", newActionData);
+  }
+
+  };
+
   const handleDropdownClick = (value) => {
     console.log("[handleDropdownClick] Selected value clicked:", value);
     setDropdownVisible(false);
@@ -261,14 +283,14 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   return (
     <>
-    <Tippy
+    {/* <Tippy
     content={<ActionNodeForm />}
     interactive={true}
     trigger="click"
     placement="auto"
     reference={nodeRef}
     theme="light"
-  >
+  > */}
       
     <div ref={nodeRef} className={`${theme} action-node rounded-lg shadow-lg text-xs flex flex-col justify-start primary-font`}>
       <div className='flex m-1 justify-between'>
@@ -304,6 +326,7 @@ export default function ActionNode({ children, data, isConnectable }) {
           handleDropdownClick={handleDropdownClick}
           SwapSVG={SwapSVG}
           xTransferSVG={xTransferSVG}
+          RemarkSVG={RemarkSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
           handleOnClick={true}
@@ -311,6 +334,14 @@ export default function ActionNode({ children, data, isConnectable }) {
 
         </div>
       </div>
+
+
+      {formState && formState.action === 'Remark' && (
+
+            <div className="in-node-border rounded m-2 p-2 ">System Remark
+            <input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+            </div>
+      )}
 
       {formState && formState.action === 'swap' && (
         isFetchingActionData ? (
@@ -393,7 +424,7 @@ export default function ActionNode({ children, data, isConnectable }) {
         {data.children}
       </div>
     </div>
-    </Tippy>
+    {/* </Tippy> */}
     </>
   );
 }

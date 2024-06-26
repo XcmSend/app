@@ -1,8 +1,9 @@
-// // axiosService.js
-// import axios from 'axios';
+// axiosService.js
+import axios from 'axios';
 
-// const instance = axios.create({
-//     baseURL: 'http://localhost:5001'
-// });
+const threadbagInstance = axios.create({
+    baseURL: import.meta.env.VITE_THREADBAG_BASE_URL,
+    withCredentials: true, 
+});
 
-// export default instance;
+export default threadbagInstance;

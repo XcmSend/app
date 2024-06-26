@@ -10,7 +10,12 @@ import CodeNode from './CodeNode/CodeNode';
 import ScheduleNode from './ScheduleNode/ScheduleNode';
 import DiscordNode from './DiscordNode/DiscordNode';
 import OpenAINode from './OpenAINode/OpenAINode';
+import ChatGptNode from './ChatGptNode/ChatGptNode';
+import DelayNode from './DelayNode/DelayNode';
 // import SwitchNode from './SwitchNode/SwitchNode';
+import ChainQueryNode from './ChainQueryNode/ChainQueryNode';
+import ChainTxNode from './ChainTxNode/ChainTxNode';
 
 
-export { ActionNode, ChainNode, RouterNode, WebhookNode, WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode };
+
+export { ActionNode, ChainNode, RouterNode, WebhookNode, WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode, DelayNode, ChainQueryNode, ChainTxNode};

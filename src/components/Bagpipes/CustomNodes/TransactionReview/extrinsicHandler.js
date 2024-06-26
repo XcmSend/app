@@ -1,5 +1,5 @@
-import { dotToHydraDx, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_kusama_assethub, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
-import { getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
+import { dotToHydraDx, moon2polkadot, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
 
@@ -16,11 +16,25 @@ export async function extrinsicHandler(actionType, formData) {
             return handlexTransfer(formData);
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
-            return handleSwap(formData);
+            return await handleSwap(formData);
+        case 'remark':
+            console.log(`handling remark`);
+            return handleRemark(formData);
         default:
             throw new Error("Unsupported action type.");
         }
 };
+
+function handleRemark(formData) {
+    const source = formData.source;
+    const msg = source.target;
+    const chain = source.chain;
+    console.log(`source: `, source);
+    console.log(`handle Remark form data:`, formData);
+    return generic_system_remark(chain, msg);
+   
+   // throw new Error("You can only swap from hydradx to hydradx");
+}
 
 
 function handlexTransfer(formData) {
@@ -59,6 +73,50 @@ function handlexTransfer(formData) {
 
             return hydradx_to_assethub(source.amount, target.assetId, source.assetId, target.address);
         },
+///hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethubassethub2moonbeam
+        'polkadot:moonbeam': () => {
+            return polkadot2moonbeam(submittableAmount, target.address);
+        },
+        'moonbeam:polkadot': () => {
+            return moon2polkadot(target.address, submittableAmount);
+        },
+        'moonbeam:assetHub': () => {
+            console.log(`moon2assethub`);
+            const mdecimals = get_moonbeam_asset_decimals(source.assetId);
+            const correct_amount = source.amount * (10 ** mdecimals);
+          
+            return moon2parachain(source.assetId, correct_amount, target.address, 1000);
+        },
+
+        'moonbeam:hydraDx': () => {
+            console.log(`assetid`, source.assetId);
+            const mdecimals = get_moonbeam_asset_decimals(source.assetId);
+            const correct_amount = source.amount * (10 ** mdecimals);
+            console.log(`moon2hydra decimals:`, mdecimals);
+            console.log(`moon2hydra correct_amount:`, correct_amount);
+            return moon2hydra2(source.assetId, correct_amount, target.address);
+         
+//            return moon2hydra(target.address, correct_amount);
+        },
+        'moonbeam:interlay': () => {
+            const mdecimals = get_moonbeam_asset_decimals(source.assetId);
+            const correct_amount = source.amount * (10 ** mdecimals);
+            
+            return moon2parachain(source.assetId, correct_amount, target.address, 2032);
+
+        },
+
+
+        'interlay:moonbeam': () => {
+            return interlay2moonbeam(source.amount, source.assetId, target.address);
+        },
+        'hydraDx:moonbeam': () => {
+            return hydra2moonbeam(target.address, source.assetId, source.amount);
+        },
+        'assethub:moonbeam': () => {
+            return assethub2moonbeam(source.amount, source.assetId, target.address);
+        },
+
         'polkadot:assetHub': () => {
             if(delay) {
                 const numberValue = Number(delay);
@@ -88,26 +146,23 @@ function handlexTransfer(formData) {
         },
 /**/
         'moonriver:turing': () => {
-
         //    if not address is evm, break 
         //    {moonbeam_address_eth_warn && <p>invalid address</p>}
                 return moonriver2turing(target.address, submittableAmount/100000000);
         },
 
-
+       
         'turing:moonriver': () => {
-            // verify that users has selected an eth address
-            if (!isEthereumAddress(target.address)) {
+             if (!isEthereumAddress(target.address)) { //  evm account check
                 throw new Error("Only allowed to send to ethereum addresses when sending to moonriver");
             };
-
             return turing2moonriver(target.address, submittableAmount);
         },
 
-        'assetHub:kusama_assethub': () => {
+        'assetHub:assetHub_kusama': () => {
             console.log(`Polkadot assethub to kusama assethub`);
             console.log(`input: `, submittableAmount, target.address);
-           return polkadot_assethub_to_kusama_assethub(submittableAmount, target.address);
+           return polkadot_assethub_to_assetHub_kusama(submittableAmount, target.address);
         },
 
 
@@ -163,13 +218,14 @@ not ready yet
 
 
  
-function handleSwap(formData) {
+async function handleSwap(formData) {
     const source = formData.source;
     const target = formData.target;
     console.log(`handle swap form data:`, formData);
       // Retrieve token decimals for the source chain
-      const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-
+    //   const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+      const tokenDecimals =  await getTokenDecimalsByAssetName(source.assetId);
+console.log(`tokenDecimals: `, tokenDecimals);
            // Adjust the source amount according to the token decimals
       const submittableAmount = source.amount * (10 ** tokenDecimals);
         const assetin = source.assetId;
@@ -182,6 +238,8 @@ function handleSwap(formData) {
 /// minBuyAmount = minimum amount to buy, note: tx will fail if this is set to 0 or to low
       // TODO: handle swaps
     if (source.chain === 'hydraDx' && target.chain === 'hydraDx') {
+
+        
         return hydradx_omnipool_sell(assetin, assetout, source.amount, submittableAmount);  //hydradx_omnipool_sell(assetin: string, assetout: string, amount: number, minBuyAmount: number)
        //  true;
     }

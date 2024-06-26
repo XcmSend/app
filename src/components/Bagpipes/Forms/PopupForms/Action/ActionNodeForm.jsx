@@ -5,6 +5,7 @@ import useAppStore from '../../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
+import RemarkSVG from '/remark.svg';
 import { getOrderedList } from '../../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from '../../../CustomNodes/ActionNode/actionUtils';
 import PriceInfo from '../../../CustomNodes/PriceInfo';
@@ -76,6 +77,8 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
   const getActionImage = () => {
     if (selectedAction.action === 'swap') return SwapSVG;
     if (selectedAction.action === 'xTransfer') return xTransferSVG;
+    if (selectedAction.action === "remark") return RemarkSVG;
+    if (selectedAction.action === "Remark") return RemarkSVG;
     return null;
   };
 
@@ -219,6 +222,8 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
     }
   }, [selectedAction, assetInFormData, assetOutFormData]);
 
+
+
 const handleDropdownClick = (value) => {
   console.log("[handleDropdownClick] Selected value clicked:", value);
   setDropdownVisible(false);
@@ -280,6 +285,7 @@ const toggleDropdown = () => {
             handleDropdownClick={handleDropdownClick}
             SwapSVG={SwapSVG}
             xTransferSVG={xTransferSVG}
+            RemarkSVG={RemarkSVG}
             dropdownVisible={dropdownVisible}
             ref={dropdownRef}
             handleOnClick={true}
@@ -289,7 +295,12 @@ const toggleDropdown = () => {
         </div>
 
         <ActionSelector />
-
+        {selectedAction && selectedAction.action === 'Remark' && (
+   
+            // Placeholder for when no price info is available
+            <div className="in-node-border rounded m-2 p-2 ">Leave a note(remark) on-chain 
+            </div>
+      )}
 
       {selectedAction && selectedAction.action === 'swap' && (
         isFetchingActionData ? (

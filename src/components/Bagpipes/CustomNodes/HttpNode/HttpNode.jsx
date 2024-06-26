@@ -68,11 +68,12 @@ export default function HttpNode({ data }) {
 
 
 return(
-  <div onScroll={handleScroll}>    
-  <div ref={nodeRef} onClick={handleNodeClick}>
+   
+  <div ref={nodeRef} onClick={handleNodeClick} onScroll={handleScroll}>
+          {hasNotification && <EventNotification nodeId={nodeId} eventUpdates={eventUpdates} />}
+
     <div className="relative nodeBody border-4 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
 
-      {hasNotification && <EventNotification nodeId={nodeId} eventUpdates={eventUpdates} />}
       {isLoadingNode ? (
           <div className="spinner-container">
               {/* Simple CSS spinner */}
@@ -94,8 +95,6 @@ return(
       <Handle position={Position.Right} type="source" className=" z-10" />
       <Handle position={Position.Left} type="target" className=" z-10" />
       </div>
-
-    </div>
 
     </div>
   );

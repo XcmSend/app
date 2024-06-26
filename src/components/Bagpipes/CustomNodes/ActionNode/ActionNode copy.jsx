@@ -5,7 +5,7 @@ import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
-
+import RemarkSVG from '/remark.svg';
 // $DED animation
 import DEDPNG from './../../../../assets/DED.png';
 //import FloatingImage from './FloatingImage';
@@ -80,6 +80,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
     if (formState.action === 'xTransfer') return xTransferSVG;
+    if (formState.action === 'remark') return xTransferSVG;
     return null;
   };
 
@@ -304,6 +305,7 @@ const toggleDropdown = () => {
           handleDropdownClick={handleDropdownClick}
           SwapSVG={SwapSVG}
           xTransferSVG={xTransferSVG}
+          Remark={RemarkSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
           handleOnClick={true}

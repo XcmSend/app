@@ -7,16 +7,48 @@ const transformOrderedList = (orderedList, nodes) => {
         }
 
         if (node.type === 'chain') {
+            console.log('transformOrderedList - chain node:', node.formData?.chain);
             return {
                 type: 'chain',
                 name: node.formData?.chain || ""
             };
         } else if (node.type === 'action') {
+            console.log('transformOrderedList - action node:', node.formData?.action);
+
             return {
                 type: 'action',
                 action: node.formData?.action || "" 
             };
-        }
+        } else if (node.type === 'chainQuery') {
+            console.log('transformOrderedList - chainQuery node:', node.formData?.selectedChain);
+
+            return {
+                type: 'chainQuery',
+                name: node.formData?.selectedChain || "" 
+            };
+        } else if (node.type === 'chainTx') {
+            console.log('transformOrderedList - chainTx node:', node.formData?.selectedChain);
+
+            return {
+                type: 'chainTx',
+                name: node.formData?.selectedChain || "" 
+            };
+
+        } else if (node.type === 'webhook') {
+
+            return {
+                type: 'webhook',
+                name:  "" 
+            };
+        } else if (node.type === 'http') {
+
+                return {
+                    type: 'http',
+                    name:  "" 
+                };
+            }
+    
+        
         return null;
     }).filter(Boolean); // Removes null entries
 };

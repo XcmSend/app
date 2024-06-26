@@ -123,24 +123,32 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    width: 100%;
+    min-width: 100%;
+    max-width:250px;
   }
   
   .pill {
     padding: 3px 5px;
     margin-right: 2px;
-    border-radius: 5px;
+    border-radius: 3px;
     color: white;
     cursor: pointer;
     z-index: 10;
+
+   
   }
 
+  
+  
+
   .editable-input {
-    width: 300px;
+    width: 100%;
+    overflow: auto;
+    min-width: 230px;
     margin: 0px !important;
     padding: 10px 5px   !important;
   }
   
 .custom-select {
-    min-width: 250px;
+    width: 250px;
 }

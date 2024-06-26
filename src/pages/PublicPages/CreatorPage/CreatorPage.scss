@@ -1,0 +1,113 @@
+.creator-page {
+    padding: 20px;
+    margin: 0 auto;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  
+    &.dark {
+      background-color: #2e2e2e;
+      color: #ffffff;
+    }
+  
+    &.light {
+      background-color: #f9f9f9;
+      color: #000000;
+    }
+  
+    .creator-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 40px;
+  
+      .creator-image-large {
+        width: 150px;
+        border-radius: 100px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+  
+      h1 {
+        font-size: 2.5rem;
+        margin: 0;
+      }
+  
+      .creator-username {
+        font-size: 1.2rem;
+        color: #666;
+        margin: 5px 0;
+      }
+  
+      h2 {
+        font-size: 1.5rem;
+        color: #333;
+      }
+  
+      p {
+        font-size: 1rem;
+        color: #555;
+      }
+    }
+  
+    .creator-section {
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      background-color: #f0f0f0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
+  
+      &.dark {
+        background-color: #444;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+  
+      &.light {
+        background-color: #ffffff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+
+    h1 {
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 700;
+      }
+  
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+      }
+  
+      .templates-list {
+        list-style: none;
+        padding: 0;
+  
+        .template-box {
+          background-color: #ffffff;
+          padding: 20px;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          transition: all 0.3s ease-in-out;
+          margin-bottom: 20px;
+  
+          &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+          }
+  
+          strong {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: block;
+            color: #007bff;
+          }
+  
+          p {
+            font-size: 1rem;
+            color: #666;
+          }
+        }
+      }
+    }
+  }
+  

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'http://localhost:5005';
+import config from '../config';
 
 class WebhooksService {
     constructor() {
@@ -16,7 +16,7 @@ class WebhooksService {
       try {
         console.log("Calling createWebhook API...");
         // const response = await axios.post(`${baseURL}/api/createWebhook`, { withCredentials: true });
-    const response = await fetch(`${baseURL}/api/webhook/createWebhook`, {
+    const response = await fetch(`${config.baseUrl}/api/webhook/createWebhook`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -37,6 +37,10 @@ class WebhooksService {
         console.error("Failed to create webhook:", error);
       }
     }
+
+
+
+  
         
     
 
@@ -47,7 +51,7 @@ class WebhooksService {
       }
 
     try {
-      const response = await axios.get('http://localhost:5005/api/webhook/webhookEvents'); // Replace with your actual API endpoint
+      const response = await axios.get(`${config.baseUrl}/api/webhook/webhookEvents`); // Replace with your actual API endpoint
       console.log('createWebhook Received Webhook Event:', response.data); // Log the event data
       return response.data; // Return the data
     //   return response.data; // Return the data for further processing
@@ -57,10 +61,14 @@ class WebhooksService {
     }
   };
 
+
+
   async fetchLatestFromWebhookSite(uuid) {
     try {
         console.log('[fetchLatestFromWebhookSite] Fetching the latest webhook data with webhook id UUID:', uuid);   
-        const response = await axios.get(`http://localhost:5005/api/webhook/fetchWebhookData/${uuid}`); // Replace with your actual API endpoint
+        const response = await axios.get(`${config.baseUrl}/api/webhook/fetchWebhookData/${uuid}`); // Replace with your actual API endpoint
+        
+        console.log('Response Webhook Data:', response); 
         console.log('Latest Webhook Data:', response.data); // Log the data
         console.log('Webhook event received:', response.data.data);
 

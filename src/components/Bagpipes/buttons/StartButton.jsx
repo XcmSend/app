@@ -5,11 +5,11 @@ import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import './Buttons.scss';
 import Button from './Button.jsx';
-import { buttonDescriptions}  from './buttonDescriptions';
+import { tippyDescriptions}  from './tippyDescriptions';
 
 const StartButton = ({ startScenario }) => {
     return (
-        <Tippy theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.runOnce}>
+        <Tippy theme='light' placement='bottom'  interactive={true}  content={tippyDescriptions.runOnce}>
             <button 
                 className="top-bar-buttons start-button text-white flex items-center" 
                 onClick={startScenario} 

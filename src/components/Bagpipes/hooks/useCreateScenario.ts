@@ -13,7 +13,7 @@ export const useCreateScenario = () => {
 
   const createScenario = () => {
     const initialData = {
-      name: "Bagpipe XCM Flow", 
+      name: "Bagpipe New Scenario", 
       timestamp: new Date().toISOString(),
       diagramData: {
         nodes: [], // Empty nodes

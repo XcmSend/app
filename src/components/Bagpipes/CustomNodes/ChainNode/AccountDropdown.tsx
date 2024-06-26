@@ -3,9 +3,12 @@ import { WalletContext } from '../../../Wallet/contexts';
 import '../../../../index.css';
 import '../../node.styles.scss';
 import './AccountDropdown.scss';
-import { WalletAccount } from '../../../Wallet/wallet-connect/src/types';
+import { WalletAccount } from '../../../Wallet/connect-wallet/src/types';
 import { listChains } from '../../../../Chains/ChainsInfo';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
+import { isEthereumAddress } from '@polkadot/util-crypto';
+
+
 
 function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: { 
   selectedChainName: string, 
@@ -17,7 +20,7 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
   // console.log(  "AccountDropdown chains:", chains);
   const [selectedAccount, setSelectedAccount] = useState<string | null>(selectedAddress);
 
- console.log("WalletContext:", walletContext);
+  // console.log("WalletContext:", walletContext);
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedAccAddress = event.target.value;
@@ -29,21 +32,17 @@ function AccountDropdown({ selectedChainName, onSelect, selectedAddress }: {
         onSelect(matchedAccount.address);
     }
     
-    console.log("Selected:", matchedAccount);
-   console.log("Selected Address:", selectedAccount);
+    // console.log("Selected:", matchedAccount);
+    // console.log("Selected Address:", selectedAccount);
 };
 
-// todo: proper validate address type
   const displayAddress = (address: string, prefix: number) => {
-    // evm
-    console.log(`displaying address:`, address);
-    if (address.startsWith("0x")) {
-      return address;
+  //    console.log(`display address: `, address);
+  //    console.log(`display prefix: `, prefix);
+    var encodedAddress = address;
+    if (!isEthereumAddress(address)) { // if address is not an evm address, we want to substrate encode it
+      encodedAddress = encodeAddress(decodeAddress(address), prefix);
     }
-  
-
-    // Substrate 
-    const encodedAddress = encodeAddress(decodeAddress(address), prefix);
     const start = encodedAddress.slice(0, 6); 
     const end = encodedAddress.slice(-4); 
     return `${start}...${end}`;

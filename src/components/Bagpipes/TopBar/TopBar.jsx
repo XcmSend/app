@@ -3,7 +3,7 @@ import { CreateUiButton, ClearButton,  CreateButton, ExecuteButton, StartButton,
 import './TopBar.scss';  
 import { useAppStore } from '../hooks';
 
-const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario, handleStopScenario, actionNodesPresent }) => {
+const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario, handleStopScenario, draftingNodesPresent }) => {
 
     const { isExecuting, scenarios, activeScenarioId, clearSignedExtrinsic, markExtrinsicAsUsed } = useAppStore(state => ({
         isExecuting: state.isExecuting,
@@ -14,7 +14,7 @@ const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario
     }));
     const extrinsicsSigned = checkAllExtrinsicsSigned(scenarios, activeScenarioId);
 
-    const showExecuteButton = actionNodesPresent && extrinsicsSigned;
+    const showExecuteButton = draftingNodesPresent && extrinsicsSigned;
     
     const selectedNodeId = scenarios[activeScenarioId]?.selectedNodeId;
 
@@ -36,7 +36,7 @@ const TopBar = ({ createScenario, handleExecuteFlowScenario, handleStartScenario
                   <ExecuteButton 
                       executeFlowScenario={handleExecuteFlowScenario} 
                       stopExecution={handleStopScenario}
-                      actionNodesPresent={actionNodesPresent}
+                      draftingNodesPresent={draftingNodesPresent}
                   />
                   <ClearButton clearExtrinsic={handleClearExtrinsic} />
               </>

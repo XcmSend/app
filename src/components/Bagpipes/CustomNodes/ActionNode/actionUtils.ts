@@ -26,6 +26,8 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
     actionType: assetOut?.actionType
   };
 
+
+
   switch(formState.action) {
     case 'swap':
       return {
@@ -36,6 +38,12 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
     case 'xTransfer':
       return {
         actionType: 'xTransfer',
+        source: actionDataIn,
+        target: actionDataOut
+      };
+    case 'Remark': 
+      return {
+        actionType: "remark",
         source: actionDataIn,
         target: actionDataOut
       };

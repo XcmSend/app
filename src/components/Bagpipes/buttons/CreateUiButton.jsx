@@ -2,7 +2,7 @@ import React from 'react';
 import { CreateUI } from '../../Icons/icons';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import { buttonDescriptions }  from './buttonDescriptions';
+import { tippyDescriptions }  from './tippyDescriptions';
 import './Buttons.scss';
 
 export const CreateUiButton = ({ onCreateUi }) => {

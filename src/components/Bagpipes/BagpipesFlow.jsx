@@ -14,15 +14,10 @@ import GitInfo from './git_tag';
 import { useDebounce } from 'use-debounce';
 import TextUpdaterNode from './TextupdaterNode';
 import Toolbar from '../Toolbar/Toolbar';
+// import AppsToolbar from '../Toolbar/AppsToolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode } from './CustomNodes';
-import RenderNodeForm from './Forms/RenderNodeForm';
-import { initialEdges, initialNodes } from './nodes.jsx';
-import PlayButton from './buttons/PlayButton';
-import StartButton from './buttons/StartButton';
-import ExecuteButton from './buttons/ExecuteButton';
-import CreateUiButton from './buttons/CreateUiButton';
+import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode } from './CustomNodes';
 import { startDraftingProcess, preProcessDraftTransactions } from './utils/startDraftingProcess';
 import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
@@ -33,8 +28,6 @@ import styled, { ThemeProvider } from 'styled-components';
 import { useTippy } from '../../contexts/tooltips/TippyContext';
 import ThemeContext from '../../contexts/ThemeContext';
 import { lightTheme, darkTheme } from './theme';
-import { CreateButton } from './buttons/CreateButton';
-import { node } from 'stylis';
 import transformOrderedList from '../toasts/utils/transformOrderedList';
 import { getOrderedList } from './hooks/utils/scenarioExecutionUtils';
 import OrderedListContent from '../toasts/OrderedListContent';
@@ -45,6 +38,7 @@ import { getNodeConfig } from './nodeConfigs';
 import EdgeForm from './Forms/EdgeForm'
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 import TopBar from './TopBar/TopBar';
+import ScenarioInfo from './ScenarioInfo/ScenarioInfo';
 import './utils/getAllConnectedNodes';
 
 
@@ -92,6 +86,10 @@ const nodeTypes = {
   discord: DiscordNode,
   delay: DelayNode,
   openAi: OpenAINode,
+  chatGpt: ChatGptNode,
+  chainQuery: ChainQueryNode,
+  chainTx: ChainTxNode,
+
 };
 
 const edgeTypes = {
@@ -239,7 +237,7 @@ const BagpipesFlow = () => {
       useEffect(() => {
         setNodes(nodes =>
           nodes.map((node) => {
-            if (node.type === 'openAi') {
+            if (node.type === 'chatGpt') {
               return {
                 ...node,
                 data: {
@@ -610,10 +608,12 @@ const BagpipesFlow = () => {
     
   // Helper function outside of main function
   const isActionDataComplete = (node) => {
+    console.log(`isActionDataComplete: `, node);
+
     if (!node.formData || !node.formData.actionData) return false;
 
     const { source, target } = node.formData.actionData;
-
+    console.log(`isActionDataComplete: `, node.formData.actionData);
     if (!source || !target) return false;
 
     const isSourceComplete = source.chain && source.assetId !== undefined && source.address && source.amount && source.amount.trim() !== "";
@@ -637,16 +637,18 @@ const BagpipesFlow = () => {
 const diagramData = scenarios[activeScenarioId].diagramData;
 const orderedList = getOrderedList(diagramData.edges);
 const transformedList = transformOrderedList(orderedList, scenarios[activeScenarioId]?.diagramData?.nodes);
-const containsActionNodes = (nodes) => nodes.some(node => node.type === 'action');
-const actionNodesPresent = containsActionNodes(transformedList);
+const draftingIsRequired = (nodes) => nodes.some(node => node.type === 'action' || node.type === 'chainTx');
+const draftingNodesPresent = draftingIsRequired(transformedList);
 
 
 
 const handleStartScenario = async (instance) => {
   setIsExecuting(true);
+  console.log("[handleStartScenario] Starting scenario execution...");
   toast(<OrderedListContent list={transformedList} />);
 
-  if (actionNodesPresent) {
+  if (draftingNodesPresent) {
+    console.log("Drafting nodes present. Starting drafting process...");  
     try {
       const promise = preProcessDraftTransactions(activeScenarioId, scenarios, isActionDataComplete);
 
@@ -799,11 +801,11 @@ const handleStopScenario = (instance) => {
       />
     )}
 
-            
-
-          
-            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} actionNodesPresent={actionNodesPresent}  />
+            <ScenarioInfo />
+            <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} draftingNodesPresent={draftingNodesPresent}  />
             <Toolbar />
+            {/* <AppsToolbar /> */}
+
             </ReactFlowStyled>
             
            

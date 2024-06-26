@@ -118,7 +118,7 @@
 .toast-styles {
   width: auto;
   min-width: 200px;  /* Minimum width you want */
-  max-width: 90%;   /* Maximum width based on the viewport width */
+  // max-width: 90%;   /* Maximum width based on the viewport width */
   word-wrap: break-word; /* This will ensure that long words/URLs will wrap instead of overflowing */
   background-color: var(--toast-bg);
 }

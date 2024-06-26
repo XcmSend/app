@@ -92,6 +92,11 @@ export const nodeDescriptions = {
   </div>,
   openAi: 
   <div className='m-4 tippy-node'>
+    <h1 className='text-xl font-bold '>Chat GPT (coming soon) </h1>
+    <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
+  </div>,
+  chatGpt: 
+  <div className='m-4 tippy-node'>
     <h1 className='text-xl font-bold '>Open AI (coming soon) </h1>
     <p>A list of tools to add more functionality to your workflow, such as event handlers, if/else statements, promises, for loops, hash functions, routers, triggers, etc.</p>
   </div>

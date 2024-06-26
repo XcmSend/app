@@ -5,7 +5,7 @@ import './Buttons.scss';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 
-const ExecuteButton = ({ executeFlowScenario, stopExecution, actionNodesPresent }) => {
+const ExecuteButton = ({ executeFlowScenario, stopExecution, draftingNodesPresent }) => {
     const { executionState } = useAppStore((state) => ({
         executionState: state.executionState,
     }));
@@ -13,7 +13,7 @@ const ExecuteButton = ({ executeFlowScenario, stopExecution, actionNodesPresent 
     // Determine button class based on executionState and whether action nodes are present
     let buttonClass = "top-bar-buttons";
     
-    if (executionState === 'idle' && actionNodesPresent) {
+    if (executionState === 'idle' && draftingNodesPresent) {
         buttonClass += ' idle-effects'; // Apply idle effects only if action nodes are present
     } else if (executionState === 'executing') {
         buttonClass += ' executing-effects'; // Apply executing effects regardless of action nodes
@@ -22,7 +22,7 @@ const ExecuteButton = ({ executeFlowScenario, stopExecution, actionNodesPresent 
     const getTooltipContent = () => {
         if (executionState === 'executing') {
             return 'Execution in progress. Click to stop.';
-        } else if (actionNodesPresent) {
+        } else if (draftingNodesPresent) {
             return 'Click to start execution.';
         } else {
             return 'Click to run once.';
@@ -32,7 +32,7 @@ const ExecuteButton = ({ executeFlowScenario, stopExecution, actionNodesPresent 
     const getButtonContent = () => {
         if (executionState === 'executing') {
             return <> Stop</>;
-        } else if (actionNodesPresent) {
+        } else if (draftingNodesPresent) {
             return <><PlayIcon /><span className='ml-1'>Broadcast</span> </>;
         } else {
             return <><PlayIcon /><span className='ml-1'>Run Once</span> </>;

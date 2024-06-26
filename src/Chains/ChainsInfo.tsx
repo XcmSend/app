@@ -11,6 +11,7 @@ interface ChainInfo {
   relayParent?: string,
   relay?: boolean
   parachain?: boolean,
+  symbol: string
   }
 
 interface AssetInfo {
@@ -26,6 +27,63 @@ export function listChains() {
     // dict[paraid] = ChainInfo
     const chainList: Record<number, ChainInfo> = {};
 
+
+    const KusamaAssethub: ChainInfo = {
+      name: 'assetHub_kusama',
+      display: 'Assethub (Kusama)',
+      paraid: 1000,
+      prefix: 2, 
+      token_decimals: 12, //change me
+      logo: '/chains/assethub.svg',
+      relayParent: 'kusama',
+      parachain: true,
+      symbol: 'KSM'
+    };
+
+  chainList[21000] = KusamaAssethub;//fake paraid
+
+  const Moonriver: ChainInfo = {
+    name: 'moonriver',
+    display: 'Moonriver (Kusama)',
+    paraid: 2023,
+    prefix: 42, 
+    token_decimals: 18, 
+    logo: '/chains/moonriver.svg',
+    parachain: true, 
+    relayParent: "kusama",
+    relay: false,
+    symbol: 'MOVR'
+  };
+  chainList[2023] = Moonriver;
+
+  const MangataX: ChainInfo = {
+    name: "mangatax",
+    display: "MangataX (Kusama)",
+    paraid: 2110,
+    prefix: 42,
+    token_decimals: 12,
+    logo: '/chains/mangata.png',
+    parachain: true, 
+    relayParent: "kusama",
+    relay: false,
+    symbol: 'MGX'
+  };
+
+  chainList[2110] = MangataX;
+
+  const Turing: ChainInfo = {
+    name: 'turing',
+    display: 'Turing (Kusama)',
+    paraid: 2114,
+    prefix: 51,
+    token_decimals: 10,
+    logo: '/chains/turing.png',
+    relayParent: 'kusama',
+    parachain: true,
+    symbol: 'TUR'
+  };
+  chainList[2114] = Turing;
+
       const AssetHub: ChainInfo = {
         name: 'assetHub',
         display: 'Asset Hub (Polkadot)',
@@ -34,7 +92,8 @@ export function listChains() {
         token_decimals: 10,
         logo: '/chains/assethub.svg',
         relayParent: 'polkadot',
-        parachain: true
+        parachain: true,
+        symbol: 'DOT'
       };
       chainList[1000] = AssetHub;
 
@@ -46,7 +105,8 @@ export function listChains() {
         token_decimals: 12,
         logo: '/chains/hydradx.svg',
         relayParent: 'polkadot',
-        parachain: true
+        parachain: true,
+        symbol: 'HDX'
       };
       chainList[2034] = HydraDX;
 
@@ -59,6 +119,7 @@ export function listChains() {
         logo: '/chains/interlay.svg',
         relayParent: 'polkadot',
         parachain: true,
+        symbol: 'INTR'
         
       };
       chainList[2032] = Interlay;
@@ -72,71 +133,28 @@ export function listChains() {
         logo: '/chains/kabocha.svg',
         parachain: true,
         relay: false,
+        relayParent: 'kusama',
+        symbol: 'KAB'
       };
       chainList[2113] = Kabocha;
 
-      const Kusama: ChainInfo = {
-        name: 'kusama',
-        display: 'Kusama',
-        paraid: 2,
-        prefix: 2,
-        token_decimals: 12,
-        logo: '/chains/kusama.svg',
-        parachain: false,
-        relay: true,
-      };
-      chainList[2] = Kusama;
+
 
       const Moonbeam: ChainInfo = {
         name: 'moonbeam',
-        display: 'Moonbeam',
+        display: 'Moonbeam (Polkadot)',
         paraid: 2004,
         prefix: 1284,
         token_decimals: 12,
         logo: '/chains/moonbeam.svg',
+        relayParent: 'polkadot',
         parachain: true,
         relay: false,
+        symbol: 'GLMR'
       };
       chainList[2004] = Moonbeam;
 
-      const Moonriver: ChainInfo = {
-        name: 'moonriver',
-        display: 'Moonriver (Kusama)',
-        paraid: 2023,
-        prefix: 42, 
-        token_decimals: 18, 
-        logo: '/chains/moonriver.svg',
-        parachain: true, 
-        relayParent: "kusama",
-        relay: false
-      };
-      chainList[2023] = Moonriver;
-
-      const MangataX: ChainInfo = {
-        name: "mangatax",
-        display: "MangataX (Kusama)",
-        paraid: 2110,
-        prefix: 42,
-        token_decimals: 12,
-        logo: '/chains/mangata.png',
-        parachain: true, 
-        relayParent: "kusama",
-        relay: false
-      };
-
-      chainList[2110] = MangataX;
-
-      const Turing: ChainInfo = {
-        name: 'turing',
-        display: 'Turing (Kusama)',
-        paraid: 2114,
-        prefix: 51,
-        token_decimals: 10,
-        logo: '/chains/turing.png',
-        relayParent: 'kusama',
-        parachain: true
-      };
-      chainList[2114] = Turing;
+  
 
       const Polkadot: ChainInfo = {
         name: 'polkadot',
@@ -147,8 +165,22 @@ export function listChains() {
         logo: '/chains/polkadot.svg',
         parachain: false,
         relay: true,
+        symbol: 'DOT'
       };
       chainList[0] = Polkadot;
+
+      const Kusama: ChainInfo = {
+        name: 'kusama',
+        display: 'Kusama',
+        paraid: 2,
+        prefix: 2,
+        token_decimals: 12,
+        logo: '/chains/kusama.svg',
+        parachain: false,
+        relay: true,
+        symbol: 'KSM'
+      };
+      chainList[2] = Kusama;
 
       const Rococo: ChainInfo = {
         name: 'rococo',
@@ -159,52 +191,38 @@ export function listChains() {
         logo: '/chains/rococo.jpeg',
         parachain: false,
         relay: true,
+        symbol: 'ROC'
 
       };
       chainList[10000] = Rococo;
 
-  
-
-      /*
       const Sora: ChainInfo = {
         name: 'sora',
         display: 'Sora (Rococo)',
-        paraid: 12011, // change me
+        paraid: 2011, // change me
         prefix: 0, //change me
         token_decimals: 10,
         logo: '/chains/sora.svg',
         relayParent: 'rococo',
-        parachain: true
+        parachain: true,
+        symbol: 'SORA'
       };
       chainList[2011] = Sora;
-/* */
-
       // only rococo > rococo assethub transfers is supported 
       const RococoAssethub: ChainInfo = {
         name: 'rococo_assethub',
         display: 'Assethub (Rococo)',
-        paraid: 3000, // fake
-        prefix: 42, 
+        paraid: 1000, 
+        prefix: 2, 
         token_decimals: 12,
         logo: '/chains/assethub.svg',
         relayParent: 'rococo',
-        parachain: true 
+        parachain: true,
+        symbol: 'ROC'
       };
 
       chainList[3000] = RococoAssethub;// fake paraid
 
-      const KusamaAssethub: ChainInfo = {
-        name: 'kusama_assethub',
-        display: 'Assethub (Kusama)',
-        paraid: 3000, // fake
-        prefix: 42,  // change me
-        token_decimals: 12, //change me
-        logo: '/chains/assethub.svg',
-        relayParent: 'kusama',
-        parachain: true 
-      };
-
-    chainList[9999] = KusamaAssethub;//fake paraid
 
     return chainList;
 }

@@ -12,6 +12,7 @@ $chain-node-width: 250px;
     --bg-hover: #3b65c9;
     --bg-lighter: lighten(var(--bg), 5%);
     --bg-main: rgb(209 213 219);
+    --hover-bg: #deedff;
 
     --primary: #fefefe;
     --node-bg: #dddddd;
@@ -44,6 +45,8 @@ $chain-node-width: 250px;
     --bg-accent-darker: darken(var(--bg-accent), 10%)
     --bg-hover: #3b65c9;
     --bg-main: rgb(17 24 39);
+
+    --hover-bg: #1f2b44;
 
     --primary: #0035a8;
     --node-bg: #1a1a1a;

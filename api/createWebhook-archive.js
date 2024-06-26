@@ -13,7 +13,7 @@ async function createWebhook(req, res) {
   try {
     console.log('Creating webhook...');
     // Webhook.site API endpoint to create a new webhook
-    const webhookEndpoint = 'https://webhook.site/token';
+    const webhookEndpoint = 'https://webhook.bagpipes.io/token';
 
     const response = await fetch(webhookEndpoint, {
       method: 'POST',

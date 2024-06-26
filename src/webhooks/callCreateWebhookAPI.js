@@ -1,11 +1,11 @@
 
-const baseURL = 'http://localhost:5005';
+import config from '../config';
 
 async function callCreateWebhookAPI() {
   try {
     console.log("Calling createWebhook API...");
     // const response = await axios.post(`${baseURL}/api/createWebhook`, { withCredentials: true });
-const response = await fetch(`${baseURL}/api/webhook/createWebhook`, {
+const response = await fetch(`${config.baseURL}/api/webhook/createWebhook`, {
   method: 'POST',
   headers: {
     'Accept': 'application/json',

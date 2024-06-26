@@ -1,47 +1,73 @@
- import React from 'react'; 
- 
- // Function to render node-specific details based on nodeType
-  export const renderNodeDetails = (nodeData) => {
-    switch (nodeData.nodeType) {
-      case 'action':
-        return (
-          <table>
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Block Hash</th>
-                <th>Timestamp</th>
-              </tr>
-            </thead>
-            <tbody>
-              {nodeData.responseData?.eventUpdates?.map((event, index) => (
-                <React.Fragment key={index}>
-                  {event.inBlock && (
-                    <tr>
-                      <td>In Block</td>
-                      <td>{event.inBlock}</td>
-                      <td>{event.timestamp}</td>
-                    </tr>
-                  )}
-                  {event.finalized && (
-                    <tr>
-                      <td>Finalized</td>
-                      <td>{event.finalized}</td>
-                      <td>{event.timestamp}</td>
-                    </tr>
-                  )}
-                  {event.error && (
-                    <tr>
-                      <td>Error</td>
-                      <td colSpan="2">{event.error}</td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              ))}
-            </tbody>
-          </table>
-        );
-        case 'http':
+import React from 'react';
+
+// Helper to safely access nested properties
+const getSafe = (fn) => {
+  try {
+    return fn();
+  } catch (e) {
+    console.error('Failed to access data:', e);
+    return undefined;
+  }
+};
+
+// Function to render each key-value pair for chainQuery node data
+const renderChainQueryData = (data) => {
+  if (!data) { // Adding this check to handle null or undefined data
+    return <tr><td colSpan="2">No data available</td></tr>;
+  }
+  return Object.entries(data).map(([key, value], index) => (
+    <tr key={index}>
+      <td>{key}</td>
+      <td>{JSON.stringify(value)}</td>
+    </tr>
+  ));
+};
+
+// Main rendering function
+export const renderNodeDetails = (nodeData) => {
+  console.log(`[renderNodeDetails] Node data:`, nodeData);
+
+  const eventUpdates = getSafe(() => nodeData.responseData.eventUpdates);
+  if (!eventUpdates || eventUpdates.length === 0) {
+    return <div>Error: No event updates available or data is malformed.</div>;
+  }
+
+  switch (nodeData.nodeType) {
+    case 'chainQuery':
+      return (
+        <table>
+          <thead>
+            <tr>
+              <th>Detail</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {eventUpdates.map((event, index) => 
+              renderChainQueryData(getSafe(() => event.eventData), index)
+            )}
+          </tbody>
+        </table>
+      );
+    case 'chainTx':
+      return (
+        <table>
+          <thead>
+            <tr>
+              <th>Detail</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {eventUpdates.map((event, index) => 
+              renderChainQueryData(getSafe(() => event.eventData), index)
+            )}
+          </tbody>
+        </table>
+      );
+
+    default:
+      // Handle other nodeTypes or general case
       return (
         <table>
           <thead>
@@ -51,41 +77,14 @@
             </tr>
           </thead>
           <tbody>
-            {nodeData.responseData?.eventUpdates?.map((event, index) => (
+            {eventUpdates.map((event, index) => (
               <tr key={index}>
                 <td>{event.timestamp}</td>
-                <td>{event.eventData}</td>
+                <td>{event.eventData ? JSON.stringify(event.eventData) : 'No event data'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       );
-      case 'webhook':
-      // Add case for 'webhook' nodes
-      return (
-        <table>
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Event Data</th>
-            </tr>
-          </thead>
-          <tbody>
-            {nodeData.responseData?.eventUpdates?.map((event, index) => (
-              <tr key={index}>
-                <td>{event.timestamp}</td>
-                <td>
-                  <div>Query: {JSON.stringify(event.eventData.query)}</div>
-                  <div>Method: {event.eventData.method}</div>
-                  <div>Created At: {event.eventData.createdAt}</div>
-                  {/* Additional details as needed */}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      );
-      default:
-        return <p>No execution details available for this node type.</p>;
-    }
-  };
+  }
+};

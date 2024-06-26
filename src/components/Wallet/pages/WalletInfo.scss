@@ -1,3 +1,5 @@
+@import '../../../variables.scss';
+
 .wallet-info-page {
   padding: 50px 8px;
 }
@@ -23,4 +25,26 @@
 
 .wallet-info-page__account-list {
   margin-top: 26px;
+}
+
+.builder-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: $lighter-primary-color;
+  color: white;
+  text-decoration: none;
+  border-radius: 7px;
+}
+
+.builder-btn .icon-and-text {
+  display: flex; /* Ensures contents are laid out horizontally */
+  align-items: center; /* Aligns items vertically in the center */
+}
+
+.builder-btn .icon-and-text > * {
+  margin-right: 8px; /* Adds space between the icon and the text */
+}
+
+.builder-btn:hover {
+  background-color: #0056b3;
 }

@@ -1,0 +1,112 @@
+.creators-page {
+    padding: 20px;
+    margin: 0 auto;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  
+    &.dark {
+      background-color: #2e2e2e;
+      color: #ffffff;
+    }
+  
+    &.light {
+      background-color: #f9f9f9;
+      color: #000000;
+    }
+  
+    .creators-header {
+      text-align: center;
+      margin-bottom: 40px;
+  
+
+      h1 {
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 700;
+      }
+    }
+  
+    .creators-main {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+  
+    .creators-list {
+      list-style: none;
+      padding: 0;
+  
+      .creator-box {
+        display: flex;
+        // align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+  
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+  
+        .creator-image {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+  
+        div {
+          flex: 1;
+
+
+    h1 {
+        font-size: 2.5rem;
+        margin: 0;
+        font-weight: 700;
+      }
+  
+          h2 {
+            font-size: 1.5rem;
+            margin: 0;
+            font-weight: 700;
+          }
+  
+          .creator-username {
+            font-size: 1.2rem;
+            color: #666;
+            margin: 5px 0;
+          }
+  
+          h3 {
+            font-size: 1.2rem;
+            color: #333;
+          }
+  
+          p {
+            font-size: 1rem;
+            color: #555;
+          }
+  
+          .view-profile {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+  
+            &:hover {
+              background-color: #0056b3;
+            }
+          }
+        }
+      }
+    }
+  }
+  

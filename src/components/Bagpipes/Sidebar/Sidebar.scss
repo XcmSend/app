@@ -1,24 +1,22 @@
 @import '../../../variables.scss';
 
-
-// .chat-container {
-//     display: flex;
-//     height: 100vh;
-//   }
-  
 .sidebar {
-  // width: 50px; /* Initial minimized width */
+  width: 50px; /* Initial minimized width */
   transition: width 0.5s ease;
-  z-index: 1000 !important;
   height: 100%;
   overflow: hidden; /* Hide content that overflows during transition */
+  background-color: var(--bg);
+  min-height: 1000px; /* Adjust as needed */
+
+
+  &.expanded {
+    width: 150px; /* Expanded width */
+  }
 }
 
 .sidebar-content {
   width: 100%; /* Full-width */
-  // text-align: center; /* Center text */
-  transition: width 0.5s ease; /* Smooth transition for width */
-  z-index: 1000 !important;
+  transition: transform 0.5s ease; /* Smooth transition for width */
 }
 
 .sidebar-item {
@@ -27,32 +25,35 @@
   padding: 10px;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.5s ease; /* Transition for hover effect */
+  transition: background-color 0.5s ease, box-shadow 0.5s ease, transform 0.5s ease; /* Transition for hover effect */
   width: 100%;
-  z-index: 1000 !important;
   background-color: var(--bg);
-  padding-right: 10px;
-  display: flex;
-
-
-
+  position: relative; /* Ensure content doesn't move the icons */
+  height: 40px; /* Adjust as needed */
 
   &:hover {
-    // box-shadow: 0 0 0 2px rgb(54, 54, 54); /* Gray border-like shadow */
-    border-radius: 5px; /* Optional for rounded corners */
-      min-width: 150px;
-
+    background-color: var(--hover-bg); /* Change to your desired hover background color */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow on hover */
+    cursor: pointer; /* Change cursor to pointer to indicate clickable items */
   }
 }
+
+
 
 .sidebar-item a {
   text-decoration: none;
   color: inherit; /* Inherit color from parent */
   display: flex;
   align-items: center;
-  z-index: 1000 !important;
+}
 
-
+.sidebar-items {
+  position: fixed;  
+  top: 100px;
+  // height: 100%;
+padding: 5px;
+border-radius: 5px;
+  background-color: rgb(255, 255, 255);
 }
 
 .sidebar-text {
@@ -60,68 +61,29 @@
   align-items: center;
   opacity: 0;
   color: rgb(43, 43, 43);
-  // transition: opacity 0.5s ease;
+  transition: opacity 0.5s ease;
   margin-left: 10px;
-  z-index: 1000 !important;
-
+  white-space: nowrap; /* Prevent text from wrapping */
 }
 
-.sidebar:hover .sidebar-text {
+.sidebar.expanded .sidebar-text {
   opacity: 1;
-  z-index: 1000 !important;
-
 }
 
-
-/* Keep the icons always visible */
 .sidebar-icon {
   min-width: 30px; /* Adjust as needed */
-  z-index: 1000 !important;
-
+  flex-shrink: 0; /* Prevent the icon from shrinking */
 }
 
-  
-  .chat-area {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    background-color: #ffffff;
-    border-left: 1px solid #e0e0e0;
-    border-right: 1px solid #e0e0e0;
-  }
-  
-  .branch-bar {
-    width: 50px; /* Initial minimized width */
-    background-color: #f4f4f4;
-    transition: width 0.3s;
-  }
-  
-  .branch-bar:hover {
-    width: 1000px; /* Expanded width */
-  }
-  
-  .input-container {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    width: calc(100% - 100px); /* Assuming 50px is the width of each sidebar */
-    background-color: #ffffff;
-    border-top: 1px solid #e0e0e0;
-    padding: 10px;
-  }
-  
-  input-container textarea {
-    flex: 1;
-    resize: vertical; /* This makes the textarea vertically resizable */
-    padding: 10px;
-    margin-right: 10px;
-  }
-  
-  .input-container button {
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    cursor: pointer;
-  }
-  
+.bagpipe-logo {
+  margin-left: 8px;
+  margin-top: 20px;
+  margin-bottom: 8px;
+  height: 30px !important;
+  width: 30px !important;
+}
+
+.sidebar-icon {
+  height: 20px; 
+  width: 20px;
+}

@@ -55,7 +55,7 @@ export default function OpenAINode({ data }) {
 
       {/* Title outside the circle below the logo */}
       <div className="node-title-circle absolute bottom-[-38%] text-center">
-      <div className="font-medium open-ai-name text-gray-500">GPT Assistant</div>
+      <div className="font-medium open-ai-name text-gray-500">GPT</div>
       {/* <div className="text-xs font-medium text-gray-500">GPT Assistant</div> */}
 
 

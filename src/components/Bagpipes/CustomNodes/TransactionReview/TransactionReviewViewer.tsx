@@ -11,18 +11,7 @@ import '../../styles.module.css';
 import '../../../../index.css';
 import './TransactionReview.scss';
 
-const JSONContainer = styled.div`
-  max-height: 400px;
-  width: 100%;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  padding: 10px;
-  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-  font-family: 'Courier New', Courier, monospace;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  background-color: var(--bg);
-`;
+
 
 interface TransactionProps {
   target: Object;
@@ -103,18 +92,23 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
             </strong></p>            
             </div>
                
-            <JSONContainer key={txWithData.formData.nodeId}>
-              <pre>{JSON.stringify(txWithData.draftedExtrinsic.toHuman(), null, 2)}</pre>
-            </JSONContainer>
+            <div className='reviewer-font' key={txWithData.formData.nodeId}>
+              <textarea className='reviewer-json-style' readOnly>{JSON.stringify(txWithData.draftedExtrinsic.toHuman(), null, 2)}</textarea>
+            </div>
             <div className='mt-3 mb-3 transaction-review-data'>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Action Type:</div> <div><strong>{txWithData.formData.actionType}</strong></div></div>
+
+              <div className='flex flex-row  mt-4'><div className='transaction-name w-1/3'>Source Asset:</div> <div><strong>{txWithData.formData.source.symbol}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Source Chain: </div> <div><strong>{txWithData.formData.source.chain}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Source AssetId: </div> <div><strong>{txWithData.formData.source.assetId}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Source Address: </div> <div><strong>{txWithData.formData.source.address}</strong></div></div>
+
+              <div className='flex flex-row mt-4'><div className='transaction-name w-1/3'>Target Asset:</div> <div><strong>{txWithData.formData.target.symbol}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Target Chain: </div> <div><strong>{txWithData.formData.target.chain}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Target AssetId: </div> <div><strong>{txWithData.formData.target.assetId}</strong></div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Target Address:</div> <div><strong> {txWithData.formData.target.address}</strong></div></div>
-              <div className='flex flex-row'><div className='transaction-name w-1/3'>Amount: </div> <div><strong>{txWithData.formData.source.amount} {txWithData.formData.source.symbol}</strong> </div></div>
+              
+              <div className='flex flex-row  mt-4'><div className='transaction-name w-1/3'>Amount: </div> <div><strong>{txWithData.formData.source.amount} {txWithData.formData.source.symbol}</strong> </div></div>
               <div className='flex flex-row'><div className='transaction-name w-1/3'>Fees:</div> <div><strong> {fees[txWithData.formData.nodeId]?.partialFee || 'Fetching...'}</strong></div></div>
           </div>
           <div className={``}>
@@ -131,5 +125,19 @@ export const TransactionReview: React.FC<TransactionReviewProps> = ({ transactio
 }
 
 
-
+const JSONContainer = styled.div`
+  max-height: 400px;
+  width: 100%;
+  overflow-y: auto;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+  font-family: 'Courier New', Courier, monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: #f4f4f4;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-sizing: border-box;
+  margin: 5px;
+`;
 

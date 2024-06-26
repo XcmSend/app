@@ -6,16 +6,16 @@ import 'tippy.js/dist/tippy.css';
 import '../nodes.jsx';
 import '../../../index.css';
 import './Buttons.scss';
-import { buttonDescriptions}  from './buttonDescriptions.jsx';
+import { tippyDescriptions}  from './tippyDescriptions.jsx';
 
 export const ClearButton = ({clearExtrinsic}) => {
     return (
-        <Tippy  theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.newFlow}>
+        <Tippy  theme='light' placement='bottom'  interactive={true}  content={tippyDescriptions.newFlow}>
             <button 
                 className="top-bar-buttons" 
                 onClick={clearExtrinsic}
             >
-            <CloseIcon />
+            <CloseIcon fillColor={'#007bff'} />
 
             </button>
             

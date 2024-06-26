@@ -33,9 +33,10 @@ function ScenarioInfo() {
   
 
   return (
-    <div className="scenario-container main-font">
-      <h1>Scenario {scenarioId}</h1>
-      
+    <div className="scenario-container">
+       <h1 className=''>Scenario: <span className='scenario-title'>{scenario.name}</span> </h1>
+       <h2 className='scenario-id-monspace'>id: {scenarioId}</h2>
+      <br></br>
       <h2>Executions</h2>
       {scenario && scenario.executions && Object.keys(scenario.executions).length > 0 ? (
         Object.entries(scenario.executions).map(([executionId, executionData]) => (
@@ -44,7 +45,7 @@ function ScenarioInfo() {
               <span className='flex justify-center items-center m-2' style={{width: '20px'}}>
                 {openExecutions[executionId] ? '-' : '+'}
               </span>
-              <span>Execution {executionId}</span>
+              <span> {executionId}</span>
             </button>
 
             {openExecutions[executionId] && (
