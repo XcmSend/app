@@ -29,7 +29,7 @@ export default async function createWebhook(req, res) {
 
     try {
       console.log('createWebhook Creating webhook...');
-      const webhookEndpoint = 'https://webhook.site/token';
+      const webhookEndpoint = 'https://webhook.bagpipes.io/token';
 
       const response = await fetch(webhookEndpoint, {
         method: 'POST',

@@ -24,7 +24,7 @@ headers
 {connection: Array(1), content-length: Array(1), accept-encoding: Array(1), host: Array(1), postman-token: Array(1), …}
 hostname
 : 
-"webhook.site"
+"webhook.bagpipes.io"
 ip
 : 
 "2.27.59.192"
@@ -68,7 +68,7 @@ updated_at
 "2023-12-01 09:41:52"
 url
 : 
-"https://webhook.site/52a2489e-bc5d-448c-88b7-6de2c843da52?test=hi%20there%203&data=structure"
+"https://webhook.bagpipes.io/52a2489e-bc5d-448c-88b7-6de2c843da52?test=hi%20there%203&data=structure"
 user_agent
 : 
 "PostmanRuntime/7.33.0"

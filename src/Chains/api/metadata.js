@@ -11,7 +11,7 @@ export const CHAIN_METADATA = {
 
     },
     interlay: {
-        chain: "interlay",
+        chain: "Interlay",
         endpoints: [
             "wss://rpc-interlay.luckyfriday.io",
             "wss://interlay-rpc.dwellir.com",
@@ -20,38 +20,21 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
-    mangatax: {
-        chain: "mangatax",
-        endpoints: [
-            "wss://kusama-archive.mangata.online",
-            "wss://kusama-rpc.mangata.online",
-        ],
-        queryAssetPaths: ["assetRegistry.metadata"],  
-        queryBalancePaths: ["system.account"],
-        nativeAccount: true,
-    },
-    moonriver: {
-        chain: "moonriver",
-        endpoints: [
-            "wss://moonriver-rpc.dwellir.com",
-            "wss://wss.api.moonriver.moonbeam.network"
-        ],
-        queryAssetPaths: ["assetRegistry.metadata"],  
-        queryBalancePaths: ["system.account" ,"assets.accounts"],
-        nativeAccount: true
-    },
-
-    turing: {
-        chain: "turing",
-        endpoints: [
-            "wss://rpc.turing.oak.tech"
-        ],
-        queryAssetPaths: ["assetRegistry.metadata"],  
-        queryBalancePaths: ["system.account" ,"tokens.accounts"],
-        nativeAccount: true
-    },
     hydraDx: {
-        chain: "HydraDX",
+        chain: "HydraDX" || "hydradx",
+        endpoints: [
+            "wss://hydradx-rpc.dwellir.com",
+            "wss://hydradx.api.onfinality.io/public-ws",
+            "wss://rpc.hydradx.cloud",
+        ],
+        queryAssetPaths: ["assetRegistry.assets"],  
+        queryBalancePaths: ["system.account", "tokens.accounts"],
+        transferFunction: "xTokens.transferMultiasset",
+        nativeAccount: true,
+
+    },
+    hydradx: {
+        chain: "HydraDX" || "hydradx",
         endpoints: [
             "wss://hydradx-rpc.dwellir.com",
             "wss://hydradx.api.onfinality.io/public-ws",
@@ -66,8 +49,8 @@ export const CHAIN_METADATA = {
     polkadot: {
         chain: "Polkadot",
         endpoints: [
-            "wss://polkadot-rpc.dwellir.com",
             "wss://rpc.polkadot.io",
+            "wss://polkadot-rpc.dwellir.com",
             "wss://polkadot.api.onfinality.io/public-ws",
 
 
@@ -76,12 +59,24 @@ export const CHAIN_METADATA = {
         transferFunction: "xcmPallet.limitedReserveTransferAssets",
         nativeAccount: true,
     },
-    Kusama: {
+    kusama: {
         chain: "Kusama",
         endpoints: [
               "wss://kusama-rpc.dwellir.com",
             "wss://kusama-rpc.polkadot.io",
             "wss://kusama.api.onfinality.io/public-ws",
+        ],
+        queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        nativeAccount: true,
+    },
+    moonbeam: {
+        chain: "Moonbeam",
+        endpoints: [
+            "wss://wss.api.moonbeam.network",
+              "wss://moonbeam-rpc.dwellir.com",
+
+
         ],
         queryBalancePaths: ["system.account"],
         transferFunction: "xcmPallet.limitedReserveTransferAssets",
@@ -104,15 +99,47 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
-    kusama_assethub: {
+    mangatax: {
+        chain: "mangatax",
+        endpoints: [
+            "wss://kusama-archive.mangata.online",
+            "wss://kusama-rpc.mangata.online",
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
+
+    moonriver: {
+        chain: "moonriver",
+        endpoints: [
+            "wss://moonriver-rpc.dwellir.com",
+            "wss://wss.api.moonriver.moonbeam.network"
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account" ,"assets.accounts"],
+        nativeAccount: true
+    },
+
+
+    assetHub_kusama: {
         chain: "Kusama Assethub",
         endpoints: ["wss://statemine-rpc.dwellir.com"],
         queryBalancePaths: ["system.account"],
     },
-    sora: {
-        chain: "Sora",
+    turing: {
+        chain: "turing",
         endpoints: [
-                "wss://ws.parachain-collator-1.c1.stg1.sora2.soramitsu.co.jp",
+            "wss://rpc.turing.oak.tech"
+        ],
+        queryAssetPaths: ["assetRegistry.metadata"],  
+        queryBalancePaths: ["system.account" ,"tokens.accounts"],
+        nativeAccount: true
+    },
+    turing: {
+        chain: "turing",
+        endpoints: [
+            "wss://rpc.turing.oak.tech",
         ],
         queryBalancePaths: ["system.account"],
         nativeAccount: true,

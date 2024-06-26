@@ -1,5 +1,6 @@
 import React from 'react';
 import SwapSVG from '/swap.svg';
+import RemarkSVG from '/remark.svg';
 import xTransferSVG from '/xTransfer.svg';
 import { HttpIcon, WebhookIcon } from '../Icons/icons';
 import { listChains } from '../../Chains/ChainsInfo';
@@ -31,10 +32,13 @@ export const ActionToastContent = ({ type, message, signedExtrinsic }) => {
     if (type === 'swap') {
         imageSrc = SwapSVG;
         altText = 'Swap Action';
-    } else if (type === 'xTransfer') {
+    } else if (type === 'remark') {
+        imageSrc = RemarkSVG;
+        altText = "System remark"
+    } 
+    else if (type === 'xTransfer') {
         imageSrc = xTransferSVG;
         altText = 'xTransfer Action';
-        console.log('ActionToastContent xTransferSVG',xTransferSVG);
     }
     console.log('imageSrc', imageSrc);
 

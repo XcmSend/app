@@ -13,11 +13,27 @@ export const getNodeConfig = (type, position, getId) => {
         name: "OpenAI",
         style: commonStyle,  
       },
+      chatGpt: {
+        label: 'Chat GPT',
+        image: './openai.svg',
+        name: "ChatGPT",
+        style: commonStyle,  
+      },
       chain: {
         label: 'Chain',
         image: './chain.svg',
         name: "Chain",
         
+      },
+      chainQuery: {
+        label: 'Query Chain',
+        image: './chainQuery.svg',
+        name: "Query Chain",
+      },
+      chainTx: {
+        label: 'Chain TX',
+        image: './chainQuery.svg',
+        name: "Chain TX",
       },
       discord: {
         label: 'Discord',

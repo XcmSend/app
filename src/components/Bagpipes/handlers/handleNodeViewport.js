@@ -29,15 +29,15 @@ export const handleNodeViewport = async (instance, node, stage, orderedList ) =>
     switch (stage) {
         case 'zoomIn':
             instance.setCenter(centerX, centerY);
-            await smoothZoom(instance, zoomLevel, 3000);
+            await smoothZoom(instance, zoomLevel, 1000);
             break;
         case 'hold':
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             break;
         case 'zoomOut':
-            await smoothZoom(instance, 1.0, 3000);
+            await smoothZoom(instance, 1.0, 1000);
             if (node === orderedList[orderedList.length - 1]) { // Check if it's the last node
-                await new Promise((resolve) => setTimeout(resolve, 2000)); 
+                await new Promise((resolve) => setTimeout(resolve, 1000)); 
                 instance.fitView();
             }
             break;

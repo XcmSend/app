@@ -6,12 +6,12 @@ import 'tippy.js/dist/tippy.css';
 import '../nodes.jsx';
 import '../../../index.css';
 import './Buttons.scss';
-import { buttonDescriptions}  from './buttonDescriptions.jsx';
+import { tippyDescriptions}  from './tippyDescriptions.jsx';
 import { useAppStore } from '../hooks/index.js';
 import { compressString } from '../TemplateFeatures/compress';
 
 
-// import { buttonDescriptions }  from './buttonDescriptions';
+// import { tippyDescriptions }  from './tippyDescriptions';
 import '../buttons/Buttons.scss';
 import toast from 'react-hot-toast';
 
@@ -91,7 +91,7 @@ export const GenerateLinkButton = ({ scenarioId}) => {
       }, [copied]);
 
       return (
-        <Tippy theme='light' placement='bottom' interactive={true} content={buttonDescriptions.generateLink}>
+        <Tippy theme='light' placement='bottom' interactive={true} content={tippyDescriptions.generateLink}>
             <button className="top-bar-buttons text-black" onClick={handleCopyToClipboard}>
                 <GenerateLinkIcon className='h-5 w-5' fillColor='#007bff' />
             </button>

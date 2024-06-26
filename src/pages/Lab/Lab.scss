@@ -4,6 +4,8 @@
      padding: 20px;
      flex-grow: 1; /* Takes up the available space */
      width: 100%;
+     overflow-y: auto;
+     height: 90%
    }
   
   .lab-top-bar {
@@ -20,9 +22,13 @@
     padding: 10px;
     cursor: pointer;
   }
+
   .scenario-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-top: 15px;
-    padding: 15px 20px 15px 20px;
+    padding: 15px 20px;
     border-radius: 10px;
     transition: all 0.3s ease;
     
@@ -30,11 +36,57 @@
     transform: scale(1);
   
     &:hover {
-      // Reduced scaling
       transform: scale(1.02);
       background-color: var(--bg);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     }
+  }
+  
+
+  .scenario-card .scenario-name {
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: larger;
+    width: 30em;
+    text-decoration: underline;
+    margin-right: 10px;
+}
+
+.scenario-card .scenario-id {
+  font-size: smaller;
+  color: #757575;
+  width: 25em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 10px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+@media (max-width: 768px) {
+  .scenario-card .scenario-id {
+    width: 10em;
+  }
+}
+
+@media screen {
+  
+}
+.scenario-card .scenario-name:hover {
+    text-decoration: underline dotted;
+}
+
+  .scenario-title {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .scenario-details {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 30px; /* Adjust the gap as needed */
   }
   
   .scenario-header {
@@ -92,8 +144,11 @@
 
   .scenario-container {
     padding: 2rem;
+    overflow-y: auto;
+    height: 100%
   }
   
+
   h1 {
     margin-bottom: 1rem;
   }
@@ -125,6 +180,7 @@
 
   .scenario-container {
     // Other styles for scenario-container
+    
   
     .execution-section {
       // Styles for each execution section

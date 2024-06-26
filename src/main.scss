@@ -1,7 +1,7 @@
 @import "./variables";
 
 .button {
-  background-color: var(--button-bg);
+  background-color: $primary-color !important;
   color: white;
   border: none;
   border-radius: 7px;
@@ -9,15 +9,42 @@
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-family: $primary-font !important;
-    
+
   &:hover {
-      background-color: darken($primary-color, 10%);
+    background-color: darken($primary-color, 10%) !important;
   }
-  
+
   &:active {
-      background-color: darken($primary-color, 20%);
+    background-color: darken($primary-color, 20%) !important;
   }
 }
+
+.button-blue {
+  background-color: $primary-color !important;
+
+  &:hover {
+    background-color: darken($primary-color, 10%) !important;
+  }
+
+  &:active {
+    background-color: darken($primary-color, 20%) !important;
+  }
+}
+
+.button-cancel {
+  background-color: rgb(250, 36, 36) !important;
+
+  &:hover {
+    background-color: darken(rgb(250, 36, 36), 10%) !important;
+  }
+
+  &:active {
+    background-color: darken(rgb(250, 36, 36), 20%) !important;
+  }
+}
+
+
+
 
   .table {
     width: 100%;

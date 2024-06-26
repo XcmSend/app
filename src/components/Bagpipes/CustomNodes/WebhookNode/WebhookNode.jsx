@@ -13,6 +13,8 @@ import 'tippy.js/dist/tippy.css';
 import 'tippy.js/themes/light.css';
 import WebhookForm from '../../Forms/PopupForms/Webhook/WebhookForm';
 
+
+
 export default function WebhookNode({ }) {
   const { scenarios, activeScenarioId, executionId, setWebhookDecisionPending, setWebhookUserDecision, webhookDecision} = useAppStore(state => ({
     scenarios: state.scenarios,
@@ -39,6 +41,7 @@ export default function WebhookNode({ }) {
   const nodeExecutionData = scenarios[activeScenarioId]?.executions[executionId]?.[nodeId];
   const eventUpdates = nodeExecutionData?.responseData?.eventUpdates || [];
   const hasNotification = eventUpdates.length > 0;
+
 
 
   useEffect(() => {
@@ -76,7 +79,7 @@ export default function WebhookNode({ }) {
 
 
   
-    showTippy(null, nodeId, nodeRef.current, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} reference={nodeRef.current} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+    showTippy(null, nodeId, nodeRef.current, <WebhookForm onSave={handleSubmit} onClose={handleCloseWebhookForm} nodeId={nodeId} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   };
 
 
@@ -112,6 +115,9 @@ export default function WebhookNode({ }) {
 
   const fillColor = "purple";
 
+
+ 
+
   return (
 
     <div ref={nodeRef} onClick={handleNodeClick}>
@@ -120,6 +126,7 @@ export default function WebhookNode({ }) {
       {hasNotification && <EventNotification nodeId={nodeId} eventUpdates={eventUpdates} />}
 
       <div className="relative nodeBody bg-white border-2 border-gray-300 rounded-full w-20 h-20 flex items-center justify-center">
+ 
  
       {isLoadingNode ? (
           <div className="spinner-container">
@@ -130,6 +137,8 @@ export default function WebhookNode({ }) {
           <WebhookNodeIcon className="h-8" fillColor={fillColor} />
       )}
       
+
+      
       {/* Logo in the middle of the circle */}
       {/* <img src={`/chains/${logo}`} alt={`${title} Logo`} className="text-slate-800 h-8 w-8" /> */}
 
@@ -137,6 +146,8 @@ export default function WebhookNode({ }) {
       <div className="node-title-circle absolute bottom-[-38%] text-center w-full">
         <span className="font-medium text-xl text-gray-500">Webhook</span>
       </div>
+
+      
 
       
       <Handle position={Position.Right} type="source" className="z-10" />

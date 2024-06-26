@@ -1,0 +1,51 @@
+@import '../../variables.scss';
+
+.community-pages {
+    padding: 20px;
+  
+    &.dark {
+      background-color: #333;
+      color: #fff;
+  
+      .community-card {
+        background-color: #444;
+        color: #fff;
+      }
+    }
+  
+    &.light {
+      background-color: #fff;
+      color: #000;
+  
+      .community-card {
+        background-color: #f9f9f9;
+        color: #000;
+      }
+    }
+  
+    .community-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+  
+    .community-card {
+      cursor: pointer;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+      width: 200px;
+  
+      &:hover {
+        transform: translateY(-5px);
+      }
+    }
+  }
+  
+
+  .community-logo {
+    height: 50px;
+    width: 50px;
+  }

@@ -90,7 +90,7 @@ const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, e
 
   const sourceChainName = scenarios[activeScenarioId]?.diagramData?.nodes[previousNodeIndex]?.formData?.chain;
   const sourceChainId = chainNameToId(sourceChainName);
-  let filteredChainInfoList;
+  let filteredChainInfoList: any[];
   const hrmpForSource = hrmpChannels[sourceChainId] || [];  // Default to an empty array if undefined
 
   // Always include "polkadot" and filter based on HRMP channels if they exist
@@ -127,7 +127,7 @@ const ChainNodeForm: React.FC<ChainNodeFormProps> = ({ visible, nodeId, nodes, e
     const fetchData = async () => {
       console.log('Fetching HRMP channels at initialization');
       try {
-        const newHrmpChannels = await buildHrmp();
+        const newHrmpChannels = await buildHrmp(relaychain);
         saveHrmpChannels(newHrmpChannels); // Assuming saveHrmpChannels is a function to store the channels in your state
         console.log('HRMP channels fetched and saved:', newHrmpChannels);
       } catch (error) {
@@ -390,7 +390,6 @@ useEffect(() => {
             <select className="asset-selector text-black font-semibold in-node-border border-gray-300 p-2 bg-white" onChange={handleAssetChange} value={formState.asset ? formState.asset.name : ""}>
               <option value="">Select an asset</option>
                {assetsForChain.map(asset => (
-                //console.log(`asset is:`, asset)
                    <option key={asset.assetId} value={asset.asset.name}>
                     {asset.asset.symbol} | {asset.asset.name} | AssetId: {asset.assetId}
                    </option>
@@ -403,7 +402,7 @@ useEffect(() => {
   
       {formState.chain && (
           <div className="form-selection">
-          <h3>Addresses:</h3>
+          <h3>Addresses99:</h3>
           <div className="flex items-center font-semibold text-black justify-start  w-full">
             <AccountDropdown 
                 selectedChainName={formState.chain}

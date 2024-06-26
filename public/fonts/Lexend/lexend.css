@@ -1,16 +1,16 @@
-/*@font-face {*/
-/*  font-family: 'Lexend';*/
-/*  src: url('./Lexend-Black.ttf'); !* IE9 Compat Modes *!*/
-/*  font-weight: 900;*/
-/*  font-style: normal;*/
-/*}*/
+@font-face {
+  font-family: 'Lexend';
+  src: url('./Lexend-Black.ttf');
+  font-weight: 900;
+  font-style: normal;
+}
 
-/*@font-face {*/
-/*  font-family: 'Lexend';*/
-/*  src: url('./Lexend-ExtraBold.ttf'); !* IE9 Compat Modes *!*/
-/*  font-weight: 800;*/
-/*  font-style: normal;*/
-/*}*/
+@font-face {
+  font-family: 'Lexend';
+  src: url('./Lexend-ExtraBold.ttf');
+  font-weight: 800;
+  font-style: normal;
+}
 
 @font-face {
   font-family: 'Lexend';

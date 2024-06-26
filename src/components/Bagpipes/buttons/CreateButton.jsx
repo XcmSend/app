@@ -6,11 +6,11 @@ import 'tippy.js/dist/tippy.css';
 import '../nodes.jsx';
 import '../../../index.css';
 import './Buttons.scss';
-import { buttonDescriptions}  from './buttonDescriptions';
+import { tippyDescriptions}  from './tippyDescriptions';
 
 export const CreateButton = ({ createScenario }) => {
     return (
-        <Tippy  theme='light' placement='bottom'  interactive={true}  content={buttonDescriptions.newFlow}>
+        <Tippy  theme='light' placement='bottom'  interactive={true}  content={tippyDescriptions.newFlow}>
         <button 
         className="top-bar-buttons " 
         onClick={createScenario} 

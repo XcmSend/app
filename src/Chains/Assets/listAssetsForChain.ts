@@ -16,10 +16,8 @@ export function listAssetHubAssets() {
   }));
 }
 
-
-
-export function listkusama_assethubAssets() {
-  const assets = CHAIN_ASSETS.kusama_assethub.assets;
+export function listassetHub_kusamaAssets() {
+  const assets = CHAIN_ASSETS.assetHub_kusama.assets;
 
   return assets.map((assetData: { asset: any; assetId: any }) => ({
     asset: assetData.asset,
@@ -27,6 +25,19 @@ export function listkusama_assethubAssets() {
   }));
 }
 
+export function list_onchainassets(chain: string) {
+  switch (chain) {
+    case "moonbeam":
+      const assets = CHAIN_ASSETS.moonbeam.assets;
+      return assets.map(
+        (assetData: { asset: any; decimals: any; assetId: any }) => ({
+          asset: assetData.asset,
+          decimals: assetData.decimals,
+          assetId: assetData.assetId.replace(",", ""),
+        }),
+      );
+  }
+}
 
 export function listTuringAssets() {
   const assets = CHAIN_ASSETS.turing.assets;
@@ -37,7 +48,7 @@ export function listTuringAssets() {
   }));
 }
 
-export function listmangataxAssets() {
+export function listMangataxAssets() {
   const assets = CHAIN_ASSETS.mangatax.assets;
 
   return assets.map((assetData: { asset: any; assetId: any }) => ({
@@ -72,7 +83,7 @@ async function listInterlayAssetReal() {
         assetId: id.toHuman(),
       };
       dictionary.set(id.toHuman() as number, myasset);
-    }
+    },
   );
   const valuesArray = Array.from(dictionary.values());
   return valuesArray;

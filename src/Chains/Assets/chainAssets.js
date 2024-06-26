@@ -266,11 +266,11 @@ export const CHAIN_ASSETS = {
     },
 
 
-    "kusama_assethub": {
+    "assetHub_kusama": {
         "assets":[
             {
                 "asset": {
-                    "decimals": '12',
+                    "decimals": '10',
                     "name": 'DOT Foreign asset',
                     "symbol": 'DOT',
                     "existentialDeposit": '500,000,000,000',
@@ -434,101 +434,101 @@ export const CHAIN_ASSETS = {
     },
 
     "turing": {
-    "assets": [
-  
-      
-        {
+      "assets": [
+    
+        
+          {
+              "asset": {
+                  "decimals": '12',
+                  "name": 'Heiko',
+                  "symbol": 'HKO',
+                  "existentialDeposit": '500,000,000,000',
+            },
+            "assetId": '5'
+          },
+          {
             "asset": {
-                "decimals": '12',
-                "name": 'Heiko',
-                "symbol": 'HKO',
-                "existentialDeposit": '500,000,000,000',
+              "decimals": '18',
+              "name": 'Shiden',
+              "symbol": 'SDN',
+              "existentialDeposit": '10,000,000,000,000,000',
+            },
+            "assetId": '8'
           },
-          "assetId": '5'
-        },
-        {
-          "asset": {
-            "decimals": '18',
-            "name": 'Shiden',
-            "symbol": 'SDN',
-            "existentialDeposit": '10,000,000,000,000,000',
+          {
+            "asset": {
+              "decimals": '12',
+              "name": 'Kusama',
+              "symbol": 'KSM',
+              "existentialDeposit": '100,000,000',
+            },
+            "assetId": '1'
           },
-          "assetId": '8'
-        },
-        {
-          "asset": {
-            "decimals": '12',
-            "name": 'Kusama',
-            "symbol": 'KSM',
-            "existentialDeposit": '100,000,000',
+          {
+            "asset": {
+              "decimals": '18',
+              "name": 'Moonriver',
+              "symbol": 'MOVR',
+              "existentialDeposit": '0',
+            },
+            "assetId": '9'
           },
-          "assetId": '1'
-        },
-        {
-          "asset": {
-            "decimals": '18',
-            "name": 'Moonriver',
-            "symbol": 'MOVR',
-            "existentialDeposit": '0',
+          {
+            "asset": {
+              "decimals": '12',
+              "name": 'AUSD',
+              "symbol": 'AUSD',
+              "existentialDeposit": '10,000,000,000',
+            },
+            "assetId": '2'
           },
-          "assetId": '9'
-        },
-        {
-          "asset": {
-            "decimals": '12',
-            "name": 'AUSD',
-            "symbol": 'AUSD',
-            "existentialDeposit": '10,000,000,000',
+          {
+            "asset": {
+              "decimals": '18',
+              "name": 'Mangata X',
+              "symbol": 'MGX',
+              "existentialDeposit": '0',
+            },
+            "assetId": '10'
           },
-          "assetId": '2'
-        },
-        {
-          "asset": {
-            "decimals": '18',
-            "name": 'Mangata X',
-            "symbol": 'MGX',
-            "existentialDeposit": '0',
+          {
+            "asset": {
+              "decimals": '10',
+              "name": 'Native',
+              "symbol": 'TUR',
+              "existentialDeposit": '100,000,000',
+            },
+            "assetId": '0'
           },
-          "assetId": '10'
-        },
-        {
-          "asset": {
-            "decimals": '10',
-            "name": 'Native',
-            "symbol": 'TUR',
-            "existentialDeposit": '100,000,000',
+          {
+            "asset": {
+              "decimals": '12',
+              "name": 'SKSM',
+              "symbol": 'SKSM',
+              "existentialDeposit": '500,000,000',
+            },
+            "assetId": '6'
           },
-          "assetId": '0'
-        },
-        {
-          "asset": {
-            "decimals": '12',
-            "name": 'SKSM',
-            "symbol": 'SKSM',
-            "existentialDeposit": '500,000,000',
+          {
+            "asset": {
+              "decimals": '12',
+              "name": 'Karura',
+              "symbol": 'KAR',
+              "existentialDeposit": '100,000,000,000',
+            },
+            "assetId": '3'
           },
-          "assetId": '6'
-        },
-        {
-          "asset": {
-            "decimals": '12',
-            "name": 'Karura',
-            "symbol": 'KAR',
-            "existentialDeposit": '100,000,000,000',
-          },
-          "assetId": '3'
-        },
-        {
-          "asset": {
-            "decimals": '12',
-            "name": 'Liquid KSM',
-            "symbol": 'LKSM',
-            "existentialDeposit": '500,000,000',
-          },
-          "assetId": '4'
-        }
-      ]      
-},
+          {
+            "asset": {
+              "decimals": '12',
+              "name": 'Liquid KSM',
+              "symbol": 'LKSM',
+              "existentialDeposit": '500,000,000',
+            },
+            "assetId": '4'
+          }
+        ]      
+    },
 
     "interlay": {
         "assets": [
@@ -643,6 +643,440 @@ export const CHAIN_ASSETS = {
                   "assetId": '4'
                 }
               ]
+    },
+    "moonbeam": {
+      "assets": [
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Moonriver',
+            "symbol":'xcibcMOVR',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'78,407,957,940,239,408,223,554,844,611,219,482,002'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Zeitgeist',
+            "symbol":'xcZTG',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'150,874,409,661,081,770,150,564,009,349,448,205,842'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Unique Network',
+            "symbol":'xcUNQ',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'283,870,493,414,747,423,842,723,289,889,816,153,538'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Polkadex',
+            "symbol":'xcPDEX',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'90,225,766,094,594,282,577,230,355,136,633,846,906'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'peaq',
+            "symbol":'xcPEAQ',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'314,077,021,455,772,878,282,433,861,213,184,736,939'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Bifrost Filecoin Native Token',
+            "symbol":'xcFIL',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'144,012,926,827,374,458,669,278,577,633,504,620,722'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Darwinia Parachain Token',
+            "symbol":'xcRING',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'125,699,734,534,028,342,599,692,732,320,197,985,871'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Centrifuge',
+            "symbol":'xcCFG',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'91,372,035,960,551,235,635,465,443,179,559,840,483'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Equilibrium Dollar',
+            "symbol":'xcEQD',
+            "decimals":'9',
+            "isFrozen":false
+          },
+          "assetId":'187,224,307,232,923,873,519,830,480,073,807,488,153'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'HydraDX',
+            "symbol":'xcHDX',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'69,606,720,909,260,275,826,784,788,104,880,799,692'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Celestia',
+            "symbol":'xcibcTIA',
+            "decimals":'6',
+            "isFrozen":false
+          },
+          "assetId":'133,307,414,193,833,606,001,516,599,592,873,928,539'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Equilibrium Token',
+            "symbol":'xcEQ',
+            "decimals":'9',
+            "isFrozen":false
+          },
+          "assetId":'190,590,555,344,745,888,270,686,124,937,537,713,878'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'dog wif dots',
+            "symbol":'xcWIFD',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'61,295,607,754,960,722,617,854,661,686,514,597,014'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Inter Stable Token',
+            "symbol":'xcibcIST',
+            "decimals":'6',
+            "isFrozen":false
+          },
+          "assetId":'141,196,559,012,917,796,508,928,734,717,797,136,690'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Bifrost Voucher DOT',
+            "symbol":'xcvDOT',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'29,085,784,439,601,774,464,560,083,082,574,142,143'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Acala Liquid DOT',
+            "symbol":'xcLDOT',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'225,719,522,181,998,468,294,117,309,041,779,353,812'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'DED',
+            "symbol":'xcDED',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'124,463,719,055,550,872,076,363,892,993,240,202,694'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Astar',
+            "symbol":'xcASTR',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'224,077,081,838,586,484,055,667,086,558,292,981,199'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Agoric',
+            "symbol":'xcibcBLD',
+            "decimals":'6',
+            "isFrozen":false
+          },
+          "assetId":'199,907,282,886,248,358,976,504,623,107,230,837,230'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'USD Coin',
+            "symbol":'xcUSDC',
+            "decimals":'6',
+            "isFrozen":false
+          },
+          "assetId":'166,377,000,701,797,186,346,254,371,275,954,761,085'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'bncs-20 inscription token BNCS',
+            "symbol":'xcBNCS',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'142,155,548,796,783,636,521,833,385,094,843,759,961'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Subsocial',
+            "symbol":'xcSUB',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'89,994,634,370,519,791,027,168,048,838,578,580,624'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Cosmos Hub',
+            "symbol":'xcibcATOM',
+            "decimals":'6',
+            "isFrozen":false
+          },
+          "assetId":'138,280,378,441,551,394,289,980,644,963,240,827,219'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Picasso',
+            "symbol":'xcibcPICA',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'228,510,780,171,552,721,666,262,089,780,561,563,481'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Bifrost Voucher GLMR',
+            "symbol":'xcvGLMR',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'204,507,659,831,918,931,608,354,793,288,110,796,652'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Bifrost Voucher MANTA',
+            "symbol":'xcvMANTA',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'289,989,900,872,525,819,559,124,583,375,550,296,953'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Acala Dollar',
+            "symbol":'xcaUSD',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'110,021,739,665,376,159,354,538,090,254,163,045,594'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Tether USD',
+            "symbol":'xcUSDT',
+            "decimals":'6',
+            "isFrozen":false
+          },
+          "assetId":'311,091,173,110,107,856,861,649,819,128,533,077,277'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'PINK',
+            "symbol":'xcPINK',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'64,174,511,183,114,006,009,298,114,091,987,195,453'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Nodle',
+            "symbol":'xcNODL',
+            "decimals":'11',
+            "isFrozen":false
+          },
+          "assetId":'309,163,521,958,167,876,851,250,718,453,738,106,865'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'interBTC',
+            "symbol":'xcIBTC',
+            "decimals":'8',
+            "isFrozen":false
+          },
+          "assetId":'120,637,696,315,203,257,380,661,607,956,669,368,914'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Manta',
+            "symbol":'xcMANTA',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'166,446,646,689,194,205,559,791,995,948,102,903,873'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Interlay',
+            "symbol":'xcINTR',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'101,170,542,313,601,871,197,860,408,087,030,232,491'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'BNC',
+            "symbol":'xcBNC',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'165,823,357,460,190,568,952,172,802,245,839,421,906'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'PARA',
+            "symbol":'xcPARA',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'32,615,670,524,745,285,411,807,346,420,584,982,855'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'xcDOT',
+            "symbol":'xcDOT',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'42,259,045,809,535,163,221,576,417,993,425,387,648'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Pendulum',
+            "symbol":'xcPEN',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'45,647,473,099,451,451,833,602,657,905,356,404,688'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Acala',
+            "symbol":'xcACA',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'224,821,240,862,170,613,278,369,189,818,311,486,111'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Bifrost Voucher FIL',
+            "symbol":'xcvFIL',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'272,547,899,416,482,196,831,721,420,898,811,311,297'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Bifrost Voucher ASTR',
+            "symbol":'xcvASTR',
+            "decimals":'18',
+            "isFrozen":false
+          },
+          "assetId":'114,018,676,402,354,620,972,806,895,487,280,206,446'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'NeuroWeb',
+            "symbol":'xcNEURO',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'238,111,524,681,612,888,331,172,110,363,070,489,924'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'STINK',
+            "symbol":'xcSTINK',
+            "decimals":'10',
+            "isFrozen":false
+          },
+          "assetId":'112,679,793,397,406,599,376,365,943,185,137,098,326'
+        },
+        {
+          "asset":{
+            "deposit":'0',
+            "name":'Phala Token',
+            "symbol":'xcPHA',
+            "decimals":'12',
+            "isFrozen":false
+          },
+          "assetId":'132,685,552,157,663,328,694,213,725,410,064,821,485'
+        }
+      ]
     },
     "assetHub": {
         "assets": [

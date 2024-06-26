@@ -6,6 +6,7 @@ import { EDGE_STYLES } from './reactflow/onConnect';
 
 const defaultState = {
   scenarios: {},
+  persistedScenarios: {},
   activeScenarioId: null,
   executions: {},
   executionId: null,
@@ -224,7 +225,24 @@ const useAppStore = create(
         // }
       
     },
-    
+
+    saveScenarioName: (scenarioId, newName) => {
+      if (!scenarioId) {
+          console.error('[saveScenarioName] Scenario ID is missing or incorrect. Cannot save scenario name.');
+          return;
+      }
+
+      set((state) => {
+          const updatedScenarios = {
+              ...state.scenarios,
+              [scenarioId]: {
+                  ...state.scenarios[scenarioId],
+                  name: newName
+              }
+          };
+          return { scenarios: updatedScenarios };
+      });
+    },
         
     saveScenario: (scenarioId, diagramData) => {
 
@@ -441,6 +459,20 @@ const useAppStore = create(
       });
     },
 
+    persistScenario: (scenarioId, persist) => {
+      console.log('[persistScenario] Persisting scenario state (in useAppStore):', scenarioId, persist);
+      set((state) => {
+          const updatedState = {
+              scenarios: {
+                  ...state.scenarios,
+                  [scenarioId]: { ...state.scenarios[scenarioId], persisted: persist },
+              },
+          };
+          console.log("[persistScenario] Updated state for scenarioId:", updatedState.scenarios[scenarioId]);
+          return updatedState;
+      });
+  },
+
     
     saveDiagramData: (scenarioId, diagramData) => {
         console.log('[saveDiagramData] Saving diagram data for scenario (in useAppStore):', scenarioId, diagramData);
@@ -457,7 +489,7 @@ const useAppStore = create(
     },
 
     saveNodeFormData: (scenarioId, nodeId, formData) => {
-        console.log("[saveNodeFormData] Called with:", { scenarioId, nodeId, formData });
+        console.log("[saveNodeFormData] tis Called with:", { scenarioId, nodeId, formData });
 
         // Checking for potential issues
         if (!scenarioId || !nodeId) {
@@ -540,15 +572,22 @@ const useAppStore = create(
           return;
         }
     
+       
+    
+        // Wrap the status update in a Response object
+        const wrappedStatusUpdate = {
+          timestamp: new Date().toISOString(),
+          data: {
+            ...statusUpdate,
+          },
+        };
+    
         // Append new status event updates without overwriting previous ones
         const updateExecutionResponseData = {
           ...node.responseData,
           eventUpdates: [
             ...(node.responseData.eventUpdates || []), // Ensure there's a default array to append to
-            {
-              timestamp: new Date().toISOString(),
-              ...statusUpdate,
-            },
+            wrappedStatusUpdate,
           ],
         };
     
@@ -573,6 +612,45 @@ const useAppStore = create(
         };
       });
     },
+    
+
+
+    updateExecutionSigningJob: (scenarioId, executionId, nodeId, signingJob) => {
+      set((state) => {
+        const scenario = state.scenarios[scenarioId];
+        if (!scenario || !scenario.executions || !scenario.executions[executionId]) {
+          console.error(`[updateChainTxExecutionSigning] Execution with ID ${executionId} not found in scenario ${scenarioId}.`);
+          return;
+        }
+  
+        const node = scenario.executions[executionId][nodeId];
+        if (!node) {
+          console.error(`[updateChainTxExecutionSigning] Node with ID ${nodeId} not found in execution ${executionId}.`);
+          return;
+        }
+  
+        // Update the state with the new signing job details
+        return {
+          scenarios: {
+            ...state.scenarios,
+            [scenarioId]: {
+              ...scenario,
+              executions: {
+                ...scenario.executions,
+                [executionId]: {
+                  ...scenario.executions[executionId],
+                  [nodeId]: {
+                    ...node,
+                    signingJob: signingJob,
+                  },
+                },
+              },
+            },
+          },
+        };
+      });
+    },
+
     
     updateNodeWebhookEventStatus: (scenarioId, executionId, nodeId, { hasPreviousEvents, userDecision }) => {
       set((state) => {

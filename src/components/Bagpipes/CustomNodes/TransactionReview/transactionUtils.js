@@ -9,22 +9,23 @@ export const prepareTransactionsForReview = (diagramData, orderedList) => {
     if (currentNode?.type === 'action' && currentNode?.formData?.actionData) {
       const actionData = currentNode.formData.actionData;
 
-      // Grabbing symbols from the previous and next nodes using your suggestion
+      // Grabbing symbols from the previous and next nodes
       const assetInNode = diagramData.nodes.find(node => node.id === orderedList[i - 1]);
       const sourceSymbol = assetInNode?.formData?.asset?.symbol;
 
       const assetOutNode = diagramData.nodes.find(node => node.id === orderedList[i + 1]);
       const targetSymbol = assetOutNode?.formData?.asset?.symbol;
-      var sourcedatan;
-      sourcedatan = actionData.source;
-      sourcedatan['delay'] = delay;
+
+      const sourcedatan = {
+        ...actionData.source,
+        delay,
+        symbol: sourceSymbol // attaching the symbol
+      };
+
       const extrinsicFromAction = {
         nodeId,
         actionType: actionData.actionType,
-        source: {
-          ...sourcedatan,
-          symbol: sourceSymbol // attaching the symbol
-        },
+        source: sourcedatan,
         target: {
           ...actionData.target,
           symbol: targetSymbol // attaching the symbol
@@ -32,8 +33,33 @@ export const prepareTransactionsForReview = (diagramData, orderedList) => {
       };
 
       extrinsicsToAccept.push(extrinsicFromAction);
+    } else if (currentNode?.type === 'chainTx' && currentNode?.formData) {
+      const chainTxData = currentNode.formData;
+
+      // Grabbing symbols from the previous and next nodes
+      const assetInNode = diagramData.nodes.find(node => node.id === orderedList[i - 1]);
+      const sourceSymbol = assetInNode?.formData?.asset?.symbol;
+
+      const assetOutNode = diagramData.nodes.find(node => node.id === orderedList[i + 1]);
+      const targetSymbol = assetOutNode?.formData?.asset?.symbol;
+
+      const extrinsicFromChainTx = {
+        nodeId,
+        actionType: 'chainTx',
+        source: {
+          ...chainTxData,
+          symbol: sourceSymbol, // attaching the symbol
+          delay
+        },
+        target: {
+          symbol: targetSymbol // attaching the symbol
+        }
+      };
+
+      extrinsicsToAccept.push(extrinsicFromChainTx);
     }
   }
 
   return extrinsicsToAccept;
 };
+

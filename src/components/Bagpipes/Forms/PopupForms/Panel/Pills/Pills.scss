@@ -1,0 +1,40 @@
+
+
+
+.pills-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px; /* Space below the container, adjust as needed */
+    overflow-x: auto;
+
+  }
+  
+  .pill {
+  
+    white-space: nowrap; /* Prevents the pill text from wrapping */
+    margin-bottom: 5px;
+    margin: 0px;
+    margin-bottom: 5px;
+
+  }
+
+  .pill.function {
+    background-color: #cccccc;
+    color: rgb(46, 46, 46) !important;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .pill.variable {
+    background-color: #3333fe;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .pill.operand {
+    background-color: #ff6e10;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .pill.keyword {
+    background-color: #00c200;
+    font-family: 'Courier New', Courier, monospace;
+  }

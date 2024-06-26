@@ -15,8 +15,8 @@ const actions = [
       information: 'Transfer allows you to move assets within a single chain.'
     },
     {
-      name: 'System Remark',
-      logo: '',
+      name: 'Remark',
+      logo: '/remark.svg',
       information: 'System Remark lets you add some data to the chain via the system.remark method.'
     }
   ];

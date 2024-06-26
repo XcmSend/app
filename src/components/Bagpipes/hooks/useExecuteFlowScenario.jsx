@@ -4,24 +4,31 @@ import { useStoreApi } from 'reactflow';
 import { getSavedFormState } from '../utils/storageUtils'; 
 import ScenarioService from '../../../services/ScenarioService';
 import NodeExecutionService from '../../../services/NodeExecutionService';
-import { processScenarioData, validateDiagramData, processAndSanitizeFormData, parseAndReplacePillsInFormData, sanitizeFormData, getUpstreamNodeIds } from '../utils/scenarioUtils';
+import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../utils/scenarioUtils';
 import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
+import ChainRpcService from '../../../services/ChainRpcService';
+
 import useAppStore from '../../../store/useAppStore';
 import { v4 as uuidv4 } from 'uuid';
 import toast  from 'react-hot-toast';
-import { getOrderedList } from './utils/scenarioExecutionUtils';
-import { handleNodeViewport } from '../handlers/handleNodeViewport';
-import { broadcastToChain } from '../../../Chains/api/broadcast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../toasts/CustomToastContext'
 
+import { getOrderedList } from './utils/scenarioExecutionUtils';
+import { handleNodeViewport } from '../handlers/handleNodeViewport';
+import { broadcastToChain } from '../../../Chains/api/broadcastToChain';
+import { getPaymentInfo } from '../../../Chains/Helpers/FeeHelper';
+import { useTippy } from '../../../contexts/tooltips/TippyContext';
+// import { sign } from 'crypto';
+
+// import TransactionSignForm from '../Forms/PopupForms/ChainForms/ChainTxForm/TransactionSignForm';
 
 
 const useExecuteFlowScenario = (nodes, setNodes, instance) => {
     const socket = useContext(SocketContext);
     const store = useStoreApi();
-    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed, setIsLoadingNode, isExecuting, setIsExecuting, saveNodeEventData } = useAppStore(state => ({
+    const { scenarios, activeScenarioId, saveExecution, executionId, setExecutionId, updateNodeContent, setLoading, loading, toggleExecuteFlowScenario, executionState, setExecutionState, saveTriggerNodeToast, updateEdgeStyleForNode, updateNodeResponseData, updateExecutionSigningJob, updateNodeWebhookEventStatus, clearSignedExtrinsic, markExtrinsicAsUsed, setIsLoadingNode, isExecuting, setIsExecuting, saveNodeEventData } = useAppStore(state => ({
       scenarios: state.scenarios,
       activeScenarioId: state.activeScenarioId,
       saveExecution: state.saveExecution,
@@ -42,13 +49,14 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
       isExecuting: state.isExecuting,
       setIsExecuting: state.setIsExecuting,
       saveNodeEventData: state.saveNodeEventData,
+      updateExecutionSigningJob: state.updateExecutionSigningJob,
     }));
     const [nodeContentMap, setNodeContentMap] = useState({}); 
-    const [nodeContentHistory, setNodeContentHistory] = useState({});
     const [lastReceived, setLastReceived] = useState({});
-    const [executionStatuses, setExecutionStatuses] = useState({});
     const prevExecutionIdRef = useRef(null);  
+
     const executedIds = useRef(new Set()).current;
+
 
     async function executeFlowScenario() {
       const newExecutionId = uuidv4(); 
@@ -84,7 +92,6 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
             edges: rawDiagramData.edges.map(edge => ({ ...edge })),
         };
         
-        console.log('[executeFlowScenario] Retrieved diagramData from state:', diagramData);
         
         const orderedList = getOrderedList(diagramData.edges);
         console.log('[executeFlowScenario] Ordered List of Nodes:', orderedList);
@@ -101,8 +108,10 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
         console.log("[executeFlowScenario] About to run the scenario with the following data:", { diagramData: diagramData, scenario: activeScenarioId });
         toast.success('Running Scenario...', { id: 'running-scenario' });
 
-        let nodeContents = {};
+       
         let executionCycleFinished = false;
+        let parsedFormData; // Used across multiple cases
+        let activeExecutionData = {}; // Used across multiple cases
 
         for(let index = 0; index < orderedList.length; index++) {
 
@@ -121,31 +130,20 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 toast.error('The execution has ended due to an unknown node.', { id: 'unknown-node' });
                 return;
             }
+            setIsLoadingNode(currentNode.id, true);
+            updateEdgeStyleForNode(currentNode.id, 'executing');
 
             switch(currentNode.type) {
                 
             case 'openAi':
-                // Handle the openAi node execution
-
                 break;
 
             case 'chain':
-
-                // we don't need to execute a chain node so it doesnt make sense to zoom into it. 
-                // toast('Executing Chain Node...', { id: 'execution-chain' });
-                updateEdgeStyleForNode(currentNode.id, 'executing');
-
-                //  // Zoom into the current node
-                // await handleNodeViewport(instance, currentNode, 'zoomIn', orderedList);
-                
-                updateEdgeStyleForNode(currentNode.id, 'default_connected');
-
                 break;
 
             case 'action':
                 console.log('executeFlowScenario currentNode position:', currentNode.position);
-                updateEdgeStyleForNode(currentNode.id, 'executing');
-            
+
                 toast('Executing action!', {
                     icon: '💥',
                     id: 'execution-action',
@@ -170,52 +168,21 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                 const signedExtrinsic = node?.extrinsics?.signedExtrinsic || null;
                 const sourceChain = formData?.actionData?.source?.chain || null;
             
-                try {
-                    console.log('clearing signed extrinsic...');
-                    clearSignedExtrinsic(activeScenarioId, nodeId);
-                    await broadcastToChain(sourceChain, signedExtrinsic, {
-                        onInBlock: (blockHash) => {
-                            console.log(`Transaction included at blockHash: ${blockHash}`);
-                            toast.success(`Transaction included at blockHash: ${blockHash}`);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { inBlock: blockHash });
-                            console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
-                            markExtrinsicAsUsed(activeScenarioId, nodeId);
+                // we use this function instead of the extrinsicHandler to handle the different action types, 
+                // but we need to validate it works with action nodes before removing the commented out code
+                // !TODO: also process pills for actions, which means providing parsedFormData to the function
+                await broadcastTransaction(activeScenarioId, updatedExecutionId, currentNode.id, formData, signedExtrinsic);
 
-
-                        },
-                        onFinalized: (blockHash) => {
-                            toast.success(`Transaction finalized at blockHash: ${blockHash}`);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { finalized: blockHash });
-                        },
-                        onError: (error) => {
-                            toast.error(`Action execution failed: ${error.message}`);
-                            setLoading(false);
-                            updateNodeResponseData(activeScenarioId, updatedExecutionId, nodeId, { error: error.message });
-                            console.log('second attempt to clear signed extrinsic...');
-
-                        },
-                    });
-
-                } catch (error) {
-                    // This catch block is for handling errors not caught by the onError callback, e.g., network issues
-                    toast.error(`Error broadcasting transaction: ${error.message}`);
-                    setLoading(false);
-                }
-                console.log('third attempt to clear signed extrinsic...');
-                console.log('Broadcasted to Chain:', signedExtrinsic);
+                // console.log('third attempt to clear signed extrinsic...');
+                // console.log('Broadcasted to Chain:', signedExtrinsic);
                 toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
             
-                // Check if it's the last iteration to set executionCycleFinished accordingly
-                executionCycleFinished = index === orderedList.length - 1;
             
-                updateEdgeStyleForNode(currentNode.id, 'default_connected');
             
                 break;  
 
             case 'webhook':
-                    updateEdgeStyleForNode(currentNode.id, 'executing');
                     const webhookFetchStartTime = new Date();
-                    setIsLoadingNode( currentNode.id, true);
                     console.log('Webhook fetch start time:', webhookFetchStartTime.toISOString());
                     try {
                         console.log('executeFlowScenario currentNode formData uuid:', currentNode.formData.uuid);
@@ -241,33 +208,24 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                         console.error('Error waiting for webhook data:', error);
                         updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, { error: error.message });
                     } finally {
-                        setIsLoadingNode(currentNode.id, false);
-                        updateEdgeStyleForNode(currentNode.id, 'default_connected');
 
                     }
-                    executionCycleFinished = index === orderedList.length - 1;
                     break;
                 
-                     
             case 'http':
-                setIsLoadingNode(currentNode.id, true);
 
-                updateEdgeStyleForNode(currentNode.id, 'executing');
                 console.log('executeFlowScenario for http event...', currentNode.id, currentNode);
                 // assuming we have the scenarios object and the activeScenarioId available
-                const executions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
-                console.log('All Executions:', executions, updatedExecutionId);
-                let parsedFormData;
-                let activeExecutionData = {};
+                const httpExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
+                console.log('All Executions:', httpExecutions, updatedExecutionId);
+               
 
-                if (executions) {
+                if (httpExecutions) {
                     const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
                     console.log('executionId:', updatedExecutionId);
-                    activeExecutionData = executions[updatedExecutionId];
+                    activeExecutionData = httpExecutions[updatedExecutionId];
                     console.log('Active Execution Data:', activeExecutionData);
 
-
-                    // Assuming currentNode.formData contains the data to be parsed
                     parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
                     console.log('Parsed Form Data:', parsedFormData);
                     // parsedFormData should contain the formData with pills replaced by actual data
@@ -303,25 +261,136 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     const errorStatusUpdate = { error: error.message };
                     updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, errorStatusUpdate);
                 } finally {
-                    setIsLoadingNode(currentNode.id, false);
-                    updateEdgeStyleForNode(currentNode.id, 'default_connected');
 
                 }
                 
-                // Check if it's the last iteration to set executionCycleFinished accordingly
-                executionCycleFinished = index === orderedList.length - 1;
+                break;
+
+            case 'chainQuery':
+                console.log('Executing Chain Query node...', currentNode.id);
+            
+                const chainQueryExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
+            
+                if (chainQueryExecutions) {
+                    const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
+                    const activeExecutionData = chainQueryExecutions[updatedExecutionId];
+            
+                    const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
+                    console.log('chainQuery Parsed Form Data:', parsedFormData, currentNode.id);
+                    try {
+                        const queryParams = {
+                            chainKey: parsedFormData.selectedChain,
+                            palletName: parsedFormData.selectedPallet,
+                            methodName: parsedFormData.selectedMethod.name,
+                            params: parsedFormData.methodInput,
+                            atBlock: parsedFormData.blockHash || null,
+                        }
+                        console.log('[queryParams] Chain Query Params:', queryParams);
+                        const queryResult = await ChainRpcService.executeChainQueryMethod({
+                            ...queryParams
+                        });
+                        console.log('Chain Query Response:', queryResult);
+
+                        const eventData = {
+                            ...queryResult,
+                            ...queryParams
+
+                        };
+
+                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            eventData: eventData,
+                            status: 'success'
+                        });
+                        saveNodeEventData(activeScenarioId, currentNode.id, queryResult);
+                    } catch (error) {
+                        console.error('Error executing Chain Query:', error);
+                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            error: error.message,
+                            status: 'error'
+                        });
+                    } finally {
+                    }
+                } else {
+                    console.error('No executions found for the scenario');
+                    return;
+                }
+                    break;
+            
+            case 'chainTx':
+                console.log('Executing Chain Tx node...', currentNode.id);
+            
+                const chainTxExecutions = useAppStore.getState().scenarios[activeScenarioId]?.executions;
+            
+                if (chainTxExecutions) {
+                    const upstreamNodeIds = getUpstreamNodeIds(orderedList, currentNode.id);
+                    const activeExecutionData = chainTxExecutions[updatedExecutionId];
+                    console.log('Active Execution Data:', activeExecutionData);
+                    const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
+                    console.log('chainTx Parsed Form Data:', parsedFormData);
+                    try {
+                        const { extrinsic, encodedCallData } = await ChainRpcService.createChainTxMethod({
+                            chainKey: parsedFormData.selectedChain,
+                            palletName: parsedFormData.selectedPallet,
+                            methodName: parsedFormData.selectedMethod.name,
+                            params: Object.values(parsedFormData.params || {})
+        
+                        });
+                        const paymentInfo = await getPaymentInfo(extrinsic, parsedFormData.selectedAddress, parsedFormData.selectedChain);
+                        
+
+                        const transactionDetails = {
+                            parsedFormData,
+                            paymentInfo,
+                            needsSigning: true,
+                            };
+
+                        updateExecutionSigningJob(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            transactionDetails,
+                            extrinsic
+                        });
+
+                        console.log('Chain Tx Transaction Details:', transactionDetails);
+
+                            // Wait for the signing to complete
+                        await new Promise(resolve => {
+                            const interval = setInterval(() => {
+                            const updatedJob = useAppStore.getState().scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id]?.signingJob;
+                            if (updatedJob?.transactionDetails?.needsSigning === false) {
+                                clearInterval(interval);
+                                resolve();
+                            }
+                            }, 1000);
+                        });
+                        
+                        const signedExtrinsic = useAppStore.getState().scenarios[activeScenarioId]?.executions[updatedExecutionId]?.[currentNode.id]?.signingJob?.signedExtrinsic
+                        console.log('broadcasting transaction...', signedExtrinsic);
+                        await broadcastTransaction(activeScenarioId, updatedExecutionId, currentNode.id, parsedFormData, signedExtrinsic);
+
+                    } catch (error) {
+                        console.error('Error executing Chain Tx:', error);
+                        updateNodeResponseData(activeScenarioId, updatedExecutionId, currentNode.id, {
+                            error: error.message,
+                            status: 'error'
+                        });
+                    } finally {
+                    }
+                } else {
+                    console.error('No executions found for the scenario');
+                    return;
+                }
+            
                 break;
             }
-
-                // Hold view
                 await handleNodeViewport(instance, currentNode, 'hold', orderedList);
-
-
-                // Zoom out
                 await handleNodeViewport(instance, currentNode, 'zoomOut', orderedList);
 
+                updateEdgeStyleForNode(currentNode.id, 'default_connected');
+                setIsLoadingNode(currentNode.id, false);
+                executionCycleFinished = index === orderedList.length - 1;
 
         }
+       
+
 
 
         if (executionCycleFinished) {
@@ -376,6 +445,55 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
 
 
     return { nodeContentMap, executeFlowScenario, stopExecution };
+
+    async function broadcastTransaction(activeScenarioId, executionId, nodeId, formData, signedExtrinsic) {
+        const sourceChain = formData?.actionData?.source?.chain || formData.selectedChain;
+      
+        try {
+          console.log('Clearing signed extrinsic...');
+          clearSignedExtrinsic(activeScenarioId, nodeId);
+          await broadcastToChain(sourceChain, signedExtrinsic, {
+            onInBlock: (blockHash) => {
+            const evenData = {
+                inBlock: blockHash
+            }
+              console.log(`Transaction included at blockHash: ${blockHash}`);
+              toast.success(`Transaction included at blockHash: ${blockHash}`);
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { evenData });
+              console.log('[markExtrinsicAsUsed] first attempt to clear signed extrinsic...');
+              markExtrinsicAsUsed(activeScenarioId, nodeId);
+            },
+            
+            onFinalized: (blockHash) => {
+                const eventData = {
+                    finalized: blockHash
+                }
+              toast.success(`Transaction finalized at blockHash: ${blockHash}`);
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { eventData });
+            },
+            onError: (error) => {
+              toast.error(`Action execution failed: ${error.message}`);
+              setLoading(false);
+              updateNodeResponseData(activeScenarioId, executionId, nodeId, { error: error.message });
+              console.log('Second attempt to clear signed extrinsic...');
+            },
+          });
+      
+        } catch (error) {
+          // This catch block is for handling errors not caught by the onError callback, e.g., network issues
+          toast.error(`Error broadcasting transaction: ${error.message}`);
+          setLoading(false);
+        }
+        console.log('Third attempt to clear signed extrinsic...');
+        console.log('Broadcasted to Chain:', signedExtrinsic);
+        toast(<ActionToastContent type={formData?.actionData?.actionType || 'Chain Tx'} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);
+      }
+
+
+
 };
+
+
+
 
 export default useExecuteFlowScenario;

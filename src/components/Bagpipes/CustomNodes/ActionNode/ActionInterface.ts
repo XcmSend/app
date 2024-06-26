@@ -12,6 +12,12 @@ export interface ActionData {
   nodeId?: string;
 }
 
+export interface RemarkAction {
+  actionType: 'remark';
+  source: ActionData;
+  target: ActionData;
+}
+
 export interface SwapAction {
   actionType: 'swap';
   source: ActionData;
@@ -30,4 +36,4 @@ export interface TransferAction {
   target: ActionData;
 }
 
-export type ActionType = SwapAction | xTransferAction | TransferAction;
+export type ActionType = SwapAction | xTransferAction | RemarkAction | TransferAction;

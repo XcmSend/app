@@ -1,8 +1,8 @@
 // Copyright 2019-2022 @subwallet authors & contributors
 // SPDX-License-Identifier: Apache-2.0
 
-import { getWalletBySource } from '../wallet-connect/src/dotsama/wallets';
-import { getEvmWalletBySource } from '../wallet-connect/src/evm/evmWallets';
+import { getWalletBySource } from '../connect-wallet/src/dotsama/wallets';
+import { getEvmWalletBySource } from '../connect-wallet/src/evm/evmWallets';
 import { Modal } from 'antd';
 import React, { useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';

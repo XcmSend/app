@@ -85,6 +85,60 @@ export const loadScenarioAsync = async (scenarioId) => {
 //     }
 //   };
 
+
+export const startPersistScenarioAsync = async (scenarioId, persist) => {
+  try {
+    console.log('startPersistScenarioAsync', scenarioId, persist);
+      const success = await ScenarioService.startPersistScenario(scenarioId, persist);
+      console.log('Server response:', success);
+      if (success) {
+          useAppStore.getState().persistScenario(scenarioId, persist);
+          return true;
+      }
+  } catch (error) {
+      console.error(`Failed to start persisting scenario ${scenarioId}:`, error);
+      return false;
+  }
+};
+
+export const stopPersistScenarioAsync = async (scenarioId, persist) => {
+  try {
+      const success = await ScenarioService.stopPersistScenario(scenarioId, persist);
+      console.log('Server response:', success);
+      if (success) {
+          useAppStore.getState().persistScenario(scenarioId, persist);
+          return true;
+      }
+  } catch (error) {
+      console.error(`Failed to stop persisting scenario ${scenarioId}:`, error);
+      return false;
+  }
+};
+
+export const fetchPersistedScenarioLogs = async (scenarioId) => {
+  try {
+      const logs = await ScenarioService.fetchPersistedScenarioLogs(scenarioId);
+      console.log('Server response:', logs);
+      return logs;
+  } catch (error) {
+      console.error(`Failed to fetch persisted scenario logs:`, error);
+      return [];
+  }
+};
+
+export const fetchAllWorkers = async () => {
+  try {
+      const workers = await ScenarioService.fetchAllWorkers();  
+      console.log('Server response:', workers);
+      return workers;
+  } catch (error) {
+      console.error(`Failed to fetch all workers:`, error);
+      return [];
+  }
+};
+
+
+
   export const deleteScenarioAsync = async (_id) => {
     try {
       // const success = await ScenarioService.deleteScenario(_id);
@@ -155,6 +209,9 @@ export const loadScenarioAsync = async (scenarioId) => {
         }
       }
     }
+
+
+
   
     // Optionally, you can also compare and update other fields for each scenario and execution
     // ...

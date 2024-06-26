@@ -60,7 +60,7 @@ function AccountList (): React.ReactElement {
           </div>
         </div>
         <div className={'actions'}>
-          <Button
+          {/* <Button
             className='xcm-send-btn sub-wallet-sign-btn'
             icon={<EditOutlined />}
             key={acc.address}
@@ -68,7 +68,7 @@ function AccountList (): React.ReactElement {
             type={'primary'}
           >
             Sign In (Dummy)
-          </Button>
+          </Button> */}
         </div>
       </div>
     ))}

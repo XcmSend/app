@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import toast  from "react-hot-toast";
+import validator from 'validator';
 
 
 export function replacePlaceholders(text, nodeContents, validNodeIds=[]) {
@@ -107,6 +108,7 @@ export function processScenarioData(diagramData) {
     return { nodes: sortedNodes, edges };
 }
 
+
 export function processAndSanitizeFormData(formData, executionData, upstreamNodeIds) {
     // Define the pill regex pattern
     const pillRegex = /<span[^>]*data-id="([^"]+)"[^>]*data-nodeindex="(\d+)"[^>]*>([^<]+)<\/span>/g;
@@ -118,9 +120,32 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
         return sanitizedValue;
     }
 
+    // Rebuild the string to ensure only valid, visible characters are included
+    function rebuildString(value) {
+        return value.split('').filter(char => char.charCodeAt(0) >= 32 && char.charCodeAt(0) <= 126).join('');
+    }
+
+    // Validate if the string is a valid Base58
+    function isValidBase58(value) {
+        return validator.isBase58(value);
+    }
+
+    // Check for any non-printable or special characters in a string
+    function logCharCodes(value) {
+        return value.split('').map((char, index) => ({
+            char,
+            code: char.charCodeAt(0),
+            index
+        }));
+    }
+
+    console.log('0. processAndSanitizeFormData Upstream Node Ids:', upstreamNodeIds);
+
     // Replace pills with their actual values from execution data
     function replacePills(value) {
+        // console.log('1. processAndSanitizeFormData Value:', value);
         return value.replace(pillRegex, (match, dataId, nodeIndexStr) => {
+            // console.log('2. processAndSanitizeFormData Match:', match);
             const nodeIndex = parseInt(nodeIndexStr, 10) - 1;
             if (nodeIndex < 0 || nodeIndex >= upstreamNodeIds.length) {
                 console.error(`Node index ${nodeIndex} out of bounds for upstream nodes.`);
@@ -128,33 +153,71 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
             }
 
             const nodeId = upstreamNodeIds[nodeIndex];
-            const eventData = executionData[nodeId]?.responseData?.eventUpdates?.slice(-1)[0]?.eventData;
-            if (!eventData) {
-                console.error(`No eventData found for node: ${nodeId}`);
-                return match; // Return original pill markup if no event data found
+            const responses = executionData[nodeId]?.responseData?.eventUpdates;
+            if (!responses || responses.length === 0) {
+                console.error(`No responses found for node: ${nodeId}`);
+                return match; // Return original pill markup if no responses found
             }
 
-            const pathParts = dataId.split('.');
-            let actualValue = eventData;
-            for (const part of pathParts) {
-                if (actualValue && actualValue.hasOwnProperty(part)) {
-                    actualValue = actualValue[part];
-                } else {
-                    console.error(`Path not found in eventData for node ${nodeId}: ${dataId}`);
-                    return match; // Return original pill markup if path not found
+            let actualValue;
+            for (const response of responses) {
+                const eventData = response?.data;
+                if (!eventData) {
+                    console.error(`No eventData found in response for node: ${nodeId}`);
+                    continue; // Skip this response if no event data found
+                }
+
+                const pathParts = dataId.split('.');
+                // console.log('4. processAndSanitizeFormData Path Parts:', pathParts);
+                actualValue = eventData;
+                for (const part of pathParts) {
+                    // console.log('5. processAndSanitizeFormData Part:', part);
+                    if (actualValue && actualValue.hasOwnProperty(part)) {
+                        actualValue = actualValue[part];
+                        // console.log('5b. processAndSanitizeFormData Actual Value:', actualValue);
+                    } else {
+                        console.error(`Path not found in eventData for node ${nodeId}: ${dataId}`);
+                        actualValue = undefined;
+                        break; // Break out of the inner loop if path not found
+                    }
+                }
+
+                if (actualValue !== undefined) {
+                    break; // Break out of the outer loop if we found a valid value
                 }
             }
 
-            return typeof actualValue === 'object' ? JSON.stringify(actualValue) : actualValue;
+            if (actualValue === undefined) {
+                return match; // Return original pill markup if no valid value found
+            }
+
+            // Log character codes before cleaning
+            // console.log('6. processAndSanitizeFormData Actual Value Before Cleaning:', actualValue);
+
+            // Rebuild the string to ensure no invisible characters are included and validate the address format
+            let cleanValue = rebuildString(typeof actualValue === 'object' ? JSON.stringify(actualValue) : `${actualValue}`);
+
+            // Log character codes after cleaning
+            // console.log('7. processAndSanitizeFormData Clean Value:', cleanValue);
+
+            // if (!isValidBase58(cleanValue)) {
+            //     console.error(`Invalid Base58 value found: ${cleanValue}`);
+            //     return match; // Return original pill markup if value is not a valid Base58
+            // }
+            // console.log('7b. processAndSanitizeFormData Clean Value:', cleanValue);
+
+            return cleanValue;
         });
     }
 
     // Recursively apply sanitization and pill replacement to strings, arrays, and object values
     function recursiveProcess(value) {
+        // console.log('8. processAndSanitizeFormData Value:', value);
         if (typeof value === 'string') {
             let sanitizedValue = sanitizeValue(value);
             return replacePills(sanitizedValue);
         } else if (Array.isArray(value)) {
+            // console.log('9. processAndSanitizeFormData Value:', value);
             return value.map(item => {
                 if (typeof item === 'object') {
                     return recursiveProcess(item); // Recursively process each item if it's an object
@@ -178,94 +241,101 @@ export function processAndSanitizeFormData(formData, executionData, upstreamNode
     for (const [key, value] of Object.entries(formData)) {
         processedFormData[key] = recursiveProcess(value);
     }
+    console.log('10. processAndSanitizeFormData Processed Form Data:', processedFormData);
 
     return processedFormData;
 }
 
 
-export function sanitizeFormData(formData) {
-    const cleanFormData = {};
-    Object.keys(formData).forEach(key => {
-        const value = formData[key];
-        if (typeof value === 'string') {
-            // Remove all <div> tags and their content
-            let sanitizedValue = value.replace(/<div[^>]*>(.*?)<\/div>/g, "$1");
+
+
+
+
+
+
+// export function sanitizeFormData(formData) {
+//     const cleanFormData = {};
+//     Object.keys(formData).forEach(key => {
+//         const value = formData[key];
+//         if (typeof value === 'string') {
+//             // Remove all <div> tags and their content
+//             let sanitizedValue = value.replace(/<div[^>]*>(.*?)<\/div>/g, "$1");
             
-            // Remove all <span> tags except those with class="pill"
-            sanitizedValue = sanitizedValue.replace(/<span(?![^>]*class="pill")[^>]*>(.*?)<\/span>/g, "$1");
+//             // Remove all <span> tags except those with class="pill"
+//             sanitizedValue = sanitizedValue.replace(/<span(?![^>]*class="pill")[^>]*>(.*?)<\/span>/g, "$1");
 
-            cleanFormData[key] = sanitizedValue;
-        } else {
-            // For non-string fields, copy as is
-            cleanFormData[key] = value;
-        }
-    });
-    console.log('Sanitized form data:', cleanFormData);
-    return cleanFormData;
-}
+//             cleanFormData[key] = sanitizedValue;
+//         } else {
+//             // For non-string fields, copy as is
+//             cleanFormData[key] = value;
+//         }
+//     });
+//     console.log('Sanitized form data:', cleanFormData);
+//     return cleanFormData;
+// }
 
 
-export function parseAndReplacePillsInFormData(formData, executionData, upstreamNodeIds) {
-    const pillRegex = /<span[^>]*data-id="([^"]+)"[^>]*data-nodeindex="(\d+)"[^>]*>([^<]+)<\/span>/g;
+// export function parseAndReplacePillsInFormData(formData, executionData, upstreamNodeIds) {
+//     const pillRegex = /<span[^>]*data-id="([^"]+)"[^>]*data-nodeindex="(\d+)"[^>]*>([^<]+)<\/span>/g;
 
-    function getLatestEventDataForNode(nodeId) {
-        // Assuming the latest event update is the last item in the eventUpdates array
-        return executionData[nodeId]?.responseData?.eventUpdates?.slice(-1)[0]?.eventData;
-    }
+//     function getLatestEventDataForNode(nodeId) {
+//         // Assuming the latest event update is the last item in the eventUpdates array
+//         return executionData[nodeId]?.responseData?.eventUpdates?.slice(-1)[0]?.eventData;
+//     }
 
-    function replacePills(value) {
-        return value.replace(pillRegex, (match, dataId, nodeIndexStr) => {
-            const nodeIndex = parseInt(nodeIndexStr, 10) - 1; // Convert 1-based index to 0-based
-            if (nodeIndex < 0 || nodeIndex >= upstreamNodeIds.length) {
-                console.error(`Node index ${nodeIndex} out of bounds for upstream nodes.`);
-                return match; // Return original pill markup if nodeIndex is out of bounds
-            }
+//     function replacePills(value) {
+//         return value.replace(pillRegex, (match, dataId, nodeIndexStr) => {
+//             const nodeIndex = parseInt(nodeIndexStr, 10) - 1; // Convert 1-based index to 0-based
+//             if (nodeIndex < 0 || nodeIndex >= upstreamNodeIds.length) {
+//                 console.error(`Node index ${nodeIndex} out of bounds for upstream nodes.`);
+//                 return match; // Return original pill markup if nodeIndex is out of bounds
+//             }
 
-            const nodeId = upstreamNodeIds[nodeIndex];
-            const latestEventData = getLatestEventDataForNode(nodeId);
-            if (!latestEventData) {
-                console.error(`No eventData found for node: ${nodeId}`);
-                return match; // Return original pill markup if no event data found
-            }
+//             const nodeId = upstreamNodeIds[nodeIndex];
+//             const latestEventData = getLatestEventDataForNode(nodeId);
+//             if (!latestEventData) {
+//                 console.error(`No eventData found for node: ${nodeId}`);
+//                 return match; // Return original pill markup if no event data found
+//             }
 
-            // Navigate through the eventData based on dataId
-            const pathParts = dataId.split('.');
-            let actualValue = latestEventData;
-            for (const part of pathParts) {
-                if (actualValue && actualValue.hasOwnProperty(part)) {
-                    actualValue = actualValue[part];
-                } else {
-                    console.error(`Path not found in eventData for node ${nodeId}: ${dataId}`);
-                    return match; // Return original pill markup if path not found
-                }
-            }
+//             // Navigate through the eventData based on dataId
+//             const pathParts = dataId.split('.');
+//             let actualValue = latestEventData;
+//             for (const part of pathParts) {
+//                 if (actualValue && actualValue.hasOwnProperty(part)) {
+//                     actualValue = actualValue[part];
+//                 } else {
+//                     console.error(`Path not found in eventData for node ${nodeId}: ${dataId}`);
+//                     return match; // Return original pill markup if path not found
+//                 }
+//             }
 
-            console.log(`Replacement found for ${dataId} in node ${nodeId}:`, actualValue);
-            return typeof actualValue === 'object' ? JSON.stringify(actualValue) : actualValue;
-        });
-    }
+//             console.log(`Replacement found for ${dataId} in node ${nodeId}:`, actualValue);
+//             return typeof actualValue === 'object' ? JSON.stringify(actualValue) : actualValue;
+//         });
+//     }
 
-    // Recursively apply pill replacement to strings, arrays, and object values
-    function applyReplacement(value) {
-        if (typeof value === 'string') {
-            return replacePills(value);
-        } else if (Array.isArray(value)) {
-            return value.map(item => applyReplacement(item));
-        } else if (typeof value === 'object' && value !== null) {
-            return Object.entries(value).reduce((acc, [key, val]) => {
-                acc[key] = applyReplacement(val);
-                return acc;
-            }, {});
-        }
-        return value;
-    }
+//     // Recursively apply pill replacement to strings, arrays, and object values
+//     function applyReplacement(value) {
+//         if (typeof value === 'string') {
+//             return replacePills(value);
+//         } else if (Array.isArray(value)) {
+//             return value.map(item => applyReplacement(item));
+//         } else if (typeof value === 'object' && value !== null) {
+//             return Object.entries(value).reduce((acc, [key, val]) => {
+//                 acc[key] = applyReplacement(val);
+//                 return acc;
+//             }, {});
+//         }
+//         return value;
+//     }
 
-    // Apply pill replacement to each field in formData
-    return Object.entries(formData).reduce((acc, [key, value]) => {
-        acc[key] = applyReplacement(value);
-        return acc;
-    }, {});
-}
+//     // Apply pill replacement to each field in formData
+//     return Object.entries(formData).reduce((acc, [key, value]) => {
+//         acc[key] = applyReplacement(value);
+//         return acc;
+//     }, {});
+// }
 
 
 
@@ -288,6 +358,7 @@ export function parseAndReplacePillsInFormData(formData, executionData, upstream
 
 
 export function getUpstreamNodeIds(orderedList, currentNodeId) {
+    console.log('getUpstreamNodeIds Ordered list:', orderedList);
     const currentIndex = orderedList.indexOf(currentNodeId);
     if (currentIndex === -1) {
         console.error(`Node ID ${currentNodeId} not found in the ordered list.`);

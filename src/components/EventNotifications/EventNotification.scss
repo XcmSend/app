@@ -1,37 +1,44 @@
 .eventNotification {
-    position: absolute;
-    top: -15px;
-    right: -3px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: rgb(23, 226, 16);
-    outline: solid 1px rgba(172, 172, 172, 0.307);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10; // Ensure it appears above other node elements
-    box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.467);
-  }
+  position: absolute;
+  top: -18px;
+  right: -10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  outline: solid 1px rgba(172, 172, 172, 0.307);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0px 3px 5px 0px rgba(0, 0, 0, 0.467);
+}
 
-  .eventData {
-    overflow: scroll;
-    max-height: 700px;
-    min-width: 300px;
+.eventNotification.success {
+  background-color: rgb(23, 226, 16);
+}
+
+.eventNotification.error {
+  background-color: rgb(255, 60, 60);
+}
+
+.eventData {
+  overflow: scroll;
+  max-height: 700px;
+  min-width: 300px;
 }
 
 .eventDataPopup .eventUpdateSection {
-    // margin-bottom: 1rem;
-  }
-  
-  .eventDataPopup .content pre, .eventDataPopup .content span {
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    overflow-x: auto; /* Ensure content does not overflow the popup */
-  }
+  // margin-bottom: 1rem;
+}
 
-  .content {
-    margin-left: 20px;
-  }
+.eventDataPopup .content pre, .eventDataPopup .content span {
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow-x: auto; /* Ensure content does not overflow the popup */
+}
+
+.content {
+  margin-left: 20px;
+}

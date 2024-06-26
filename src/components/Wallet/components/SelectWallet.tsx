@@ -4,9 +4,9 @@
 // SPDX-License-Identifier: Apache-2.0
 import React, { useCallback } from 'react';
 
-import { getWallets } from '../wallet-connect/src/dotsama/wallets';
-import { getEvmWallets } from '../wallet-connect/src/evm/evmWallets';
-import { EvmWallet, Wallet } from '../wallet-connect/src/types';
+import { getWallets } from '../connect-wallet/src/dotsama/wallets';
+import { getEvmWallets } from '../connect-wallet/src/evm/evmWallets';
+import { EvmWallet, Wallet } from '../connect-wallet/src/types';
 
 import './styles/SelectWallet.scss';
 import ThemeContext from '../../../contexts/ThemeContext';

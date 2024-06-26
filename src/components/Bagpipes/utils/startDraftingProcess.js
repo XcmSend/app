@@ -9,8 +9,11 @@ export const preProcessDraftTransactions = async (activeScenarioId, scenarios, i
     if (!actionNodes || actionNodes.length === 0) {
         throw new Error('No action nodes found.');
     }
-  
+    console.log(`ActionNodes are: `,actionNodes );
+    console.log(`preProcessDraftTransactions: `, );
     if (actionNodes.some(node => !isActionDataComplete(node))) {
+       // console.log(`problem node: `, node);
+        console.log(`problem: `, actionNodes);
         throw new Error('Incomplete data in some action nodes. Please review and complete all fields.');
     }
   

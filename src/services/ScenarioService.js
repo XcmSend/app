@@ -1,6 +1,9 @@
+
+
 // import axios from './AxiosService';
 import useAppStore from '../store/useAppStore';
 import toast from 'react-hot-toast';
+import threadbagInstance from './AxiosService'
 class ScenarioService {
     constructor() {
         this.csrfToken = null;
@@ -222,8 +225,53 @@ class ScenarioService {
         }
     }
     
-    
- 
+
+    async startPersistScenario(scenarioId, persist) {
+        try {
+            console.log('startPersistScenario', scenarioId, persist);
+            const response = await threadbagInstance.post('/job/start', { id: scenarioId, persist: true, _csrf: this.csrfToken }, { withCredentials: true });
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to persist scenario ${scenarioId}:`, error);
+            throw error;
+        }
+    }
+
+    async stopPersistScenario(scenarioId, persist) {
+        try {
+            const response = await threadbagInstance.post('/job/start', { id: scenarioId, persist: false, _csrf: this.csrfToken }, { withCredentials: true });
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to persist scenario ${scenarioId}:`, error);
+            throw error;
+        }
+    }
+
+    async fetchPersistedScenarioLogs(scenarioId) {
+        try {
+            const response = await threadbagInstance.post(
+                `/scenario/worker/logs`, { id: scenarioId }, { withCredentials: true }
+            );
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to get logs for scenario ${scenarioId}:`, error);
+            throw error;
+        }
+    }
+
+    async fetchAllWorkers() {
+        try {
+            const response = await threadbagInstance.get('/scenario/all_workers', { withCredentials: true });
+            console.log('Server response:', response.data);
+            return response.data;
+        } catch (error) {
+            console.error(`Failed to get all workers:`, error);
+            throw error;
+        }
+    }
 
     async fetchMissingData(executionId) {
         try {

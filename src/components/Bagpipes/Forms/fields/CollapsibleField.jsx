@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Collapse, Input, Button, Select, Radio } from 'antd';
 import Toggle from '../Toggle';
 import ItemField from './ItemField'; // Assuming ItemField is in the same directory
@@ -9,6 +9,8 @@ import PanelForm from '../PopupForms/Panel/PanelForm';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrop, useDrag } from 'react-dnd';
 import CustomInput from './CustomInput';
+import SequenceField from './SequenceField';
+import { CopyBlock, CodeBlock, dracula } from 'react-code-blocks';
 import 'antd/dist/antd.css';
 import './Fields.scss';
 
@@ -16,12 +18,14 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange }) => {
+const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, elementType}) => {
   const [isToggled, setIsToggled] = useState(false);
-  const { showPanelTippy, hidePanelTippy } = usePanelTippy();
+  const { showPanelTippy, hidePanelTippy, tippyInstance } = usePanelTippy();
+  const referenceElement = useRef(null);
   const [droppedItems, setDroppedItems] = useState([]);
   const [pills, setPills] = useState([]);
   const [editableContent, setEditableContent] = useState("");
+
  
   const [{ isOver }, drop] = useDrop({
     accept: ['NODE', 'PIll'], 
@@ -57,9 +61,8 @@ const handleInputClick = (event, nodeId) => {
   const rect = event.currentTarget.getBoundingClientRect();
   const viewportWidth = window.innerWidth;
 
-  // Determine if there's enough space to the right; if not, use the left position.
   const spaceOnRight = viewportWidth - rect.right;
-  const tooltipWidth = 300; // Approximate or dynamically determine your tooltip's width.
+  const tooltipWidth = 300;
   const shouldFlipToLeft = spaceOnRight < tooltipWidth;
 
   const calculatedPosition = {
@@ -67,8 +70,16 @@ const handleInputClick = (event, nodeId) => {
     y: rect.top
   };
 
-  showPanelTippy(nodeId, calculatedPosition, <PanelForm nodeId={nodeId} onClose={hidePanelTippy} />, shouldFlipToLeft ? 'left-start' : 'right-start');
+  showPanelTippy(nodeId, event.currentTarget, <PanelForm nodeId={nodeId} onClose={hidePanelTippy} notifyChange={handleContentChange} />, shouldFlipToLeft ? 'left-start' : 'right-start');
   event.stopPropagation();
+};
+
+const handleContentChange = () => {
+
+  // Notify that content has changed
+  if (tippyInstance.current && tippyInstance.current.popperInstance) {
+    tippyInstance.current.popperInstance.update();
+  }
 };
 
 const handleToggleChange = (toggled) => {
@@ -93,6 +104,42 @@ const handleToggleChange = (toggled) => {
         }
     }
 };
+
+// Sequence Items
+const handleAddItem = (defaultType = 'input') => {
+  const newItem = { typeId: defaultType, value: '', id: generateUniqueId() }; // Default type can be parameterized
+  const newItems = [...items, newItem];
+  onChange(newItems);
+};
+
+const handleRemoveItem = (index) => {
+  const newItems = items.filter((_, idx) => idx !== index);
+  onChange(newItems);
+};
+
+const handleChangeItem = (index, newValue) => {
+  const newItems = items.map((item, idx) => idx === index ? { ...item, value: newValue } : item);
+  onChange(newItems);
+};
+
+const renderSequenceItems = () => {
+  return (
+      <div className='flex flex-col'>
+          {items.map((item, index) => (
+              <div key={item.id} className='flex flex-row items-center'>
+                  {renderField(item, index, handleChangeItem)}
+                  <button onClick={() => handleRemoveItem(index)}>Remove</button>
+              </div>
+          ))}
+          <button onClick={() => handleAddItem()}>Add New Item</button>
+      </div>
+  );
+};
+
+
+
+
+
 
   
 
@@ -142,6 +189,24 @@ const handleToggleChange = (toggled) => {
   };
 
 
+  function typeRenderer(typeId, typesLookup) {
+    const typeInfo = typesLookup[typeId];
+    if (!typeInfo) return <div>Unknown Type</div>;
+
+    switch (typeInfo.def.type) {
+        case 'Sequence':
+            return <SequenceComponent typeId={typeInfo.def.Sequence.type} typesLookup={typesLookup} />;
+        case 'Array':
+            return <ArrayComponent typeId={typeInfo.def.Array.type} length={typeInfo.def.Array.len} typesLookup={typesLookup} />;
+        case 'Variant':
+            return <VariantComponent variants={typeInfo.def.Variant.variants} typesLookup={typesLookup} />;
+        default:
+            return <div>Unsupported Type: {typeInfo.def.type}</div>;
+    }
+}
+
+
+
   const renderContent = () => {
     let content;
 
@@ -167,6 +232,8 @@ const handleToggleChange = (toggled) => {
   
     // Dynamic field type rendering based on the fieldType prop
     switch (fieldTypes) {
+
+
         case 'input':
             content = (
               <CustomInput 
@@ -195,10 +262,31 @@ const handleToggleChange = (toggled) => {
               placeholder="Select option"
             >
               {selectOptions.map((option, index) => (
-                <Option key={index} value={option.value}>{option.label}</Option>
+                <Option key={index} value={option.value}><span className=''>{option.label}</span></Option>
               ))}
             </Select>
           );
+          break;
+
+          case 'selectAddressWithBalance':
+            content = (
+              <>
+              <Select
+                onChange={value => onChange(value)}
+                getPopupContainer={trigger => trigger.parentNode}
+  
+                value={value} 
+                className='w-full font-semibold custom-select'
+                placeholder="Select option"
+              >
+                {selectOptions.map((option, index) => (
+                  <Option key={index} value={option.value}>{option.label}</Option>
+                ))}
+              </Select>
+              
+      
+            </>
+            );
           break;
       case 'radio':
         // Check if selectRadioOptions is provided, else default to Yes/No
@@ -224,6 +312,33 @@ const handleToggleChange = (toggled) => {
           
           );
           break; 
+      case 'buttonTextArea':
+
+      // <textarea className="result-textarea" value={value} readOnly />
+
+        content = (
+          <>
+            {isTextAreaValue ? (
+            <div className=''>
+              <CopyBlock
+              text={value}
+              language={'json'}
+              showLineNumbers={false}
+              customStyle={{borderRadius: '5px', marginBottom:'15px', padding: '5px', backgroundColor: '#f5f5f5', overflow: 'auto', maxWidth: '275px'}}
+              />
+                  {/* <CodeBlock
+            text={value}
+            language={'javascript'}
+            showLineNumbers={true}
+            theme={dracula}
+          /> */}
+            </div>
+            ) : ('')}
+          <button className="button mt-3" onClick={onClick} disabled={disabled}>{buttonName}</button>
+
+          </>
+        );  
+       break;
       case 'items':
    
         const addItem = () => {
@@ -271,9 +386,31 @@ const handleToggleChange = (toggled) => {
           </div>
         );
       break
+
+      case 'sequence':
+        content = (
+            <SequenceField
+                items={value || []}
+                onChange={(newItems) => onChange(newItems)}
+                typesLookup={typesLookup}
+                elementType={elementType}
+                setPills={setPills}
+                onPillsChange={onPillsChange}
+                nodeId={nodeId}
+            />
+        );
+        break;
+
+    case 'sequenceItems':
+          return renderSequenceItems();
     case 'accordion':
       
     break;
+    case 'sequenceItems':
+      case 'array':
+      case 'variant':
+          return typeRenderer(field.typeId, lookupTypes);
+
       default:
         content = <div className="description">{info}</div>;
     }
@@ -281,6 +418,7 @@ const handleToggleChange = (toggled) => {
     <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent' }}>
       {renderDroppedItems()}
       {content} {/* Keep the existing input field */}
+      {customContent}
     </div>
   );
   };

@@ -1,0 +1,40 @@
+@import '../../../variables.scss';
+
+/* Custom Tippy theme */
+.tippy-box[data-theme~='custom'] {
+    width: 0;
+    height: 0;
+    background-color: red;
+    position: relative;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 5;
+    padding: 0;
+    text-align: center;
+}
+
+.tooltip-content {
+    position: absolute;
+    width: 50px; /* Adjust the width to ensure proper spacing */
+    height: 100px; /* Adjust the height to ensure proper spacing */
+    pointer-events: auto;
+}
+
+.tooltip-item {
+    position: absolute;
+    display: block;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    transition: all 0.3s ease 0s;
+    padding: 6px 11px;
+    background: rgb(0, 0, 0);
+    border-radius: 2px;
+    opacity: 0;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+}
+
+.tippy-box[data-theme~='custom'][data-state='visible'] .tooltip-item {
+    opacity: 1;
+}

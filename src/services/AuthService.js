@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+import config from '../config';
 
 
 const API_URL = 'http://localhost:5005'; 
@@ -16,7 +17,7 @@ class AuthService {
   async getInitialCsrfToken() {
     try {
       console.log('getting initial csrf token')
-      const response = await axios.get(API_URL + '/csrf-token', { withCredentials: true });
+      const response = await axios.get(config.baseUrl + '/csrf-token', { withCredentials: true });
       console.log('got initial csrf token', response.data.csrfToken)
       return response.data.csrfToken;
     } catch (error) {
@@ -40,7 +41,7 @@ class AuthService {
     try {
       console.log('calling server for login: ', user);
       const response = await axios
-      .post(API_URL + '/api/user/login', {
+      .post(config.baseUrl + '/api/user/login', {
         email: user.email,
         password: user.password, _csrf: user.newCsrfToken
       }, { withCredentials: true })
@@ -77,7 +78,7 @@ class AuthService {
         const token = await this.getAccessToken();
         const response = await axios({
           method,
-          url: API_URL + url,
+          url: config.baseUrl + url,
           data,
           withCredentials: true, 
         });

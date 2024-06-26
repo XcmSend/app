@@ -306,9 +306,11 @@ border: 1px solid rgb(184, 184, 184);
 }
 
 .react-flow {
-  height: 93% !important;
+  /* height: 93% !important; */
+  height: 100% !important;
+
   position: absolute !important;
-  top: 75px;
+  top: 0px;
   bottom: 0px;
   left: 0px;
 }
@@ -336,3 +338,13 @@ border: 1px solid rgb(184, 184, 184);
     flex-grow: 1; /* Takes up the available space */
     width: 100%; /* Ensures it fills the container */
   }
+
+  .overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  z-index: 9999 !important; 
+}

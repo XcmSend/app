@@ -63,7 +63,7 @@ function App () {
 
                   <div className='absolute top-0 left-0'>
                 </div>
-                <Header open={true} />
+                {/* <Header open={true} /> */}
 
                 {/* <Header open={walletContext.wallet || walletContext.evmWallet} /> */}
 

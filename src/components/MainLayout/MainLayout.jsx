@@ -13,12 +13,19 @@ import ReactTestFlow from '../../ReactTestFlow';
 import Sidebar from '../Bagpipes/Sidebar/Sidebar';
 import Header from '../Header';
 import Lab from '../../pages/Lab/Lab';
+import CommunityPages from '../../pages/PublicPages/CommunityPages';
+import CommunityPage from '../../pages/PublicPages/CommunityPage/CommunityPage';
+import CreatorPage from '../../pages/PublicPages/CreatorPage/CreatorPage';
+import CreatorsPage from '../../pages/PublicPages/CreatorsPage/CreatorsPage';
+
 import ScenarioInfo from '../../pages/Lab/Scenario';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useTippy, usePanelTippy } from '../../contexts/tooltips/TippyContext';
+import Settings from '../../pages/Settings/Settings';
+
 
 import '../toasts/toast.scss';
 // import '../index.css';
@@ -38,7 +45,6 @@ function MainLayout({ children }) {
   <div className={`main-layout ${theme === 'dark' ? '-dark' : '-light'}`}>
 
 {tippyProps.visible && (
-
         <Tippy
           appendTo={tippyProps.reference || (() => document.body)}
           content={tippyProps.content}
@@ -50,63 +56,52 @@ function MainLayout({ children }) {
         >
           <div style={{ position: 'fixed', left: tippyProps.position.x, top: tippyProps.position.y }}></div>
         </Tippy>
-
       )}
 
-      {panelTippyProps.visible && (
-        <Tippy
-      appendTo={() => document.body}
-      content={panelTippyProps.content}
-      interactive={true}
-      placement={panelTippyProps.placement}
-      visible={panelTippyProps.visible}
-      theme="light"
-      trigger='click'
-      hideOnClick="toggle"
-      onClickOutside={() => hidePanelTippy()}
-      flip={true}
-      boundary="viewport"
-    >
-      <div style={{ position: 'fixed', left: panelTippyProps.position.x, top: panelTippyProps.position.y }}></div>
-    </Tippy>
-      )}
+
+  
+
+      
 
 
         {/* <Toaster /> */}
         <Toaster
-            position="top-left"
-
-            containerStyle={{ position: 'absolute' }} 
-            toastOptions={{
-              className: 'toast-styles',
-                style: {
-                    background: '#fff00', 
-                    padding: 0,
-                    minWidth: "200px",
-                    transition: "all 0.5s ease-out",
-                    zIndex: 100000,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between", 
-                },
-            }}
-        > 
+        position="top-left"
+        containerStyle={{ position: 'absolute' }} 
+        toastOptions={{
+            className: 'toast-styles',
+            style: {
+                background: '#fff00', 
+                padding: 0,
+                minWidth: "200px",
+                transition: "all 0.5s ease-out",
+                zIndex: 100000,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between", 
+                overflow: "hidden",
+            },
+        }}
+    >
         {(t) => (
             <ToastBar toast={t}>
                 {({ icon, message }) => (
-                    <div className={` toast-container ${theme}`}>
-                      <div className="toast-content">
-                          {icon}
-                          {message}
-                      </div>
-                      {t.type !== 'loading' && (
-                          <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
-                      )}
+                    <div className={`toast-container p-1 ${theme}`}>
+                        <div className="toast-content pr-2">
+                            {icon}
+                            <span className="toast-message pr-2">{message}</span>
+                        </div>
+                        {t.type !== 'loading' && (
+                            <button className='toast-button' onClick={() => toast.dismiss(t.id)}>x</button>
+                        )}
                     </div>
                 )}
-            </ToastBar> 
+            </ToastBar>
         )}
-        </Toaster>
+    </Toaster>
+
+    {/* <Sidebar /> */}
+
         
         {/* <Header /> */}
             <Routes>
@@ -117,6 +112,11 @@ function MainLayout({ children }) {
                     <Route path="welcome" element={<Welcome />} />
                     <Route path="builder" element={<BagpipesFlowRoute />} />
 
+                    <Route path="pages" element={<CommunityPages />} />
+                    <Route path="/pages/:communityName" element={<CommunityPage />} />
+                    <Route path="/creators/:creatorId" element={<CreatorPage />} /> 
+                    <Route path="/creators" element={<CreatorsPage />} /> 
+
                     <Route path="lab" element={<Lab />} />
                     <Route path="/scenario/:scenarioId" element={<ScenarioInfo />} />
                     <Route path="wallet-info" element={<WalletInfo />} />
@@ -124,6 +124,9 @@ function MainLayout({ children }) {
                     <Route path="parachains" element={<Parachains />} />
                     <Route path="test-flow" element={<ReactTestFlow />} />
                     <Route path="evm-wallet-info" element={<EvmWalletInfo />} />
+                    <Route path="settings" element={<Settings />} />
+
+
                 {/* </Route> */}
                 {/* Other Top-Level Routes */}
                 <Route path="/create" element={<CreateFromTemplate />} />
