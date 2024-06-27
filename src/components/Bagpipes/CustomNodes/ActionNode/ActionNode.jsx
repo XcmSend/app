@@ -237,8 +237,8 @@ export default function ActionNode({ children, data, isConnectable }) {
  // newActionData.source.target = value;
   console.log(`wrote new`);
   if (newone) {
-    setActionData({ [nodeId]: newActionData });
-    console.log("[setRemark] Constructed action data : ", newActionData);
+    setActionData({ [nodeId]: newone });
+    console.log("[setRemark] Constructed action data : ", newone);
   }
 
   };
