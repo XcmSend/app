@@ -24,7 +24,7 @@ async function test_interlay() {
   const tx = await assethub2interlay(
     1984,
     200000000,
-    "0xe64afe6914886cdcfea8da5f13e1e21aa11876cfe7fdde9299bbcdbbdc3a8b19",
+    "0xe64afe6914886cdcfea8da5f13e1e21aa11876cfe7fdde9299bbcdbbdc3a8b19"
   );
   console.log(tx.toHex());
   console.log(`assethub > interlay ok`);
@@ -50,24 +50,24 @@ async function test_transfers() {
   const runp = await genericPolkadotToParachain(paraid, amount, address);
   assert.strictEqual(
     runp.toHex(),
-    "0xe804630203000100a10f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e51400000000",
+    "0xe804630203000100a10f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e51400000000"
   );
 
   console.log(`Polkadot DOT > assethub OK`);
   const ri = await polkadot_to_assethub(
     amount,
-    "16XByL4WpQ4mXzT2D8Fb3vmTLWfHu7QYh5wXX34GvahwPotJ",
+    "16XByL4WpQ4mXzT2D8Fb3vmTLWfHu7QYh5wXX34GvahwPotJ"
   );
   assert.strictEqual(
     ri.toHex(),
-    "0xec04630903000100a10f0300010100f43376315face751ae6014e8a94301b2c27c0bc4a234e9997ed2c856d13d3d2f030400000000e5140000000000",
+    "0xec04630903000100a10f0300010100f43376315face751ae6014e8a94301b2c27c0bc4a234e9997ed2c856d13d3d2f030400000000e5140000000000"
   );
 
   console.log(`Polkadot DOT > assethub scheduled tx check`);
   const dri = await polkadot_to_assethub(
     amount,
     "16XByL4WpQ4mXzT2D8Fb3vmTLWfHu7QYh5wXX34GvahwPotJ",
-    10,
+    10
   );
 
   console.log(`Polkadot DOT > assethub scheduled tx check`);
@@ -86,7 +86,7 @@ async function test_transfers() {
   const runp2 = await dotToHydraDx(amount, address);
   assert.strictEqual(
     runp2.toHex(),
-    "0xec04630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000",
+    "0xec04630803000100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a40030400000000e5140000000000"
   );
 
   console.log(`Polkadot DOT > hydradx scheduled tx check`);
@@ -96,11 +96,11 @@ async function test_transfers() {
     assetid.toString(),
     amount,
     address,
-    2034,
+    2034
   ); // hydradx
   assert.strictEqual(
     ah.toHex(),
-    "0x0101041f0803010100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a400304000002043205011f00e5140000000000",
+    "0x0101041f0803010100c91f030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a400304000002043205011f00e5140000000000"
   );
   console.log(`Assethub > hydradx ok`);
 
@@ -109,11 +109,11 @@ async function test_transfers() {
     assetid.toString(),
     amount,
     address,
-    0,
+    0
   ); // polkadot
   assert.strictEqual(
     ap.toHex(),
-    "0xfc041f080301010000030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a400304000002043205011f00e5140000000000",
+    "0xfc041f080301010000030001010068de6e1566e333753df02b2446f24e1cc2b796cfdf954dc0f39753c578e02a400304000002043205011f00e5140000000000"
   );
   console.log(`Assethub > Polkadot ok`);
 
@@ -121,7 +121,7 @@ async function test_transfers() {
   const runh = await hydraDxToParachain(amount, assetid, address, paraid);
   assert.strictEqual(
     runh.toHex(),
-    "0x680489010300000300a10f0000000000e51401010200a10f000000",
+    "0x680489010300000300a10f0000000000e51401010200a10f000000"
   );
   console.log(`Hydradx > assethub ok`);
 
@@ -129,7 +129,7 @@ async function test_transfers() {
   const hp = await hydraDxToParachain(amount, assetid, address, 0); // polkadot
   assert.strictEqual(
     hp.toHex(),
-    "0x600489010300000300000000000000e5140101020000000000",
+    "0x600489010300000300000000000000e5140101020000000000"
   );
   console.log(`Hydradx > polkadot ok`);
   await test_interlay();
@@ -162,7 +162,7 @@ async function broadcast_run_tx(tx: any) {
       if (status.isInBlock) {
         console.log(`included in ${status.asInBlock}`);
       }
-    }),
+    })
   );
 }
 
@@ -177,12 +177,12 @@ async function test_balances() {
   //  console.log(aha);
   const assethubusdtbalanceString: string = aha.free.toString();
   const assethubusdtbalance: number = parseFloat(
-    assethubusdtbalanceString.replace(/,/g, ""),
+    assethubusdtbalanceString.replace(/,/g, "")
   );
   assert.strictEqual(
     assethubusdtbalance > 0,
     true,
-    "Free balance should be more than default 0",
+    "Free balance should be more than default 0"
   );
 
   // check native balance on assethub
@@ -197,7 +197,7 @@ async function test_balances() {
   const polko = await checkRelayRawNativeBalance("polkadot", accountid);
   assert.ok(
     number_improve(polko) > 0,
-    "Polkadot free balance check must be greater than the default 0 value",
+    "Polkadot free balance check must be greater than the default 0 value"
   );
   console.log(`polkadot native balance check ok`);
 
@@ -217,7 +217,7 @@ async function check_open_channels() {
   const assethubchans: number[] = await inAndOutChannels(assethub);
   assert.ok(
     assethubchans.length > 1,
-    "Could not find open channels for assethub",
+    "Could not find open channels for assethub"
   );
   console.log("assethub has open channels");
 

@@ -13,6 +13,7 @@ type SelectorProps = {
     SwapSVG: string;
     xTransferSVG: string;
     RemarkSVG: string;
+    VoteSVG: string;
     iIcon: string;  
     dropdownVisible: boolean;
 
@@ -53,7 +54,7 @@ export function useOutsideAlerter(ref: React.RefObject<HTMLElement>, callback: (
   }
   
 
-const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, xTransferSVG, RemarkSVG }, ref) => {
+const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, xTransferSVG, RemarkSVG, VoteSVG }, ref) => {
       const { theme } = React.useContext(ThemeContext);
 
 
@@ -89,6 +90,22 @@ const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdo
 
                 </div>
             
+
+                <div onClick={() => handleDropdownClick('vote')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
+                    <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
+
+                    <img src={VoteSVG} alt="Vite" className="w-3 h-4border rounded" />
+                    </div>
+                    <div className='text-xs font-semibold mr-2'>Vote</div>
+                    <Tippy theme="light" content="Vote on a proposal in OpenGOV">
+                    <span className='absolute top-0 right-0 mt-1 mr-1 bg-blue-100 hover:bg-blue-200 p-1 rounded-full shadow-md cursor-pointer flex items-center justify-center w-3 h-3'>
+                        <img src={icons.iIcon} className='w-1 h-1' alt="Info"/>
+                    </span>
+                    </Tippy>
+
+                </div>
+
+
 
                 
                 <div onClick={() => handleDropdownClick('xTransfer')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">

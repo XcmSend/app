@@ -26,7 +26,7 @@ export function substrate_address_to_evm(accountid32: string): string {
 async function spawn_native_balance_check(
   chain: supported_Polkadot_Chains,
   account: string,
-  block_limit: number,
+  block_limit: number
 ) {
   let api: ApiPromise;
   // get the api instance for the chain

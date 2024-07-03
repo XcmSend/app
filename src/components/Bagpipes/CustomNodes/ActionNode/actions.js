@@ -15,6 +15,11 @@ const actions = [
       information: 'Transfer allows you to move assets within a single chain.'
     },
     {
+      name: 'vote',
+      logo: '/vote.svg',
+      information: 'vote in opengov'
+    },
+    {
       name: 'Remark',
       logo: '/remark.svg',
       information: 'System Remark lets you add some data to the chain via the system.remark method.'
