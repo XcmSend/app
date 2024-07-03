@@ -242,6 +242,26 @@ export default function ActionNode({ children, data, isConnectable }) {
   }
 
   };
+  const setAye = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    var aye_or_nay = false;
+    if (value === 'aye'){
+      aye_or_nay = true;
+    }
+    const newone = currentNodeFormData.actionData;
+    if (!newone.source.votedata){
+      newone.source.votedata = {};
+    }
+    newone.source.votedata.aye_or_nay = aye_or_nay; //value.target.value; // append the message as source.target value
+
+  if (newone) {
+    setActionData({ [nodeId]: newone });
+  }
+
+  };
+
+
+
 
   const setLock = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -391,7 +411,14 @@ export default function ActionNode({ children, data, isConnectable }) {
 
 <div className="in-node-border rounded m-2 p-2 ">Vote
 <input  onChange={(newValue) => setRef(newValue.target.value)}  type="number" id="contact-name"  placeholder="Referendum Number" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
-
+<select
+            onChange={(e) => setAye(e.target.value)}
+            id="vote-aye"
+            className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+          >
+            <option value="aye">Aye</option>
+            <option value="nay">Nay</option>
+          </select>
 
 <select
             onChange={(e) => setLock(e.target.value)}

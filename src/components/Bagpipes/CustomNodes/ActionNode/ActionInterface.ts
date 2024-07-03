@@ -17,6 +17,7 @@ interface votedata {
   refnr: number;
   amount: number; 
   lock: number;
+  aye_or_nay: boolean;
 }
 
 export interface VoteAction {

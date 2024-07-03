@@ -1,4 +1,4 @@
-import { dotToHydraDx, generic_system_remark, moon2polkadot, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { dotToHydraDx, polkadot_vote, generic_system_remark, moon2polkadot, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -17,6 +17,9 @@ export async function extrinsicHandler(actionType, formData) {
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
             return await handleSwap(formData);
+        case 'vote':
+            console.log(`vote handling`);
+            return handleVote(formData);
         case 'remark':
             console.log(`handling remark`);
             return handleRemark(formData);
@@ -24,6 +27,19 @@ export async function extrinsicHandler(actionType, formData) {
             throw new Error("Unsupported action type.");
         }
 };
+
+function handleVote(formData) {
+    const source = formData.source;
+    if (!source.chain == "polkadot") {
+        throw new Error("Voting only support on Polkadot");
+    }
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const lock = source.votedata.lock;
+    const refnr = source.votedata.refnr;
+    const aye_or_nay = source.votedata.aye_or_nay;
+    const amount = source.amount * (10 ** tokenDecimals);
+    return polkadot_vote(amount, lock, refnr, aye_or_nay);
+}
 
 function handleRemark(formData) {
     const source = formData.source;

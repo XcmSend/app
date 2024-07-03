@@ -78,6 +78,41 @@ export async function polkadot_to_assethub(
   return tx;
 }
 
+// 0x5c041400690a008600ca9a3b000000000000000000000000
+export async function polkadot_vote(amount: number, lock: number, refnr: number, aye_or_nay: boolean) {
+  const api = await getApiInstance("polkadot");
+  var lockperiod = "Locked1x";
+  switch (lock) {
+    case 0:
+      lockperiod = null;
+    case 1:
+      lockperiod = "Locked1x";
+    case 2:
+      lockperiod = "Locked2x";
+    case 3:
+      lockperiod = "Locked3x";
+    case 4:
+      lockperiod = "Locked4x";
+    case 5:
+      lockperiod = "Locked5x";
+    case 6:
+      lockperiod = "Locked6x";
+  }
+     
+const vote = {
+  Standard: {
+    vote: { aye: aye_or_nay, conviction: lockperiod },
+    balance: amount,
+  },
+}
+  return api.tx.convictionVoting.vote(
+      refnr, 
+      vote
+  )
+}
+
+
+
 /// Generic system remark with event
 export async function generic_system_remark(chain: string, msg: string) {
   const api = await getApiInstance(chain);
