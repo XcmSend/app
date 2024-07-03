@@ -6,6 +6,7 @@ import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
+import VoteSVG from '/vote.svg';
 
 // $DED animation
 import DEDPNG from './../../../../assets/DED.png';
@@ -83,6 +84,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (formState.action === 'xTransfer') return xTransferSVG;
     if (formState.action === "remark") return RemarkSVG;
     if (formState.action === "Remark") return RemarkSVG;
+    if (formState.action === "vote") return VoteSVG;
     return null;
   };
 
@@ -233,8 +235,6 @@ export default function ActionNode({ children, data, isConnectable }) {
     newone.source.target = value.target.value; // append the message as source.target value
     console.log(`newone newActionData: `, newone);
     console.log(`got input value: `, value.target.value);
-    const newActionData = false;
- // newActionData.source.target = value;
   console.log(`wrote new`);
   if (newone) {
     setActionData({ [nodeId]: newone });
@@ -242,6 +242,67 @@ export default function ActionNode({ children, data, isConnectable }) {
   }
 
   };
+  const setAye = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    var aye_or_nay = false;
+    if (value === 'aye'){
+      aye_or_nay = true;
+    }
+    const newone = currentNodeFormData.actionData;
+    if (!newone.source.votedata){
+      newone.source.votedata = {};
+    }
+    newone.source.votedata.aye_or_nay = aye_or_nay; //value.target.value; // append the message as source.target value
+
+  if (newone) {
+    setActionData({ [nodeId]: newone });
+  }
+
+  };
+
+
+
+
+  const setLock = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+    console.log(`setRef called `);
+    const newone = currentNodeFormData.actionData;
+    if (!newone.source.votedata){
+      newone.source.votedata = {};
+    }
+    newone.source.votedata.lock = value; //value.target.value; // append the message as source.target value
+    console.log(`newone newActionData: `, newone);
+    console.log(`got input value: `, value);
+  console.log(`wrote new`);
+  if (newone) {
+    setActionData({ [nodeId]: newone });
+    console.log("[setRef] Constructed action data : ", newone);
+  }
+
+  };
+
+
+
+  const setRef = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+    console.log(`setRef called `);
+    const newone = currentNodeFormData.actionData;
+    if (!newone.source.votedata){
+      newone.source.votedata = {};
+    }
+    newone.source.votedata.refnr = value; //value.target.value; // append the message as source.target value
+    console.log(`newone newActionData: `, newone);
+    console.log(`got input value: `, value);
+  console.log(`wrote new`);
+  if (newone) {
+    setActionData({ [nodeId]: newone });
+    console.log("[setRef] Constructed action data : ", newone);
+  }
+
+  };
+
 
   const handleDropdownClick = (value) => {
     console.log("[handleDropdownClick] Selected value clicked:", value);
@@ -327,6 +388,7 @@ export default function ActionNode({ children, data, isConnectable }) {
           SwapSVG={SwapSVG}
           xTransferSVG={xTransferSVG}
           RemarkSVG={RemarkSVG}
+          VoteSVG={VoteSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
           handleOnClick={true}
@@ -342,6 +404,40 @@ export default function ActionNode({ children, data, isConnectable }) {
             <input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
             </div>
       )}
+
+
+
+{formState && formState.action === 'vote' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Vote
+<input  onChange={(newValue) => setRef(newValue.target.value)}  type="number" id="contact-name"  placeholder="Referendum Number" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+<select
+            onChange={(e) => setAye(e.target.value)}
+            id="vote-aye"
+            className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+          >
+            <option value="aye">Aye</option>
+            <option value="nay">Nay</option>
+          </select>
+
+<select
+            onChange={(e) => setLock(e.target.value)}
+            id="vote-locks"
+            className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+          >
+            <option value="0">0.1x voting balance, no lockup period</option>
+            <option value="1">1x voting balance, locked for 7 days</option>
+            <option value="2">2x voting balance, locked for 14 days</option>
+            <option value="3">3x voting balance, locked for 28 days</option>
+            <option value="4">4x voting balance, locked for 56 days</option>
+            <option value="5">5x voting balance, locked for 112 days</option>
+            <option value="6">6x voting balance, locked for 224 days</option>
+          </select>
+
+</div>
+)}
+
+
 
       {formState && formState.action === 'swap' && (
         isFetchingActionData ? (

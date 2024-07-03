@@ -25,7 +25,7 @@ export interface PaymentInfo {
 export async function getPaymentInfo(
   extrinsic: IExtrinsic,
   sender: string,
-  chain: string,
+  chain: string
 ): Promise<PaymentInfo> {
   console.log(`getPaymentInfo extrinsic:`, extrinsic);
 
@@ -39,7 +39,7 @@ export async function getPaymentInfo(
       api = await getApiInstance(chain); // Attempt to get a fresh instance or reconnect
       if (!api.isConnected) {
         throw new Error(
-          "WebSocket is not connected after reconnection attempt",
+          "WebSocket is not connected after reconnection attempt"
         );
       }
     }
@@ -59,7 +59,7 @@ export async function getPaymentInfo(
   } catch (error) {
     console.error(`Error getting payment info for address ${sender}:`, error);
     throw new Error(
-      `Error getting payment info for address ${sender}: ${error.message}`,
+      `Error getting payment info for address ${sender}: ${error.message}`
     );
   }
 }

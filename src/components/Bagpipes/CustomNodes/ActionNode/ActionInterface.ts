@@ -10,6 +10,20 @@ export interface ActionData {
   amount?: number; 
   symbol?: string; 
   nodeId?: string;
+  votedata?: votedata;
+}
+
+interface votedata {
+  refnr: number;
+  amount: number; 
+  lock: number;
+  aye_or_nay: boolean;
+}
+
+export interface VoteAction {
+  actionType: 'vote';
+  source: ActionData;
+  target: ActionData;
 }
 
 export interface RemarkAction {
@@ -36,4 +50,4 @@ export interface TransferAction {
   target: ActionData;
 }
 
-export type ActionType = SwapAction | xTransferAction | RemarkAction | TransferAction;
+export type ActionType = SwapAction | VoteAction | xTransferAction | RemarkAction | TransferAction;

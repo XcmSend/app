@@ -12,6 +12,7 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
     symbol: assetIn?.asset?.symbol,
     target: assetIn?.target,
     source: assetIn?.source,
+    votedata: assetIn?.votedata,
     actionType: assetIn?.actionType
   };
   
@@ -41,6 +42,12 @@ export function convertFormStateToActionType(formState: any, assetIn: any, asset
         source: actionDataIn,
         target: actionDataOut
       };
+    case 'vote':
+      return {
+        actionType: 'vote',
+        source: actionDataIn,
+        target: actionDataOut,  
+      }
     case 'Remark': 
       return {
         actionType: "remark",

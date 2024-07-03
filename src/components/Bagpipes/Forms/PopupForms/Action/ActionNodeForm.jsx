@@ -6,6 +6,8 @@ import { getHydraDxSellPrice } from '../../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
+import VoteSVG from '/vote.svg';
+
 import { getOrderedList } from '../../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from '../../../CustomNodes/ActionNode/actionUtils';
 import PriceInfo from '../../../CustomNodes/PriceInfo';
@@ -79,6 +81,8 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
     if (selectedAction.action === 'xTransfer') return xTransferSVG;
     if (selectedAction.action === "remark") return RemarkSVG;
     if (selectedAction.action === "Remark") return RemarkSVG;
+    if (selectedAction.action === "vote") return VoteSVG;
+
     return null;
   };
 
