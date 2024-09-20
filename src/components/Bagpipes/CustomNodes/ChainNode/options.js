@@ -1,4 +1,4 @@
-import { listAssetHubAssets, listPaseoAssets, list_onchainassets, listassetHub_kusamaAssets, listMoonRiverAssets, listTuringAssets, listMangataxAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
+import { listAssetHubAssets, listPaseoPopAssets, listPaseoAssets, list_onchainassets, listassetHub_kusamaAssets, listMoonRiverAssets, listTuringAssets, listMangataxAssets, listHydraDxAssets, listInterlayAssets } from '../../../../Chains/Assets/listAssetsForChain';
 
 const dotAssets = {
   asset: {
@@ -101,6 +101,10 @@ export const getAssetOptions = async (selectedChain, signal) => {
       case 'paseo':
         assets = listPaseoAssets();
         break; 
+
+      case 'paseo_pop':
+        assets = listPaseoPopAssets();
+        break;
 
     case 'moonriver':
         assets = listMoonRiverAssets();

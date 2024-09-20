@@ -1,4 +1,4 @@
-import { delegate_polkadot, stake_to_dot_pool, paseo2assethub, assethub2paseo, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { delegate_polkadot, stake_to_dot_pool, paseo2pop, paseo2assethub, assethub2paseo, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -135,6 +135,7 @@ function handlexTransfer(formData) {
             };
             return polkadot2moonbeam(submittableAmount, target.address);
         },
+        
 
 
         'assetHub:ethereum': () => {
@@ -238,7 +239,9 @@ function handlexTransfer(formData) {
         'paseo_assethub:paseo': () => {
             return assethub2paseo(submittableAmount, target.address);
         },
-
+        'paseo:paseo_pop': () => {
+            return paseo2pop(submittableAmount, target.address);
+        },
 
 
 /**/
