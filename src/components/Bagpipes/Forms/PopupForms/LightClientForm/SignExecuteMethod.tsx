@@ -1,4 +1,4 @@
-import { getApiInstance } from '../../../../../../Chains/api/connect';
+import { getApiInstance } from '../../../../../Chains/api/connect';
 
 interface MethodParams {
     chainKey: string;

@@ -135,58 +135,52 @@ export async function polkadot_vote(
 // snowbridge
 // ref: https://assethub-polkadot.subscan.io/extrinsic/6841319-2?event=6841319-10
 // send WETH to ethereum
-export async function assethub2ethereum(eth_account: string, amount: any){
-  console.log(`[assethub2ethereum] got input: `, eth_account, amount );
-const api = await getApiInstance("assetHub"); ;
-  
-  const dest = {
-      parents: 2,
-      interior: {
-        X1:
-          { GlobalConsensus: { Ethereum: { chain_id: 1 } } },
-      },
-    };
+export async function assethub2ethereum(eth_account: string, amount: any) {
+  console.log(`[assethub2ethereum] got input: `, eth_account, amount);
+  const api = await getApiInstance("assetHub");
 
+  const dest = {
+    parents: 2,
+    interior: {
+      X1: { GlobalConsensus: { Ethereum: { chain_id: 1 } } },
+    },
+  };
 
   const bene = {
-      parents: 0,
-      interior: {
-          X1:
-              { AccountKey20: { key: eth_account , network: null}}
-         
-      },
+    parents: 0,
+    interior: {
+      X1: { AccountKey20: { key: eth_account, network: null } },
+    },
   };
 
   const assets = [
-      {
-          fun: {
-              Fungible: amount,
+    {
+      fun: {
+        Fungible: amount,
+      },
+      id: {
+        Concrete: {
+          interior: {
+            X2: [
+              { GlobalConsensus: { Ethereum: { chain_id: 1 } } },
+              { AccountKey20: { key: eth_account, network: null } },
+            ],
           },
-          id: {
-              Concrete: {
-                  interior: {
-                      X2: [
-                          { GlobalConsensus: { Ethereum: { chain_id: 1 } } },
-                          { AccountKey20: { key: eth_account, network: null } },
-                      ]
-                  },
-                  parents: 2,
-              }
-          }
-      }
+          parents: 2,
+        },
+      },
+    },
   ];
 
-
   const tx = api.tx.polkadotXcm.transferAssets(
-      {V3: dest},
-      { V3: bene },
-      { V3: assets },
-      0,
-      { Unlimited: 0 },
+    { V3: dest },
+    { V3: bene },
+    { V3: assets },
+    0,
+    { Unlimited: 0 }
   );
   return tx;
 }
-
 
 // Paseo relay chain
 
@@ -267,12 +261,6 @@ export async function assethub2paseo(amount: number, accountdest: string) {
 
   return tx;
 }
-
-
-
-
-
-
 
 // working: https://polkadot.subscan.io/xcm_message/polkadot-6cff92a4178a7bf397617201e13f00c4da124981
 /// ref: https://polkaholic.io/tx/0x47914429bcf15b47f4d202d74172e5fbe876c5ac8b8a968f1db44377906f6654

@@ -32,7 +32,7 @@ const PanelForm = ({ nodeId, edgeId, onClose, notifyChange }) => {
     const [pills, setPills ]  = useState([]);
     const [activeTab, setActiveTab] = useState('Pills');
     const currentScenario = scenarios[activeScenarioId];
-    const node = currentScenario.diagramData.nodes.find(node => node.id === nodeId);
+    const node = currentScenario?.diagramData?.nodes.find(node => node.id === nodeId);
     const savedState = getSavedFormState(nodeId) ?? { inputNodes: node?.data?.inputNodes || [] };
     const [inputNodes, setInputNodes] = useState(node?.data?.inputNodes || []);
     const [content, setContent] = useState([]);
@@ -62,20 +62,19 @@ const PanelForm = ({ nodeId, edgeId, onClose, notifyChange }) => {
 
     useEffect(() => {
       console.log('PanelForm checking current scenario ', currentScenario);
-      const allNodes = currentScenario.diagramData.nodes;
-      const orderedList = getOrderedList(currentScenario.diagramData.edges);
+      const allNodes = currentScenario?.diagramData.nodes;
+      const orderedList = getOrderedList(currentScenario?.diagramData.edges);
       console.log('orderedList', orderedList);
       const upstreamNodes = findUpstreamNodes(orderedList, nodeId);
       console.log('upstreamNodes', upstreamNodes);
       if (orderedList) {
-        const newPills = extractEventDataFromNodes(upstreamNodes, allNodes, orderedList, currentScenario.executions[executionId]);
+        const newPills = extractEventDataFromNodes(upstreamNodes, allNodes, orderedList, currentScenario?.executions[executionId]);
         console.log('newPills', newPills);  
         setPills(newPills);
       } else {
         console.error('orderedList is undefined');
       }
-    }, [currentScenario.diagramData.edges, nodeId, currentScenario.diagramData.nodes, currentScenario.diagramData, executionId]);
-  
+    }, [currentScenario?.diagramData?.edges, nodeId, currentScenario?.diagramData?.nodes, currentScenario?.diagramData, executionId]);
 
     // keyword pills
     const generalPills = Object.entries(keywordPills).filter(([key, pill]) => pill.group === PillGroup.General);

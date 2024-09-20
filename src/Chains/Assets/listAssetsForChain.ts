@@ -16,7 +16,6 @@ export function listAssetHubAssets() {
   }));
 }
 
-
 export function listPaseoAssets() {
   const assets = CHAIN_ASSETS.paseo.assets;
 
@@ -25,7 +24,6 @@ export function listPaseoAssets() {
     assetId: assetData.assetId,
   }));
 }
-
 
 export function listassetHub_kusamaAssets() {
   const assets = CHAIN_ASSETS.assetHub_kusama.assets;

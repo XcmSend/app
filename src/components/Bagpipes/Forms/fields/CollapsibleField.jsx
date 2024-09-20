@@ -19,7 +19,7 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, fieldTypeObject, fields, hoverInfo}) => {
+const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, fieldTypeObject, fields, hoverInfo, selectFieldStyle, collapsibleContainerStyle}) => {
   const [isToggled, setIsToggled] = useState(false);
   const { showPanelTippy, hidePanelTippy, tippyPanelInstance } = usePanelTippy();
   const referenceElement = useRef(null);
@@ -336,9 +336,8 @@ const renderContent = (field, depth = 0) => {
             <Select
               onChange={value => onChange(value)}
               getPopupContainer={trigger => trigger.parentNode}
-
               value={value} 
-              className='w-full font-semibold custom-select'
+              className={`{w-full font-semibold custom-select ${selectFieldStyle}`}
               placeholder="Select option"
             >
               {selectOptions.map((option, index) => (
@@ -592,7 +591,7 @@ const renderContent = (field, depth = 0) => {
 
   return (
 
-    <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent' }} className="collapsible-field-container relative">
+    <div ref={drop} style={{ backgroundColor: isOver ? 'lightblue' : 'transparent' }} className={`collapsible-field-container ${collapsibleContainerStyle} relative`}>
     {hasToggle && (
       <div className="toggle-container mt-3 mr-2" style={{ position: 'absolute', top: 0, right: 0, zIndex: 1 }}>
         <Toggle title={toggleTitle} isToggled={isToggled} onToggleChange={handleToggleChange} />

@@ -10,7 +10,8 @@ import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 
 import { queryMetadata } from '../QueryMetadata';
-import { parseMetadataPallets, parseLookupTypes, resolveTypeName } from '../parseMetadata'
+import { parseMetadataPallets, resolveTypeName } from '../parseMetadata'
+import { parseLookupTypes } from '../ParseMetadataTypes';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
 import ExtrinsicCountTester from './ExtrinsicCountTester'; // Import the ExtrinsicCountTester component
 

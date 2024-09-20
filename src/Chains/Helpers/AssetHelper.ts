@@ -198,7 +198,6 @@ export async function checkPaseoNativeBalance(
   };
 }
 
-
 /// check the balance of an asset on interlay
 /// returns { free: '304', reserved: '0', frozen: '0' }
 export async function checkInterlayAssetBalance(
@@ -931,9 +930,9 @@ export async function getAssetBalanceForChain(
       break;
 
     case "paseo":
-       balances = await checkPaseoNativeBalance(assetDecimals, accountId);
-       assetDecimals = balances.assetDecimals;
-       break;
+      balances = await checkPaseoNativeBalance(assetDecimals, accountId);
+      assetDecimals = balances.assetDecimals;
+      break;
 
     case "hydraDx":
       const hydraBalanceInfo = await checkHydraDxAssetBalance(

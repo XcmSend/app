@@ -10,7 +10,7 @@ import { resolveKeyType } from './resolveKeyType';
 
 async function fetchAndDecodeMetadata(api: ApiPromise) {
     const metadata = await api.rpc.state.getMetadata();
-    return metadata.toHuman(); // Convert the metadata to a more readable form
+    return metadata.toHuman(); 
 }
 
 
