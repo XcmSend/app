@@ -13,7 +13,7 @@
     "gen-gitinfo": "echo export default \"\\\"$(git rev-parse HEAD)\\\"\"  > src/components/Bagpipes/_git_commit.js",
     "build:tailwind": "npx tailwindcss -c ./tailwind.config.js -i ./src/index.css -o dist/output.css",
     "dev": "npm run build:tailwind && vite --force",
-    "build": "npm run papi:generate && tsc && npm run build:tailwind && vite build",
+    "build": "tsc && npm run build:tailwind && vite build",
     "test": "npx tsx src/run_tests.ts",
     "format": "npx prettier --write 'src/*/*/*.ts' && npx prettier --write 'src/*.ts'",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
