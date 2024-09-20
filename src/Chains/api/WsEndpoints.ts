@@ -22,6 +22,10 @@ const endpoints = {
     kabocha: "wss://kabocha.jelliedowl.net",
     mangata: "wss://kusama-rpc.mangata.online",
   },
+  paseo: {
+    default: "wss://paseo-rpc.dwellir.com",
+    assethub: "wss://sys.dotters.network/asset-hub-paseo",
+  },
   turing: {
     default: "wss://rpc.turing.oak.tech",
   },

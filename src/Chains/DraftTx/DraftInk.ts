@@ -8,7 +8,7 @@ export async function query_contract(
   params: any[],
   contract_address: string,
   api: any,
-  abidata: any,
+  abidata: any
 ) {
   const storageDepositLimit = null;
   const abiJson = abidata; //JSON.parse(fs.readFileSync('./src/flipper.json', 'utf8'));
@@ -27,7 +27,7 @@ export async function query_contract(
       gasLimit,
       storageDepositLimit,
     },
-    ...params,
+    ...params
   );
 
   return queryResult.result;

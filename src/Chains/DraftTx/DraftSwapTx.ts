@@ -18,7 +18,7 @@ interface HydradxAssetSymbolDecimalsResponse {
 }
 
 export async function getHydradxAssetSymbolDecimals(
-  assetid: number,
+  assetid: number
 ): Promise<HydradxAssetSymbolDecimalsResponse> {
   console.log(`getHydradxAssetSymbolDecimals assetid`, assetid);
   const api = await getApiInstance("hydraDx");
@@ -45,7 +45,7 @@ export async function hydradx_omnipool_sell(
   assetin: string,
   assetout: string,
   rawamount: number,
-  submitamount: number,
+  submitamount: number
 ) {
   const api = await getApiInstance("hydraDx");
   const pinfo = await getHydraDxSellPrice(assetin, assetout, rawamount);
@@ -63,7 +63,7 @@ export async function hydradx_omnipool_sell(
     assetout,
     rawamount,
     minBuyAmount,
-    submitamount,
+    submitamount
   );
 
   const route = await hdx_get_routes(assetin, assetout, rawamount);
@@ -84,7 +84,7 @@ export async function hydradx_omnipool_sell(
       assetin.toString(),
       assetout.toString(),
       submitamount.toString(),
-      minBuyAmount / BigInt(10000),
+      minBuyAmount / BigInt(10000)
       // TODO: fix router,
     );
     console.log(`selltx router.sell drafted`);
