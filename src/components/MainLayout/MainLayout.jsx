@@ -17,7 +17,7 @@ import CommunityPages from '../../pages/PublicPages/CommunityPages';
 import CommunityPage from '../../pages/PublicPages/CommunityPage/CommunityPage';
 import CreatorPage from '../../pages/PublicPages/CreatorPage/CreatorPage';
 import CreatorsPage from '../../pages/PublicPages/CreatorsPage/CreatorsPage';
-import BlinkBuilder from '../../pages/PublicPages/Blinks/BlinkBuilder/';
+//import BlinkBuilder from '../../pages/PublicPages/Blinks/BlinkBuilder/';
 import ScenarioInfo from '../../pages/Lab/Scenario';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';
@@ -119,7 +119,7 @@ function MainLayout({ children }) {
                     <Route path="test-flow" element={<ReactTestFlow />} />
                     <Route path="evm-wallet-info" element={<EvmWalletInfo />} />
                     <Route path="settings" element={<Settings />} />
-                    <Route path ="blinks" element={<BlinkBuilder />} />
+              //      <Route path ="blinks" element={<BlinkBuilder />} />
 
 
 
