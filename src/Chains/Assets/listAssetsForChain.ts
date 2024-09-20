@@ -16,6 +16,15 @@ export function listAssetHubAssets() {
   }));
 }
 
+export function listPaseoAssets() {
+  const assets = CHAIN_ASSETS.paseo.assets;
+
+  return assets.map((assetData: { asset: any; assetId: any }) => ({
+    asset: assetData.asset,
+    assetId: assetData.assetId,
+  }));
+}
+
 export function listassetHub_kusamaAssets() {
   const assets = CHAIN_ASSETS.assetHub_kusama.assets;
 

@@ -280,6 +280,21 @@ export const CHAIN_ASSETS = {
         ]
     },
 
+    "paseo": {
+      "assets": [
+        {
+          "asset": {
+            "decimals": '10',
+            "name": 'Paseo Native Pas',
+            "symbol": 'PAS',
+            "existentialDeposit": '0',
+          },
+          "assetId": '0'
+        },
+      ]
+    },
+
+
     "mangatax": {
         "assets":  [
             {

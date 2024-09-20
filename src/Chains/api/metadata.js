@@ -20,6 +20,25 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
+    paseo: {
+        chain: "paseo",
+        endpoints: [
+            "wss://paseo-rpc.dwellir.com",
+            "wss://rpc.ibp.network/paseo"
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true
+    },
+
+    paseo_assethub: {
+        chain: "paseo_assethub",
+        endpoints: [
+            "wss://asset-hub-paseo-rpc.dwellir.com",
+            "wss://sys.dotters.network/asset-hub-paseo"
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true
+    },
     hydraDx: {
         chain: "HydraDX" || "hydradx",
         endpoints: [
@@ -86,6 +105,14 @@ export const CHAIN_METADATA = {
         chain: "Rococo",
         endpoints: [
                 "wss://rococo-rpc.polkadot.io",
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
+    rococo_contracts: {
+        chain:"Contracts Rococo",
+        endpoints: [
+            "wss://rococo-contracts-rpc.polkadot.io",
         ],
         queryBalancePaths: ["system.account"],
         nativeAccount: true,

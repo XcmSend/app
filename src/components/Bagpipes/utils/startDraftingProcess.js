@@ -43,6 +43,7 @@ export const startDraftingProcess = async (activeScenarioId, scenarios) => {
         const diagramData = scenarios[activeScenarioId].diagramData;
         const orderedList = getOrderedList(diagramData.edges);
         console.log('[startDraftingProcess] Ordered List:', orderedList);
+        console.log(`predata: `, diagramData);
         const preparedActions = prepareTransactionsForReview(diagramData, orderedList);
         console.log('[startDraftingProcess] Prepared Actions:', preparedActions);
         const draftedExtrinsicsWithData = []; // Note the name change for clarity

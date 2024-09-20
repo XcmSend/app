@@ -15,6 +15,21 @@ const actions = [
       information: 'Transfer allows you to move assets within a single chain.'
     },
     {
+      name: 'delegate',
+      logo: '/delegate.svg',
+      information: 'Delegate Voting power'
+    },
+    {
+      name: 'stake',
+      logo: '/stake.svg',
+      information: 'Stake to nomination pool'
+    },
+    {
+      name: 'ink',
+      logo: '/ink.svg',
+      information: '!ink Smart Contracts'
+    },
+    {
       name: 'vote',
       logo: '/vote.svg',
       information: 'vote in opengov'

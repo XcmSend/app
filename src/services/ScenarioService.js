@@ -1,9 +1,12 @@
 
 
 // import axios from './AxiosService';
+import axios from 'axios';
 import useAppStore from '../store/useAppStore';
 import toast from 'react-hot-toast';
 import threadbagInstance from './AxiosService'
+import config from "../config";
+
 class ScenarioService {
     constructor() {
         this.csrfToken = null;
@@ -226,10 +229,21 @@ class ScenarioService {
     }
     
 
-    async startPersistScenario(scenarioId, persist) {
+    async startPersistScenario(scenarioId) {
         try {
-            console.log('startPersistScenario', scenarioId, persist);
-            const response = await threadbagInstance.post('/job/start', { id: scenarioId, persist: true, _csrf: this.csrfToken }, { withCredentials: true });
+            console.log('startPersistScenario', scenarioId);
+
+            const response = await axios.post(`${config.threadbagUrl}/job/start`, {
+                id: scenarioId
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+
+
+           // const response = await threadbagInstance.post('/job/start', { id: scenarioId });
             console.log('Server response:', response.data);
             return response.data;
         } catch (error) {
@@ -238,9 +252,15 @@ class ScenarioService {
         }
     }
 
-    async stopPersistScenario(scenarioId, persist) {
+    async stopPersistScenario(scenarioId) {
         try {
-            const response = await threadbagInstance.post('/job/start', { id: scenarioId, persist: false, _csrf: this.csrfToken }, { withCredentials: true });
+            const response = await axios.post(`${config.threadbagUrl}/job/stop`, {
+                id: scenarioId
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             console.log('Server response:', response.data);
             return response.data;
         } catch (error) {

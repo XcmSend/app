@@ -71,6 +71,35 @@ export function listChains() {
 
   chainList[2110] = MangataX;
 
+
+  const Paseo: ChainInfo = {
+    name: 'paseo',
+    display: 'Paseo (Testnet Relay Chain)',
+    paraid: 0,
+    symbol: 'PAS',
+    prefix: 1,
+    token_decimals: 10,
+    logo: '/chains/paseo.png',
+    relayParent: 'paseo',
+    parachain: false
+  };
+  chainList[999] = Paseo;
+
+ const PaseoAssethub: ChainInfo = {
+    name: 'paseo_assethub',
+    display: 'Paseo Assethub(Testnet)',
+    paraid: 1000,
+    prefix: 1,
+    symbol: 'PAS',
+    token_decimals: 10,
+    logo: '/chains/assethub.svg',
+    relayParent: 'paseo',
+    parachain: true
+  };
+  chainList[9990] = PaseoAssethub;
+
+
+
   const Turing: ChainInfo = {
     name: 'turing',
     display: 'Turing (Kusama)',
@@ -109,6 +138,22 @@ export function listChains() {
         symbol: 'HDX'
       };
       chainList[2034] = HydraDX;
+
+      const Ethereum: ChainInfo = {
+        name: 'ethereum',
+        display: 'Ethereum',
+        paraid: 0,
+        prefix: 1,
+        token_decimals: 12,
+        logo: '/chains/ethereum.svg',
+        relayParent: 'Ethereum',
+        parachain: true,
+        symbol: 'ETH'
+        
+      };
+      chainList[100000] = Ethereum;
+
+
 
       const Interlay: ChainInfo = {
         name: 'interlay',
@@ -181,6 +226,19 @@ export function listChains() {
         symbol: 'KSM'
       };
       chainList[2] = Kusama;
+      const RococoContracts: ChainInfo = {
+        name: 'rococo_contracts',
+        display: 'Contracts (Rococo)',
+        paraid: 0,
+        prefix: 0,
+        token_decimals: 12,
+        logo: '/chains/rococo.jpeg',
+        parachain: false,
+        relay: true,
+        symbol: 'ROC'
+
+      };
+      chainList[101] = RococoContracts;
 
       const Rococo: ChainInfo = {
         name: 'rococo',
@@ -247,4 +305,4 @@ export enum supported_Polkadot_Chains {
 // in order to cover tx fee's
 
 
-export { AssetInfo, ChainInfo };
+export type { AssetInfo, ChainInfo };

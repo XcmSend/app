@@ -13,18 +13,18 @@ const OrderedListContent = ({ list }) => {
     const chains = listChains();
     const { theme } = useContext(ThemeContext);
 
-    console.log('OrderedListContent chains', chains);
-    console.log('OrderedListContent SwapSVG', SwapSVG);
+    // console.log('OrderedListContent chains', chains);
+    // console.log('OrderedListContent SwapSVG', SwapSVG);
 
     return (
         <div className={`ordered-list-content-container flex justify-left w-full ${theme}`}>
             <div className='ordered-list-map flex justify-left' >
                 {list.map((item, index) => {
                     let imageSrc, altText;
-                    console.log(`OrderedListContent item is:`, item);
+                    // console.log(`OrderedListContent item is:`, item);
                     if (item.type === 'chain') {
                         const chainInfo = Object.values(chains).find(chain => chain.name === item.name);
-                        console.log('OrderedListContent chainInfo', chainInfo);
+                        // console.log('OrderedListContent chainInfo', chainInfo);
                         return (
                             <img
                                 key={index}
@@ -36,7 +36,7 @@ const OrderedListContent = ({ list }) => {
                     }  
                     if (item.type === 'chainQuery') {
                         const chainQueryInfo = Object.values(chains).find(chain => chain.name === item.name);
-                        console.log('OrderedListContent chainQueryInfo', chainQueryInfo);
+                        // console.log('OrderedListContent chainQueryInfo', chainQueryInfo);
                         return (
                             <div key={index} className="toast-icon">
                                 {chainQueryInfo?.name ? (
@@ -53,8 +53,8 @@ const OrderedListContent = ({ list }) => {
                     } 
                     if (item.type === 'chainTx') {
                         const chainTxInfo = Object.values(chains).find(chain => chain.name === item.name);
-                        console.log('OrderedListContent chainInfo', chainTxInfo);
-                        console.log('OrderedListContent chainTx item', item);
+                        // console.log('OrderedListContent chainInfo', chainTxInfo);
+                        // console.log('OrderedListContent chainTx item', item);
                         return (
                             <div key={index} className="toast-icon">
                                 {chainTxInfo?.name ? (
@@ -99,7 +99,7 @@ const OrderedListContent = ({ list }) => {
                         );
                     }
                     if (item.action === 'swap') {
-                        console.log('OrderedListContent item action', item.action);
+                        // console.log('OrderedListContent item action', item.action);
                         imageSrc = SwapSVG;
                         altText = 'Swap Action';
                         return (
@@ -111,13 +111,36 @@ const OrderedListContent = ({ list }) => {
                         return (
                             <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
                         );
-                    } else if (item.action === 'Vote' || item.action === 'vote') {
-                        imageSrc = VoteSVG;
-                        altText = "Vote";
-                        return (
-                            <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
-                        );
-                    } else if (item.action === 'xTransfer') {
+
+                    } 
+               else if (item.action === 'Vote' || item.action === 'vote') {
+                    imageSrc = VoteSVG;
+                    altText = "Vote";
+                    return (
+                        <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
+                    );
+                }
+                 
+                else if (item.action === 'stake' || item.action === 'stake') {
+                    imageSrc = VoteSVG;
+                    altText = "Stake DOT";
+                    return (
+                        <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
+                    );
+                }
+                         
+
+                else if (item.action === 'delegate' || item.action === 'delegate') {
+                    imageSrc = VoteSVG;
+                    altText = "delegate voting power";
+                    return (
+                        <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
+                    );
+                }
+                    
+
+
+                    else if (item.action === 'xTransfer') {
                         console.log('OrderedListContent item action', item.action);
                         imageSrc = xTransferSVG;
                         altText = 'xTransfer Action';

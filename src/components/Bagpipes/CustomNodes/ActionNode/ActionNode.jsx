@@ -3,10 +3,14 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { Handle, Position, useNodeId } from 'reactflow';
 import useAppStore from '../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
+import { query_contract } from '../../../../Chains/DraftTx/DraftInk';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
 import VoteSVG from '/vote.svg';
+import DelegateSVG from '/delegate.svg';
+import InkSVG from '/ink.svg';
+import StakeSVG from '/stake.svg';
 
 // $DED animation
 import DEDPNG from './../../../../assets/DED.png';
@@ -15,6 +19,7 @@ import DEDPNG from './../../../../assets/DED.png';
 import { getOrderedList } from '../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from './actionUtils';
 import PriceInfo from '../PriceInfo';
+import InkInfo from '../InkInfo';
 import Selector, { useOutsideAlerter } from './Selector';
 import ActionNodeForm from '../../Forms/PopupForms/Action/ActionNodeForm';
 import toast from 'react-hot-toast';
@@ -62,18 +67,18 @@ export default function ActionNode({ children, data, isConnectable }) {
   const [actionData, setActionData] = useState({});
   const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
   const currentActionData = currentNode?.formData?.actionData;
-  console.log('ActionNode currentActionData:', currentActionData);
+  console.log('000 ActionNode currentActionData:', currentActionData);
   const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
-    // console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
+   console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
     return nodeData?.formData;
   }, [assetInNodeId, nodes]);
   
   const assetOutFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetOutNodeId);
-    // console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
+     console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
     return nodeData?.formData;
   }, [assetOutNodeId, nodes]);
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -84,7 +89,12 @@ export default function ActionNode({ children, data, isConnectable }) {
     if (formState.action === 'xTransfer') return xTransferSVG;
     if (formState.action === "remark") return RemarkSVG;
     if (formState.action === "Remark") return RemarkSVG;
+    if (formState.action === "stake") return StakeSVG;
+    if (formState.action === "delegate") return DelegateSVG;
+    if (formState.action === "ink") return InkSVG;
+    
     if (formState.action === "vote") return VoteSVG;
+
     return null;
   };
 
@@ -120,6 +130,41 @@ export default function ActionNode({ children, data, isConnectable }) {
             }));
             setLastUpdated(new Date());
         }
+       
+        if(formState.action === 'ink') {
+          setIsFetchingActionData(true); // Start the loading state
+          await sleep(1000);
+          const fetchedPriceInfo = {
+            "type": "Sell",
+            "amountIn": "1",
+            "amountOut": "0.005668",
+            "spotPrice": "0.005699451151",
+            "tradeFee": "0.000015",
+            "tradeFeePct": 0.3,
+            "priceImpactPct": -0.29,
+            "swaps": [
+                {
+                    "poolAddress": "7JRrXBpB1K2JUapwojTYLZPoMvLPMQUDyiEyJb5hj7wad1of",
+                    "pool": "Xyk",
+                    "assetIn": "0",
+                    "assetOut": "10",
+                    "amountIn": "1",
+                    "calculatedOut": "0.005683",
+                    "amountOut": "0.005668",
+                    "spotPrice": "0.005699451151",
+                    "tradeFeePct": 0.3,
+                    "priceImpactPct": -0.29,
+                    "errors": []
+                }
+            ]
+        };
+          setPriceInfoMap(prevMap => ({
+            ...prevMap,
+            [nodeId]: fetchedPriceInfo
+        }));
+          console.log('fetchActionInfo Fetching for ink');
+          setLastUpdated(new Date());
+      }
 
         if(formState.action === 'xTransfer') {
             setIsFetchingActionData(true); // Start the loading state
@@ -131,6 +176,7 @@ export default function ActionNode({ children, data, isConnectable }) {
 
         // Set actionData outside of the action-specific blocks
         // Create action data based on the selected value
+        console.log(`newActionData`);
         const newActionData = convertFormStateToActionType(
           { ...formState, action: formState.action }, 
           assetInFormData, 
@@ -186,6 +232,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     useEffect(() => {
       const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
       if (currentNodeFormData) {
+        console.log(`currentNodeFormData set`);
         setFormState(currentNodeFormData);
       }
     }, []);
@@ -219,6 +266,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     
     // Here we want to create the action form data object to pass for processing 
     useEffect(() => {
+      console.log(`newactiondata called`);
       const newActionData = convertFormStateToActionType(formState, assetInFormData, assetOutFormData); 
       if (newActionData) {
         setActionData({ [nodeId]: newActionData });
@@ -226,81 +274,286 @@ export default function ActionNode({ children, data, isConnectable }) {
       }
     }, [formState, assetInFormData, assetOutFormData]);
 
+function get_previous_node() {
+  const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+  const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+  const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+  const previousNodeFormData = previousNode ? previousNode.formData : null;
+  return previousNodeFormData;
+}
+
+  
 // store the system remark message
   const setRemark = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     console.log(`setting remark value `);
-    const newone = currentNodeFormData.actionData;
-    newone.source.target = value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
-    console.log(`got input value: `, value.target.value);
-  console.log(`wrote new`);
+    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+    const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+    const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+    const previousNodeFormData = previousNode ? previousNode.formData : null;
+    var currentActionData = currentNodeFormData.actionData || {};
+    currentActionData.actionType = 'remark';
+
+
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      extra: value.target.value,
+    };
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+
+
+  };
+
+  const setDelegateConviction = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    var inputen = value.target.value;
+
+    const newone = currentNodeFormData.actionData; 
+    if (!newone.source.delegate){
+      newone.source.delegate = {};
+    }
+    newone.source.delegate.conviction = inputen;
+
   if (newone) {
     setActionData({ [nodeId]: newone });
-    console.log("[setRemark] Constructed action data : ", newone);
   }
 
   };
+
+  const setStake = (value) => {
+    console.log(`set stake called`);
+    console.log(`SET STAKE`, scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex - 1] : null;
+const previousNodeFormData = previousNode ? previousNode.formData : null;
+
+console.log('previousNodeFormData: ', previousNodeFormData);
+
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+
+    var currentActionData = currentNodeFormData.actionData || {};
+    currentActionData.actionType = 'stake';
+
+
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      stake: {
+        pool_id: value.target.value
+      }
+    };
+  
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  
+
+  };
+
+  const setToDel = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+    const currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.delegate || {};
+    currentActionData.actionType = 'delegate';
+    const updatedActionData = {
+      ...currentActionData,
+      source: get_previous_node(),
+      delegate: {
+        ...currentSource,
+        to_address: value.target.value
+      }
+    };
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  };
+
+
+  const handleFileUpload = (event) => {
+    console.log(`handle fileupload`);
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const fileContent = JSON.parse(e.target.result);
+      // Do something with fileContent
+      const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+      var currentActionData = currentNodeFormData.actionData || {};
+      var currentSource = currentActionData.inkdata || {};
+      currentActionData.actionType = 'ink';
+
+      currentSource.abi = fileContent;
+      const previousNodeFormData = get_previous_node(); 
+  
+  
+      const updatedActionData = {
+        ...currentActionData,
+        source: previousNodeFormData,
+        inkdata: {
+          ...currentSource,
+          abi: fileContent
+        }
+      };
+      console.log(`abi saved`);
+      console.log(`abi is: `, fileContent);
+  setActionData(updatedActionData);
+
+      saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+
+
+     // console.log(fileContent);
+    };
+    reader.readAsText(file);
+    console.log(`handle fileupload ok`);
+  };
+
+  const setInkAddress = (value) => {
+    console.log(`set ink address start`);
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    var currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.inkdata || {};
+    currentActionData.actionType = 'ink';
+
+    var currentInkData = currentSource.inkdata || {};
+    currentInkData.contract = value.target.value;
+    const previousNodeFormData = get_previous_node(); 
+
+
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      inkdata: {
+        ...currentSource,
+        contract: value.target.value
+      }
+    };
+
+    console.log(`set 2 ink`);
+    setActionData(updatedActionData);
+    console.log(`set 3 ink`);
+    console.log(`updatedActionData: `, updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+    console.log(`set ink address done`);
+
+  };
+
   const setAye = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     var aye_or_nay = false;
     if (value === 'aye'){
       aye_or_nay = true;
     }
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.aye_or_nay = aye_or_nay; //value.target.value; // append the message as source.target value
 
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-  }
+    var currentActionData = currentNodeFormData.actionData || {};
+    const currentSource = currentActionData.votedata || {};
+    currentActionData.actionType = 'vote';
+
+    var currentVoteData = currentSource.votedata || {};
+    currentVoteData.aye_or_nay = aye_or_nay;
+
+    currentVoteData.refnr = value; // value.target.value; // append the message as source.target value
+    const previousNodeFormData = get_previous_node();
+    
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      votedata: {
+        ...currentSource,
+        aye_or_nay: aye_or_nay
+      }
+    };
+
+
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
 
   };
 
+  const setDelLock = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    const currentActionData = currentNodeFormData.actionData || {};
 
+    const currentDelData = currentActionData.delegate || {};
+    currentActionData.actionType = 'delegate';
+    const updatedActionData = {
+      ...currentActionData,
+      source: get_previous_node(),
+      delegate: {
+        ...currentDelData,
+        conviction: value,
+      }
+    };
+
+  // Update the local state
+  setActionData(updatedActionData);
+  saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+
+
+
+  };
 
 
   const setLock = (value) => {
+  
+ 
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
-    console.log(`setRef called `);
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.lock = value; //value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
-    console.log(`got input value: `, value);
-  console.log(`wrote new`);
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log("[setRef] Constructed action data : ", newone);
-  }
+    console.log(`setLock called `);
+  
+    if (!currentNodeFormData) return;
+  
+    const currentActionData = currentNodeFormData.actionData || {};
+
+    const currentVoteData = currentActionData.votedata || {};
+    currentActionData.actionType = 'vote';
+    const previousNodeFormData = get_previous_node(); 
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      votedata: {
+        ...currentVoteData,
+        lock: value,
+      }
+    };
+
+  
+    // Update the local state
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
 
   };
-
 
 
   const setRef = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    console.log(`currentNodeFormData: `, currentNodeFormData);
-    console.log(`setRef called `);
-    const newone = currentNodeFormData.actionData;
-    if (!newone.source.votedata){
-      newone.source.votedata = {};
-    }
-    newone.source.votedata.refnr = value; //value.target.value; // append the message as source.target value
-    console.log(`newone newActionData: `, newone);
-    console.log(`got input value: `, value);
-  console.log(`wrote new`);
-  if (newone) {
-    setActionData({ [nodeId]: newone });
-    console.log("[setRef] Constructed action data : ", newone);
-  }
 
+  
+    var currentActionData = currentNodeFormData.actionData || {};
+
+    var currentVoteData = currentActionData.votedata || {};
+    currentActionData.actionType = 'vote';
+
+    currentVoteData.refnr = value; // value.target.value; // append the message as source.target value
+
+    const previousNodeFormData = get_previous_node(); 
+    const updatedActionData = {
+      ...currentActionData,
+      source: previousNodeFormData,
+      votedata: {
+        ...currentVoteData,
+        lock: value,
+      }
+    };
+
+    // Update the local state
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+
+    console.log("[setRef] Constructed action data : ", updatedActionData);
   };
 
 
@@ -329,7 +582,7 @@ export default function ActionNode({ children, data, isConnectable }) {
     // setDropdownVisible(false);
   }, []);
 
-
+  console.log(`Actionnode formstate:`, formState);
 // useOutsideAlerter(dropdownRef, handleOutsideClick);
 
 
@@ -389,6 +642,9 @@ export default function ActionNode({ children, data, isConnectable }) {
           xTransferSVG={xTransferSVG}
           RemarkSVG={RemarkSVG}
           VoteSVG={VoteSVG}
+          DelegateSVG={DelegateSVG}
+          InkSVG={InkSVG}
+          StakeSVG={StakeSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
           handleOnClick={true}
@@ -397,6 +653,33 @@ export default function ActionNode({ children, data, isConnectable }) {
         </div>
       </div>
 
+      {formState && formState.action === 'delegate' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Delegate voting power on all Polkadot tracks
+<input  onChange={(newValue) => setToDel(newValue)}  type="text" id="contact-name"  placeholder="Address" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+
+<select
+            onChange={(e) => setDelLock(e.target.value)}
+            id="vote-locks"
+            className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+          >
+            <option value="0">0.1x voting balance, no lockup period</option>
+            <option value="1">1x voting balance, locked for 7 days</option>
+            <option value="2">2x voting balance, locked for 14 days</option>
+            <option value="3">3x voting balance, locked for 28 days</option>
+            <option value="4">4x voting balance, locked for 56 days</option>
+            <option value="5">5x voting balance, locked for 112 days</option>
+            <option value="6">6x voting balance, locked for 224 days</option>
+          </select>
+</div>
+)}
+     {formState && formState.action === 'stake' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Stake dot to a nomination pool
+
+<input  onChange={(newValue) => setStake(newValue)}  type="number" min="1" id="contact-name"  placeholder="Nomination pool id" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+</div>
+)}
 
       {formState && formState.action === 'Remark' && (
 
@@ -405,12 +688,31 @@ export default function ActionNode({ children, data, isConnectable }) {
             </div>
       )}
 
+{formState && formState.action === 'ink' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Contract address:
+<input  onChange={(newValue) => setInkAddress(newValue)}  type="text" id="contact-name"  placeholder="Smart contract address" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+<label htmlFor="contract-json" className="mt-2">Upload Contract JSON file:</label>
+  <input
+    onChange={(e) => handleFileUpload(e)}
+    type="file"
+    id="contract-json"
+    accept=".json"
+    placeholder="contract.json"
+    className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
+  />
+</div>
+
+
+
+)}
+
 
 
 {formState && formState.action === 'vote' && (
 
 <div className="in-node-border rounded m-2 p-2 ">Vote
-<input  onChange={(newValue) => setRef(newValue.target.value)}  type="number" id="contact-name"  placeholder="Referendum Number" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+<input  onChange={(newValue) => setRef(newValue.target.value)} min="1"  type="number" id="contact-name"  placeholder="Referendum Number" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
 <select
             onChange={(e) => setAye(e.target.value)}
             id="vote-aye"
@@ -436,8 +738,19 @@ export default function ActionNode({ children, data, isConnectable }) {
 
 </div>
 )}
-
-
+  {formState && formState.action === 'ink' && (
+        isFetchingActionData ? (
+            <InkInfo sourceInfo='0' targetInfo='0' priceInfo='0'  contract_address={ formState.actionData?.inkdata?.contract }  abi={formState.actionData?.inkdata?.abi} />
+          ) : (
+            // Placeholder for when no price info is available
+            <div className="in-node-border rounded m-2 p-2 ">!ink<br/>
+              Contract address: { formState.actionData?.inkdata?.contract || 'Not set'}<br/>
+              Chain: { formState.actionData?.source?.chain || 'Not set'}
+            </div>
+            
+          )
+        )
+      }
 
       {formState && formState.action === 'swap' && (
         isFetchingActionData ? (

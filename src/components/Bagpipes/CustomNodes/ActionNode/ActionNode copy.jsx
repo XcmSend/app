@@ -6,7 +6,6 @@ import { getHydraDxSellPrice } from '../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
-import VoteSVG from "/vote.svg";
 // $DED animation
 import DEDPNG from './../../../../assets/DED.png';
 //import FloatingImage from './FloatingImage';
@@ -307,7 +306,6 @@ const toggleDropdown = () => {
           SwapSVG={SwapSVG}
           xTransferSVG={xTransferSVG}
           Remark={RemarkSVG}
-          VoteSVG={VoteSVG}
           dropdownVisible={dropdownVisible}
           ref={dropdownRef}
           handleOnClick={true}

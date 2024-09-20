@@ -1,4 +1,4 @@
-import { dotToHydraDx, polkadot_vote, generic_system_remark, moon2polkadot, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { delegate_polkadot, stake_to_dot_pool, paseo2assethub, assethub2paseo, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
@@ -9,7 +9,7 @@ import { account } from "@polkadot/api-derive/balances";
 import { evm } from "@polkadot/types/interfaces/definitions";
 
 export async function extrinsicHandler(actionType, formData) {
-    
+    console.log(`extrinsicHandler:`, actionType, formData);
     switch(actionType) {
         case 'xTransfer':
             console.log("Inside extrinsicHandler for xTransfer formData:", formData);
@@ -17,6 +17,12 @@ export async function extrinsicHandler(actionType, formData) {
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
             return await handleSwap(formData);
+        case 'stake':
+            console.log(`stake handling`);
+            return handleStake(formData);
+        case 'delegate':
+            console.log(`delegate handling`);
+            return handleDelegate(formData);                    
         case 'vote':
             console.log(`vote handling`);
             return handleVote(formData);
@@ -28,23 +34,56 @@ export async function extrinsicHandler(actionType, formData) {
         }
 };
 
+function handleStake(formdata) {
+    console.log(`handlestake: `, formdata);
+    const source = formdata.source;
+    if (!source.chain == "polkadot") {
+        throw new Error("Staking only support on Polkadot");
+    }
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const stake = formdata.stake;
+    const pool_id = stake.pool_id;
+    const amount = source.amount * (10 ** tokenDecimals);
+    return stake_to_dot_pool(amount, pool_id);
+}
+
+function handleDelegate(formdata) {
+    const source = formdata.source;
+    if (!source.chain == "polkadot") {
+        throw new Error("Delegate Voting only support on Polkadot");
+    }
+    const delegate = formdata.delegate;
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+    const conviction = delegate.conviction; // string number
+    const dest = delegate.to_address;
+ 
+    const amount = source.amount * (10 ** tokenDecimals);
+    return delegate_polkadot(dest, amount, conviction);
+}
+
 function handleVote(formData) {
+//    console.log(`handleVote input: `, formData);
     const source = formData.source;
     if (!source.chain == "polkadot") {
         throw new Error("Voting only support on Polkadot");
     }
     const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-    const lock = source.votedata.lock;
-    const refnr = source.votedata.refnr;
-    const aye_or_nay = source.votedata.aye_or_nay;
-    const amount = source.amount * (10 ** tokenDecimals);
+    const votedata = formData.votedata;
+    const lock = votedata.lock;
+    const refnr = votedata.refnr;
+    const aye_or_nay = votedata.aye_or_nay;
+    const amount = Number(source.amount) * (10 ** tokenDecimals);
     return polkadot_vote(amount, lock, refnr, aye_or_nay);
 }
 
+
 function handleRemark(formData) {
     const source = formData.source;
-    const msg = source.target;
+    const msg = formData.extra;
     const chain = source.chain;
+       if (!msg) {
+        throw new Error("Set remark message");
+    }
     console.log(`source: `, source);
     console.log(`handle Remark form data:`, formData);
     return generic_system_remark(chain, msg);
@@ -91,10 +130,42 @@ function handlexTransfer(formData) {
         },
 ///hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethubassethub2moonbeam
         'polkadot:moonbeam': () => {
+            if (!isEthereumAddress(target.address)) { //  evm account check
+                throw new Error("Invalid address, select your evm account");
+            };
             return polkadot2moonbeam(submittableAmount, target.address);
         },
+
+
+        'assetHub:ethereum': () => {
+
+            if (source.assetId != "100"){
+                throw new Error("only WETH with assetid 100 is supported");
+            }
+            if (!isEthereumAddress(target.address)) { //  evm account check
+                throw new Error("Invalid address, select your evm account");
+            };
+            console.log(`ethereum source.assetId: `, source.assetId);
+            return assethub2ethereum(target.address, submittableAmount)
+        },
+
+
+
         'moonbeam:polkadot': () => {
-            return moon2polkadot(target.address, submittableAmount);
+            // todo check dot address
+            console.log(`moonbeam2polkadot!!`);
+            if (source.assetId != "42259,045,809,535,163,221,576,417,993,425,387,648"){
+                toast("You can only send DOT to the Polkadot relay chain");
+                
+                throw new Error("Wrong asset");
+            };
+            if (isEthereumAddress(target.address)) { //  evm account check
+                throw new Error("Invalid address, select a polkadot address not evm");
+            };
+            console.log(`source:`, source);
+            console.log(`source amount:`, source.amount);
+            const correct_dot_amount = source.amount * (10**10);
+            return moon2polkadot(target.address, correct_dot_amount);
         },
         'moonbeam:assetHub': () => {
             console.log(`moon2assethub`);
@@ -129,7 +200,7 @@ function handlexTransfer(formData) {
         'hydraDx:moonbeam': () => {
             return hydra2moonbeam(target.address, source.assetId, source.amount);
         },
-        'assethub:moonbeam': () => {
+        'assetHub:moonbeam': () => {
             return assethub2moonbeam(source.amount, source.assetId, target.address);
         },
 
@@ -160,6 +231,16 @@ function handlexTransfer(formData) {
             console.log("handlexTransfer forAssetHub to Interlay...", tetherAmount);
             return assethub2interlay(source.assetId, tetherAmount, target.address);
         },
+
+        'paseo:paseo_assethub': () => {
+            return paseo2assethub(submittableAmount, target.address)
+        },
+        'paseo_assethub:paseo': () => {
+            return assethub2paseo(submittableAmount, target.address);
+        },
+
+
+
 /**/
         'moonriver:turing': () => {
         //    if not address is evm, break 

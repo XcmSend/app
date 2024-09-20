@@ -27,6 +27,241 @@ export function getRawAddress(ss58Address: string): Uint8Array {
   }
 }
 
+// example input, stake 2 dot to pool 161: const pooltx = await stake_to_dot_pool(20000000000, 161);
+export async function stake_to_dot_pool(amount: number, pool_id: number) {
+  const api = await getApiInstance("polkadot");
+  const outtx = api.tx.nominationPools.join(amount, pool_id);
+  return outtx;
+}
+
+/*
+tracks:
+[0] Root
+[1] Whitelisted Caller
+[2] Wish For Change
+[10] Staking Admin
+[11] Treasurer
+[12] Lease Admin
+[13] Fellowship Admin
+[14] General Admin
+[15] Auction Admin
+[20] Referendum Canceller
+[21] Referendum Killer
+[30] Small Tipper
+[31] Big Tipper
+[32] Small Spender
+[33] Medium Spender
+[34] Big Spender
+*/
+export async function delegate_polkadot(
+  to_address: string,
+  amount: number,
+  conviction: string // 0-6
+) {
+  const tracks = [0, 1, 2, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34];
+  var call_list: any[] = [];
+  const real_conviction = number2lock(Number(conviction));
+  const api = await getApiInstance("polkadot");
+  for (const track in tracks) {
+    const item = api.tx.convictionVoting.delegate(
+      track.toString(),
+      { Id: to_address },
+      real_conviction,
+      amount
+    );
+    call_list.push(item);
+  }
+
+  const final_tx = api.tx.utility.batchAll(call_list);
+  return final_tx;
+}
+
+export function number2lock(inputen: number) {
+  var lockperiod = "Locked1x";
+  switch (inputen) {
+    case 0:
+      lockperiod = null;
+    case 1:
+      lockperiod = "Locked1x";
+    case 2:
+      lockperiod = "Locked2x";
+    case 3:
+      lockperiod = "Locked3x";
+    case 4:
+      lockperiod = "Locked4x";
+    case 5:
+      lockperiod = "Locked5x";
+    case 6:
+      lockperiod = "Locked6x";
+  }
+  return lockperiod;
+}
+
+// 0x5c041400690a008600ca9a3b000000000000000000000000
+export async function polkadot_vote(
+  amount: number,
+  lock: number,
+  refnr: number,
+  aye_or_nay: boolean
+) {
+  const api = await getApiInstance("polkadot");
+  var lockperiod = "Locked1x";
+  switch (lock) {
+    case 0:
+      lockperiod = null;
+    case 1:
+      lockperiod = "Locked1x";
+    case 2:
+      lockperiod = "Locked2x";
+    case 3:
+      lockperiod = "Locked3x";
+    case 4:
+      lockperiod = "Locked4x";
+    case 5:
+      lockperiod = "Locked5x";
+    case 6:
+      lockperiod = "Locked6x";
+  }
+
+  const vote = {
+    Standard: {
+      vote: { aye: aye_or_nay, conviction: lockperiod },
+      balance: amount,
+    },
+  };
+  return api.tx.convictionVoting.vote(refnr, vote);
+}
+
+// snowbridge
+// ref: https://assethub-polkadot.subscan.io/extrinsic/6841319-2?event=6841319-10
+// send WETH to ethereum
+export async function assethub2ethereum(eth_account: string, amount: any) {
+  console.log(`[assethub2ethereum] got input: `, eth_account, amount);
+  const api = await getApiInstance("assetHub");
+
+  const dest = {
+    parents: 2,
+    interior: {
+      X1: { GlobalConsensus: { Ethereum: { chain_id: 1 } } },
+    },
+  };
+
+  const bene = {
+    parents: 0,
+    interior: {
+      X1: { AccountKey20: { key: eth_account, network: null } },
+    },
+  };
+
+  const assets = [
+    {
+      fun: {
+        Fungible: amount,
+      },
+      id: {
+        Concrete: {
+          interior: {
+            X2: [
+              { GlobalConsensus: { Ethereum: { chain_id: 1 } } },
+              { AccountKey20: { key: eth_account, network: null } },
+            ],
+          },
+          parents: 2,
+        },
+      },
+    },
+  ];
+
+  const tx = api.tx.polkadotXcm.transferAssets(
+    { V3: dest },
+    { V3: bene },
+    { V3: assets },
+    0,
+    { Unlimited: 0 }
+  );
+  return tx;
+}
+
+// Paseo relay chain
+
+// works with this input
+// const amount = 94250842200;
+//const account = "0xf621771ddf37d482210b8c59617952eb1c2b40cfec55df47215231365186a057";
+export async function paseo2assethub(amount: number, accountdest: string) {
+  const api = await getApiInstance("paseo");
+  const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
+  const destination = {
+    interior: { X1: { Parachain: 1000 } },
+    parents: 0,
+  };
+  const account = {
+    interior: {
+      X1: {
+        Accountid32: {
+          id: accountid,
+          network: null,
+        },
+      },
+    },
+  };
+  const asset = {
+    fun: {
+      Fungible: amount,
+    },
+    id: {
+      Concrete: {
+        parents: 0,
+        interior: {
+          Here: null,
+        },
+      },
+    },
+  };
+
+  const tx = api.tx.xcmPallet.limitedTeleportAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: [asset] },
+    0,
+    { Unlimited: null }
+  );
+  return tx;
+}
+
+export async function assethub2paseo(amount: number, accountdest: string) {
+  const api = await getApiInstance("paseo_assethub");
+  console.log(`[assethub2paseo] connected`);
+  const accountId = api
+    .createType("AccountId32", getRawAddress(accountdest))
+    .toHex();
+  const destination = {
+    parents: 1,
+    interior: { Here: null },
+  };
+
+  const account = {
+    parents: 0,
+    interior: { X1: { AccountId32: { id: accountId, network: null } } },
+  };
+
+  const asset = [
+    {
+      id: { Concrete: { parents: 1, interior: "Here" } }, // The asset is on the parachain (origin)
+      fun: { Fungible: amount },
+    },
+  ];
+
+  const tx = api.tx.polkadotXcm.limitedTeleportAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: asset },
+    { fee_asset_item: 0 },
+    { Unlimited: null }
+  );
+
+  return tx;
+}
+
 // working: https://polkadot.subscan.io/xcm_message/polkadot-6cff92a4178a7bf397617201e13f00c4da124981
 /// ref: https://polkaholic.io/tx/0x47914429bcf15b47f4d202d74172e5fbe876c5ac8b8a968f1db44377906f6654
 /// DOT to assethub
@@ -77,41 +312,6 @@ export async function polkadot_to_assethub(
 
   return tx;
 }
-
-// 0x5c041400690a008600ca9a3b000000000000000000000000
-export async function polkadot_vote(amount: number, lock: number, refnr: number, aye_or_nay: boolean) {
-  const api = await getApiInstance("polkadot");
-  var lockperiod = "Locked1x";
-  switch (lock) {
-    case 0:
-      lockperiod = null;
-    case 1:
-      lockperiod = "Locked1x";
-    case 2:
-      lockperiod = "Locked2x";
-    case 3:
-      lockperiod = "Locked3x";
-    case 4:
-      lockperiod = "Locked4x";
-    case 5:
-      lockperiod = "Locked5x";
-    case 6:
-      lockperiod = "Locked6x";
-  }
-     
-const vote = {
-  Standard: {
-    vote: { aye: aye_or_nay, conviction: lockperiod },
-    balance: amount,
-  },
-}
-  return api.tx.convictionVoting.vote(
-      refnr, 
-      vote
-  )
-}
-
-
 
 /// Generic system remark with event
 export async function generic_system_remark(chain: string, msg: string) {
@@ -868,29 +1068,43 @@ export async function polkadot_assethub_to_assetHub_kusama(
 /// moonbeam > Polkadot Relay chain
 export async function moon2polkadot(account: string, amount: number) {
   const api = await getApiInstance("moonbeam");
-
+  console.log(`moon2polkadot input account, amount: `, account, amount);
   const relayAccount = getRawAddress(account);
+  console.log(`relayaccount: `, relayAccount);
   const dest = {
-    V4: {
-      parents: 1,
-      interior: { X1: [{ AccountId32: { id: relayAccount } }] },
-    },
+    parents: 1,
+    interior: { X1: { AccountId32: { id: relayAccount, network: null } } },
   };
 
   const destWeightLimit = { Unlimited: null };
+
+  /*
   const asset = {
-    V4: {
-      id: {
-        parents: 1,
+    V2: {id: {
+      Concrete: {
         interior: null,
-      },
-      fun: {
-        Fungible: { Fungible: amount },
+        parents: 1,
       },
     },
+    fun: { Fungible: amount },
+  }};
+*/
+
+  const asset = {
+    id: {
+      Concrete: {
+        interior: null,
+        parents: 1,
+      },
+    },
+    fun: { Fungible: amount.toString() },
   };
 
-  const tx = api.tx.xTokens.transferMultiasset(asset, dest, destWeightLimit);
+  const tx = api.tx.xTokens.transferMultiasset(
+    { V2: asset },
+    { v2: dest },
+    { Unlimited: null }
+  );
   return tx;
 }
 

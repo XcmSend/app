@@ -6,11 +6,12 @@ import { getHydraDxSellPrice } from '../../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
+import InkSVG from '/ink.svg';
 import VoteSVG from '/vote.svg';
-
 import { getOrderedList } from '../../../hooks/utils/scenarioExecutionUtils';
 import { convertFormStateToActionType } from '../../../CustomNodes/ActionNode/actionUtils';
 import PriceInfo from '../../../CustomNodes/PriceInfo';
+import { contract_info } from '../../../../../Chains/DraftTx/DraftInk';
 import { Select } from 'antd';
 import Selector, { useOutsideAlerter } from '../../../CustomNodes/ActionNode/Selector';
 import toast from 'react-hot-toast';
@@ -59,7 +60,7 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
   const [actionData, setActionData] = useState({});
   const currentNode = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId);
   const currentActionData = currentNode?.formData?.actionData;
-  console.log('ActionNode currentActionData:', currentActionData);
+  console.log('01 ActionNode currentActionData:', currentActionData);
   const nodeRef = useRef(null);
 
   const assetInFormData = useMemo(() => {
@@ -81,7 +82,10 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
     if (selectedAction.action === 'xTransfer') return xTransferSVG;
     if (selectedAction.action === "remark") return RemarkSVG;
     if (selectedAction.action === "Remark") return RemarkSVG;
+    if (selectedAction.action === "stake") return RemarkSVG;
+    if (selectedAction.action === "delegate") return RemarkSVG;
     if (selectedAction.action === "vote") return VoteSVG;
+    if (selectedAction.action === "ink") return InkSVG;
 
     return null;
   };
@@ -92,6 +96,9 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
     setIsFetchingActionData(true);
 
     try {
+
+
+    
         // Deduce the assetInNodeId and assetOutNodeId based on the currentNodeId.
         const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
         const currentIndex = orderedList.indexOf(currentNodeId);
@@ -107,7 +114,18 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
         const assetOutId = assetOutFormData?.asset?.assetId;
         const amount = assetInFormData?.amount;
 
-        
+        if(selectedAction.action === 'ink') {
+          setIsFetchingActionData(true); // Start the loading state
+          await sleep(1000);
+          // get contract info
+      //    console.log(`ink select action: `, selectedAction);
+         // if ()
+         // contr
+          console.log('fetchActionInfo Fetching for ink');
+          setLastUpdated(new Date());
+      }
+
+
         if(selectedAction.action === 'swap' && assetInFormData.chain === 'hydraDx' && assetOutFormData.chain === 'hydraDx') {
           console.log('fetchActionInfo Fetching for swap');
           console.log('fetchActionInfo Fetching for swap');
@@ -120,6 +138,9 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
             }));
             setLastUpdated(new Date());
         }
+
+
+      
 
         if(selectedAction.action === 'xTransfer') {
             setIsFetchingActionData(true); // Start the loading state
@@ -321,7 +342,6 @@ const toggleDropdown = () => {
       </div>
 
 
-
       {selectedAction.action === 'xTransfer' && currentActionData?.source?.chain && currentActionData?.source?.amount && currentActionData?.source?.symbol && (
       <div className='p-2 in-node-border rounded mb-2 '>
         <div className="flex justify-between">
@@ -358,7 +378,13 @@ const toggleDropdown = () => {
         ):( null)
         }
 
-      
+{ selectedAction.action === 'ink' ? (
+         lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>
+          Last updated: {formatTime(lastUpdated)}
+        </span>
+      ):( null)
+    } 
+
       { selectedAction.action === 'xTransfer' ? (
          lastUpdated && <span className='text-gray-400 text-xxs flex justify-center'>
           Last updated: {formatTime(lastUpdated)}

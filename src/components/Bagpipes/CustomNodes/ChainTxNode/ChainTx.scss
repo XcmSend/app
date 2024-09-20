@@ -19,7 +19,18 @@
 
   .chainTx-name {
 
-    min-width: 200px;   
+    // min-width: 200px;   
     font-size: 20px;
     align-items: center;
   }
+
+  .resizable-tooltip {
+    resize: both;
+    overflow: auto;
+    max-width: none;     
+    min-width: 350px;
+    border: 1px solid #ccc;
+    background: white; 
+    outline: 10px;
+
+}

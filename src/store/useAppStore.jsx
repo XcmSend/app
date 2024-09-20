@@ -489,7 +489,7 @@ const useAppStore = create(
     },
 
     saveNodeFormData: (scenarioId, nodeId, formData) => {
-        console.log("[saveNodeFormData] tis Called with:", { scenarioId, nodeId, formData });
+        console.log("[saveNodeFormData] is Called with:", { scenarioId, nodeId, formData });
 
         // Checking for potential issues
         if (!scenarioId || !nodeId) {
@@ -505,19 +505,56 @@ const useAppStore = create(
                 return;
             }
 
-            const nodes = scenario.diagramData.nodes.map((node) =>
-                node.id === nodeId ? { ...node, formData } : node
-            );
+            const nodes = scenario.diagramData.nodes.map((node) => {
+              console.log("saveNodeFormData [Before Update] Node formData:", node.formData);
+
+            
+              return node.id === nodeId ? { ...node, formData } : node
+        });
+
+        console.log("saveNodeFormData [After Update] Updated Node formData:", nodes.find(node => node.id === nodeId).formData);
 
             const updatedScenarios = {
                 ...state.scenarios,
                 [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, nodes } },
             };
 
-            console.log("[saveNodeFormData] Updated scenarios:", nodes, scenarioId);
+            console.log("[saveNodeFormData] Updated scenarios [params] temp LOG:", nodes[0].formData?.params, scenarioId);
             return { scenarios: updatedScenarios };
         });
     },
+
+    saveEdgeFormData: (scenarioId, edgeId, formData) => {
+      console.log("[saveEdgeFormData] tis Called with:", { scenarioId, edgeId, formData });
+
+      // Checking for potential issues
+      if (!scenarioId || !edgeId) {
+          console.error("[saveEdgeFormData] Scenario ID or Edge ID is missing. Cannot save edge form data.");
+          return;
+      }
+
+      set((state) => {
+          const scenario = state.scenarios[scenarioId];
+          
+          if (!scenario) {
+              console.error(`[saveEdgeFormData] Scenario with ID ${scenarioId} not found.`);
+              return;
+          }
+
+          const edges = scenario.diagramData.edges.map((edge) =>
+              edge.id === edgeId ? { ...edge, formData } : edge
+          );
+
+          const updatedScenarios = {
+              ...state.scenarios,
+              [scenarioId]: { ...scenario, diagramData: { ...scenario.diagramData, edges } },
+          };
+
+          console.log("[saveNodeForsaveEdgeFormDatamData] Updated scenarios:", edges, scenarioId);
+          return { scenarios: updatedScenarios };
+      });
+    },
+
 
     saveNodeEventData: (scenarioId, nodeId, eventData) => {
       console.log("[saveNodeEventData] Called with:", { scenarioId, nodeId, eventData });
@@ -1278,14 +1315,7 @@ const useAppStore = create(
       };
     });
   },
-  
-  
 
-
-
-
-  
-  
   }
 )
 ),

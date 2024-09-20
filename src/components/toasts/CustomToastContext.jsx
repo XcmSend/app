@@ -1,9 +1,9 @@
 import React from 'react';
 import SwapSVG from '/swap.svg';
 import RemarkSVG from '/remark.svg';
+import xTransferSVG from '/xTransfer.svg';
 import VoteSVG from '/vote.svg';
 
-import xTransferSVG from '/xTransfer.svg';
 import { HttpIcon, WebhookIcon } from '../Icons/icons';
 import { listChains } from '../../Chains/ChainsInfo';
 

@@ -13,8 +13,11 @@ type SelectorProps = {
     SwapSVG: string;
     xTransferSVG: string;
     RemarkSVG: string;
-    VoteSVG: string;
     iIcon: string;  
+    VoteSVG: string;
+    StakeSVG: string;
+    DelegateSVG: string;
+    InkSVG: string;
     dropdownVisible: boolean;
 
 }
@@ -54,7 +57,7 @@ export function useOutsideAlerter(ref: React.RefObject<HTMLElement>, callback: (
   }
   
 
-const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, xTransferSVG, RemarkSVG, VoteSVG }, ref) => {
+const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdownClick, SwapSVG, xTransferSVG, VoteSVG, RemarkSVG, DelegateSVG, InkSVG, StakeSVG }, ref) => {
       const { theme } = React.useContext(ThemeContext);
 
 
@@ -89,7 +92,49 @@ const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdo
                     </Tippy>
 
                 </div>
-            
+             
+                <div onClick={() => handleDropdownClick('stake')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
+                    <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
+
+                    <img src={StakeSVG} alt="Vite" className="w-3 h-4border rounded" />
+                    </div>
+                    <div className='text-xs font-semibold mr-2'>Stake</div>
+                    <Tippy theme="light" content="Stake DOT into a nomination pool">
+                    <span className='absolute top-0 right-0 mt-1 mr-1 bg-blue-100 hover:bg-blue-200 p-1 rounded-full shadow-md cursor-pointer flex items-center justify-center w-3 h-3'>
+                        <img src={icons.iIcon} className='w-1 h-1' alt="Info"/>
+                    </span>
+                    </Tippy>
+
+                </div>
+
+                <div onClick={() => handleDropdownClick('delegate')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
+                    <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
+
+                    <img src={DelegateSVG} alt="Vite" className="w-3 h-4border rounded" />
+                    </div>
+                    <div className='text-xs font-semibold mr-2'>Delegate</div>
+                    <Tippy theme="light" content="Delegate voting power on all tracks in Polkadot's opengov">
+                    <span className='absolute top-0 right-0 mt-1 mr-1 bg-blue-100 hover:bg-blue-200 p-1 rounded-full shadow-md cursor-pointer flex items-center justify-center w-3 h-3'>
+                        <img src={icons.iIcon} className='w-1 h-1' alt="Info"/>
+                    </span>
+                    </Tippy>
+
+                </div>
+
+                <div onClick={() => handleDropdownClick('ink')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
+                    <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
+
+                    <img src={InkSVG} alt="Vite" className="w-3 h-4border rounded" />
+                    </div>
+                    <div className='text-xs font-semibold mr-2'>!ink</div>
+                    <Tippy theme="light" content="!ink smart contracts">
+                    <span className='absolute top-0 right-0 mt-1 mr-1 bg-blue-100 hover:bg-blue-200 p-1 rounded-full shadow-md cursor-pointer flex items-center justify-center w-3 h-3'>
+                    <img src={icons.iIcon} className='w-1 h-1' alt="Info"/>
+
+                    </span>
+                    </Tippy>
+
+                </div>
 
                 <div onClick={() => handleDropdownClick('vote')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
                     <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>
@@ -104,9 +149,6 @@ const Selector = React.forwardRef<HTMLDivElement, SelectorProps>(({ handleDropdo
                     </Tippy>
 
                 </div>
-
-
-
                 
                 <div onClick={() => handleDropdownClick('xTransfer')} className="hovering flex items-center p-2 hover:bg-gray-200 relative">
                     <div className='bg-white flex justify-center align-center p-1 mr-2 border rounded h-6'>

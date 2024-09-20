@@ -17,7 +17,7 @@ import Toolbar from '../Toolbar/Toolbar';
 // import AppsToolbar from '../Toolbar/AppsToolbar';
 import FormGroupNode from './FormGroupNode';
 import CustomEdge from './CustomEdges/CustomEdge';
-import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode } from './CustomNodes';
+import { ChainNode, ActionNode, RouterNode, WebhookNode,WebsocketNode, APINode, HttpNode, CodeNode, ScheduleNode, DiscordNode, OpenAINode, ChatGptNode,  ChainQueryNode, ChainTxNode, DelayNode, LightClientNode, BlinksNode } from './CustomNodes';
 import { startDraftingProcess, preProcessDraftTransactions } from './utils/startDraftingProcess';
 import { calculateTippyPosition } from './utils/canvasUtils';
 import { MarkerType } from 'reactflow';
@@ -35,7 +35,7 @@ import { onConnect, onEdgesChange, onNodesChange } from '../../store/reactflow/'
 import useOnEdgesChange from '../../store/reactflow/useOnEdgesChange';
 import Edges from './edges';
 import { getNodeConfig } from './nodeConfigs';
-import EdgeForm from './Forms/EdgeForm'
+import EdgeForm from './Forms/PopupForms/EdgeForm'
 import { EDGE_STYLES } from '../../store/reactflow/onConnect';
 import TopBar from './TopBar/TopBar';
 import ScenarioInfo from './ScenarioInfo/ScenarioInfo';
@@ -80,6 +80,7 @@ const nodeTypes = {
   webhook: WebhookNode,
   websocket: WebsocketNode,
   api: APINode,
+  blinks: BlinksNode,
   http: HttpNode,
   code: CodeNode,
   schedule: ScheduleNode,
@@ -89,6 +90,7 @@ const nodeTypes = {
   chatGpt: ChatGptNode,
   chainQuery: ChainQueryNode,
   chainTx: ChainTxNode,
+  lightClient: LightClientNode,
 
 };
 
@@ -296,36 +298,50 @@ const BagpipesFlow = () => {
      * Callback function that gets triggered when the nodes state changes.
      * @param changes {object} - Contains the changes made to the node state.
      */
-          const onNodesChange = useCallback((changes) => {
-            // console.log("Active Scenario ID:", activeScenarioId);
-            // console.log("Changes received:", changes); // Add this line to log changes
+      const onNodesChange = useCallback((changes) => {
+        // console.log("Active Scenario ID:", activeScenarioId);
+        // console.log("Changes received:", changes); // Add this line to log changes
+      
+        if (!Array.isArray(changes)) {
+          console.error("Changes should be an array but received:", changes);
+          return;
+        }
           
-            if (!Array.isArray(changes)) {
-              console.error("Changes should be an array but received:", changes);
-              return;
-            }
-          
-             
-       
-            // Use the Zustand action instead
-            setNodes((prevNodes) => {
-            const updatedNodes = applyNodeChanges(changes, prevNodes);
-            
-              // Update the nodes in the current scenario
-              updateNodesInScenario(activeScenarioId, updatedNodes);
-          
-              return updatedNodes;
-            });
-          }, [  activeScenarioId]);
+        // Use the Zustand action instead
+        setNodes((prevNodes) => {
+        const updatedNodes = applyNodeChanges(changes, prevNodes);
+        
+          // Update the nodes in the current scenario
+          updateNodesInScenario(activeScenarioId, updatedNodes);
+      
+          return updatedNodes;
+        });
+      }, [activeScenarioId, setNodes, updateNodesInScenario]);
 
-          
+      
+      const handleAddNode = useCallback((nodeType) => {
+        const newNode = {
+          id: Date.now().toString(),
+          type: nodeType,
+          position: { x: Math.random() * 250, y: Math.random() * 250 },
+          data: { label: `${nodeType} Node` }
+        };
+      
+        setNodes(prevNodes => {
+          const newNodes = prevNodes.concat(newNode);
+          updateNodesInScenario(activeScenarioId, newNodes);
+          return newNodes;
+        });
+      }, [activeScenarioId, setNodes, updateNodesInScenario]);
+
+      
     
-    const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios,  );
-    // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId,  );
+      const handleEdgesChange = onEdgesChange(setEdges, setInputVariablesByEdgeId, inputVariablesByEdgeId, activeScenarioId, addEdgeToScenario, scenarios,  );
+      // const handleEdgesChange = useOnEdgesChange(appStore.setState, appStore.getState, setInputVariablesByEdgeId, inputVariablesByEdgeId, handleEdgesOperation, activeScenarioId,  );
 
-    const handleConnect = (params) => {
-      onConnect(currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario)(params);
-    };
+      const handleConnect = (params) => {
+        onConnect(currentScenarioEdges, nodeConnections, setEdges, setNodeConnections, activeScenarioId, addEdgeToScenario)(params);
+      };
         
       /**
      * Function to get the closest edge to a node.
@@ -564,6 +580,8 @@ const BagpipesFlow = () => {
 
 
     const onEdgeClick = useCallback((event, edge) => {
+
+      const edgeId = edge.id;
       if (selectedEdgeId === edge.id) {
           setSelectedEdgeId(null); // deselect if the same edge is clicked again
           setSelectedEdgeInScenario(activeScenarioId, null); // update scenario state
@@ -608,14 +626,20 @@ const BagpipesFlow = () => {
     
   // Helper function outside of main function
   const isActionDataComplete = (node) => {
-    console.log(`isActionDataComplete node: `, node);
+    console.log(`isActionDataComplete: `, node);
 
     if (!node.formData || !node.formData.actionData) return false;
 
     const { source, target } = node.formData.actionData;
-    console.log(`isActionDataComplete actionData: `, node.formData.actionData);
+    console.log(`isActionDataComplete: `, node.formData.actionData);
+   
+   
     if (node.formData.actionData){
-      if (node.formData.actionData.actionType == "remark" ||      node.formData.actionData.actionType === "vote"){
+      console.log(`got form data`);
+      console.log(`isActionDataComplete actionType:`, node.formData.action);
+      
+      if (["Remark", "vote", "stake", "delegate", "ink"].includes(node.formData.action)) {
+        
         return true;
       }
     }
@@ -795,7 +819,7 @@ const handleStopScenario = (instance) => {
                 </div>
 
             </Panel> */}
-            {isEdgeFormVisible && selectedEdgeId && (
+            {/* {isEdgeFormVisible && selectedEdgeId && (
       <EdgeForm
         edge={selectedEdgeId}
         onSubmit={(data) => {
@@ -804,11 +828,11 @@ const handleStopScenario = (instance) => {
         }}
         onClose={() => setIsEdgeFormVisible(false)}
       />
-    )}
+    )} */}
 
             <ScenarioInfo />
             <TopBar createScenario={createScenario} handleExecuteFlowScenario={handleExecuteFlowScenario} handleStartScenario={handleStartScenario} handleStopScenario={handleStopScenario} shouldExecuteFlowScenario={shouldExecuteFlowScenario} draftingNodesPresent={draftingNodesPresent}  />
-            <Toolbar />
+            <Toolbar onAddNode={handleAddNode} />
             {/* <AppsToolbar /> */}
 
             </ReactFlowStyled>

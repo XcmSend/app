@@ -28,8 +28,8 @@
     .community-logo-large {
       width: 100px;
       height: 100px;
-      border-radius: 50%;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      border-radius: 100% !important;
     }
 
     h1 {
@@ -68,6 +68,18 @@
     grid-row: 2 / 3;
     overflow-y: auto;
     padding-right: 20px;
+  }
+
+
+  @media (max-width: 600px) {
+    .community-aside {
+      display: None;
+
+    }
+
+    .community-main {
+      width: 150%;
+    }
   }
 
   .community-aside {

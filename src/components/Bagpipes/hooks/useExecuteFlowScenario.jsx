@@ -5,6 +5,8 @@ import { getSavedFormState } from '../utils/storageUtils';
 import ScenarioService from '../../../services/ScenarioService';
 import NodeExecutionService from '../../../services/NodeExecutionService';
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../utils/scenarioUtils';
+import { constructCallData, formatCallData } from '../utils/callDataUtils';
+
 import { fetchNodeExecutionData, processWebhookEvent, waitForNewWebhookEvent } from './utils/scenarioExecutionUtils';
 import SocketContext from '../../../contexts/SocketContext';
 import WebhooksService from '../../../services/WebhooksService';
@@ -327,12 +329,22 @@ const useExecuteFlowScenario = (nodes, setNodes, instance) => {
                     console.log('Active Execution Data:', activeExecutionData);
                     const parsedFormData = processAndSanitizeFormData(currentNode.formData, activeExecutionData, upstreamNodeIds);
                     console.log('chainTx Parsed Form Data:', parsedFormData);
+
+                    const callData = constructCallData(parsedFormData);
+                    console.log('constructCallData params call data', { callData } );
+              
+                    const formattedCallData = formatCallData(callData);
+                    console.log('constructCallData params call data formattedParams', { callData, formattedCallData } );
+
+
+                    
+
                     try {
-                        const { extrinsic, encodedCallData } = await ChainRpcService.createChainTxMethod({
+                        const { extrinsic, encodedCallData } = await ChainRpcService.createChainTxRenderedMethod({
                             chainKey: parsedFormData.selectedChain,
                             palletName: parsedFormData.selectedPallet,
                             methodName: parsedFormData.selectedMethod.name,
-                            params: Object.values(parsedFormData.params || {})
+                            params: formattedCallData,
         
                         });
                         const paymentInfo = await getPaymentInfo(extrinsic, parsedFormData.selectedAddress, parsedFormData.selectedChain);

@@ -245,7 +245,7 @@ const ChainNode = ({ data, isConnectable }) => {
 
   useEffect(() => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
-    // console.log('currentNodeFormData', scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
+    console.log('currentNodeFormData', scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId));
     if (currentNodeFormData) {
         setFormState({
             chain: currentNodeFormData?.chain?.name || "",
@@ -264,12 +264,14 @@ const ChainNode = ({ data, isConnectable }) => {
 
     saveNodeFormData(activeScenarioId, nodeId, formData);
     setSavedFormState(nodeId, formData); // save to local storage
+    console.log(`saved form state`);
   }, [formState]);
 
   useEffect(() => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     
     if (currentNodeFormData) {
+      console.log(`set form state`);
         setFormState(currentNodeFormData);
     }
   }, [ nodeId, activeScenarioId]);

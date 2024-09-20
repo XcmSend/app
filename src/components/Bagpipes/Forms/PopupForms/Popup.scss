@@ -149,10 +149,12 @@ margin-right: 0px;
 }
 
 
-.http-form {
+.standard-form {
     overflow: scroll;
-    max-height: 700px;
+    min-height: 700px;
+    max-height: 1000px;
     min-width: 300px;
+    margin-bottom: 10px;
 }
 
 

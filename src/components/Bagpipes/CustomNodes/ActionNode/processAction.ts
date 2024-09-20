@@ -10,8 +10,14 @@ export function processAction(action: ActionType) {
         break;
       case 'remark':
         break;
-        case 'vote':
-          break;
+      case 'ink':
+        break
+      case 'delegate':
+        break
+      case 'stake':
+        break
+      case 'vote':
+        break;
       case 'transfer':
         // Here, TypeScript knows that "action" has the shape of "TransferAction"
         break;

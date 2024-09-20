@@ -71,6 +71,7 @@ function App () {
                 <Sidebar />
                 <MainLayout theme={'dark'} />
                 </div>
+                
                 {/* <SelectWalletModal theme={'dark'} /> */}
                 <SelectWalletModal />
                 </PanelTippyProvider>

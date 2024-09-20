@@ -55,3 +55,19 @@
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
+.chain-tx-container {
+  // resizable container only sideways 
+  resize: both;
+  overflow: auto;
+  max-width: none;     
+  min-width: 350px;
+  border: 1px solid #ccc;
+  background: white; 
+  outline: 10px solid transparent; /* Added transparency for outline for consistency */
+  border: 5px solid #ffffff;
+  padding-bottom: 10px;
+  // a box shadow bottom right
+  box-shadow: 5px 5px 5px #ccccccca;
+  max-height: 1000px;
+}

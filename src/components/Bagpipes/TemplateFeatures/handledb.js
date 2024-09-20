@@ -3,7 +3,7 @@ import config from '../../../config';
 
 const saveUrl = async (longUrl) => {
   try {
-    const response = await axios.post(`https://api.bagpipes.io/api/template/saveUrl`, { url: longUrl });
+    const response = await axios.post(`${config.baseUrl}/api/template/saveUrl`, { url: longUrl });
     const shortUrl = response.data;
     console.log(`saveUrl:`, shortUrl.shortUrl);
     return shortUrl;
@@ -15,7 +15,7 @@ const saveUrl = async (longUrl) => {
 
 const getUrl = async (shortUrl) => {
   try {
-    const response = await axios.get(`https://api.bagpipes.io/api/template/getUrl/${shortUrl}`);
+    const response = await axios.get(`${config.baseUrl}/api/template/getUrl/${shortUrl}`);
     console.log(`got response data:`, response);
     const longUrl = response.data.longUrl;
     console.log(`geturl longurl: `,longUrl);

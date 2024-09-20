@@ -4,16 +4,16 @@ export interface Template {
   description: string;
   image?: string;
   workflowOrderedList?: string[];
-  links?: { title: string; url: string }[];
+  links?: Link[];
 }
 
 export interface BagpipesTemplate extends Template {
   workflowOrderedList?: string[];
-  links: { title: string; url: string }[];
+  links: Link[];
 }
 
 export interface UITemplate extends Template {
-  links: { title: string; url: string }[];
+  links: Link[];
   image: string;
 }
 
@@ -26,6 +26,12 @@ export interface HowTo {
   title: string;
   image: string;
   description: string;
+  links?: Link[];
+}
+
+export interface Link {
+  title: string;
+  url: string;
 }
 
 export interface Hashtag {
@@ -46,6 +52,7 @@ export interface Creator {
 }
 
 export interface Community {
+  id: string;
   logo: string;
   name: string;
   title: string;

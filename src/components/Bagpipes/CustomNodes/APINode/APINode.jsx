@@ -19,8 +19,8 @@ export default function APINode({ data }) {
       {/* Logo in the middle of the circle */}
 
       {/* Title outside the circle below the logo */}
-      <div className="node-title-circle absolute bottom-[-38%] text-center">
-        <div className="font-medium api-name text-gray-500">API Call</div>
+      <div className="node-title-circle">
+        <div className="node-title font-medium api-name text-gray-500">API Call</div>
       </div>
       
       <Handle position={Position.Right} type="source" className=" z-10" />

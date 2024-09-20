@@ -1,0 +1,16 @@
+@import '../../../../variables.scss';
+
+.nodeBody {
+    box-shadow: 0 14px 9px rgba(118, 118, 118, 0.1), 10px 10px 10px rgba(0, 0, 0, 0.08);
+  }
+
+  .react-flow__node-delay {
+    background-color: var(--node-bg);
+    border-radius :1000px !important;
+    font-family: $primary-font, sans-serif;
+    font-size: xx-small;
+
+    &:hover {
+        box-shadow: 8px 8px 10px 5px var(--box-shadow-color) !important;
+    }
+  }
