@@ -96,7 +96,7 @@ function composeFunctionStartName(baseName: string): string {
 function createFunctionBlock(functionName: string, numArgs: number, pillBlockTypes: PillBlockTypes, overrides?: Partial<PillBlockType>): FunctionBlockItem[] {
   const functionMainName = functionName;
   const composedName = composeFunctionStartName(functionName);
-  console.log("composedName", composedName);
+ // console.log("composedName", composedName);
 
   // Apply overrides or use defaults for function start
     const functionStartOverrides = overrides ? { ...pillBlockTypes.functionStart, ...overrides, name: composedName } : { ...pillBlockTypes.functionStart, name: composedName };
@@ -184,7 +184,7 @@ export const textBinaryFunctionBlocks: Record<string, FunctionBlockItem[]> = {
 
 }
 
-export const bytesFunctionBlocks: Record<string, FunctionBlockItem[]> = {
+export const encodeFunctionBlocks: Record<string, FunctionBlockItem[]> = {
   encodeBase64: createFunctionBlock("encodeBase64", 1, pillBlockTypes, { class: "function", group: "text-binary", type: "text" }),
   encodeBytes:  createFunctionBlock("encodeBytes", 1, pillBlockTypes, { class: "function", group: "text-binary", type: "text" }),
   decodeBase64: createFunctionBlock("decodeBase64", 1, pillBlockTypes, { class: "function", group: "text-binary", type: "text" }),
@@ -196,11 +196,7 @@ export const bytesFunctionBlocks: Record<string, FunctionBlockItem[]> = {
   toHex:        createFunctionBlock("toHex", 1, pillBlockTypes, { class: "function", group: "text-binary", type: "text" }),
 }
 
-export const cryptographicHashFunctionBlocks: Record<string, FunctionBlockItem[]> = {
-  sha256:        createFunctionBlock("sha256", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
-  sha512:        createFunctionBlock("sha512", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
-  ed25519:       createFunctionBlock("ed25519", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
-  sr25519:       createFunctionBlock("sr25519", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
+export const formatConversionFunctionBlocks: Record<string, FunctionBlockItem[]> = {
   bytesToHex:    createFunctionBlock("bytesToHex", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   hexToBytes:    createFunctionBlock("hexToBytes", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   balanceToHex:   createFunctionBlock("balanceToHex", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
@@ -209,12 +205,22 @@ export const cryptographicHashFunctionBlocks: Record<string, FunctionBlockItem[]
   hexToAccountId: createFunctionBlock("hexToAccountId", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   stringToHex:   createFunctionBlock("stringToHex", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   hexToString:   createFunctionBlock("hexToString", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
+  u8ArrayToHex: createFunctionBlock("u8ArrayToHex", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
+
+
+}
+
+
+export const cryptographicHashFunctionBlocks: Record<string, FunctionBlockItem[]> = {
+  sha256:        createFunctionBlock("sha256", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
+  sha512:        createFunctionBlock("sha512", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
+  ed25519:       createFunctionBlock("ed25519", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
+  sr25519:       createFunctionBlock("sr25519", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   blake2ToString: createFunctionBlock("blake2ToString", 2, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   blake2ConcatAString: createFunctionBlock("blake2ConcatAString", 3, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   xXhashAString: createFunctionBlock("xXhashAString", 2, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   xXhashConcatAString: createFunctionBlock("xXhashConcatAString", 3, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   seedToAddress: createFunctionBlock("seedToAddress", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
-  u8ArrayToHex: createFunctionBlock("u8ArrayToHex", 1, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   pbkdf2:        createFunctionBlock("pbkdf2", 4, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   bcrypt:        createFunctionBlock("bcrypt", 2, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
   scrypt:        createFunctionBlock("scrypt", 6, pillBlockTypes, { class: "function", group: "crypto-hash", type: "text" }),
@@ -299,6 +305,8 @@ export const functionBlocks: FunctionBlocks = {
   ...logicFunctionBlocks,
   ...mathFunctionBlocks,
   ...textBinaryFunctionBlocks,
+  ...encodeFunctionBlocks,
+  ...formatConversionFunctionBlocks,
   ...cryptographicHashFunctionBlocks,
   ...arrayFunctionBlocks,
   ...collectionFunctionBlocks,

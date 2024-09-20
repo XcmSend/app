@@ -39,8 +39,8 @@ export async function getHydraDxSpotPrice(assetIn: string, assetOut: string) {
     `getHydraDx Spot price for ${assetIn} to ${assetOut}: ${JSON.stringify(
       spotPrice,
       null,
-      2
-    )}`
+      2,
+    )}`,
   );
   console.log(`got spot price`);
   return spotPrice.toString();
@@ -49,12 +49,12 @@ export async function getHydraDxSpotPrice(assetIn: string, assetOut: string) {
 export async function getHydraDxSellPrice(
   assetIn: string,
   assetOut: string,
-  amount: number
+  amount: number,
 ) {
   console.log(`getHydraDx Getting selling details...`);
   if (!tradeRouter) {
     console.log(
-      `getHydraDx Initializing TradeRouter in teh getHydraDxSell function...`
+      `getHydraDx Initializing TradeRouter in teh getHydraDxSell function...`,
     );
     await initializeTradeRouter();
   }
@@ -79,7 +79,7 @@ interface MyRoute {
 export async function hdx_get_routes(
   assetin: string,
   assetout: string,
-  amountin: number
+  amountin: number,
 ): Promise<MyRoute[]> {
   const routes: MyRoute[] = [];
   if (!tradeRouter) {

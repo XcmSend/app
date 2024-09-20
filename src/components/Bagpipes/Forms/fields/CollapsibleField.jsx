@@ -9,8 +9,9 @@ import PanelForm from '../PopupForms/Panel/PanelForm';
 import { v4 as uuidv4 } from 'uuid';
 import { useDrop, useDrag } from 'react-dnd';
 import CustomInput from './CustomInput';
-import SequenceField from './SequenceField';
+import { SequenceField, CompositeField } from './SubstrateMetadataFields';
 import { CopyBlock, CodeBlock, dracula } from 'react-code-blocks';
+import FieldRenderer from '../PopupForms/ChainForms/FieldRenderer';
 import 'antd/dist/antd.css';
 import './Fields.scss';
 
@@ -18,13 +19,14 @@ import './Fields.scss';
 const { Option } = Select;
 
 
-const CollapsibleField = ({ fieldKey, nodeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, elementType}) => {
+const CollapsibleField = ({ fieldKey, nodeId, edgeId, title, info, toggleTitle, hasToggle,fieldTypes, items=[], selectOptions=[], selectRadioOptions=[], children, value, onChange, onPillsChange, placeholder, onClick, disabled, isTextAreaValue, customContent, buttonName, typesLookup, fieldTypeObject, fields, hoverInfo}) => {
   const [isToggled, setIsToggled] = useState(false);
-  const { showPanelTippy, hidePanelTippy, tippyInstance } = usePanelTippy();
+  const { showPanelTippy, hidePanelTippy, tippyPanelInstance } = usePanelTippy();
   const referenceElement = useRef(null);
   const [droppedItems, setDroppedItems] = useState([]);
   const [pills, setPills] = useState([]);
   const [editableContent, setEditableContent] = useState("");
+  const [compositeValues, setCompositeValues] = useState(value || {});
 
  
   const [{ isOver }, drop] = useDrop({
@@ -77,8 +79,8 @@ const handleInputClick = (event, nodeId) => {
 const handleContentChange = () => {
 
   // Notify that content has changed
-  if (tippyInstance.current && tippyInstance.current.popperInstance) {
-    tippyInstance.current.popperInstance.update();
+  if (tippyPanelInstance.current && tippyPanelInstance.current.popperInstance) {
+    tippyPanelInstance.current.popperInstance.update();
   }
 };
 
@@ -205,10 +207,29 @@ const renderSequenceItems = () => {
     }
 }
 
+const handleSubFieldChange = (subFieldName, newValue) => {
+  const updatedValues = { ...compositeValues, [subFieldName]: newValue };
+  setCompositeValues(updatedValues);
+  // Optionally propagate changes up if needed:
+  onChange(nodeId, updatedValues);  // Assuming you want to update some global state
+};
 
 
-  const renderContent = () => {
+
+
+const renderContent = (field, depth = 0) => {
+
+
+    console.log(`Rendering ${field} at depth ${depth}`);
+
+    if (depth > 10) {  // Set a reasonable max depth for recursion
+        console.error('Too deep recursion detected', field);
+        return <div>Complexity Error</div>;
+    }
+
     let content;
+
+
 
     // Handle the toggle condition
     if (isToggled) {
@@ -230,11 +251,70 @@ const renderSequenceItems = () => {
     }
 
   
-    // Dynamic field type rendering based on the fieldType prop
+    // Dynamic field type rendering based on the fieldTypes prop
     switch (fieldTypes) {
+
+      case 'composite':
+        console.log('Rendering composite field', fieldTypeObject);
+        content = (
+          <CompositeField
+            fields={fieldTypeObject.fields}
+            values={value || {}}
+            onChange={onChange}
+            typesLookup={typesLookup}
+            nodeId={nodeId}
+            setPills={setPills}
+            onPillsChange={onPillsChange}
+            onClick={(e) => handleInputClick(e, nodeId)} 
+
+          />
+        );
+        break;
+
+        // case 'variant':
+        //   console.log('Rendering variant field in collapsible field', fieldTypeObject);
+          
+        //   content = (
+        //     <div>
+        //     <VariantField
+        //       fields={fieldTypeObject.fields}
+        //       // values={value || {}}
+        //       onChange={onChange}              
+        //       typesLookup={typesLookup}
+        //       nodeId={nodeId}
+        //       setPills={setPills}
+        //       onPillsChange={onPillsChange}
+        //       onClick={onClick} 
+        //       value={value}
+        //       variants={fieldTypeObject.variants}
+        //       // onChange={(selectedVariant) => onChange({ ...field, value: selectedVariant })}
+  
+  
+
+        //     />
+
+        //     </div>
+        //   );
+    
+
+          case 'sequence':
+            content = (
+                <SequenceField
+                    items={value || []}
+                    onChange={(newItems) => onChange(newItems)}
+                    typesLookup={typesLookup}
+                    elementType={fieldTypeObject.elementType}
+                    setPills={setPills}
+                    onPillsChange={onPillsChange}
+                    nodeId={nodeId}
+                />
+            );
+            break;
+
 
 
         case 'input':
+          console.log(' decodeCallData Rendering input field');
             content = (
               <CustomInput 
                 value={value}
@@ -387,30 +467,109 @@ const renderSequenceItems = () => {
         );
       break
 
-      case 'sequence':
-        content = (
-            <SequenceField
-                items={value || []}
-                onChange={(newItems) => onChange(newItems)}
-                typesLookup={typesLookup}
-                elementType={elementType}
-                setPills={setPills}
-                onPillsChange={onPillsChange}
-                nodeId={nodeId}
-            />
-        );
-        break;
+     
+    
+
+
+
 
     case 'sequenceItems':
           return renderSequenceItems();
     case 'accordion':
       
     break;
-    case 'sequenceItems':
-      case 'array':
-      case 'variant':
-          return typeRenderer(field.typeId, lookupTypes);
+    // case 'sequenceItems':
+    case 'array':
+    // case 'variant':
+        return typeRenderer(field.typeId, lookupTypes);
+    case 'condition':
 
+
+    const parseNodeIdFromEdgeId = (edgeId) => {
+      console.log('parseNodeIdFromEdgeId', edgeId);
+      const parts = edgeId.split('-');
+      return parts.length > 1 ? parts[1] : '';
+    };
+  
+    const parsenodeIdfromEdgeId = parseNodeIdFromEdgeId(edgeId);
+
+    
+      const handleContentChange = (index, field, newContent) => {
+        const updatedValues = [...(value || [])];
+        updatedValues[index][field] = newContent;
+        onChange(updatedValues);
+      };
+
+
+      const handleSelectChange = (index, field, selectedOption) => {
+        const updatedValues = [...(value || [])];
+        updatedValues[index][field] = selectedOption.value;
+        onChange(updatedValues);
+      };
+
+      const handleAddCondition = (type) => {
+        const updatedValues = [
+          ...(Array.isArray(value) ? value : []),
+          { value: '', operator: '', anotherValue: '', type }
+        ];
+        onChange(updatedValues);
+      };
+
+      const handleRemoveItem = (index) => {
+        const updatedValues = value.filter((_, i) => i !== index);
+        onChange(updatedValues);
+      };
+
+      const renderConditionField = (condition, index) => (
+        <div key={index} className="condition-field">
+          <CustomInput
+            value={condition?.value}
+            onChange={(newContent) => handleContentChange(index, 'value', newContent)}
+            fieldKey={`${fieldKey}-${index}-value`}
+            onPillsChange={onPillsChange}
+            onClick={(e) => handleInputClick(e, parsenodeIdfromEdgeId)} 
+            placeholder={info}
+            className='custom-input'
+            pills={pills}
+            setPills={setPills}
+            nodeId={edgeId}
+          />
+          <Select
+            onChange={(selectedOption) => handleSelectChange(index, 'operator', selectedOption)}
+            value={selectOptions.find(option => option.value === condition?.operator)}
+            options={selectOptions}
+            placeholder="Select operator"
+            className='w-full font-semibold custom-select'
+          />
+          <CustomInput
+            value={condition?.anotherValue}
+            onChange={(newContent) => handleContentChange(index, 'anotherValue', newContent)}
+            fieldKey={`${fieldKey}-${index}-anotherValue`}
+            onPillsChange={onPillsChange}
+            onClick={(e) => handleInputClick(e, parsenodeIdfromEdgeId)} 
+            placeholder={info}
+            className='custom-input'
+            pills={pills}
+            setPills={setPills}
+            nodeId={edgeId}
+          />
+          <button type="button" onClick={() => handleRemoveItem(index)} disabled={value.length === 1}>Remove</button>
+          <button type="button" onClick={() => handleAddCondition('AND')}>Add AND rule</button>
+          <button type="button" onClick={() => handleAddCondition('OR')}>Add OR rule</button>
+        </div>
+      );
+
+      content = (
+        <div>
+          {(Array.isArray(value) && value?.length === 0) ? (
+            <button type="button" onClick={() => handleAddCondition('')}>Add Condition</button>
+          ) : (
+            value.map(renderConditionField)
+          )}
+        </div>
+      );
+      break;
+     
       default:
         content = <div className="description">{info}</div>;
     }
@@ -426,6 +585,7 @@ const renderSequenceItems = () => {
   const header = (
     <div className='font-semibold text-sm text-gray-600 mt-1'>
       <div>{title}</div>
+      <div className='text-xs text-gray-500 mt-3'>{hoverInfo}</div>
       
     </div>
   );
@@ -446,7 +606,7 @@ const renderSequenceItems = () => {
         <div className='flex justify-between'>
           {renderContent()}
         </div>
-        <div className='text-xxs text-gray-500 mt-3'>{info}</div>
+        <div className='custom-info'>{info}</div>
       </Collapse.Panel>
     </Collapse>
     </div>

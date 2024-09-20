@@ -84,7 +84,7 @@ return(
       )}
 
       {/* Title outside the circle below the logo */}
-      <div className="node-title-circle absolute bottom-[-38%] text-center">
+      <div className="node-title-circle">
       <div className="http-name font-medium text-xl flex-col text-gray-500">HTTP Request
       {/* <div className=" font-medium text-xs absolute top-8 right-16 text-gray-500">Get proposal</div> */}
       </div>

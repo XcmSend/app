@@ -20,7 +20,7 @@ import './Pills/Pills.scss';
 // import { PanelIcon } from '../../../../Icons/icons';
 
 
-const PanelForm = ({ nodeId, onClose, notifyChange }) => {
+const PanelForm = ({ nodeId, edgeId, onClose, notifyChange }) => {
   const dropPositionRef = useRef(null);    
   const { scenarios, activeScenarioId, saveNodeFormData, savePanel, panels, setSelectedPanelInNode, executionId } = useAppStore(state => ({ 
         scenarios: state.scenarios,

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useRef, useEffect } from 'react';
+
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 
@@ -10,6 +11,7 @@ export const TippyProvider = ({ children }) => {
   const [tippyProps, setTippyProps] = useState({
     visible: false,
     position: { x: 100, y: 300 },
+    size: { width: 300, height: 150 },
     nodeId: null,
     placement: 'bottom',
     content: null
@@ -75,7 +77,7 @@ export const PanelTippyProvider = ({ children }) => {
     content: null,
     placement: 'bottom',
   });
-  const tippyInstance = useRef(null);
+  const tippyPanelInstance = useRef(null);
   const pollingIntervalRef = useRef(null);
 
   const showPanelTippy = (nodeId, referenceElement, content, placement = 'top-start') => {
@@ -115,9 +117,9 @@ export const PanelTippyProvider = ({ children }) => {
     }
 
     pollingIntervalRef.current = setInterval(() => {
-      if (tippyInstance.current && tippyInstance.current.popperInstance) {
+      if (tippyPanelInstance.current && tippyPanelInstance.current.popperInstance) {
         console.log('Polling: Updating Tippy instance');
-        tippyInstance.current.popperInstance.update();
+        tippyPanelInstance.current.popperInstance.update();
       }
     }, 1000); // Poll every 3 seconds
   };
@@ -139,14 +141,14 @@ export const PanelTippyProvider = ({ children }) => {
   useEffect(() => {
     console.log('PanelTippyProvider useEffect for visibility/content change');
 
-    if (tippyInstance.current && tippyInstance.current.popperInstance) {
+    if (tippyPanelInstance.current && tippyPanelInstance.current.popperInstance) {
       console.log('Updating Tippy instance');
-      tippyInstance.current.popperInstance.update();
+      tippyPanelInstance.current.popperInstance.update();
     }
   }, [panelTippyProps.content, panelTippyProps.visible]);
 
   return (
-    <PanelTippyContext.Provider value={{ panelTippyProps, showPanelTippy, hidePanelTippy, tippyInstance }}>
+    <PanelTippyContext.Provider value={{ panelTippyProps, showPanelTippy, hidePanelTippy, tippyPanelInstance }}>
       {children}
       {panelTippyProps.visible && (
         <Tippy
@@ -163,7 +165,7 @@ export const PanelTippyProvider = ({ children }) => {
           boundary="viewport"
           maxWidth="100%"
           onCreate={(instance) => {
-            tippyInstance.current = instance;
+            tippyPanelInstance.current = instance;
           }}
         >
           <div

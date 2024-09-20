@@ -1,0 +1,456 @@
+.blinkTitleInfo {
+  display: flex;
+  align-items: left;
+  // we want items to be stacked under each other
+  flex-direction: column;
+  margin: 20px;
+
+  h1 {
+    font-size:32px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+  }
+
+  span {
+    margin-left: 2px;
+    color: grey
+  }
+
+
+}
+
+
+
+
+.blinkMainContainer {
+    overflow-y: scroll;
+    height: 100%;
+    display: flex;
+    background: rgb(238, 238, 238);
+}
+
+label {
+  color: rgb(104, 104, 104)
+}
+
+.blinkBuilder {
+    // display: flex;
+    // justify-content: space-around;
+    // align-items: flex-start;
+    height: 100%;
+    padding: 20px;
+    width: 40%;
+
+
+
+  .blinkForm {
+    overflow-y: scroll;
+height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    min-width: 400px;
+    padding: 20px;
+    margin: 7px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: white;
+    // width: 300px;
+
+    .actionArea {
+      padding: 20px;
+      margin: 10px;
+      border: 1px dashed #ccc;
+      border-radius: 10px;
+    }
+
+  .actionBox {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    align-items: left;
+    width: 200px;
+    padding: 12px;
+    margin: 7px;
+    margin: 15px 0 0 0;
+    // lets make the border dashed but more spaced dots
+    border: 1px dashed #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 300px;
+
+  .typeBox {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    width: 250px;
+    padding: 7px;
+    margin: 7px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-left: 17px;
+    // box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .actionRow {
+    display: flex;
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; 
+  }
+
+}
+
+
+
+    h2 {
+      text-align: center;
+    }
+
+    // button {
+    //   padding: 8px 16px;
+    //   margin: 10px 0;
+    //   border-radius: 5px;
+    //   background: #007bff;
+    //   color: white;
+    //   border: none;
+    //   cursor: pointer;
+
+    //   &:hover {
+    //     background: darken(#007bff, 10%);
+    //   }
+    // }
+
+    .add-button, .remove-button {
+    
+      width: 30px;
+      padding: 3px;
+      background: rgb(39, 39, 254);
+      color: white;
+      font-weight: 700;
+      margin-right: 5px;
+      border-radius: 100%;
+      align-items: center;
+      text-align: center;
+      
+  }
+
+  .remove-button {
+    background: rgb(254, 39, 39);
+  }
+  }
+
+  form {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    padding: 20px;
+    // border: 1px solid #ccc;
+    border-radius: 10px;
+    // box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+    h2 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: bold;
+      min-width: 120px;
+      align-items: center;
+    }
+
+    input, textarea {
+      padding: 8px;
+      margin: 5px 0 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+      font-weight: normal;
+    }
+
+    textarea {
+      height: 100px;
+    }
+
+    // button {
+    //   align-items: center !important;
+    // }
+    //   padding: 8px 16px;
+    //   margin: 10px 0;
+    //   border-radius: 5px;
+    //   background: #28a745;
+    //   color: white;
+    //   border: none;
+    //   cursor: pointer;
+
+    //   &:hover {
+    //     background: darken(#28a745, 10%);
+    //   }
+    // }
+
+    .action-button {
+      display: flex;
+      align-items: center !important;
+      cursor: pointer;
+      border: 0px;
+      outline: 0px;
+      // width: 200px;
+      
+      &:hover {
+            border: 0px
+          }
+    
+      .add-button, .remove-button {
+    
+          width: 30px;
+          padding: 3px;
+          background: rgb(39, 39, 254);
+          color: white;
+          font-weight: 700;
+          margin-right: 5px;
+          border-radius: 100%;
+          align-items: center;
+          text-align: center;
+          
+      }
+
+      .remove-button {
+        background: rgb(254, 39, 39);
+      }
+    }
+  }
+}
+
+.actionSelect {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  // width: 200px;
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 7px;
+  font-weight: normal;
+  width: 100%;
+}
+
+
+.viewerWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+
+.blinkViewer {
+  font-family: 'Inter', sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 20px;
+  margin: auto;
+  width: 500px; // Fixed width similar to an embedded Twitter card
+  min-height: auto;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); // Adding some shadow for depth
+  background: #fff; // Assuming a light mode card, set a white background
+  // font-family: Inter,Roboto,Helvetica,sans-serif; 
+  // ok we want the position of the viewer to always be floating on the right side and centered vertically
+  // position: absolute;
+  // top: 10%;
+  // right: 200px;
+  //  margin: auto;
+  //  overflow: scroll;
+  margin-top: 100px;
+   
+
+   h1 {
+    margin-top: 10px;
+    font-size:large;
+    font-weight: bold;
+    margin-bottom: 0px;
+   }
+
+   p {
+    margin-top: 0px;
+    font-size:normal;
+    font-weight: normal;
+   }
+  h2 {
+    margin-top: 0;
+  }
+
+  .blink-icon {
+    max-width: 100%; // Ensure the image does not exceed the container's width
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+
+
+  }
+
+
+
+  .blink-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.5rem; // Adjust the top margin as needed
+  
+    .link-section, .creator-section {
+      display: flex;
+      align-items: center;
+  
+      // Adjust spacing between icons and text
+      .icon {
+        
+        color: grey;
+       
+      }
+  
+      .blink-title, .creator-name {
+        margin-left: 0.25rem;
+        color: grey
+      }
+    }
+  
+    // Responsive adjustments for smaller screens
+    @media (max-width: 600px) { // Adjust breakpoint as necessary
+      flex-direction: column;
+      align-items: flex-start;
+  
+      .link-section, .creator-section {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  }
+  
+
+
+  .button-group-style {
+    display: flex;
+    // we want the siblings of the buttons to be on the same row
+    justify-content: space-around; /* This will space out buttons evenly */
+    // align-items: center;
+    margin-top: auto;    // background: #c2c2c2;
+    width: 100%;
+    height: 50px;
+    padding: 0;
+    list-style: none;
+    margin: 0;
+    
+
+    ul {
+      display: flex;
+      width: 100%; /* Ensures the ul takes up the entire width of its container */
+      justify-content: space-around; /* This will space out buttons evenly */
+      padding: 0; /* Removes default padding */
+      list-style: none; /* Removes bullet points */
+  }
+
+    li {
+      flex-grow: 1; /* Distributes space evenly amongst list items */
+      display: flex; /* Aligns the button properly within the list item */
+      justify-content: center; /* Centers the button within the list item */
+      align-items: center; /* Centers the button vertically within the list item */
+
+    }
+    .action-button {
+      width: 100%; /* Ensures the button stretches to fill its list item */
+      margin: 5px; /* Provides space around the button */
+      padding: 10px 0; /* Vertical padding, adjust as necessary */
+  }
+    button {
+      padding: 7px 12px; // Padding inside the button
+      margin: 5px; // Remove margin
+      border-radius: 10px; // Rounded corners on the right side only
+      background: #222222 !important;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+
+      &:hover {
+          background: darken(#007bff, 10%);
+      }
+
+    }
+  }
+}
+
+
+.fixed-wrapper {
+  // we want the buttons in this wrapper to be on the same row if possible
+  display: flex;
+  justify-content: center;
+  
+}
+
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; // Space between multiple inputs if any
+    width: 100%; // Full width
+
+    input {
+        padding: 8px 50px 8px 8px; // Right padding to make space for the button
+        margin: 0; // Remove margin for alignment
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        width: 100%;
+        font-weight: normal;
+    }
+
+    button {
+      position: absolute;
+      right: 1px; // Positioned right inside the input
+      top: 1px; // Align top
+      bottom: 1px; // Align bottom to stretch the button height to input's height
+      padding: 0 12px; // Padding inside the button
+      margin: 0; // Remove margin
+      border-radius: 0 17px 17px 0; // Rounded corners on the right side only
+      background: #000000 !important;
+      color: white;
+      border: none;
+      cursor: pointer;
+
+      &:hover {
+          background: darken(#007bff, 10%);
+      }
+  }
+
+    
+}
+
+  .inputAmountButton {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    background: #000000;
+  }
+  button {
+    opacity: 1;
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    li button {
+      margin-top: 10px;
+    }
+  }
+}
+
+
+

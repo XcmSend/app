@@ -239,8 +239,8 @@ return(
       )}
 
       {/* Title outside the circle below the logo */}
-      <div className="node-title-circle absolute bottom-[-38%] text-center">
-      <div className="chainTx-name font-medium text-xl flex-col text-gray-500">Chain Tx
+      <div className="node-title-circle ">
+      <div className="node-title chainTx-name">Chain Tx
       {/* <div className=" font-medium text-xs absolute top-8 right-16 text-gray-500">Get proposal</div> */}
       </div>
       </div>

@@ -1,28 +1,37 @@
-import React, { useState, useEffect, useMemo, useContext } from 'react';
+import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 import useAppStore from '../../../../../../store/useAppStore';
 import { WalletContext } from '../../../../../Wallet/contexts';
 import { getAssetBalanceForChain } from '../../../../../../Chains/Helpers/AssetHelper';
 import BalanceTippy from './BalanceTippy';
 
 import { broadcastToChain } from '../../../../../../Chains/api/broadcastToChain';
+import { decodeCallData } from '../../../../../../Chains/api/codecForCallData';
 
 import toast  from 'react-hot-toast';
 import { ChainToastContent, ActionToastContent, CustomToastContext } from '../../../../../toasts/CustomToastContext'
 
 import { processScenarioData, validateDiagramData, processAndSanitizeFormData, getUpstreamNodeIds } from '../../../../utils/scenarioUtils';
+import { constructCallData, formatCallData } from '../../../../utils/callDataUtils';
+import { generatePathKey } from '../../../fields/utils';
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 import { CollapsibleField }  from '../../../fields';
 import { ChainQueryIcon } from '../../../../../Icons/icons';
 import { useTippy } from '../../../../../../contexts/tooltips/TippyContext';
+import { usePanelTippy } from '../../../../../../contexts/tooltips/TippyContext';
+import useTooltipClick from '../../../../../../contexts/tooltips/tooltipUtils/useTooltipClick';
 import { listChains} from '../../../../../../Chains/ChainsInfo';
-import { queryMetadata } from './QueryMetadata';
-import { parseMetadataPallets, resolveTypeName, resolveFieldType } from '../parseMetadata'
-import { parseLookupTypes } from '../ParseMetadataTypes';
+import { queryMetadata } from '../QueryMetadata';
+import { parseMetadataPallets, resolveFieldType, resolveTypeName } from '../parseMetadata'
+import { parseLookupTypes } from '../parseMetadata/ParseMetadataTypes';
 import { resolveKeyType } from '../resolveKeyType';
 import ChainRpcService from '../../../../../../services/ChainRpcService';
+import CustomInput from '../../../fields/CustomInput';
 import FormHeader from '../../../FormHeader';
 import FormFooter from '../../../FormFooter';
+import RecursiveFieldRenderer from '../../../fields/RecursiveFieldRenderer/RecursiveFieldRendererNew';
+import DynamicFieldRenderer from './DynamicFieldRenderer';
+import { generatePath } from '../../../fields/RecursiveFieldRenderer/utils';
 
 import '../types';
 
@@ -35,7 +44,7 @@ import '../../Popup.scss';
 import '../../../../../../index.css';
 
 
-const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
+const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId, pills, setPills, onPillsChange }) => {
   const { scenarios, activeScenarioId, saveNodeFormData, clearSignedExtrinsic, markExtrinsicAsUsed, updateNodeResponseData } = useAppStore(state => ({ 
     scenarios: state.scenarios,
     activeScenarioId: state.activeScenarioId,
@@ -61,24 +70,36 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   const [selectedPallet, setSelectedPallet] = useState(formData.selectedPallet || null);
   const [selectedMethod, setSelectedMethod] = useState(formData.selectedMethod || null);
   const [selectedParams, setSelectedParams] = useState(formData.selectedParams || null);
+  const [localResolvedFields, setLocalResolvedFields] = useState([]);
+
 
   const [result, setResult] = useState('');
 
   const { hideTippy } = useTippy();
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [isTextAreaValue, setIsTextAreaValue] = useState(false);
+  const [isDecodedTextAreaValue, setDecodedTextAreaValue] = useState(false);
+
+
+
+
 
   const lookupTypes = useMemo(() => {
+    console.log("Complete metadata object available for types parsing:", metadata);
     const typesArray = metadata?.metadata?.V14?.lookup?.types;
-    // console.log('Lookup Types in lookupTypes:', typesArray);
+    console.log('Lookup Types in lookupTypes:', typesArray)
     if (typesArray && Array.isArray(typesArray)) {
+      console.log("Lookup Types Array:", typesArray);
         const parsedTypes = parseLookupTypes(typesArray);
-        // console.log("Lookup Parsed Types:", parsedTypes);
+        console.log("Lookup Parsed Types:", parsedTypes);
         return parsedTypes;
+    } else {
+        console.error("Metadata is not valid or types are not available", typesArray);
     }
-    console.error("Metadata is not valid or types are not available");
     return {};
-  }, [metadata]);
+}, [metadata]); // useMemo for memoization of the lookupTypes object to prevent unnecessary re-renders
+
+
 
 
   useEffect(() => {
@@ -128,6 +149,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
 
 
 
+
   const handleChainSelectChange = async (chainName) => {
     if (chainName !== selectedChain) {
         setSelectedChain(chainName);
@@ -147,6 +169,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedChain: chainName, selectedMethod: null, selectedPallet: null, params: null});
   };
 
+
     
   const handlePalletChange = (palletName) => {
     const newPallet = pallets.find(p => p.name === palletName);
@@ -160,31 +183,107 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedPalletData: newPallet, selectedPallet: palletName, selectedMethod: null, params: null});
   };
 
-  const handleMethodChange = (methodName) => {
+  useEffect(() => {
+    if (formData.selectedMethod) {
+        const fields = formData.selectedMethod.fields.map(field => 
+            resolveFieldType(field.type, lookupTypes));
+        setLocalResolvedFields(fields);
+        console.log('useEffect formData.selectedMethod:', formData.selectedMethod, 'fields:', fields);
+    }
+}, [formData.selectedMethod, lookupTypes]);
+
+
+useEffect(() => {
+  if (localResolvedFields) {
+      console.log('useEffect resolvedFields:', localResolvedFields);
+  }
+}, [localResolvedFields]);
+  
+
+const handleMethodChange = (methodName) => {
     const newMethod = formData.selectedPalletData?.calls.find(calls => calls.name === methodName);
+    let resolvedFields;
     console.log('handleMethodChange New Method:', newMethod);
+
+
+
     if (newMethod && newMethod !== selectedMethod) {
+        resolvedFields = formData?.selectedMethod?.fields?.map(field =>
+            resolveFieldType(field.type, lookupTypes)
+        );
+
+        console.log('handleMethodChange Resolved Fields:', resolvedFields);
+
+
         setSelectedMethod(newMethod);
-        setSelectedParams({});
+        // setSelectedParams({});
+        setLocalResolvedFields(resolvedFields);
+
     }
     // setSelectedMethod(newMethod);
 
-    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, params: null});
+    // saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod, params: []});
+    saveNodeFormData(activeScenarioId, nodeId, {...formData, selectedMethod: newMethod});
+
   };
 
 
-  const handleMethodFieldChange = (fieldName, newFieldValue) => {
-    // Update the specific field inside formData.params
-    const updatedParams = {
-        ...formData.params, 
-        [fieldName]: newFieldValue
-    };
-    const updatedValues = {
-        ...formData,
-        params: updatedParams
-    };
-    saveNodeFormData(activeScenarioId, nodeId, updatedValues);
+
+
+// const handleMethodFieldChange = (fieldName, newValue) => {
+//   console.log('handleMethodFieldChange fieldName:', fieldName, 'newFieldValue:', newValue);
+
+//   if (!fieldName) {
+//       console.error("Field name is undefined.");
+//       return;
+//   }
+
+//   let updatedParams = {
+//       ...formData.params,
+//       [fieldName]: newValue  // Directly set the new value
+//   };
+
+//   console.log(`Updated params for field ${fieldName}:`, updatedParams);
+//   saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
+// };
+
+
+
+
+
+const handleMethodFieldChange = (updatedParams) => {
+  console.log('saveNodeFormData handleMethodFieldChange about to change values', updatedParams);
+
+  
+  saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
 };
+
+
+
+// const handleMethodFieldChange = (fieldName, newValue, fieldType) => {
+//   console.log('handleMethodFieldChange about to change values', fieldName, newValue, fieldType);
+
+//   if (!fieldName) {
+//       console.error("Field name is undefined.");
+//       return;
+//   }
+
+//   let updatedParams = {...formData.params};
+
+//   if (fieldType === 'variant') {
+//     console.log('handleMethodFieldChange updating variant:', fieldName, newValue);
+//       updatedParams[fieldName] = newValue; // Handle variant updates
+//   } else {
+//       updatedParams[fieldName] = newValue; // Handle all other updates as before
+//   }
+
+//   console.log(`Updated params for field ${fieldName}:`, updatedParams);
+//   saveNodeFormData(activeScenarioId, nodeId, {...formData, params: updatedParams});
+// };
+
+
+
+
 
   // handlers for the form fields
 
@@ -226,7 +325,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         hasToggle={true}
         fieldTypes="select"
         customContent={renderCustomContent()}
-        nodeId="address-dropdown"
+        nodeId={nodeId}
         info="Select an address that will sign the transaction."
         selectOptions={addressOptions}
         value={formData.selectedAddress || ''}
@@ -276,7 +375,7 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         hasToggle={true}
         fieldTypes="select"
         nodeId={nodeId}
-        info="Select a pallet to explore"
+        info={formData?.selectedPallet?.docs || "Select a pallet to execute tx."}
         selectOptions={pallets.map(pallet => ({ label: pallet.name, value: pallet.name }))}
         value={formData.selectedPallet || ''}
         onChange={(value) => handlePalletChange(value)}
@@ -311,7 +410,8 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
         customContent={generateCustomContent()}
         fieldTypes="select"
         nodeId={nodeId}
-        info="Select a transaction method to execute"
+        // also add docs from  const newMethod = formData.selectedPalletData?.calls.find(calls => calls.name === methodName);
+        info={formData?.selectedMethod?.docs || "Select a method to execute."}
         selectOptions={methods.map(method => ({ label: method.name, value: method.name }))}
         value={formData?.selectedMethod?.name || ''}
         onChange={(value) => handleMethodChange(value)}
@@ -320,64 +420,149 @@ const ChainTxForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
   };
   
 
+
+  
   const renderMethodFields = () => {
     if (!formData.selectedMethod) {
-        return null;  
+      return null;  
     }
 
+    if (!lookupTypes || Object.keys(lookupTypes).length === 0 || !localResolvedFields) {
+      console.log("Waiting for data...");
+      return <div>Loading...</div>;
+  }
+  
     const customContent = Object.keys(lookupTypes).length === 0 
                           ? <div>Loading data or incomplete metadata...</div>
                           : null;
+  
+        
+
+    if (!localResolvedFields || localResolvedFields.length !== formData.selectedMethod.fields.length) {
+        console.warn("Mismatch or missing data in localResolvedFields");
+        return <div>Error or incomplete data.</div>;
+    }
 
     return formData.selectedMethod.fields.map((field, index) => {
-        const fieldTypeObject = resolveFieldType(field.type, lookupTypes);
-        console.log('Field Type ID:', fieldTypeObject);
-        return (
-            <CollapsibleField
-                key={index}
-                title={`${field.name} <${field.typeName || resolveTypeName(field.type, lookupTypes)}> `}
-                info={field.docs || 'No documentation available.'}
-                fieldTypes={fieldTypeObject.type}  
-                customContent={customContent}
-                hasToggle={true}
-                nodeId={formData.nodeId}
-                value={formData.params?.[field.name] || ''}
-                onChange={(newFieldValue) => handleMethodFieldChange(field.name, newFieldValue)} // Pass the onChange handler
-                placeholder={`Enter ${field.name}`}
-                // Pass typesLookup if needed for dynamic rendering within the field
-                typesLookup={lookupTypes}
-                elementType={fieldTypeObject.elementType}
-            />
-        );
+      console.log('renderMethodFields index field:', index, field);  
+   
+          const resolvedFields = localResolvedFields;
+          const resolvedField = localResolvedFields?.[index];
+          console.log('renderMethodFields Resolved Field and Fields:', { resolvedField, resolvedFields });
+
+          if (!resolvedField) {
+              console.warn("Mismatch or missing data in localResolvedFields");
+              return <div>Error or incomplete data.</div>;
+          }
+
+          const chain     =    `${formData.selectedChain}`;
+          const pallet    =    `${formData.selectedPallet}`;
+          const method    =    `${formData.selectedMethod.name}`;
+          const fieldName =    `${field.name}`;
+
+          console.log('renderMethodFields RecursiveFieldRenderer - chain pallet method fieldName:', chain, pallet, method, fieldName);
+          const chainPalletMethod = `{${chain}}_{${pallet}}_{${method}}`;
+
+          const initialPath = generatePath(chainPalletMethod, fieldName, 'initialBase');
+          console.log("renderMethodFields  generatePath initialPath", { initialPath, fieldName, resolvedField } );
+
+          console.log('renderMethodFields formData.params', formData.params, initialPath, resolvedField);
+            // if the initial path doesnt exist in formData.params then save the inital path in params
+          if (!formData.params?.[chainPalletMethod]) {
+            console.log('renderMethodFields formData.params[chainPalletMethod] does not exist creating new param section:', formData.params, chainPalletMethod);
+            // we need to save the chainPalletMethod as the key of an object with fieldName added as the key of a nested object. 
+            saveNodeFormData(activeScenarioId, nodeId, {...formData, params: {...formData.params, [chainPalletMethod]: {}}});
+            // the above function will create a new object with the chainPalletMethod as the key and an empty object as the value.
+          }
+          return (
+            <>
+              <CollapsibleField
+                  title={
+                    <>
+                    <span className="field-name">{field.name}</span>
+                    <span className="type-name">
+                      {' <'}{field.typeName || resolvedField.typeName}{'>'}
+                    </span>
+                  </>
+                  }
+                  // info={field?.docs || ''}
+                  hoverInfo={field?.docs || ''}
+                  customContent={customContent}
+                  hasToggle={true}
+                  nodeId={nodeId}
+                  placeholder={`Enter ${field.name}`}
+              >
+               <RecursiveFieldRenderer
+                      index={index}
+                      localResolvedFields={localResolvedFields}
+                      fieldName={resolvedField.name}
+                      fieldObject={resolvedField}
+                      formValues={formData?.params?.[resolvedField?.name] || []}
+                      nodeId={nodeId}
+                      formData={formData}
+                      fieldPath={initialPath}
+                      onChange={(updatedParams) => handleMethodFieldChange(updatedParams)}
+                      fromType={'default'}
+                  />
+              </CollapsibleField>
+        
+        </>
+      );
     });
-};
-
-
-const renderSignAndSendTx = () => {
-  if (!formData.selectedMethod) {
-      return null;
-  }
-    return (
-      <CollapsibleField
-      title={`Sign and Send Tx`}
-      info={'Sign and send a transaction just within this node. If you use pills then it will use the data from the previous scenario workflow execution that was made.'}
-      fieldTypes="buttonTextArea"
-      buttonName="Submit Tx"
-      nodeId={nodeId}
-      value={result}
-      isTextAreaValue={isTextAreaValue}
-      onClick={handleSignMethodClick}
-      // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
-      placeholder={`Enter`}
-      disabled={!formData.selectedMethod}
-  />
-    );
-};
+  };
   
   
 
 
-  const handleSignMethodClick = async () => {
+  const renderSignAndSendTx = () => {
+    if (!formData.selectedMethod) {
+        return null;
+    }
+      return (
+        <CollapsibleField
+            title={`Sign and Send Tx`}
+            info={'Sign and send a transaction just within this node. If you use pills then it will use the data from the previous scenario workflow execution that was made.'}
+            fieldTypes="buttonTextArea"
+            buttonName="Submit Tx"
+            nodeId={nodeId}
+            value={result}
+            isTextAreaValue={isTextAreaValue}
+            onClick={handleSignExecuteMethodClick}
+            // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, field.name)}
+            placeholder={`Enter`}
+            disabled={!formData.selectedMethod}
+        />
+      );
+  };
+  
+
+  const renderDecodeCallData = () => {
+    if (!formData.selectedMethod) {
+        return null;
+    }
+      return (
+        <CollapsibleField 
+        key="encodedData"
+        title="Decode Call Data"
+        hasToggle={true}
+        fieldTypes="input"
+        nodeId={nodeId}
+        info="Add scale encoded call data to decode into the input field so that it can be decoded into pallet, method and field arguments."
+        value={encodedData}
+        isTextAreaValue={isTextAreaValue}
+        onChange={(newValue) => setEncodedData(newValue)}
+        customContent={encodedCustomContent()}
+      >
+
+     
+    </CollapsibleField>
+      );
+  };
+  
+  
+
+
+  const handleSignExecuteMethodClick = async () => {
     setIsTextAreaValue(true);
     clearSignedExtrinsic(activeScenarioId, nodeId);
 
@@ -406,7 +591,17 @@ const renderSignAndSendTx = () => {
       const upstreamNodeIds = getUpstreamNodeIds(orderedList, nodeId);
       const parsedFormData = processAndSanitizeFormData(formData, lastExecution, upstreamNodeIds);
 
-      const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${Object.values(parsedFormData.params)}\n`;
+      const callData = constructCallData(parsedFormData);
+      console.log('constructCallData params call data', { callData } );
+
+      const formattedCallData = formatCallData(callData);
+      console.log('constructCallData params call data formattedParams', { callData, formattedCallData } );
+
+      const formatArguments = (args) => {
+        return args.map(arg => JSON.stringify(arg, null, 2)).join(',\n');
+      }
+
+      const presignPack = `Draft Tx ready to sign: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${formattedCallData.section}, \nmethod: ${formattedCallData.method}, \n params: ${formatArguments(formattedCallData.arguments)}\n`;
       setResult(presignPack);
 
       console.log('Parsed Form Data:', parsedFormData);
@@ -414,11 +609,11 @@ const renderSignAndSendTx = () => {
         ...formData,
         isSigned: false
     });
-        const signedExtrinsic = await ChainRpcService.executeChainTxMethod({
+        const signedExtrinsic = await ChainRpcService.executeChainTxRenderedMethod({
             chainKey: parsedFormData.selectedChain,
             palletName: parsedFormData.selectedPallet,
             methodName: parsedFormData.selectedMethod.name,
-            params: Object.values(parsedFormData.params || {}),
+            params: formattedCallData,
             signer: walletContext?.wallet?.signer,
             signerAddress: parsedFormData.selectedAddress
         });
@@ -428,7 +623,7 @@ const renderSignAndSendTx = () => {
             signedExtrinsic: signedExtrinsic,
             isSigned: true
         });
-        const resultPack = `Chain Tx signed for: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${Object.values(parsedFormData.params)}\n`;
+        const resultPack = `Chain Tx signed for: \naddress: ${parsedFormData.selectedAddress}, \nchain: ${parsedFormData.selectedChain}, \npallet: ${parsedFormData.selectedPallet}, \nmethod: ${parsedFormData.selectedMethod.name}, \nparams: ${parsedFormData.params}\n`;
         const nextSteps = `Transaction signed successfully and is now being submitted to the chain...\n`;
         const submittingTransaction = `Submitting transaction...\n`;
         setResult(resultPack);
@@ -552,11 +747,48 @@ const renderSignAndSendTx = () => {
   };
 
 
+  const [encodedData, setEncodedData] = useState('0x');
+  const [decodedData, setDecodedData] = useState('');
+  const [error, setError] = useState('');
+
+  const handleDecodeCallData = async () => {
+    console.log('handleDecodeCallData selectedChain:', selectedChain, 'encodedData:', encodedData);
+    if (!encodedData) {
+      setError('Please enter encoded data to decode.');
+      return;
+    }
+
+    try {
+      const result = await decodeCallData(selectedChain, encodedData);
+      console.log('handleDecodeCallData Decoded Data:', result);
+      setDecodedData(result);
+      setError('');
+    } catch (err) {
+      setError(`Failed to decode data: ${err.message}`);
+      setDecodedData('');
+    }
+  };
+
+
+const encodedCustomContent = () => (
+  <div>
+  <button className='button' onClick={handleDecodeCallData}>Decode</button>
+  <div>
+    {error && <p style={{ color: 'red' }}>{error}</p>}
+    {decodedData && (
+      <div>
+        <h3>Decoded Data:</h3>
+        <pre>{JSON.stringify(decodedData, null, 2)}</pre>
+      </div>
+    )}
+  </div>
+</div>
+)
 return (
-  <div onScroll={handleScroll} className=''>
+  <div onScroll={handleScroll} className='chain-tx-container'>
       <FormHeader onClose={handleCancel} title='Chain Tx Form' logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
-      <div className='http-form'>
+      <div className='standard-form'>
           
           {renderAddressSelection()} 
           {renderChainSelection()}
@@ -564,9 +796,29 @@ return (
           {renderMethodSelection()}
           {renderMethodFields()}
           {renderSignAndSendTx()}
+          {renderDecodeCallData()}
 
 
     </div>
+
+    
+      {/* <CustomInput
+        type="text"
+        value={encodedData}
+        onChange={(e) => setEncodedData(e.target.value)}
+        placeholder="Enter encoded call data"
+        key={'encodedData'}
+        fieldKey={'encodedData'}
+        className='custom-input'
+        pills={pills}
+        setPills={setPills}
+        nodeId={nodeId}
+        onClick={handleInputClick} 
+        onPillsChange={onPillsChange}
+
+      /> */}
+
+
 
 
       <FormFooter onClose={handleCancel} onSave={handleSave} showToggle={true} onToggleChange={handleAdvancedSettingsToggle} />

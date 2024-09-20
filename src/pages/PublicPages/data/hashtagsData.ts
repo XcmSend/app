@@ -2,7 +2,6 @@ import { Hashtag } from '../types';
 
   
   export const hashtags: Hashtag[] = [
-         // lets do more hashtags but with different background colors and then suitable text colors
 
     { id: "1", tag: "blockchain", backgroundColor:"#00ffaa", color: "#000000"  },
     { id: "2", tag: "interoperability", backgroundColor: "#00ff00", color: "#000000"},
@@ -16,7 +15,6 @@ import { Hashtag } from '../types';
     { id: "10", tag: "DAO", backgroundColor: "#ff00ff", color: "#ffffff"},
     { id: "11", tag: "NFT", backgroundColor: "#ff00ff", color: "#ffffff"},
     { id: "12", tag: "staking", backgroundColor: "#ff00ff", color: "#ffffff"},
-    { id: "13", tag: "yield farming", backgroundColor: "#ff00ff", color: "#ffffff"},
     { id: "14", tag: "gaming", backgroundColor: "#ff00ff", color: "#ffffff"},
     { id: "15", tag: "metaverse", backgroundColor: "#ff00ff", color: "#ffffff"},
     { id: "16", tag: "web3", backgroundColor: "#ff00ff", color: "#ffffff"},
@@ -32,5 +30,11 @@ import { Hashtag } from '../types';
     { id: "26", tag: "yield farming", backgroundColor: "#ff00ff", color: "#ffffff"},
     { id: "27", tag: "gaming", backgroundColor: "#ff00ff", color: "#ffffff"},
     { id: "28", tag: "bridges", backgroundColor: "#ff00ff", color: "#ffffff"},
+    { id: "29", tag: "cross-chain swaps", backgroundColor: "#ff00ff", color: "#ffffff"},
+    { id: "30", tag: "AMM", backgroundColor: "#ff00ff", color: "#ffffff"},
+    { id: "31", tag: "DEX", backgroundColor: "#ff00ff", color: "#ffffff"},
+
+
+
   ];
   

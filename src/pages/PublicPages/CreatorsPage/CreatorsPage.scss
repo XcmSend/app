@@ -3,6 +3,8 @@
     margin: 0 auto;
     line-height: 1.6;
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-y: scroll;
+    height: 100%;
   
     &.dark {
       background-color: #2e2e2e;

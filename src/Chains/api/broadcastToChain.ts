@@ -15,7 +15,7 @@ import { SubmittableExtrinsic } from "@polkadot/api-base/types";
 export async function broadcastToChain(
   chain: string,
   signedExtrinsic: any,
-  { onInBlock, onFinalized, onError } // Add callback parameters
+  { onInBlock, onFinalized, onError }, // Add callback parameters
 ): Promise<void> {
   let api: ApiPromise;
   console.log(`broadcasting`);
@@ -42,12 +42,12 @@ export async function broadcastToChain(
 
         if (status.isInBlock) {
           console.log(
-            `Transaction included at blockHash ${status.asInBlock.toString()}`
+            `Transaction included at blockHash ${status.asInBlock.toString()}`,
           );
           onInBlock?.(status.asInBlock.toString());
         } else if (status.isFinalized) {
           console.log(
-            `Transaction finalized at blockHash ${status.asFinalized.toString()}`
+            `Transaction finalized at blockHash ${status.asFinalized.toString()}`,
           );
           onFinalized?.(status.asFinalized.toString());
           resolve();

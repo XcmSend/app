@@ -24,14 +24,14 @@ function getRelayChains() {
 // This function finds ingress channels for a given paraid on a specified relay chain.
 async function findIngressChannels(
   relayChainName: string,
-  paraid: number
+  paraid: number,
 ): Promise<number[]> {
   const api: ApiPromise = await getApiInstance(relayChainName);
   const result = await api.query.hrmp.hrmpIngressChannelsIndex(paraid);
   // Directly mapping over the result assuming result is Vec<u32>
   // const channels = result.map((item) => item.toNumber());
   const channels = (result as unknown as { toNumber: () => number }[]).map(
-    (item) => item.toNumber()
+    (item) => item.toNumber(),
   );
 
   // console.log(`Ingress channels for ${paraid} on ${relayChainName}:`, channels);
@@ -41,13 +41,13 @@ async function findIngressChannels(
 // This function finds egress channels for a given paraid on a specified relay chain.
 async function findEgressChannels(
   relayChainName: string,
-  paraid: number
+  paraid: number,
 ): Promise<number[]> {
   const api: ApiPromise = await getApiInstance(relayChainName);
   const result = await api.query.hrmp.hrmpEgressChannelsIndex(paraid);
   // Directly mapping over the result assuming result is Vec<u32>
   const channels = (result as unknown as { toNumber: () => number }[]).map(
-    (item) => item.toNumber()
+    (item) => item.toNumber(),
   );
   //   console.log(`Egress channels for ${paraid} on ${relayChainName}:`, channels);
   return channels;
@@ -59,23 +59,23 @@ async function findAllChannels() {
   for (const relayChainName of relayChains) {
     console.log(`Processing channels for relay chain: ${relayChainName}`);
     const parachains = Object.values(listChains()).filter(
-      (chain) => chain.relayParent === relayChainName
+      (chain) => chain.relayParent === relayChainName,
     );
     for (const parachain of parachains) {
       const ingressChannels = await findIngressChannels(
         relayChainName,
-        parachain.paraid
+        parachain.paraid,
       );
       const egressChannels = await findEgressChannels(
         relayChainName,
-        parachain.paraid
+        parachain.paraid,
       );
       // Do something with channels
     }
   }
 }
 export async function findIngressPolkadotChannels(
-  paraid: number
+  paraid: number,
 ): Promise<[number]> {
   //  console.log("findIngressPolkadotChannels for hrmp for  paraid", paraid);
   const api = await getApiInstance("polkadot");
@@ -86,13 +86,13 @@ export async function findIngressPolkadotChannels(
   console.log(
     "findIngressPolkadotChannels for hrmp for  paraid",
     paraid,
-    Channels
+    Channels,
   );
   return Channels;
 }
 
 export async function findEngressPolkadotChannels(
-  paraid: number
+  paraid: number,
 ): Promise<[number]> {
   const api = await getApiInstance("polkadot");
   const Channels = (
@@ -144,11 +144,11 @@ export async function inAndOutChannels(paraid: number): Promise<number[]> {
 
 export function listParachainsConnectedToRelay(
   relayName: string,
-  chains: Record<number, ChainInfo>
+  chains: Record<number, ChainInfo>,
 ): ChainInfo[] {
   // console.log("listParachainsConnectedToRelay for hrmp", chains);
   return Object.values(chains).filter(
-    (chain) => chain.relayParent === relayName
+    (chain) => chain.relayParent === relayName,
   );
 }
 
@@ -167,7 +167,7 @@ export async function buildHrmp(): Promise<Record<number, number[]>> {
     // console.log(`buildHrmp processing ${relayChain.name} with paraid ${relayChain.paraid}`);
 
     const parachains = Object.values(chainlist).filter(
-      (chain) => chain.relayParent === relayChain.name
+      (chain) => chain.relayParent === relayChain.name,
     );
     console.log(`buildHrmp ${relayChain.name} parachains`, parachains);
 

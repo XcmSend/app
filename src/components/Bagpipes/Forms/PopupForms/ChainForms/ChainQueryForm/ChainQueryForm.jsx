@@ -9,10 +9,8 @@ import { processScenarioData, validateDiagramData, processAndSanitizeFormData, g
 import { getOrderedList } from '../../../../hooks/utils/scenarioExecutionUtils';
 
 
-import { queryMetadata } from './QueryMetadata';
-import { parseMetadataPallets } from '../parseMetadata'
-import { parseLookupTypes } from '../ParseMetadataTypes';
-import { resolveKeyType } from '../resolveKeyType';
+import { queryMetadata } from '../QueryMetadata';
+import { parseMetadataPallets, parseLookupTypes, resolveTypeName } from '../parseMetadata'
 import ChainRpcService from '../../../../../../services/ChainRpcService';
 import ExtrinsicCountTester from './ExtrinsicCountTester'; // Import the ExtrinsicCountTester component
 
@@ -196,7 +194,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     
   const renderPalletSelection = () => {
     // console.log('renderPalletSelection pallets:', pallets);
-    if (!selectedChain || pallets.length === 0) return null;
+    if (!selectedChain || pallets?.length === 0) return null;
   
     return (
       <CollapsibleField
@@ -240,7 +238,7 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
             title="Blockhash/Blocknumber to Query (optional)"
             info="Enter a block hash or block number to query specific data, leave blank for latest block."
             fieldTypes="input"
-            hasToggle={true}
+            hasToggle={false}
             nodeId={nodeId}
             value={formData?.blockHash || ''}
             onChange={(value) => handleBlockHashChange(value)}
@@ -268,9 +266,9 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
     let keyTypeInfo = { displayName: 'Unknown' };
     if (storageItem.type?.Map) {
         const keyField = storageItem.type.Map.key;
-        keyTypeInfo = resolveKeyType(keyField, lookupTypes);
+        keyTypeInfo = resolveTypeName(keyField, lookupTypes);
     } else if (storageItem.type?.Plain) {
-        keyTypeInfo = resolveKeyType(storageItem.type.Plain, lookupTypes);
+        keyTypeInfo = resolveTypeName(storageItem.type.Plain, lookupTypes);
     }
 
 
@@ -282,12 +280,12 @@ const ChainQueryForm = ({ onSubmit, onSave, onClose, onEdit, nodeId }) => {
                 // key={key}
                 title={`Enter Key <${keyTypeInfo.displayName}>`}
                 info={storageItem.docs}
-                hasToggle={true}
+                hasToggle={false}
                 fieldTypes="input"
                 nodeId={nodeId}
                 value={formData.methodInput || ''}
                 onChange={(value) => handleMethodFieldChange( value)}
-                placeholder={`${keyTypeInfo.path[keyTypeInfo.path.length - 1]}`}
+                placeholder={`${keyTypeInfo?.path?.[keyTypeInfo?.path?.length - 1]}`}
                 // onPillsChange={(updatedPills) => handlePillsChange(updatedPills, 'methodInput')}
 
             />
@@ -401,13 +399,13 @@ return (
   <div onScroll={handleScroll} className=''>
       <FormHeader onClose={handleCancel} title={`Query Chain Form (${nodeId})`} logo={<ChainQueryIcon className='h-4 w-4' fillColor='black' />} />  
 
-      <div className='http-form'>
+      <div className='standard-form'>
           {renderChainSelection()}
           {renderPalletSelection()}
           {renderMethodSelection()}
           {renderMethodFields()}
           {renderRunMethod()}
-            <ExtrinsicCountTester chainKey='polkadot' />
+            {/* <ExtrinsicCountTester chainKey='polkadot' /> */}
           {renderBlockHashInput()}
 
     </div>

@@ -16,20 +16,22 @@ export default defineConfig({
     })  
   ],
 optimizeDeps: {
-  include: ['wasm-crypto'],
-        esbuildOptions: {
-            // Node.js global to browser globalThis
-            define: {
-                global: 'globalThis'
-            },
-            // Enable esbuild polyfill plugins
-            plugins: [
-                NodeGlobalsPolyfillPlugin({
-                    buffer: true
-                })
-            ]
-        }
+  // include: ['wasm-crypto'],
+  esbuildOptions: {
+      // Node.js global to browser globalThis
+      define: {
+          global: 'globalThis'
+      },
+      // Enable esbuild polyfill plugins
+      plugins: [
+          NodeGlobalsPolyfillPlugin({
+              buffer: true
+          })
+      ]
     },
+    },    
+   
+
   allowImportingTsExtensions: true,
   define: {
     // By default, Vite doesn't include shims for NodeJS/

@@ -89,7 +89,7 @@ export const loadScenarioAsync = async (scenarioId) => {
 export const startPersistScenarioAsync = async (scenarioId, persist) => {
   try {
     console.log('startPersistScenarioAsync', scenarioId, persist);
-      const success = await ScenarioService.startPersistScenario(scenarioId, persist);
+      const success = await ScenarioService.startPersistScenario(scenarioId);
       console.log('Server response:', success);
       if (success) {
           useAppStore.getState().persistScenario(scenarioId, persist);
@@ -103,7 +103,7 @@ export const startPersistScenarioAsync = async (scenarioId, persist) => {
 
 export const stopPersistScenarioAsync = async (scenarioId, persist) => {
   try {
-      const success = await ScenarioService.stopPersistScenario(scenarioId, persist);
+      const success = await ScenarioService.stopPersistScenario(scenarioId);
       console.log('Server response:', success);
       if (success) {
           useAppStore.getState().persistScenario(scenarioId, persist);

@@ -17,7 +17,7 @@ import CommunityPages from '../../pages/PublicPages/CommunityPages';
 import CommunityPage from '../../pages/PublicPages/CommunityPage/CommunityPage';
 import CreatorPage from '../../pages/PublicPages/CreatorPage/CreatorPage';
 import CreatorsPage from '../../pages/PublicPages/CreatorsPage/CreatorsPage';
-
+import BlinkBuilder from '../../pages/PublicPages/Blinks/BlinkBuilder/';
 import ScenarioInfo from '../../pages/Lab/Scenario';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';
@@ -44,7 +44,7 @@ function MainLayout({ children }) {
     
   <div className={`main-layout ${theme === 'dark' ? '-dark' : '-light'}`}>
 
-{tippyProps.visible && (
+    {tippyProps.visible && (
         <Tippy
           appendTo={tippyProps.reference || (() => document.body)}
           content={tippyProps.content}
@@ -57,12 +57,6 @@ function MainLayout({ children }) {
           <div style={{ position: 'fixed', left: tippyProps.position.x, top: tippyProps.position.y }}></div>
         </Tippy>
       )}
-
-
-  
-
-      
-
 
         {/* <Toaster /> */}
         <Toaster
@@ -125,6 +119,9 @@ function MainLayout({ children }) {
                     <Route path="test-flow" element={<ReactTestFlow />} />
                     <Route path="evm-wallet-info" element={<EvmWalletInfo />} />
                     <Route path="settings" element={<Settings />} />
+                    <Route path ="blinks" element={<BlinkBuilder />} />
+
+
 
 
                 {/* </Route> */}

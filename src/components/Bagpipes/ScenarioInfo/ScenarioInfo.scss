@@ -35,6 +35,14 @@
 }
 
 
+/* Disappear on smaller screens */
+@media (max-width: 700px) {
+  .scenario-info-container {
+      display: none;
+  }
+  
+}
+
 .dropdown-trigger {
   cursor: pointer;
   color: #007bff;

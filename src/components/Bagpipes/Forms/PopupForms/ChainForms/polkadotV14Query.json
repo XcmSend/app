@@ -4453,7 +4453,6 @@
                                           "fields": [
                                               {
                                                   "name": "id",
-                                                  "type": "73",
                                                   "typeName": "BodyId",
                                                   "docs": []
                                               },

@@ -346,3 +346,75 @@ export function setCaretAtSpecificPosition(parentNode, referenceNode) {
 }
 
 
+export function generatePathKey(pathSegments) {
+  console.log("generatePathKey path:", pathSegments);
+  // Concatenate IDs to form a unique path key
+ const keyPath = pathSegments.map(segment => `${segment.id}`).join('/');
+  console.log("generatePathKey keyPath:", keyPath);
+  return keyPath;
+}
+
+
+export function parsePathKey(pathKey) {
+  return pathKey.split('/').map(segment => {
+      const [id, type] = segment.split('-');
+      return { id, type };
+  });
+}
+
+// Rebuilds nested structure from flat path-keyed data
+export function rebuildNestedStructure(data) {
+  const root = {};
+  Object.entries(data).forEach(([key, value]) => {
+      const pathSegments = parsePathKey(key);
+      let current = root;
+      pathSegments.forEach((segment, index) => {
+          if (index === pathSegments.length - 1) {
+              current[segment.type] = value;
+          } else {
+              current[segment.type] = current[segment.type] || {};
+              current = current[segment.type];
+          }
+      });
+  });
+  return root;
+}
+
+
+export const setNestedValue = (obj, unstringedPath, value) => {
+  const path = unstringedPath.toString()
+  if (typeof path !== 'string') {
+      console.log('Invalid path type, converting to string:', stringPath);
+      return; // Optionally handle this case more gracefully
+  }
+
+  const keys = path.split('.');
+  keys.reduce((acc, key, index) => {
+      if (index === keys.length - 1) {
+          acc[key] = value;
+      } else {
+          if (!acc[key]) acc[key] = {};
+          return acc[key];
+      }
+  }, obj);
+};
+export const getNestedValue = (obj, unstringedPath) => {
+  const path = unstringedPath.toString()
+  if (typeof path !== 'string') {
+    console.log("getNestedValue obj path:",obj,  path);
+    console.error('Invalid path type:', path);
+    return; // Optionally handle this case more gracefully
+}
+  const keys = path.split('[').map(k => k.replace(']', ''));
+  return keys.reduce((acc, key) => acc[key], obj);
+};
+
+export const buildPath = (base, key) => {
+  if (typeof key !== 'string') {
+      console.error('Key should be a string:', key);
+      return base; // Return the base path to prevent further errors
+  }
+  return base ? `${base}.${key}` : key;
+};
+
+

@@ -90,6 +90,14 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
+    rococo_contracts: {
+        chain:"Contracts Rococo",
+        endpoints: [
+            "wss://rococo-contracts-rpc.polkadot.io",
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true,
+    },
     rococo_assethub: {
         chain: "Rococo Assethub",
         endpoints: [

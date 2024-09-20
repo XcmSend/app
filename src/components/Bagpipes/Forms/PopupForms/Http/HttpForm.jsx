@@ -379,7 +379,7 @@ if (field.children) {
     <div onScroll={handleScroll} className=''>
       <FormHeader onClose={handleCancel} title='Http' logo={<HttpIcon className='h-4 w-4' fillColor='black' />} />  
   
-      <div className='http-form'>
+      <div className='standard-form'>
       {formSections.map((section) => {
     if (isSectionVisible(section)) {
       return (

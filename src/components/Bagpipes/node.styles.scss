@@ -72,7 +72,7 @@
     outline: 15px solid rgba(198, 213, 38, 0.418) !important;
   }
 
-  .react-flow__node-webhook.selected,.react-flow__node-websocket.selected, .react-flow__node-router.selected, .react-flow__node-api.selected,  .react-flow__node-http.selected,  .react-flow__node-code.selected, .react-flow__node-schedule.selected, .react-flow__node-discord.selected, .react-flow__node-openAi.selected, .react-flow__node-chatGpt.selected, .react-flow__node-telegram.selected, .react-flow__node-slack.selected, .react-flow__node-twitter.selected, .react-flow__node-github.selected, .react-flow__node-google.selected, .react-flow__node-chainQuery.selected, .react-flow__node-chainTx.selected {
+  .react-flow__node-webhook.selected,.react-flow__node-websocket.selected, .react-flow__node-router.selected, .react-flow__node-api.selected,  .react-flow__node-http.selected,  .react-flow__node-code.selected,  .react-flow__node-blinks.selected, .react-flow__node-schedule.selected, .react-flow__node-discord.selected, .react-flow__node-openAi.selected, .react-flow__node-chatGpt.selected, .react-flow__node-telegram.selected, .react-flow__node-slack.selected, .react-flow__node-twitter.selected, .react-flow__node-github.selected, .react-flow__node-google.selected, .react-flow__node-chainQuery.selected, .react-flow__node-chainTx.selected, .react-flow__node-lightClient.selected {
     outline: 20px solid rgba(1, 179, 24, 0.203) !important;
     border-radius: 50px !important;
   }
@@ -329,3 +329,26 @@ background-color: white !important;
     100% { transform: rotate(360deg); }
   }
   
+  .node-title-circle {
+    position: absolute;     // Tailwind's absolute
+    bottom: -58%;           // Tailwind's bottom-[-38%]
+    text-align: center !important;      // Tailwind's text-center
+    width: 150px;           // Tailwind's w-full
+    padding: 0px;
+    background: rgba(255, 255, 255, 0);     
+    color: rgb(70, 70, 70);           // Tailwind's text-black
+    // border: 1px solid rgb(210, 210, 210);     // Tailwind's border border-black
+    // border-radius: 7px;       // Tailwind's rounded-full
+  }
+
+  .node-title {
+    font-weight: 500;      // Tailwind's font-medium
+    font-size: 1.25rem !important;    // Tailwind's text-xl (equivalent to 20px)
+    width: 100%;  
+    text-align: center !important;    // Tailwind's text-center
+   
+    }
+
+
+
+    
