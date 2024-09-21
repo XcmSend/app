@@ -98,20 +98,19 @@ export function listChains() {
   };
   chainList[9990] = PaseoAssethub;
 
-
-
-  const Turing: ChainInfo = {
-    name: 'turing',
-    display: 'Turing (Kusama)',
-    paraid: 2114,
+// 4001 paraid
+  const PaseoPop: ChainInfo = {
+    name: 'paseo_pop',
+    display: 'Pop Testnet (paseo)',
+    paraid: 4001,
     prefix: 51,
     token_decimals: 10,
-    logo: '/chains/turing.png',
-    relayParent: 'kusama',
+    logo: '/chains/pop.svg',
+    relayParent: 'paseo',
     parachain: true,
-    symbol: 'TUR'
+    symbol: 'POP'
   };
-  chainList[2114] = Turing;
+  chainList[9991] = PaseoPop;
 
       const AssetHub: ChainInfo = {
         name: 'assetHub',
@@ -228,7 +227,7 @@ export function listChains() {
       chainList[2] = Kusama;
       const RococoContracts: ChainInfo = {
         name: 'rococo_contracts',
-        display: 'Contracts (Rococo)',
+        display: 'Contracts (Rococo| (EOL soon))',
         paraid: 0,
         prefix: 0,
         token_decimals: 12,
@@ -242,7 +241,7 @@ export function listChains() {
 
       const Rococo: ChainInfo = {
         name: 'rococo',
-        display: 'Rococo',
+        display: 'Rococo(EOL soon)',
         paraid: 0,
         prefix: 0,
         token_decimals: 12,

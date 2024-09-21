@@ -228,6 +228,51 @@ export async function paseo2assethub(amount: number, accountdest: string) {
   return tx;
 }
 
+/// send PAS from paseo to pop
+export async function paseo2pop(amount: number, accountdest: string) {
+  const api = await getApiInstance("paseo"); // dial paseo relaychain
+
+  const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
+  const destination = {
+    interior: { X1: { Parachain: 4001 } },
+    parents: 0,
+  };
+  const account = {
+    interior: {
+      X1: {
+        Accountid32: {
+          id: accountid,
+          network: null,
+        },
+      },
+    },
+    parents: 0,
+  };
+
+  const asset = {
+    fun: {
+      Fungible: amount,
+    },
+    id: {
+      Concrete: {
+        parents: 0,
+        interior: {
+          Here: null,
+        },
+      },
+    },
+  };
+
+  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
+    { V3: destination },
+    { V3: account },
+    { V3: [asset] },
+    0,
+    { Unlimited: null }
+  );
+  return tx;
+}
+
 export async function assethub2paseo(amount: number, accountdest: string) {
   const api = await getApiInstance("paseo_assethub");
   console.log(`[assethub2paseo] connected`);

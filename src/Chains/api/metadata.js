@@ -30,6 +30,15 @@ export const CHAIN_METADATA = {
         nativeAccount: true
     },
 
+    paseo_pop: {
+        chain: "paseo_pop",
+        endpoints: [
+            "wss://rpc3.paseo.popnetwork.xyz"
+        ],
+        queryBalancePaths: ["system.account"],
+        nativeAccount: true
+    },
+    
     paseo_assethub: {
         chain: "paseo_assethub",
         endpoints: [
