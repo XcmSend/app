@@ -12,6 +12,7 @@ type SelectorProps = {
     setDropdownVisible: (visible: boolean) => void; 
     SwapSVG: string;
     xTransferSVG: string;
+    ScheduleTransferSVG: string;
     RemarkSVG: string;
     iIcon: string;  
     VoteSVG: string;

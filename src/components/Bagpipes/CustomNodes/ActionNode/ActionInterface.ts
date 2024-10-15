@@ -75,6 +75,13 @@ export interface SwapAction {
   target: ActionData;
 }
 
+export interface ScheduleTransferAction {
+  actionType: 'ScheduleTransfer';
+  source: ActionData;
+  target: ActionData;
+}
+
+
 export interface xTransferAction {
   actionType: 'xTransfer';
   source: ActionData;
@@ -88,5 +95,5 @@ export interface TransferAction {
 }
 
 
-export type ActionType = SwapAction | InkAction | DelegateAction | StakeAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
+export type ActionType = SwapAction | ScheduleTransferAction | InkAction | DelegateAction | StakeAction | VoteAction | xTransferAction | RemarkAction | TransferAction;
 

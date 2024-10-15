@@ -1,3 +1,5 @@
+
+ /*
 // `dot` is the name we gave to `npx papi add`
 import { dot } from "@polkadot-api/descriptors"
 import { createClient } from "polkadot-api"
@@ -6,14 +8,14 @@ import { chainSpec } from "polkadot-api/chains/polkadot";
 import { startFromWorker } from "polkadot-api/smoldot/from-worker";
  
 // Using vite
-import SmWorker from "polkadot-api/smoldot/worker";
-const worker = new SmWorker();
+//import SmWorker from "polkadot-api/smoldot/worker";
+//const worker = new SmWorker();
  
 // Using Webpack
 // const worker = new Worker(
 //   new URL("polkadot-api/smoldot/worker", import.meta.url)
 // );
- 
+
 const smoldot = startFromWorker(worker);
 const chain = await smoldot.addChain({ chainSpec });
  
@@ -36,3 +38,6 @@ const dotApi = client.getTypedApi(dot)
 const accountInfo = await dotApi.query.System.Account.getValue(
   "16JGzEsi8gcySKjpmxHVrkLTHdFHodRepEz8n244gNZpr9J",
 )
+  .
+
+  */

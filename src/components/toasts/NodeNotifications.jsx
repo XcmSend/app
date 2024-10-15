@@ -3,6 +3,7 @@ import toast  from "react-hot-toast";
 import { listChains } from '../../Chains/ChainsInfo';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
+import ScheduleTransferSVG from '/clock.svg';
 import ThemeContext from '../../contexts/ThemeContext';
 import './toast.scss';
 

@@ -8,6 +8,8 @@ export function processAction(action: ActionType) {
       case 'xTransfer':
         // Here, TypeScript knows that "action" has the shape of "xTransferAction"
         break;
+      case 'ScheduleTransfer':
+        break;
       case 'remark':
         break;
       case 'ink':
