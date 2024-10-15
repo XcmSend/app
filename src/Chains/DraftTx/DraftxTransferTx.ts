@@ -196,6 +196,7 @@ export async function schedule_task(transfer_tx: any, datestring: string){
   const future_timestamp = human2unixtime(datestring); //"2024-10-15T19:00:00Z"
   //const transfer_tx = await turing2moonriver(accountido, amount);
   const api = await getApiInstance("turing");
+  console.log(`unix timestamp: `, future_timestamp);
   const tx_me = await api.tx.automationTime.scheduleDynamicDispatchTask(
   { fixed: {executionTimes: [future_timestamp,]}},
     transfer_tx

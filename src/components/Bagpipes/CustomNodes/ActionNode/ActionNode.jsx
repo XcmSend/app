@@ -284,6 +284,14 @@ function get_previous_node() {
   return previousNodeFormData;
 }
 
+function get_next_node() {
+  const nodes = scenarios[activeScenarioId]?.diagramData?.nodes || [];
+  const currentNodeIndex = nodes.findIndex(node => node.id === nodeId);
+  const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex + 1] : null;
+  const previousNodeFormData = previousNode ? previousNode.formData : null;
+  return previousNodeFormData;
+}
+
   
 // store the system remark message
   const setRemark = (value) => {
@@ -320,6 +328,7 @@ function get_previous_node() {
     const updatedActionData = {
       ...currentActionData,
       source: get_previous_node(),
+      target: get_next_node(),
       extra: value.target.value
 
     };

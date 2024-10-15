@@ -19,7 +19,7 @@ export async function extrinsicHandler(actionType, formData) {
             return await handleSwap(formData);
         case 'ScheduleTransfer':
             console.log(`schedule transfer`);
-            return handleScheduleTransfer(formData);
+            return await handleScheduleTransfer(formData);
         case 'stake':
             console.log(`stake handling`);
             return handleStake(formData);
@@ -96,12 +96,12 @@ function handleRemark(formData) {
 
 
 
-function handleScheduleTransfer(formdata) {
+async function handleScheduleTransfer(formdata) {
     const source = formdata.source;
     const target = formdata.target;
 
     console.log(`[handleScheduleTransfer] formdata:`, formdata);
-    if (!source.chain == "Turing") {
+    if (!source.chain == "turing") {
         throw new Error("You can only schedule xcm transfers from Turing");
     }
 
@@ -132,7 +132,8 @@ function handleScheduleTransfer(formdata) {
         console.log(`action got!`);
         const datumstring = formdata.extra + 'T12:00:00Z';
         console.log(`schedule_task with datumstring: `, datumstring);
-        return schedule_task(action(), datumstring);
+       const tx  = await action();
+        return schedule_task(tx, datumstring);
     } else {
         console.log("Unsupported ScheduleTransfer direction.");
         toast("Action data is empty. Did you fetch?");
