@@ -15,6 +15,11 @@ const actions = [
       information: 'Transfer allows you to move assets within a single chain.'
     },
     {
+      name: 'ScheduleTransfer',
+      logo: '/clock.svg',
+      information: 'Schedule a transfer with Turing'
+    },
+    {
       name: 'delegate',
       logo: '/delegate.svg',
       information: 'Delegate Voting power'

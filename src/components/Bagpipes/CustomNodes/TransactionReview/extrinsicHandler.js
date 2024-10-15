@@ -2,7 +2,7 @@ import { delegate_polkadot, stake_to_dot_pool, paseo2pop, paseo2assethub, asseth
 import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
-
+import { schedule_task } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { hydradx_omnipool_sell } from "../../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
 import { account } from "@polkadot/api-derive/balances";
@@ -17,6 +17,9 @@ export async function extrinsicHandler(actionType, formData) {
         case 'swap':
             console.log("Inside extrinsicHandler for swap");
             return await handleSwap(formData);
+        case 'ScheduleTransfer':
+            console.log(`schedule transfer`);
+            return await handleScheduleTransfer(formData);
         case 'stake':
             console.log(`stake handling`);
             return handleStake(formData);
@@ -89,6 +92,55 @@ function handleRemark(formData) {
     return generic_system_remark(chain, msg);
    
    // throw new Error("You can only swap from hydradx to hydradx");
+}
+
+
+
+async function handleScheduleTransfer(formdata) {
+    const source = formdata.source;
+    const target = formdata.target;
+
+    console.log(`[handleScheduleTransfer] formdata:`, formdata);
+    if (!source.chain == "turing") {
+        throw new Error("You can only schedule xcm transfers from Turing");
+    }
+
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+
+    // Adjust the source amount according to the token decimals
+    const submittableAmount = source.amount * (10 ** tokenDecimals);
+
+      // Define a map for each xTransfer action
+      const ScheduleTransferActions = {
+       
+        'turing:moonriver': () => {
+             if (!isEthereumAddress(target.address)) { //  evm account check
+                throw new Error("Only allowed to send to ethereum addresses when sending to moonriver");
+            };
+            return turing2moonriver(target.address, submittableAmount);
+        },
+
+        'turing:mangatax': () => {
+            return  turing2mangata(submittableAmount, target.address) ;
+        }
+    };
+
+    const action = ScheduleTransferActions[`${source.chain}:${target.chain}`];
+    console.log(`action is: `, action);
+
+    if (action) {
+        console.log(`action got!`);
+        const datumstring = formdata.extra + 'T12:00:00Z';
+        console.log(`schedule_task with datumstring: `, datumstring);
+       const tx  = await action();
+        return schedule_task(tx, datumstring);
+    } else {
+        console.log("Unsupported ScheduleTransfer direction.");
+        toast("Action data is empty. Did you fetch?");
+        
+        throw new Error("Unsupported ScheduleTransfer direction.");
+    }
+
 }
 
 

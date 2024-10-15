@@ -1,3 +1,4 @@
+ /*
 //import { dot } from "@polkadot-api/descriptors";
 import { createClient } from "polkadot-api";
 import { getSmProvider } from "polkadot-api/sm-provider";
@@ -10,7 +11,6 @@ interface SmoldotMethodParams {
   chainSpec: string;
 }
 
-/*
 
 class SmoldotService {
   private smoldotClient: any;

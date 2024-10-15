@@ -5,6 +5,7 @@ import useAppStore from '../../../../../store/useAppStore';
 import { getHydraDxSellPrice } from '../../../../../Chains/Helpers/PriceHelper';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
+import ScheduleTransferSVG from '/clock.svg';
 import RemarkSVG from '/remark.svg';
 import InkSVG from '/ink.svg';
 import VoteSVG from '/vote.svg';
@@ -80,6 +81,7 @@ export default function ActionNodeForm({ children, data, isConnectable }) {
   const getActionImage = () => {
     if (selectedAction.action === 'swap') return SwapSVG;
     if (selectedAction.action === 'xTransfer') return xTransferSVG;
+    if (selectedAction.action === 'ScheduleTransferSVG') return ScheduleTransferSVG;
     if (selectedAction.action === "remark") return RemarkSVG;
     if (selectedAction.action === "Remark") return RemarkSVG;
     if (selectedAction.action === "stake") return RemarkSVG;
@@ -311,6 +313,7 @@ const toggleDropdown = () => {
             SwapSVG={SwapSVG}
             xTransferSVG={xTransferSVG}
             RemarkSVG={RemarkSVG}
+            ScheduleTransferSVG={ScheduleTransferSVG}
             dropdownVisible={dropdownVisible}
             ref={dropdownRef}
             handleOnClick={true}

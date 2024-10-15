@@ -6,7 +6,7 @@
     "Filip Kalebo <filip@rustsyndi.cat>"
   ],
   "private": true,
-  "version": "0.3.0",
+  "version": "0.3.2",
   "license": "Bagpipes License",
   "type": "module",
   "scripts": {
@@ -33,7 +33,6 @@
     "@galacticcouncil/sdk": "^3.0.0",
     "@metamask/providers": "^11.1.1",
     "@metamask/types": "^1.1.0",
-    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot/api": "^12.2.1",
     "@polkadot/api-augment": "^12.2.1",
     "@polkadot/api-base": "^12.2.1",
@@ -57,7 +56,6 @@
     "@polkadot/ui-keyring": "^3.1.4",
     "@polkadot/util": "^13.0.2",
     "@polkadot/util-crypto": "^13.0.2",
-    "@polkadot/wasm-crypto": "^7.3.2",
     "@sub-wallet/wallet-connect": "./src/components/Wallet/connect-wallet",
     "@subwallet/wallet-connect": "^0.2.3",
     "@testing-library/jest-dom": "^5.14.1",
@@ -107,7 +105,6 @@
   },
   "devDependencies": {
     "@metamask/detect-provider": "^2.0.0",
-    "@polkadot/dev": "^0.66.28",
     "@types/js-yaml": "^4.0.9",
     "@types/pako": "^2.0.3",
     "@types/react": "^18.2.15",

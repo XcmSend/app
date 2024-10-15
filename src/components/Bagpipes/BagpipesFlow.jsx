@@ -638,7 +638,7 @@ const BagpipesFlow = () => {
       console.log(`got form data`);
       console.log(`isActionDataComplete actionType:`, node.formData.action);
       
-      if (["Remark", "vote", "stake", "delegate", "ink"].includes(node.formData.action)) {
+      if (["Remark", "vote", "stake", "delegate", "ink", "ScheduleTransfer"].includes(node.formData.action)) {
         
         return true;
       }
