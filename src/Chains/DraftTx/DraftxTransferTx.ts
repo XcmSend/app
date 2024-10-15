@@ -182,6 +182,35 @@ export async function assethub2ethereum(eth_account: string, amount: any) {
   return tx;
 }
 
+
+
+// input: 2024-10-15T12:00:00Z
+// outpout: 1728993600 
+function human2unixtime(inputen: string) {
+  const date = new Date(inputen);
+  return Math.floor(date.getTime() / 1000);
+}
+
+// schedule a call on turing
+export async function schedule_task(transfer_tx: any, datestring: string){
+  const future_timestamp = human2unixtime(datestring); //"2024-10-15T19:00:00Z"
+  //const transfer_tx = await turing2moonriver(accountido, amount);
+  const api = await getApiInstance("turing");
+  const tx_me = await api.tx.automationTime.scheduleDynamicDispatchTask(
+  { fixed: {executionTimes: [future_timestamp,]}},
+    transfer_tx
+  );
+  return tx_me;
+}
+
+
+
+
+
+
+
+
+
 // Paseo relay chain
 
 // works with this input

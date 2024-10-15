@@ -138,6 +138,19 @@ export function listChains() {
       };
       chainList[2034] = HydraDX;
 
+      const Turing: ChainInfo = {
+        name: 'turing',
+        display: 'Turing (Kusama)',
+        paraid: 2114,
+        prefix: 51,
+        token_decimals: 10,
+        symbol: 'TUR',
+        logo: '/chains/turing.png',
+        relayParent: 'kusama',
+        parachain: true
+      };
+      chainList[2114] = Turing;
+
       const Ethereum: ChainInfo = {
         name: 'ethereum',
         display: 'Ethereum',
@@ -168,19 +181,7 @@ export function listChains() {
       };
       chainList[2032] = Interlay;
 
-      const Kabocha: ChainInfo = {
-        name: 'kabocha',
-        display: 'Kabocha',
-        paraid: 2113,
-        prefix: 27,
-        token_decimals: 12,
-        logo: '/chains/kabocha.svg',
-        parachain: true,
-        relay: false,
-        relayParent: 'kusama',
-        symbol: 'KAB'
-      };
-      chainList[2113] = Kabocha;
+ 
 
 
 
@@ -253,18 +254,7 @@ export function listChains() {
       };
       chainList[10000] = Rococo;
 
-      const Sora: ChainInfo = {
-        name: 'sora',
-        display: 'Sora (Rococo)',
-        paraid: 2011, // change me
-        prefix: 0, //change me
-        token_decimals: 10,
-        logo: '/chains/sora.svg',
-        relayParent: 'rococo',
-        parachain: true,
-        symbol: 'SORA'
-      };
-      chainList[2011] = Sora;
+
       // only rococo > rococo assethub transfers is supported 
       const RococoAssethub: ChainInfo = {
         name: 'rococo_assethub',

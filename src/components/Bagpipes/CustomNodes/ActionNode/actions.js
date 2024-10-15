@@ -16,7 +16,7 @@ const actions = [
     },
     {
       name: 'ScheduleTransfer',
-      logo: '',
+      logo: '/clock.svg',
       information: 'Schedule a transfer with Turing'
     },
     {

@@ -7,6 +7,7 @@ import { query_contract } from '../../../../Chains/DraftTx/DraftInk';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
+import ScheduleTransferSVG from '/clock.svg';
 import VoteSVG from '/vote.svg';
 import DelegateSVG from '/delegate.svg';
 import InkSVG from '/ink.svg';
@@ -87,6 +88,7 @@ export default function ActionNode({ children, data, isConnectable }) {
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
     if (formState.action === 'xTransfer') return xTransferSVG;
+    if (formState.action === 'ScheduleTransfer') return ScheduleTransferSVG; 
     if (formState.action === "remark") return RemarkSVG;
     if (formState.action === "Remark") return RemarkSVG;
     if (formState.action === "stake") return StakeSVG;
@@ -307,6 +309,26 @@ function get_previous_node() {
 
 
   };
+
+
+  const setDateSchedule = (value) => {
+    const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
+    console.log(`currentNodeFormData: `, currentNodeFormData);
+    const currentActionData = currentNodeFormData.actionData || {};
+
+    currentActionData.actionType = 'ScheduleTransfer';
+    const updatedActionData = {
+      ...currentActionData,
+      source: get_previous_node(),
+      extra: value.target.value
+
+    };
+    setActionData(updatedActionData);
+    saveActionDataForNode(activeScenarioId, nodeId, updatedActionData);
+  console.log(`ScheduleTransfer wrote updated data: `, updatedActionData);
+
+  };
+
 
   const setDelegateConviction = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -565,7 +587,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
       action: value
     }));
 
-    
+    console.log(`[handleDropdownClick] formState:`, formState);
     // Create action data based on the selected value
     const newActionData = convertFormStateToActionType(
         { ...formState, action: value }, 
@@ -641,6 +663,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           SwapSVG={SwapSVG}
           xTransferSVG={xTransferSVG}
           RemarkSVG={RemarkSVG}
+          ScheduleTransferSVG={ScheduleTransferSVG}
           VoteSVG={VoteSVG}
           DelegateSVG={DelegateSVG}
           InkSVG={InkSVG}
@@ -687,6 +710,15 @@ console.log('previousNodeFormData: ', previousNodeFormData);
             <input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
             </div>
       )}
+
+
+{formState && formState.action === 'ScheduleTransfer' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Schedule a XCM asset tranfer on date: 
+<input required min={new Date().toISOString().split('T')[0]}   onChange={(newValue) => setDateSchedule(newValue)}  type="date" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+</div>
+)}
+
 
 {formState && formState.action === 'ink' && (
 

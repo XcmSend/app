@@ -313,6 +313,7 @@ const toggleDropdown = () => {
             SwapSVG={SwapSVG}
             xTransferSVG={xTransferSVG}
             RemarkSVG={RemarkSVG}
+            ScheduleTransferSVG={ScheduleTransferSVG}
             dropdownVisible={dropdownVisible}
             ref={dropdownRef}
             handleOnClick={true}
