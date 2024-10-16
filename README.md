@@ -18,6 +18,14 @@ Welcome to Bagpipes.io, no-code platform for Web3 development. Our platform simp
 Find our docs at:
 [Bagpipes.io Documentation](https://docs.bagpipes.io/)
 
+## 🌐 Live Instance (Semi-Synced) | Try this repo here  
+
+Check out our live instance at:
+[app.xcmsend.com](https://app.xcmsend.com)
+
+
+
+
 ## 🌐 Live Instance (Experimental)
 
 Check out our live instance at:
