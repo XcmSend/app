@@ -176,7 +176,7 @@ export const CHAIN_METADATA = {
     turing: {
         chain: "turing",
         endpoints: [
-            "wss://rpc.turing.oak.tech",
+            "wss://turing-rpc.dwellir.com",
         ],
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
