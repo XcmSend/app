@@ -27,7 +27,7 @@ const endpoints = {
     assethub: "wss://sys.dotters.network/asset-hub-paseo",
   },
   turing: {
-    default: "wss://rpc.turing.oak.tech",
+    default: "wss://turing-rpc.dwellir.com",
   },
   hydradx: {},
   assetHub: {},
