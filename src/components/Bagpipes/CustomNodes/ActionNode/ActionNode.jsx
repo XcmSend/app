@@ -323,7 +323,7 @@ function get_next_node() {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     const currentActionData = currentNodeFormData.actionData || {};
-
+    console.log(`set date schedule: `, value.target.value);
     currentActionData.actionType = 'ScheduleTransfer';
     const updatedActionData = {
       ...currentActionData,
@@ -724,7 +724,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
 {formState && formState.action === 'ScheduleTransfer' && (
 
 <div className="in-node-border rounded m-2 p-2 ">Schedule a XCM asset tranfer on date: 
-<input required min={new Date().toISOString().split('T')[0]}   onChange={(newValue) => setDateSchedule(newValue)}  type="date" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+<input required min={new Date().toISOString().split('T')[0]}   onChange={(newValue) => setDateSchedule(newValue)}  type="datetime-local" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
 </div>
 )}
 

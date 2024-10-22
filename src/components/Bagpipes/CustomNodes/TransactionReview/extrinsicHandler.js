@@ -130,7 +130,7 @@ async function handleScheduleTransfer(formdata) {
 
     if (action) {
         console.log(`action got!`);
-        const datumstring = formdata.extra + 'T12:00:00Z';
+        const datumstring = formdata.extra + ':00Z'; // example input: 2024-10-22T16:20
         console.log(`schedule_task with datumstring: `, datumstring);
        const tx  = await action();
         return schedule_task(tx, datumstring);
