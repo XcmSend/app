@@ -32,6 +32,9 @@ jobs:
           restore-keys: |
             npm-
 
+	- name: Configure npm to force true
+          run: npm config set force true
+
       - name: Install dependencies
         run: npm install -f 
 

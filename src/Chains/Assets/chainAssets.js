@@ -260,7 +260,18 @@ export const CHAIN_ASSETS = {
                     "symbol": "ZTG"
                 },
                 "assetId": "12"
-            }
+            },
+            {
+              "asset": {
+                  "name": "Bifrost Native Coin",
+                  "assetType": "Token",
+                  "existentialDeposit": "68,795,189,840",
+                  "xcmRateLimit": null,
+                  "symbol": "BNC"
+              },
+              "assetId": "14"
+          }
+
         ]
 
     },
@@ -279,35 +290,6 @@ export const CHAIN_ASSETS = {
             }
         ]
     },
-
-    "paseo": {
-      "assets": [
-        {
-          "asset": {
-            "decimals": '10',
-            "name": 'Paseo Native Pas',
-            "symbol": 'PAS',
-            "existentialDeposit": '0',
-          },
-          "assetId": '0'
-        },
-      ]
-    },
-
-    "paseo_pop": {
-      "assets": [
-        {
-          "asset": {
-            "decimals": '10',
-            "name": 'Paseo Native Pas',
-            "symbol": 'PAS',
-            "existentialDeposit": '0',
-          },
-          "assetId": '0'
-        },
-      ]
-    },
-
 
     "mangatax": {
         "assets":  [

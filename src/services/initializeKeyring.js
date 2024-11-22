@@ -1,4 +1,4 @@
-import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
+import { web3Accounts, web3Enable, web3AccountsSubscribe } from '@polkadot/extension-dapp';
 import { keyring } from '@polkadot/ui-keyring';
 
 export default async function initializeKeyring() {
@@ -12,7 +12,7 @@ export default async function initializeKeyring() {
         }
         
         const allAccounts = await web3Accounts();
-        console.log("[initializeKeyring] web3Accounts called");
+        console.log("[initializeKeyring] web3Accounts called", allAccounts);
         
         keyring.loadAll({
             isDevelopment: true,

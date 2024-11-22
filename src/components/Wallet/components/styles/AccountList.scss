@@ -4,7 +4,7 @@
 
 .account-item {
   padding: 16px 20px;
-  border: 2px solid #151A30;
+  border: 1px solid #c5c5c5;
   border-radius: 8px;
   margin-bottom: 16px;
 
@@ -21,15 +21,28 @@
 .account-item__title {
   font-size: 15px;
   line-height: 26px;
-  font-weight: 500;
+  font-weight: 400;
   padding-right: 5px;
+  color: #bababa;
+
 }
 
 .account-item__content {
 
   font-size: 15px;
   line-height: 26px;
-  color: #7B8098;
+  color: #707382;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.account-item__contentName {
+
+  font-size: 15px;
+  line-height: 26px;
+  color: #3f3f3f;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-weight: 500;
+
 }

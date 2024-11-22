@@ -66,4 +66,5 @@ export interface Community {
   features: Feature[];
   hashTags: string[];
   mostActiveCreators: string[];
+  uiTemplateShowcase?: boolean;
 }

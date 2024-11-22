@@ -11,7 +11,7 @@
     background-color: $primary-color; // Theme-based background
     padding: 10px 20px;
     border-radius: 16px; // Rounded edges
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); // Subtle shadow for depth
+    box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.282); // Subtle shadow for depth
     z-index: 1000; // Ensure it's above other elements
 }
 
@@ -59,11 +59,10 @@
     }
 }
 
-// fix mobile
+// Media query for responsiveness
 @media (max-width: 600px) {
   .toolbar-node {
-    width: 55%;
-    top: 10%;
+    width: 90%;
   }
 }
 

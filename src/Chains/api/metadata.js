@@ -20,34 +20,6 @@ export const CHAIN_METADATA = {
         queryBalancePaths: ["system.account"],
         nativeAccount: true,
     },
-    paseo: {
-        chain: "paseo",
-        endpoints: [
-            "wss://paseo-rpc.dwellir.com",
-            "wss://rpc.ibp.network/paseo"
-        ],
-        queryBalancePaths: ["system.account"],
-        nativeAccount: true
-    },
-
-    paseo_pop: {
-        chain: "paseo_pop",
-        endpoints: [
-            "wss://rpc3.paseo.popnetwork.xyz"
-        ],
-        queryBalancePaths: ["system.account"],
-        nativeAccount: true
-    },
-    
-    paseo_assethub: {
-        chain: "paseo_assethub",
-        endpoints: [
-            "wss://asset-hub-paseo-rpc.dwellir.com",
-            "wss://sys.dotters.network/asset-hub-paseo"
-        ],
-        queryBalancePaths: ["system.account"],
-        nativeAccount: true
-    },
     hydraDx: {
         chain: "HydraDX" || "hydradx",
         endpoints: [
@@ -74,11 +46,35 @@ export const CHAIN_METADATA = {
         nativeAccount: true,
 
     },
+    people: {
+        chain: "People",
+        endpoints: [
+            "wss://polkadot-people-rpc.polkadot.io",
+            "wss://rpc-people-polkadot.luckyfriday.io",
+
+
+        ],
+        queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        nativeAccount: true,
+    },
+    people_kusama: {
+        chain: "People (Kusama)",
+        endpoints: [
+            "wss://kusama-people-rpc.polkadot.io",
+            "wss://rpc-people-kusama.luckyfriday.io",
+
+
+        ],
+        queryBalancePaths: ["system.account"],
+        transferFunction: "xcmPallet.limitedReserveTransferAssets",
+        nativeAccount: true,
+    },
     polkadot: {
         chain: "Polkadot",
         endpoints: [
-            "wss://rpc.polkadot.io",
             "wss://polkadot-rpc.dwellir.com",
+            "wss://rpc.polkadot.io",
             "wss://polkadot.api.onfinality.io/public-ws",
 
 
@@ -166,8 +162,7 @@ export const CHAIN_METADATA = {
     turing: {
         chain: "turing",
         endpoints: [
-            "wss://turing-rpc.dwellir.com",
-      //      "wss://rpc.turing.oak.tech"
+            "wss://rpc.turing.oak.tech"
         ],
         queryAssetPaths: ["assetRegistry.metadata"],  
         queryBalancePaths: ["system.account" ,"tokens.accounts"],
@@ -176,7 +171,7 @@ export const CHAIN_METADATA = {
     turing: {
         chain: "turing",
         endpoints: [
-            "wss://turing-rpc.dwellir.com",
+            "wss://rpc.turing.oak.tech",
         ],
         queryBalancePaths: ["system.account"],
         nativeAccount: true,

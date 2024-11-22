@@ -4,6 +4,19 @@ import React from 'react';
 import { Wallet, WalletAccount } from '../connect-wallet/src/types';
 import { EvmWallet } from '../connect-wallet/src/types';
 
+
+export type WalletStatus =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'authorizing'
+  | 'signing'
+  | 'signed'
+  | 'sending'
+  | 'success'
+  | 'error'
+  | 'cancelled';
+
 export interface WalletContextInterface {
   wallet?: Wallet,
   evmWallet?: EvmWallet,
@@ -11,6 +24,10 @@ export interface WalletContextInterface {
   setWallet: (wallet: Wallet | EvmWallet | undefined, walletType: 'substrate'|'evm') => void
   walletType: 'substrate'|'evm';
   isWalletSelected: boolean;
+  status: WalletStatus;
+  setStatus: (status: WalletStatus) => void;
+
+
 }
 
 export const WalletContext = React.createContext<WalletContextInterface>({
@@ -18,7 +35,9 @@ export const WalletContext = React.createContext<WalletContextInterface>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setWallet: (wallet: any, walletType: 'substrate'|'evm') => {},
   walletType: 'substrate',
-  isWalletSelected: false
+  isWalletSelected: false,
+  status: 'disconnected',
+  setStatus: () => {},
 });
 
 interface OpenSelectWalletInterface {

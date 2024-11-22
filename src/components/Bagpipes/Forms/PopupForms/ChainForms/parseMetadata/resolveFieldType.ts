@@ -11,7 +11,7 @@ export function resolveFieldType(typeId: string, typesLookup: TypeLookup, depth 
     return cache[typeId];
 }
 
-if (depth > 45) {
+if (depth > 500) {
     console.warn(`Excessive recursion at depth ${depth} for typeId ${typeId}`);
     return { type: 'complex', path, typeName: 'Complex Type', id: `complexDepth-${depth}`};
 }

@@ -169,62 +169,6 @@ export async function checkmangataxAssetBalance(
   return { free: 0, reserved: 0, total: 0 };
 }
 
-/// check paseo system account
-export async function checkPaseoNativeBalance(
-  assetid: number | string,
-  account_id_32: string,
-  signal?: AbortSignal
-): Promise<{
-  free: number;
-  reserved: number;
-  total: number;
-  frozen?: number;
-  assetDecimals?: number;
-}> {
-  const api = await getApiInstance("paseo");
-
-  const result = await generic_check_native_balance(api, account_id_32);
-  const total =
-    result.free +
-    result.reserved +
-    (result.miscFrozen || 0) +
-    (result.feeFrozen || 0);
-
-  return {
-    free: result.free,
-    reserved: result.reserved,
-    total: total,
-    // can include miscFrozen and feeFrozen if they are relevant for hydraDx
-  };
-}
-
-export async function checkPaseoPopNativeBalance(
-  assetid: number | string,
-  account_id_32: string,
-  signal?: AbortSignal
-): Promise<{
-  free: number;
-  reserved: number;
-  total: number;
-  frozen?: number;
-  assetDecimals?: number;
-}> {
-  const api = await getApiInstance("paseo_pop");
-
-  const result = await generic_check_native_balance(api, account_id_32);
-  const total =
-    result.free +
-    result.reserved +
-    (result.miscFrozen || 0) +
-    (result.feeFrozen || 0);
-
-  return {
-    free: result.free,
-    reserved: result.reserved,
-    total: total,
-  };
-}
-
 /// check the balance of an asset on interlay
 /// returns { free: '304', reserved: '0', frozen: '0' }
 export async function checkInterlayAssetBalance(
@@ -954,16 +898,6 @@ export async function getAssetBalanceForChain(
 
     case "kusama":
       balances = await checkRelayRawNativeBalance("kusama", accountId, signal);
-      break;
-
-    case "paseo":
-      balances = await checkPaseoNativeBalance(assetDecimals, accountId);
-      assetDecimals = balances.assetDecimals;
-      break;
-
-    case "paseo_pop":
-      balances = await checkPaseoPopNativeBalance(assetDecimals, accountId);
-      assetDecimals = balances.assetDecimals;
       break;
 
     case "hydraDx":

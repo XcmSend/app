@@ -74,7 +74,7 @@ export const ChainSubMenu = ({ onClick, onDragStart, theme }) => {
    chainTx: 'Chain TX',
    chainQuery: 'Chain Query',
    action: 'Action',
-   lightClient: 'Light Client',
+ //  lightClient: 'Light Client',
    blinks: 'Blink Builder',
 
   };

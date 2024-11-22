@@ -81,7 +81,6 @@ export interface ScheduleTransferAction {
   target: ActionData;
 }
 
-
 export interface xTransferAction {
   actionType: 'xTransfer';
   source: ActionData;

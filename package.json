@@ -6,7 +6,7 @@
     "Filip Kalebo <filip@rustsyndi.cat>"
   ],
   "private": true,
-  "version": "0.3.2",
+  "version": "0.8.1",
   "license": "Bagpipes License",
   "type": "module",
   "scripts": {
@@ -18,7 +18,11 @@
     "format": "npx prettier --write 'src/*/*/*.ts' && npx prettier --write 'src/*.ts'",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "papi:generate": "npx papi add dot -n polkadot && npx papi"
+    "install": "npm install -f",
+    "papi:dotonly": "bun papi add -n polkadot custompolkadot",
+    "papi:generate": "npx papi add dot -n polkadot && npx papi",
+    "postinstall": "papi"
+    
 
   },
   "dependencies": {
@@ -33,6 +37,7 @@
     "@galacticcouncil/sdk": "^3.0.0",
     "@metamask/providers": "^11.1.1",
     "@metamask/types": "^1.1.0",
+    "@polkadot-api/descriptors": "file:.papi/descriptors",
     "@polkadot/api": "^12.2.1",
     "@polkadot/api-augment": "^12.2.1",
     "@polkadot/api-base": "^12.2.1",
@@ -56,6 +61,7 @@
     "@polkadot/ui-keyring": "^3.1.4",
     "@polkadot/util": "^13.0.2",
     "@polkadot/util-crypto": "^13.0.2",
+    "@polkadot/wasm-crypto": "^7.3.2",
     "@sub-wallet/wallet-connect": "./src/components/Wallet/connect-wallet",
     "@subwallet/wallet-connect": "^0.2.3",
     "@testing-library/jest-dom": "^5.14.1",
@@ -75,7 +81,7 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
     "pako": "^2.1.0",
-    "polkadot-api": "^1.1.0",
+    "polkadot-api": "^1.7.6",
     "quill": "^1.3.7",
     "react": "^18.2.0",
     "react-code-blocks": "^0.1.6",
@@ -105,6 +111,7 @@
   },
   "devDependencies": {
     "@metamask/detect-provider": "^2.0.0",
+    "@polkadot/dev": "^0.66.28",
     "@types/js-yaml": "^4.0.9",
     "@types/pako": "^2.0.3",
     "@types/react": "^18.2.15",

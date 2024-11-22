@@ -71,6 +71,7 @@ export const communities: Community[] = [
         name: "Ava",
         description: "Ava Protocol provides intelligent automation and enhanced privacy features for blockchain transactions.",
         url: "https://avaprotocol.org/",
+        uiTemplateShowcase: false,
         templates: {
           bagpipes: [
             {

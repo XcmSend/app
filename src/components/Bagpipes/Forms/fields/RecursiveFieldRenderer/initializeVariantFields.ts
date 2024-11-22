@@ -17,9 +17,13 @@ export const initializeVariantFields = (selectedVariant, fieldPath, formData, is
 
     if (selectedVariant.fields?.[0]?.resolvedType != undefined ){
         console.log('initializeVariantFields - variant 2c. selectedVariant.fields[0].resolvedType:', selectedVariant.fields[0].resolvedType);
-        updatedParams = handleChange(fieldPath, defaultName, false, 'variant', formData, false, selectedVariant.fields?.[0].resolvedType?.type);
+        // updatedParams = handleChange(fieldPath, defaultName, false, 'variant', formData, false, selectedVariant.fields?.[0].resolvedType?.type);
+        updatedParams = handleChange(fieldPath, defaultName, false, 'variant', formData);
+
     } else {
-        updatedParams = handleChange(fieldPath, defaultName, false, 'variant', formData, false);
+        // updatedParams = handleChange(fieldPath, defaultName, false, 'variant', formData, false);
+        updatedParams = handleChange(fieldPath, defaultName, false, 'variant', formData);
+
     }
     console.log('initializeVariantFields - variant 2c. updatedParams:', updatedParams, fieldPath, defaultName);
 
@@ -44,7 +48,9 @@ export const initializeVariantFields = (selectedVariant, fieldPath, formData, is
         console.log('initializeVariantFields - variant 2bi. field:', { field, subFieldPath, initialValues });
 
         // Update the formData with initial values for each subfield
-        updatedParams = handleChange(subFieldPath, initialValues, false, 'variant', formData, false);
+        // updatedParams = handleChange(subFieldPath, initialValues, false, 'variant', formData, false);
+        updatedParams = handleChange(subFieldPath, initialValues, false, 'variant', formData);
+
         // updatedParams[field.name] = initialValues; // Store updated values in the return object
         console.log('initializeVariantFields - variant 2bi. updatedParams:', updatedParams, initialValues, subFieldPath);
     });

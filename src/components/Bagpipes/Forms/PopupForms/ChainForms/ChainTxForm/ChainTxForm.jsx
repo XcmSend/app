@@ -444,11 +444,11 @@ const handleMethodFieldChange = (updatedParams) => {
     }
 
     return formData.selectedMethod.fields.map((field, index) => {
-      console.log('renderMethodFields index field:', index, field);  
+      // console.log('renderMethodFields index field:', index, field);  
    
           const resolvedFields = localResolvedFields;
           const resolvedField = localResolvedFields?.[index];
-          console.log('renderMethodFields Resolved Field and Fields:', { resolvedField, resolvedFields });
+          // console.log('renderMethodFields Resolved Field and Fields:', { resolvedField, resolvedFields });
 
           if (!resolvedField) {
               console.warn("Mismatch or missing data in localResolvedFields");
@@ -460,13 +460,13 @@ const handleMethodFieldChange = (updatedParams) => {
           const method    =    `${formData.selectedMethod.name}`;
           const fieldName =    `${field.name}`;
 
-          console.log('renderMethodFields RecursiveFieldRenderer - chain pallet method fieldName:', chain, pallet, method, fieldName);
+          // console.log('renderMethodFields RecursiveFieldRenderer - chain pallet method fieldName:', chain, pallet, method, fieldName);
           const chainPalletMethod = `{${chain}}_{${pallet}}_{${method}}`;
 
           const initialPath = generatePath(chainPalletMethod, fieldName, 'initialBase');
-          console.log("renderMethodFields  generatePath initialPath", { initialPath, fieldName, resolvedField } );
+          // console.log("renderMethodFields  generatePath initialPath", { initialPath, fieldName, resolvedField } );
 
-          console.log('renderMethodFields formData.params', formData.params, initialPath, resolvedField);
+          // console.log('renderMethodFields formData.params', formData.params, initialPath, resolvedField);
             // if the initial path doesnt exist in formData.params then save the inital path in params
           if (!formData.params?.[chainPalletMethod]) {
             console.log('renderMethodFields formData.params[chainPalletMethod] does not exist creating new param section:', formData.params, chainPalletMethod);
@@ -627,7 +627,7 @@ const handleMethodFieldChange = (updatedParams) => {
         const nextSteps = `Transaction signed successfully and is now being submitted to the chain...\n`;
         const submittingTransaction = `Submitting transaction...\n`;
         setResult(resultPack);
-        setResult(resultPack + nextSteps);
+        setResult(prevResult => prevResult + nextSteps);
 
         
     // } catch (error) {
@@ -642,7 +642,7 @@ const handleMethodFieldChange = (updatedParams) => {
 
       await broadcastToChain(formData.selectedChain, signedExtrinsic, {
           onInBlock: (blockHash) => {
-              setResult(resultPack + nextSteps + "Tx in block...\n");
+            setResult(prevResult => prevResult + "Tx in block...\n");
 
               console.log(`Transaction included at blockHash: ${blockHash}`);
               toast.success(`Transaction included at blockHash: ${blockHash}`);
@@ -651,14 +651,15 @@ const handleMethodFieldChange = (updatedParams) => {
               markExtrinsicAsUsed(activeScenarioId, nodeId);
           },
           onFinalized: (blockHash) => {
-              setResult(resultPack + nextSteps + "Tx in block..." + "Tx finalized...");
+              setResult(prevResult => prevResult + "Tx in block..." + "Tx finalized...\n");
+
               toast.success(`Transaction finalized at blockHash: ${blockHash}`);
               // updateNodeResponseData(activeScenarioId, lastExecutionId, nodeId, { finalized: blockHash });
               saveNodeFormData(activeScenarioId, nodeId, { ...formData, signedExtrinsic: '' });
               console.log('clearing signed extrinsic...', formData);
           },
           onError: (error) => {
-              setResult(result + "Tx error ...");
+              setResult(prevResult => prevResult + "Tx error ...");
               toast.error(`Action execution failed: ${error.message}`);
               // updateNodeResponseData(activeScenarioId, lastExecutionId, nodeId, { error: error.message });
               console.log('second attempt to clear signed extrinsic...');
@@ -671,7 +672,7 @@ const handleMethodFieldChange = (updatedParams) => {
 
       // This catch block is for handling errors not caught by the onError callback, e.g., network issues
       toast.error(`Error broadcasting transaction for ChainTx: ${error.message}`);
-      setResult(result + failedTransaction);
+      setResult(prevResult => prevResult + failedTransaction);
     }
     
     // toast(<ActionToastContent type={formData?.actionData?.actionType} message={`Broadcasted to Chain: ${sourceChain}`} signedExtrinsic={signedExtrinsic} />);

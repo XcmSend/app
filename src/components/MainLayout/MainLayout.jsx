@@ -17,7 +17,9 @@ import CommunityPages from '../../pages/PublicPages/CommunityPages';
 import CommunityPage from '../../pages/PublicPages/CommunityPage/CommunityPage';
 import CreatorPage from '../../pages/PublicPages/CreatorPage/CreatorPage';
 import CreatorsPage from '../../pages/PublicPages/CreatorsPage/CreatorsPage';
-//import BlinkBuilder from '../../pages/PublicPages/Blinks/BlinkBuilder/';
+import BlinkBuilder from '../../pages/PublicPages/Blinks/BlinkBuilder/';
+import BlinkAppViewer from '../../pages/PublicPages/Blinks/BlinkAppViewer';
+import BlinkAppPostViewer from '../../pages/PublicPages/Blinks/BlinkAppPostViewer';
 import ScenarioInfo from '../../pages/Lab/Scenario';
 import Parachains from '../../pages/Parachains/Parachains';
 import ThemeContext from '../../contexts/ThemeContext';
@@ -25,6 +27,7 @@ import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useTippy, usePanelTippy } from '../../contexts/tooltips/TippyContext';
 import Settings from '../../pages/Settings/Settings';
+
 
 
 import '../toasts/toast.scss';
@@ -119,7 +122,9 @@ function MainLayout({ children }) {
                     <Route path="test-flow" element={<ReactTestFlow />} />
                     <Route path="evm-wallet-info" element={<EvmWalletInfo />} />
                     <Route path="settings" element={<Settings />} />
-                {    /*      <Route path ="blinks" element={<BlinkBuilder />} /> */}
+                    <Route path ="blink-builder" element={<BlinkBuilder />} />
+                    <Route path=":fullId" element={<BlinkAppViewer />}  />
+                    <Route path="/post/:fullId" element={<BlinkAppPostViewer />}  />
 
 
 

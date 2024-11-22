@@ -70,6 +70,7 @@ function App () {
               <div className='main-container'>
                 <Sidebar />
                 <MainLayout theme={'dark'} />
+                
                 </div>
                 
                 {/* <SelectWalletModal theme={'dark'} /> */}

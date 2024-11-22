@@ -71,46 +71,18 @@ export function listChains() {
 
   chainList[2110] = MangataX;
 
-
-  const Paseo: ChainInfo = {
-    name: 'paseo',
-    display: 'Paseo (Testnet Relay Chain)',
-    paraid: 0,
-    symbol: 'PAS',
-    prefix: 1,
-    token_decimals: 10,
-    logo: '/chains/paseo.png',
-    relayParent: 'paseo',
-    parachain: false
-  };
-  chainList[999] = Paseo;
-
- const PaseoAssethub: ChainInfo = {
-    name: 'paseo_assethub',
-    display: 'Paseo Assethub(Testnet)',
-    paraid: 1000,
-    prefix: 1,
-    symbol: 'PAS',
-    token_decimals: 10,
-    logo: '/chains/assethub.svg',
-    relayParent: 'paseo',
-    parachain: true
-  };
-  chainList[9990] = PaseoAssethub;
-
-// 4001 paraid
-  const PaseoPop: ChainInfo = {
-    name: 'paseo_pop',
-    display: 'Pop Testnet (paseo)',
-    paraid: 4001,
+  const Turing: ChainInfo = {
+    name: 'turing',
+    display: 'Turing (Kusama)',
+    paraid: 2114,
     prefix: 51,
     token_decimals: 10,
-    logo: '/chains/pop.svg',
-    relayParent: 'paseo',
+    logo: '/chains/turing.png',
+    relayParent: 'kusama',
     parachain: true,
-    symbol: 'POP'
+    symbol: 'TUR'
   };
-  chainList[9991] = PaseoPop;
+  chainList[2114] = Turing;
 
       const AssetHub: ChainInfo = {
         name: 'assetHub',
@@ -127,7 +99,7 @@ export function listChains() {
 
       const HydraDX: ChainInfo = {
         name: 'hydraDx',
-        display: 'Hydra DX',
+        display: 'Hydration',
         paraid: 2034,
         prefix: 0,
         token_decimals: 12,
@@ -137,19 +109,6 @@ export function listChains() {
         symbol: 'HDX'
       };
       chainList[2034] = HydraDX;
-
-      const Turing: ChainInfo = {
-        name: 'turing',
-        display: 'Turing (Kusama)',
-        paraid: 2114,
-        prefix: 51,
-        token_decimals: 10,
-        symbol: 'TUR',
-        logo: '/chains/turing.png',
-        relayParent: 'kusama',
-        parachain: true
-      };
-      chainList[2114] = Turing;
 
       const Ethereum: ChainInfo = {
         name: 'ethereum',
@@ -181,7 +140,19 @@ export function listChains() {
       };
       chainList[2032] = Interlay;
 
- 
+      const Kabocha: ChainInfo = {
+        name: 'kabocha',
+        display: 'Kabocha',
+        paraid: 2113,
+        prefix: 27,
+        token_decimals: 12,
+        logo: '/chains/kabocha.svg',
+        parachain: true,
+        relay: false,
+        relayParent: 'kusama',
+        symbol: 'KAB'
+      };
+      chainList[2113] = Kabocha;
 
 
 
@@ -228,7 +199,7 @@ export function listChains() {
       chainList[2] = Kusama;
       const RococoContracts: ChainInfo = {
         name: 'rococo_contracts',
-        display: 'Contracts (Rococo| (EOL soon))',
+        display: 'Contracts (Rococo)',
         paraid: 0,
         prefix: 0,
         token_decimals: 12,
@@ -242,7 +213,7 @@ export function listChains() {
 
       const Rococo: ChainInfo = {
         name: 'rococo',
-        display: 'Rococo(EOL soon)',
+        display: 'Rococo',
         paraid: 0,
         prefix: 0,
         token_decimals: 12,
@@ -254,7 +225,18 @@ export function listChains() {
       };
       chainList[10000] = Rococo;
 
-
+      const Sora: ChainInfo = {
+        name: 'sora',
+        display: 'Sora (Rococo)',
+        paraid: 2011, // change me
+        prefix: 0, //change me
+        token_decimals: 10,
+        logo: '/chains/sora.svg',
+        relayParent: 'rococo',
+        parachain: true,
+        symbol: 'SORA'
+      };
+      chainList[2011] = Sora;
       // only rococo > rococo assethub transfers is supported 
       const RococoAssethub: ChainInfo = {
         name: 'rococo_assethub',

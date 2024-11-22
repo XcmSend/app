@@ -9,10 +9,25 @@ export function constructCallData(formData) {
     if (!camelCaseMethod) throw new Error("Method not found");
 
     const fieldsOrder = formData.selectedMethod.fields.map(field => field.name);
+    console.log('fieldsOrder:', fieldsOrder);
+
+
     const paramsKey = Object.keys(formData.params).find(key => key.includes(formData.selectedMethod.name));
     if (!paramsKey) throw new Error("Parameters for the method not found in formData");
 
     const methodParams = formData.params[paramsKey];
+    console.log('methodParams keys:', Object.keys(methodParams));
+
+
+    // Convert methodParams keys to camelCase
+    const methodParamsCamelCase = {};
+    Object.keys(methodParams).forEach(key => {
+        const camelCaseKey = toCamelCase(key);
+        methodParamsCamelCase[camelCaseKey] = methodParams[key];
+    });
+    console.log('methodParamsCamelCase keys:', Object.keys(methodParamsCamelCase));
+
+    
 
     // Map formData to the order specified by metadata and convert keys to camelCase in final mapping
     const callData = fieldsOrder.map(fieldName => {
@@ -46,12 +61,16 @@ export function formatCallData(callDataArray) {
                 if (typeof item[key] === 'object' && item[key] !== null && !Array.isArray(item[key])) {
                     return { [key]: { ...item[key] } };
                 }
-                return { [key]: item[key] }; 
+                // return { [key]: item[key] }; 
+                const value = item[key];
+                return { [key]: value }; // preserve the casing
             }
             return item; 
         })
     };
 }
+
+
 
 
 
@@ -62,11 +81,8 @@ export function formatCallData(callDataArray) {
 // }
 
 export function toCamelCase(str) {
-    return str
-        .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) => index === 0 ? word.toLowerCase() : word.toUpperCase())
-        .replace(/[\s_]+/g, '');
+    return str.toLowerCase().replace(/_([a-z])/g, (match, letter) => letter.toUpperCase());
 }
-
 
 
 // Example usage:
