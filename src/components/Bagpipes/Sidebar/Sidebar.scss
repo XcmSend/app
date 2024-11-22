@@ -1,22 +1,24 @@
 @import '../../../variables.scss';
 
 .sidebar {
-  width: 50px; /* Initial minimized width */
-  transition: width 0.5s ease;
+  width: 50px; 
   height: 100%;
-  overflow: hidden; /* Hide content that overflows during transition */
+  overflow: hidden;
   background-color: var(--bg);
-  min-height: 1000px; /* Adjust as needed */
+  min-height: 1000px;
 
 
   &.expanded {
-    width: 150px; /* Expanded width */
+    width: 150px; 
+
   }
 }
 
 .sidebar-content {
   width: 100%; /* Full-width */
-  transition: transform 0.5s ease; /* Smooth transition for width */
+  // transition: width 2s ease;
+  transition: width 0.5s ease;
+
 }
 
 .sidebar-item {
@@ -25,7 +27,6 @@
   padding: 10px;
   text-decoration: none;
   color: inherit;
-  transition: background-color 0.5s ease, box-shadow 0.5s ease, transform 0.5s ease; /* Transition for hover effect */
   width: 100%;
   background-color: var(--bg);
   position: relative; /* Ensure content doesn't move the icons */
@@ -51,8 +52,10 @@
   position: fixed;  
   top: 100px;
   // height: 100%;
-padding: 5px;
-border-radius: 5px;
+  // transition: width 0.5s ease;
+
+  padding: 5px;
+  border-radius: 5px;
   background-color: rgb(255, 255, 255);
 }
 
@@ -61,7 +64,7 @@ border-radius: 5px;
   align-items: center;
   opacity: 0;
   color: rgb(43, 43, 43);
-  transition: opacity 0.5s ease;
+  // transition: opacity 0.5s ease;
   margin-left: 10px;
   white-space: nowrap; /* Prevent text from wrapping */
 }

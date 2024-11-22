@@ -32,7 +32,7 @@ function Welcome () {
       <Button
         className='xcm-send-btn xcm-send-btn-normal-size'
         onClick={ selectWallet.open}
-      >Let's play...
+      >Connect Extension
       </Button>
     </div>
   </div>);

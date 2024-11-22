@@ -30,11 +30,7 @@ optimizeDeps: {
       ]
     },
     },    
-    server: {
-      hmr: {
-        overlay: false
-      }
-    },
+   
 
   allowImportingTsExtensions: true,
   define: {

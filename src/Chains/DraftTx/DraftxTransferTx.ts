@@ -56,7 +56,7 @@ tracks:
 export async function delegate_polkadot(
   to_address: string,
   amount: number,
-  conviction: string, // 0-6
+  conviction: string // 0-6
 ) {
   const tracks = [0, 1, 2, 10, 11, 12, 13, 14, 15, 20, 21, 30, 31, 32, 33, 34];
   var call_list: any[] = [];
@@ -67,7 +67,7 @@ export async function delegate_polkadot(
       track.toString(),
       { Id: to_address },
       real_conviction,
-      amount,
+      amount
     );
     call_list.push(item);
   }
@@ -102,7 +102,7 @@ export async function polkadot_vote(
   amount: number,
   lock: number,
   refnr: number,
-  aye_or_nay: boolean,
+  aye_or_nay: boolean
 ) {
   const api = await getApiInstance("polkadot");
   var lockperiod = "Locked1x";
@@ -177,160 +177,8 @@ export async function assethub2ethereum(eth_account: string, amount: any) {
     { V3: bene },
     { V3: assets },
     0,
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
-  return tx;
-}
-
-// input: 2024-10-15T12:00:00Z
-// outpout: 1728993600
-function human2unixtime(inputen: string) {
-  const date = new Date(inputen);
-  return Math.floor(date.getTime() / 1000);
-}
-
-// schedule a call on turing
-export async function schedule_task(transfer_tx: any, datestring: string) {
-  const currentTimestamp2 = new Date(datestring).valueOf(); // should always be UTC
-  //const transfer_tx = await turing2moonriver(accountido, amount);
-  const secondsInHour = 600;
-  const millisecondsInHour = 600 * 1000;
-  console.log("currentTimestamp2: ", currentTimestamp2);
-  const future_timestamp =
-    (currentTimestamp2 - (currentTimestamp2 % millisecondsInHour)) / 1000 +
-    secondsInHour;
-
-  const api = await getApiInstance("turing");
-  console.log(`unix timestamp: `, future_timestamp);
-  const tx_me = await api.tx.automationTime.scheduleDynamicDispatchTask(
-    { fixed: { executionTimes: [future_timestamp] } },
-    transfer_tx,
-  );
-  return tx_me;
-}
-
-// Paseo relay chain
-
-// works with this input
-// const amount = 94250842200;
-//const account = "0xf621771ddf37d482210b8c59617952eb1c2b40cfec55df47215231365186a057";
-export async function paseo2assethub(amount: number, accountdest: string) {
-  const api = await getApiInstance("paseo");
-  const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
-  const destination = {
-    interior: { X1: { Parachain: 1000 } },
-    parents: 0,
-  };
-  const account = {
-    interior: {
-      X1: {
-        Accountid32: {
-          id: accountid,
-          network: null,
-        },
-      },
-    },
-  };
-  const asset = {
-    fun: {
-      Fungible: amount,
-    },
-    id: {
-      Concrete: {
-        parents: 0,
-        interior: {
-          Here: null,
-        },
-      },
-    },
-  };
-
-  const tx = api.tx.xcmPallet.limitedTeleportAssets(
-    { V3: destination },
-    { V3: account },
-    { V3: [asset] },
-    0,
-    { Unlimited: null },
-  );
-  return tx;
-}
-
-/// send PAS from paseo to pop
-export async function paseo2pop(amount: number, accountdest: string) {
-  const api = await getApiInstance("paseo"); // dial paseo relaychain
-
-  const accountid = getRawAddress(accountdest); // make sure its accountid32 pubkey
-  const destination = {
-    interior: { X1: { Parachain: 4001 } },
-    parents: 0,
-  };
-  const account = {
-    interior: {
-      X1: {
-        Accountid32: {
-          id: accountid,
-          network: null,
-        },
-      },
-    },
-    parents: 0,
-  };
-
-  const asset = {
-    fun: {
-      Fungible: amount,
-    },
-    id: {
-      Concrete: {
-        parents: 0,
-        interior: {
-          Here: null,
-        },
-      },
-    },
-  };
-
-  const tx = api.tx.xcmPallet.limitedReserveTransferAssets(
-    { V3: destination },
-    { V3: account },
-    { V3: [asset] },
-    0,
-    { Unlimited: null },
-  );
-  return tx;
-}
-
-export async function assethub2paseo(amount: number, accountdest: string) {
-  const api = await getApiInstance("paseo_assethub");
-  console.log(`[assethub2paseo] connected`);
-  const accountId = api
-    .createType("AccountId32", getRawAddress(accountdest))
-    .toHex();
-  const destination = {
-    parents: 1,
-    interior: { Here: null },
-  };
-
-  const account = {
-    parents: 0,
-    interior: { X1: { AccountId32: { id: accountId, network: null } } },
-  };
-
-  const asset = [
-    {
-      id: { Concrete: { parents: 1, interior: "Here" } }, // The asset is on the parachain (origin)
-      fun: { Fungible: amount },
-    },
-  ];
-
-  const tx = api.tx.polkadotXcm.limitedTeleportAssets(
-    { V3: destination },
-    { V3: account },
-    { V3: asset },
-    { fee_asset_item: 0 },
-    { Unlimited: null },
-  );
-
   return tx;
 }
 
@@ -340,7 +188,7 @@ export async function assethub2paseo(amount: number, accountdest: string) {
 export async function polkadot_to_assethub(
   amount: number,
   address: string,
-  delay?: number,
+  delay?: number
 ) {
   const api = await getApiInstance("polkadot");
   const paraid = 1000;
@@ -369,7 +217,7 @@ export async function polkadot_to_assethub(
     { V3: account },
     { V3: asset },
     { fee_asset_item: 0 },
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
   if (delay) {
     const future: number = (
@@ -430,7 +278,7 @@ export async function roc2assethub(amount: number, accountdest: string) {
     { V3: account },
     { V3: [asset] },
     0,
-    { Unlimited: null },
+    { Unlimited: null }
   );
   return tx;
 }
@@ -466,7 +314,7 @@ export async function assethub_to_polkadot(amount: number, address: string) {
     { V3: account },
     { V3: asset },
     { fee_asset_item: 0 },
-    { Unlimited: null },
+    { Unlimited: null }
   );
 
   return tx;
@@ -490,7 +338,7 @@ export async function hydradx_to_assethub(
   amount: number,
   destassetid: number,
   sourceassetid: number,
-  destaccount: string,
+  destaccount: string
 ) {
   const api = await getApiInstance("hydraDx");
   console.log(`hydradx to assethub called`);
@@ -501,7 +349,7 @@ export async function hydradx_to_assethub(
     assetid,
     destaccount,
     destassetid,
-    sourceassetid,
+    sourceassetid
   );
   const parachainid = 1000;
   const accountido = raw_address_now(destaccount);
@@ -546,7 +394,7 @@ export async function hydradx_to_assethub(
   const tx = await api.tx.xTokens.transferMultiasset(
     { V3: asset },
     { V3: destination },
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
   console.log("generated tx: ", tx.toHuman());
   return tx;
@@ -557,7 +405,7 @@ export async function moon2parachain(
   assetid: string,
   amount: number,
   account: string,
-  paraid: number,
+  paraid: number
 ) {
   const api = await getApiInstance("moonbeam");
   console.log(`moon to assethub called`);
@@ -583,17 +431,37 @@ export async function moon2parachain(
     { foreignasset: cleanAssetId.toString() },
     { amount: amount },
     { V3: dest },
-    { Unlimited: null },
+    { Unlimited: null }
   );
 
   return tx;
+}
+
+// schedule a call on turing
+export async function schedule_task(transfer_tx: any, datestring: string) {
+  const currentTimestamp2 = new Date(datestring).valueOf(); // should always be UTC
+  //const transfer_tx = await turing2moonriver(accountido, amount);
+  const secondsInHour = 600;
+  const millisecondsInHour = 600 * 1000;
+  console.log("currentTimestamp2: ", currentTimestamp2);
+  const future_timestamp =
+    (currentTimestamp2 - (currentTimestamp2 % millisecondsInHour)) / 1000 +
+    secondsInHour;
+
+  const api = await getApiInstance("turing");
+  console.log(`unix timestamp: `, future_timestamp);
+  const tx_me = await api.tx.automationTime.scheduleDynamicDispatchTask(
+    { fixed: { executionTimes: [future_timestamp] } },
+    transfer_tx
+  );
+  return tx_me;
 }
 
 /// https://moonbeam.subscan.io/extrinsic/6444042-5?tab=xcm_transfer
 export async function moon2hydra2(
   assetid: string,
   amount: number,
-  account: string,
+  account: string
 ) {
   const accountme = getRawAddress(account); //"0xb6864e89ef92820dfd586c034a264e175415cee72270d853ab8b42110f24de25";
   //const amount = 1000000000000;
@@ -621,7 +489,7 @@ export async function moon2hydra2(
     { foreignasset: cleanAssetId.toString() },
     { amount: amount },
     { V3: dest },
-    { Unlimited: null },
+    { Unlimited: null }
   );
   return tx;
 }
@@ -679,7 +547,7 @@ export async function moon2hydra(account: string, amount: number) {
   return api.tx.xTokens.transferMultiasset(
     { V2: asset },
     { V2: dest },
-    { Unlimited: null },
+    { Unlimited: null }
   );
 }
 
@@ -687,7 +555,7 @@ export async function moon2hydra(account: string, amount: number) {
 export async function assethub2interlay(
   assetid: number,
   amount: number,
-  destaccount: string,
+  destaccount: string
 ) {
   const paraid = 2032;
   const api = await getApiInstance("assetHub");
@@ -729,7 +597,7 @@ export async function assethub2interlay(
     { V2: account },
     { V2: [asset] },
     0,
-    { Unlimited: null },
+    { Unlimited: null }
   );
 
   return tx;
@@ -740,7 +608,7 @@ export async function assethub2interlay(
 export async function interlay2assethub(
   assetid: number,
   amount: number,
-  accountid32: string,
+  accountid32: string
 ) {
   const api = await getApiInstance("interlay");
   const paraid = 1000;
@@ -770,7 +638,7 @@ export async function interlay2assethub(
     { foreignasset: assetid },
     { amount: amount.toString() },
     { V3: destination },
-    { unlimited: null },
+    { unlimited: null }
   );
   return tx;
 }
@@ -779,7 +647,7 @@ export async function interlay2assethub(
 export async function generic_kusama_to_parachain(
   paraid: number,
   amount: number,
-  address: string,
+  address: string
 ) {
   const api = await getApiInstance("kusama");
   const accountId = api.createType("AccountId32", address).toHex();
@@ -807,7 +675,7 @@ export async function generic_kusama_to_parachain(
     { V3: targetAccount },
     { V3: asset },
     0,
-    { Unlimited: null }, // weight_limit
+    { Unlimited: null } // weight_limit
   );
   return tx;
 }
@@ -816,7 +684,7 @@ export async function generic_kusama_to_parachain(
 export async function genericPolkadotToParachain(
   paraid: number,
   amount: number,
-  address: string,
+  address: string
 ) {
   const api = await getApiInstance("polkadot");
   //const address = "12u9Ha4PxyyQPvJgq3BghnqNXDwLqTnnJFuXV7aZQoiregT2";
@@ -843,7 +711,7 @@ export async function genericPolkadotToParachain(
     { V3: destination },
     { V3: account },
     { V3: asset },
-    0,
+    0
   );
 
   return tx;
@@ -853,7 +721,7 @@ export async function genericPolkadotToParachain(
 export async function dotToHydraDx(
   amount: number,
   targetAddress: string,
-  delay?: number,
+  delay?: number
 ) {
   const paraid = 2034; // TODO: call from ChainInfo
   let api: any;
@@ -862,7 +730,7 @@ export async function dotToHydraDx(
   } catch (error) {
     // If there's an error connecting, send a toast message and terminate the function
     toast.error(
-      "Failed to connect to the endpoint. Please ensure you're connected and try again.",
+      "Failed to connect to the endpoint. Please ensure you're connected and try again."
     );
     return;
   }
@@ -902,7 +770,7 @@ export async function dotToHydraDx(
     { V3: targetAccount },
     { V3: asset },
     0,
-    { Unlimited: null }, // weight_limit
+    { Unlimited: null } // weight_limit
   );
   //   console.log(`[dotTohydraDx] tx created!`);
   //   console.log("[dotTohydraDx] tx to hex", tx.toHex());
@@ -921,7 +789,7 @@ export async function dotToHydraDx(
       numberfuture,
       null,
       priority,
-      tx,
+      tx
     );
     return txo;
   }
@@ -961,7 +829,7 @@ export async function dotToParachain(amount: number, targetAddress: string) {
     { V3: targetAccount },
     { V3: asset },
     0,
-    { Unlimited: null }, // weight_limit
+    { Unlimited: null } // weight_limit
   );
   //	console.log(`tx created!`);
   //	console.log(tx.toHex());
@@ -972,7 +840,7 @@ export async function dotToParachain(amount: number, targetAddress: string) {
 // hydradx > polkadot DOT transfers
 export async function hydradx_to_polkadot(
   amount: number,
-  dest_account: string,
+  dest_account: string
 ) {
   const api = await getApiInstance("hydraDx");
   const rawTargetAddress = getRawAddress(dest_account);
@@ -988,7 +856,7 @@ export async function hydradx_to_polkadot(
     { currencyId: 5 }, // DOT assetid
     { amount: amount.toString() },
     { V3: dest },
-    { unlimited: null },
+    { unlimited: null }
   );
   return tx;
 }
@@ -1000,7 +868,7 @@ export async function hydraDxToParachain(
   amount: number,
   assetId: number,
   destAccount: string,
-  paraId: number,
+  paraId: number
 ) {
   const api = await getApiInstance("hydraDx");
 
@@ -1035,7 +903,7 @@ export async function hydraDxToParachain(
   const tx = api.tx.xTokens.transferMultiasset(
     { V3: asset },
     { V2: destination },
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
 
   return tx;
@@ -1045,7 +913,7 @@ async function moonbeam2parachain(
   accountidme: string,
   assetid: string,
   amount: string,
-  paraid: number,
+  paraid: number
 ) {
   const api = await getApiInstance("moonbeam");
 
@@ -1075,7 +943,7 @@ async function moonbeam2parachain(
   const tx = api.tx.xTokens.transferMultiasset(
     { V3: asset },
     { V2: destination },
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
 
   return tx;
@@ -1094,7 +962,7 @@ function uint8ArrayToHex(uint8Array: Uint8Array): string {
 
 export async function polkadot_assethub_to_assetHub_kusama(
   amount: number,
-  accountid: string,
+  accountid: string
 ) {
   const myaccount = getRawAddress(accountid);
 
@@ -1132,7 +1000,7 @@ export async function polkadot_assethub_to_assetHub_kusama(
     { V3: account },
     { V3: [asset] },
     0,
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
   return tx;
 }
@@ -1175,7 +1043,7 @@ export async function moon2polkadot(account: string, amount: number) {
   const tx = api.tx.xTokens.transferMultiasset(
     { V2: asset },
     { v2: dest },
-    { Unlimited: null },
+    { Unlimited: null }
   );
   return tx;
 }
@@ -1216,7 +1084,7 @@ export async function moonriver2turing(accountidme: string, amount: number) {
   const tx = await api.tx.xTokens.transferMultiasset(
     { V2: asset },
     { v2: dest },
-    { Unlimited: null },
+    { Unlimited: null }
   );
 
   return tx;
@@ -1266,7 +1134,7 @@ export async function turing2moonriver(accountido: string, amount: number) {
   const tx = await api.tx.xTokens.transferMultiasset(
     { V3: asset },
     { V3: destination },
-    { Unlimited: null },
+    { Unlimited: null }
   );
   return tx;
 }
@@ -1274,7 +1142,7 @@ export async function turing2moonriver(accountido: string, amount: number) {
 export async function mangata2turing(
   amount: number,
   accountido: string,
-  assetid: number,
+  assetid: number
 ) {
   const api = await getApiInstance("mangatax");
   const accountid = getRawAddress(accountido);
@@ -1297,7 +1165,7 @@ export async function mangata2turing(
     { currency_id: assetid },
     { amount: amount },
     { V3: dest },
-    { Limited: { proof_size: 0, ref_time: 4000000000 } },
+    { Limited: { proof_size: 0, ref_time: 4000000000 } }
   );
   return tx;
 }
@@ -1339,7 +1207,7 @@ export async function turing2mangata(amount: number, accountido: string) {
   const tx = await api.tx.xTokens.transferMultiasset(
     { V3: asset },
     { V3: destination },
-    { Limited: { proof_size: 0, ref_time: 4000000000 } },
+    { Limited: { proof_size: 0, ref_time: 4000000000 } }
   );
   return tx;
 }
@@ -1348,7 +1216,7 @@ export async function turing2mangata(amount: number, accountido: string) {
 export async function interlay2moonbeam(
   amount: string,
   assetid: string,
-  account: string,
+  account: string
 ) {
   const api = await getApiInstance("interlay");
 
@@ -1371,7 +1239,7 @@ export async function interlay2moonbeam(
     { foreignasset: assetid },
     { amount: amount.toString() },
     { V3: dest },
-    { unlimited: null },
+    { unlimited: null }
   );
   return tx;
 }
@@ -1380,7 +1248,7 @@ export async function interlay2moonbeam(
 export async function hydra2moonbeam(
   accountme: string,
   assetid: string,
-  amount: string,
+  amount: string
 ) {
   const api = await getApiInstance("hydraDx");
 
@@ -1403,7 +1271,7 @@ export async function hydra2moonbeam(
     { currency_id: assetid },
     { amount: amount },
     { V3: dest },
-    { Unlimited: null },
+    { Unlimited: null }
   );
 }
 
@@ -1441,7 +1309,7 @@ export async function polkadot2moonbeam(amount: string, accountme: string) {
     { V2: beneficiary },
     { V2: assets },
     { fee_asset_item: 0 },
-    { Unlimited: null },
+    { Unlimited: null }
   );
 
   return tx;
@@ -1451,7 +1319,7 @@ export async function polkadot2moonbeam(amount: string, accountme: string) {
 export async function assethub2moonbeam(
   amount: string,
   assetid: string,
-  account: string,
+  account: string
 ) {
   const api = await getApiInstance("assetHub");
 
@@ -1493,7 +1361,7 @@ export async function assethub2moonbeam(
     { V2: bene },
     { V2: [asset] },
     { fee_asset_item: 1 },
-    { Unlimited: null },
+    { Unlimited: null }
   );
 
   return tx;
@@ -1503,7 +1371,7 @@ export async function assethub2moonbeam(
 export async function assethub_to_hydra(
   assetid: number,
   amount: number,
-  accountId: string,
+  accountId: string
 ) {
   console.log(`[assethub_to_hydra]`);
   const api = await getApiInstance("assetHub");
@@ -1545,7 +1413,7 @@ export async function assethub_to_hydra(
     { V2: account },
     { V2: [asset] },
     0,
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
   return tx;
 }
@@ -1555,7 +1423,7 @@ export async function assethub_to_parachain(
   assetid: string,
   amount: number,
   accountid: string,
-  paraid: number,
+  paraid: number
 ) {
   //console.log(`assethub_to_parachain]amount :`, amount);
   //console.log(`[assethub_to_parachain]assetId :`, assetid);
@@ -1602,7 +1470,7 @@ export async function assethub_to_parachain(
     { V3: account },
     { V3: [asset] },
     0,
-    { Unlimited: 0 },
+    { Unlimited: 0 }
   );
   return tx;
 }

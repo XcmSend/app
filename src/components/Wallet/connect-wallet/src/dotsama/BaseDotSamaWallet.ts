@@ -9,7 +9,7 @@ import { SubscriptionFn, Wallet, WalletAccount, WalletInfo, WalletLogoProps } fr
 import { InjectedAccount, InjectedExtension, InjectedMetadata, InjectedProvider, InjectedWindow } from '@polkadot/extension-inject/types';
 import { Signer } from '@polkadot/types/types';
 
-const DAPP_NAME = 'SubWallet Connect';
+const DAPP_NAME = 'Bagpipes';
 
 export class BaseDotSamaWallet implements Wallet {
   extensionName: string;
@@ -29,9 +29,34 @@ export class BaseDotSamaWallet implements Wallet {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.logo = logo;
 
-    return this;
+    return this;  
+  
   }
 
+  //   this.initializeWallet();
+  // }
+
+  //   initializeWallet = () => {
+  //   // Retry mechanism to check if the extension is available
+  //   const checkInjectedExtension = () => {
+  //     const injectedWindow = window as Window & InjectedWindow;
+  //     const injectedExtension = injectedWindow?.injectedWeb3?.[this.extensionName];
+  //     console.log(`injectedExtension for ${this.extensionName}:`, injectedExtension);
+
+  //     if (injectedExtension) {
+  //       this._extension = injectedExtension;
+  //       this._signer = injectedExtension.signer;
+  //       console.log(`${this.extensionName} extension detected and initialized.`);
+  //     } else {
+  //       console.warn(`${this.extensionName} extension not found, retrying...`);
+  //       setTimeout(checkInjectedExtension, 500); // Retry every 500ms
+  //     }
+  //   };
+
+  //   checkInjectedExtension();
+  // }
+
+  
   // API docs: https://polkadot.js.org/docs/extension/
   get extension () {
     return this._extension;
@@ -54,6 +79,7 @@ export class BaseDotSamaWallet implements Wallet {
     const injectedWindow = window as Window & InjectedWindow;
     const injectedExtension =
       injectedWindow?.injectedWeb3?.[this.extensionName];
+      console.log("injectedExtension for bagpipes", injectedWindow, injectedExtension);
 
     return !!injectedExtension;
   }

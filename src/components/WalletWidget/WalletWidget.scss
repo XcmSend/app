@@ -1,0 +1,113 @@
+@import '../../variables.scss';
+
+
+.widget-container {
+
+    width: 250px;
+    height: 50px;
+    float: right;
+    text-align: right;
+    padding: 10px;
+   
+  }
+
+  .wallet-widget-app-position {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+  }
+  
+
+.wallet-logo-small {
+  margin-right: 4px;
+  height: 18px !important;
+}
+
+.wallet-title {
+  padding-left: 0;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 32px;
+}
+
+
+.widget-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: rgb(255, 255, 255);
+  color: rgb(35, 35, 35);
+  text-decoration: none;
+  border-radius: 7px;
+  min-width: 150px;
+  border: 1px dashed rgb(169, 169, 169);
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.194);
+
+  &:hover {
+    background-color: $primary-color;
+    color: white;
+  }
+
+ 
+}
+
+ .icon-and-text {
+  display: flex; /* Ensures contents are laid out horizontally */
+  align-items: center; /* Aligns items vertically in the center */
+
+  .icon {
+    margin-right: 8px;
+
+  }
+
+  .text {
+    margin-right: 8px; 
+  }
+
+  &:active {
+    border: none;
+  }
+
+    &:focus {
+        border: none;
+    }
+
+}
+
+
+
+
+
+.connect {
+  margin-left: 8px;
+  margin-right: 4px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+
+.status {
+  display: block;
+  font-size: 0.8em;
+  color: gray;
+}
+
+.buttonIcon {
+  border: none !important;
+  outline: none !important;
+  padding: 3px;
+
+  // even if hovered or active no border or focus
+  &:hover {
+    border: none !important;
+    outline: none !important;
+  }
+  &:active {
+    border: none !important;
+    outline: none !important;
+  }
+  &:focus {
+    border: none !important;
+    outline: none !important;
+  }
+}

@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
-import ScheduleTransferSVG from '/clock.svg';
 import RemarkSVG from '/remark.svg';
+import ScheduleTransferSVG from '/clock.svg';
+
 import VoteSVG from '/vote.svg';
 import { listChains } from '../../Chains/ChainsInfo';
 import { toast } from 'react-hot-toast';
@@ -114,6 +115,13 @@ const OrderedListContent = ({ list }) => {
                         );
 
                     } 
+                    else if (item.action === 'ScheduleTransfer') {
+                        imageSrc = ScheduleTransferSVG;
+                        altText = "Schedule a transfer";
+                        return (
+                            <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
+                        );
+                    }
                else if (item.action === 'Vote' || item.action === 'vote') {
                     imageSrc = VoteSVG;
                     altText = "Vote";
@@ -138,13 +146,7 @@ const OrderedListContent = ({ list }) => {
                         <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
                     );
                 }
-                else if (item.action === 'ScheduleTransfer') {
-                    imageSrc = ScheduleTransferSVG;
-                    altText = "Schedule a transfer";
-                    return (
-                        <img key={index} src={imageSrc} alt={altText} className="toast-icon" />
-                    );
-                }
+                    
 
 
                     else if (item.action === 'xTransfer') {

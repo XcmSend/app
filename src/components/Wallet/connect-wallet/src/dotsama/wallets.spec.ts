@@ -14,6 +14,8 @@ describe('Test Wallets Methods', () => {
   it('Test getWalletBySource', () => {
     expect(getWalletBySource('subwallet-js')?.title).toEqual('SubWallet');
     expect(getWalletBySource('polkadot-js')?.title).toEqual('Polkadot{.js}');
+    // expect(getWalletBySource('beetl')?.title).toEqual('Beetle');
+
   });
 
   it('Test addWallet', () => {

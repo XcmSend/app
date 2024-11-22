@@ -1,0 +1,253 @@
+.viewerBuilderWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-direction: column;
+    outline: 0px dashed rgb(105, 255, 125);
+    border-radius: 0px;
+    background: rgba(0, 0, 0, 0) ;
+    max-width: 500px;
+    // margin: 0 auto;
+  
+  
+    .cutOutLabel {
+      // font-mono text-sm align-left m-0 we want mono (not inter) font and small text, and a background and we want to shift it up so it looks like its over the cut out. 
+      font-family: monospace, 'Inter', sans-serif;
+      font-size: 12px;
+  
+      color: rgb(105, 255, 125) !important;
+      margin-top: -15px;
+      font-weight: 500 !important;
+      background: rgb(0, 0, 0);
+      padding: 5px;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
+  
+  
+    }
+  
+    .visibleApp {
+      padding-bottom: 10px;
+    }
+  
+  .blinkViewer {
+    font-family: 'Inter', sans-serif;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 10px;
+    max-width: 480px; // Fixed width similar to an embedded Twitter card
+    min-width: 460px; // Minimum width to prevent the card from shrinking too much
+    min-height: auto;
+    box-shadow: 4px 4px 17px rgba(0, 0, 0, 0.305); // Adding some shadow for depth
+    background: #fff; // Assuming a light mode card, set a white background
+    // font-family: Inter,Roboto,Helvetica,sans-serif; 
+    // ok we want the position of the viewer to always be floating on the right side and centered vertically
+    // position: absolute;
+    // top: 10%;
+    // right: 200px;
+    //  margin: auto;
+    //  overflow: scroll;
+  ;
+     
+  
+     h1 {
+      margin-top: 10px;
+      font-size:large;
+      font-weight: bold;
+      margin-bottom: 0px;
+     }
+  
+     p {
+      margin-top: 0px;
+      font-size:normal;
+      font-weight: normal;
+     }
+    h2 {
+      margin-top: 0;
+    }
+  
+    .blink-icon {
+      max-width: 100%; // Ensure the image does not exceed the container's width
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+  
+  
+    }
+  
+  
+  
+    .blink-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem; // Adjust the top margin as needed
+    
+      .link-section, .creator-section {
+        display: flex;
+        align-items: center;
+    
+        // Adjust spacing between icons and text
+        .icon {
+          
+          color: grey;
+         
+        }
+    
+        .blink-title {
+          margin-left: 0.25rem;
+          color: grey
+        }
+  
+        .creator-identity  {
+          margin-left: 0.25rem;
+          color: grey;
+          display: flex;
+          align-items: center;
+        }
+      }
+    
+      // Responsive adjustments for smaller screens
+      @media (max-width: 600px) { // Adjust breakpoint as necessary
+        flex-direction: column;
+        align-items: flex-start;
+    
+        .link-section, .creator-section {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+      }
+    }
+    
+  
+    .account-widget {
+      float: left;
+      margin-bottom: 10px;
+      
+    }
+  
+  
+  
+    .action-group-style {
+      display: flex;
+      flex-direction: column;
+      // we want the siblings of the buttons to be on the same row
+      justify-content: space-around; /* This will space out buttons evenly */
+      align-items: center;
+      margin-top: auto;    // background: #c2c2c2;
+      width: 100%;
+      list-style: none;
+      justify-items: center;
+  
+  
+  
+      
+  
+      ul {
+        display: flex;
+        width: 100%; /* Ensures the ul takes up the entire width of its container */
+        justify-content: space-around; /* This will space out buttons evenly */
+        padding: 0; /* Removes default padding */
+        list-style: none; /* Removes bullet points */
+    }
+  
+      li {
+        flex-grow: 1; /* Distributes space evenly amongst list items */
+        display: flex; /* Aligns the button properly within the list item */
+        justify-content: center; /* Centers the button within the list item */
+        align-items: center; /* Centers the button vertically within the list item */
+  
+      }
+  
+  
+  
+      button {
+        padding: 7px 12px; // Padding inside the button
+        margin: 5px; // Remove margin
+        border-radius: 10px; // Rounded corners on the right side only
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+  
+       
+  
+      }
+    }
+  }
+  
+  
+  .fixed-wrapper {
+    // we want the buttons in this wrapper to be on the same row if possible
+    display: flex;
+    justify-content: center;
+    
+  }
+  
+  
+  .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px; // Space between multiple inputs if any
+      width: 100%; // Full width
+  
+      input {
+          padding: 8px 50px 8px 8px; // Right padding to make space for the button
+          margin: 0; // Remove margin for alignment
+          border-radius: 5px;
+          border: 1px solid #ccc;
+          width: 100%;
+          font-weight: normal;
+      }
+  
+      button {
+        position: absolute;
+        right: 1px; // Positioned right inside the input
+        top: 1px; // Align top
+        bottom: 1px; // Align bottom to stretch the button height to input's height
+        padding: 0 12px; // Padding inside the button
+        margin: 0; // Remove margin
+        border-radius: 0 17px 17px 0; // Rounded corners on the right side only
+        background: #000000 !important;
+        color: white;
+        border: none;
+        cursor: pointer;
+  
+        &:hover {
+            background: darken(#007bff, 10%);
+        }
+    }
+  
+      
+  }
+  
+    .inputAmountButton {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      background: #000000;
+    }
+    button {
+      opacity: 1;
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
+  
+    ul {
+      list-style-type: none;
+      padding: 0;
+  
+      li button {
+        margin-top: 10px;
+      }
+    }
+  }

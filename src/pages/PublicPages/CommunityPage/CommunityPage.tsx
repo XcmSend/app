@@ -58,7 +58,7 @@ const CommunityPage = () => {
           <h2>Templates</h2>
           <div className="template-container">
             <div className="template-group">
-              <h3>Bagpipes Scenarios</h3>
+              <h3>Workflow Templates</h3>
               <div className="template-flex">
                 {community.templates.bagpipes.map((template, index) => (
                   <div key={index} className="template-box box">
@@ -88,6 +88,7 @@ const CommunityPage = () => {
                 ))}
               </div>
             </div>
+            {community.uiTemplateShowcase !== false && (
             <div className="template-group">
               <h3>UI Templates</h3>
               <div className="template-flex">
@@ -114,6 +115,7 @@ const CommunityPage = () => {
                 ))}
               </div>
             </div>
+            )}
           </div>
         </section>
         <section className="community-section">
@@ -159,7 +161,7 @@ const CommunityPage = () => {
                       <h4>{creator.title}</h4>
                     </div>
                   </div>
-                  <p>{creator.description}</p>
+                  <p className='creator-description'>{creator.description}</p>
                 </Link>
               </li>
             );

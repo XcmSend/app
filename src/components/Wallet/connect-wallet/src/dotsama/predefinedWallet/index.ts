@@ -17,6 +17,15 @@ import NovaWalletLogo from './NovaWalletLogo.svg';
 import WalletConnectLogo from './WalletConnectLogo.svg';
 
 export const PREDEFINED_WALLETS: WalletInfo[] = [
+  // {
+  //   extensionName: 'beetl',
+  //   title: 'beetl',
+  //   installUrl: '~/blinks/polkadot-extension/packages/extension/build',
+  //   logo: {
+  //     src: WalletConnectLogo as string,
+  //     alt: 'Beetle Exoskeleton (extension)'
+  //   }
+  // },
   {
     extensionName: 'polkadot-js',
     title: 'Polkadot{.js}',

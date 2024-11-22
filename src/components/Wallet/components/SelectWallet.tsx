@@ -67,8 +67,8 @@ function SelectWallet ({ onSelectWallet }: Props): React.ReactElement<Props> {
             rel='noreferrer'
             target='_blank'
           >
-            Install
-          </a>)}
+          Reload or Install  
+        </a>)}
       </div>
     </div>
   );

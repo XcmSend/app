@@ -1,9 +1,11 @@
 import { ApiPromise } from '@polkadot/api';
 import { SubmittableExtrinsic, SubmittableExtrinsicFunction } from '@polkadot/api/types';
 import { getApiInstance } from '../Chains/api/connect';
+import { getSmoldotApiInstance } from '../Chains/api/connect_smol';
 import { signExtrinsicUtil } from '../components/Bagpipes/utils/signExtrinsicUtil';
 import { Codec, ISubmittableResult } from '@polkadot/types/types';
 import { TypeRegistry } from '@polkadot/types';
+import { chain } from 'lodash';
 const registry = new TypeRegistry();
 
 
@@ -26,13 +28,31 @@ interface Arguments {
   [key: string]: any;
 }
 
+interface TxParams {
+  method: string;
+  section: string;
+  arguments: string[];
+}
+
+interface CallArgument {
+  section: string;
+  method: string;
+  args: any;
+}
+
 
 
 class ChainRpcService {
 
 
   static async executeChainQueryMethod({ chainKey, palletName, methodName, params, atBlock }: MethodParams): Promise<any> {
-    const api = await getApiInstance(chainKey);
+    console.log(`executeChainQueryMethod: chainKey:`, chainKey);
+    
+    var api = await getApiInstance(chainKey);
+    if (chainKey == 'polkadot') {
+        console.log(`[executeChainQueryMethod] polkadot detected, running with smoldot!`);
+        api = await getSmoldotApiInstance(chainKey);
+    };
     const method = this.resolveMethod(api, palletName, methodName, false);
   console.log('1. executeChainQueryMethod method:', method);
     try {
@@ -40,9 +60,35 @@ class ChainRpcService {
       let result: Codec;
       if (params && params.length > 0) {
         const formattedParams = this.formatParams(params);
-        result = blockHash ? await method.at(blockHash, ...formattedParams) : await method(...formattedParams);
+       console.log(`result 0`);
+       if (typeof method === 'object' && chainKey === 'polkadot' ){
+        console.log(`object detected `);
+        console.log(`result 1, correct`);
+        const formattedParams = this.formatParams(params);
+          console.log(`grabbing with params: `, formattedParams);
+          result = await method.getValue(...formattedParams);
+  
+        console.log(`result 1 is:`, result);
+        console.log(`returning result 1...`);
+        return result;
       } else {
-        result = blockHash ? await method.at(blockHash) : await method();
+        result = blockHash ? await method.at(blockHash, ...formattedParams) : await method(...formattedParams);
+      }
+        
+      } else {
+        if (typeof method === 'object' && chainKey === 'polkadot' ){
+          console.log(`object detected `);
+          console.log(`result 1, correct`);
+            result = await method.getValue(); // ...formattedParams
+          console.log(`result 1 is:`, result);
+          console.log(`returning result 1...`);
+          return result.toString();
+        } else {
+          console.log(`result 2`);
+          result = blockHash ? await method.at(blockHash) : await method();
+      
+        }
+       
       }
       return result.toHuman ? result.toHuman() : result.toString();
     } catch (error) {
@@ -71,6 +117,7 @@ class ChainRpcService {
 
 
   static async executeChainTxRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+    console.log(`executeChainTxRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params, signerAddress, signer);
     const api = await getApiInstance(chainKey);
     const method = this.resolveMethod(api, palletName, methodName, true);
 
@@ -78,7 +125,9 @@ class ChainRpcService {
     if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
 
     try {
-        const formattedParams = this.formatTxParams(api, method, params);
+    console.log('executeChainTxRenderedMethod method:', method);
+        const formattedParams = this.formatTxParams(api, method, params, methodName);
+        console.log('formattedParams:', formattedParams);
         const extrinsic = method(...formattedParams);
         const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
         return signedExtrinsic;
@@ -86,6 +135,27 @@ class ChainRpcService {
         console.error('Error executing chain tx method:', error);
         throw error;
     }
+}
+
+static async executeChainTxBlinkRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {
+  console.log(`executeChainTxBlinkRenderedMethod: chainKey, palletName, methodName, params: `, chainKey, palletName, methodName, params, signerAddress, signer);
+  const api = await getApiInstance(chainKey);
+  const method = this.resolveMethod(api, palletName, methodName, true);
+  console.log(`executeChainTxBlinkRenderedMethod: method resolved:...`, method);
+
+  if (!method) throw new Error(`Method ${methodName} is not available on pallet ${palletName}.`);
+  if (!signerAddress) throw new Error("Signer address is required for transaction signing.");
+
+  try {
+  
+      const formattedParams = this.formatTxBlinkParams(api, method, params);
+      const extrinsic = method(...formattedParams);
+      const signedExtrinsic = await signExtrinsicUtil(api, signer, extrinsic, signerAddress);
+      return signedExtrinsic;
+  } catch (error) {
+      console.error('Error executing chain tx method:', error);
+      throw error;
+  }
 }
 
 
@@ -98,7 +168,7 @@ static async createChainTxRenderedMethod({ chainKey, palletName, methodName, par
   }
 
   try {
-      const formattedParams = this.formatTxParams(api, method, params);
+      const formattedParams = this.formatTxParams(api, method, params, methodName);
       const extrinsic = method(...formattedParams);
       const encodedCallData = extrinsic.method.toHex();
 
@@ -115,24 +185,27 @@ static async createChainTxRenderedMethod({ chainKey, palletName, methodName, par
 
 
   private static resolveMethod(api: ApiPromise, palletName: string, methodName: string, isTx: boolean): any {
-    const camelPalletName = this.toCamelCase(palletName);
+    const camelPalletName2 = this.toCamelCase(palletName);
     console.log(`executeChainTxRenderedMethod Resolving method: ${methodName} on pallet: ${palletName}`);
-    const camelMethodName = this.toCamelCase(methodName);
+    const camelMethodName2 = this.toCamelCase(methodName);
     const namespace = isTx ? api.tx : api.query;
 
     console.log(`executeChainTxRenderedMethod Resolving method: ${methodName} on pallet: ${palletName}`);
-    console.log(`executeChainTxRenderedMethod Camel Case Pallet Name: ${camelPalletName}, Camel Case Method Name: ${camelMethodName}`);
+    console.log(`executeChainTxRenderedMethod Camel Case Pallet Name: ${camelPalletName2}, Camel Case Method Name: ${camelMethodName2}`);
     console.log(`executeChainTxRenderedMethod Namespace details:`, namespace);
 
-    if (!namespace[camelPalletName]) {
-      console.error(`Pallet ${camelPalletName} is not available in the namespace.`);
+    if (!namespace[camelPalletName2]) {
+      console.error(`Pallet ${camelPalletName2} is not available in the namespace.`);
       return null;
     }
-
+    const camelMethodName = this.capitalizefirst_letter(camelMethodName2);
+    const camelPalletName = this.capitalizefirst_letter(camelPalletName2);
+    console.log(`camelcases: `, camelPalletName, camelMethodName);
     const method = namespace[camelPalletName][camelMethodName];
     console.log(`executeChainTxRenderedMethod Method details:`, method);
+    console.log(`Method type: ${typeof method}`);
 
-    if (typeof method === 'function') {
+    if (typeof method === 'function' || typeof method === 'object') {
       console.log(`executeChainTxRenderedMethod Direct method access successful for: ${camelMethodName}`);
       return method;
     } else {
@@ -146,25 +219,145 @@ static async createChainTxRenderedMethod({ chainKey, palletName, methodName, par
 /**
  * Formats parameters according to their defined types in Substrate metadata.
  */
-static formatTxParams(api: ApiPromise, method: any, params: any): any[] {
+static formatTxParams(api: ApiPromise, method: any, params: any, methodName: string): any[] {
+  console.log('formatTxParams:', params);
   return params.arguments.map(arg => {
-      const key = Object.keys(arg)[0];
-      let value = Object.values(arg)[0];
-      const typeInfo = method.meta.args.find(a => a.name.toString() === key);
-      const paramType = typeInfo.type.toString();
+    const key = Object.keys(arg)[0];
+    let value = arg[key];
+    const typeInfo = method?.meta?.args.find(a => a.name.toString() === key);
 
-      // Handle optional types
-      if (paramType.startsWith('Option<')) {
-          if (value === "None") {
-              return null; // Convert "None" to null
-          } else if (value && typeof value === 'object' && 'Some' in value) {
-              value = value.Some; // Unwrap the value from Some
-          }
+    if (!typeInfo) {
+      throw new Error(`Argument "${key}" is not a valid parameter for method "${methodName}". Expected arguments: ${method.meta.args.map(a => a.name.toString()).join(', ')}`);
+    }
+
+    console.log('Provided argument key:', key);
+    console.log('Available method argument names:', method.meta.args.map(a => a.name.toString()));
+
+    const paramType = typeInfo?.type?.toString();
+    console.log('formatTxParams paramType:', paramType);
+
+    // Handle optional types
+    if (paramType?.startsWith('Option<')) {
+      if (value === "None") {
+        return null; // Convert "None" to null
+      } else if (value && typeof value === 'object' && 'Some' in value) {
+        value = value.Some; // Unwrap the value from Some
       }
-      // Create the parameter using the appropriate type from the registry
-      return api.registry.createType(paramType, value);
+    }
+
+    // Handle 'Call' type dynamically
+    if (paramType === 'Call') {
+      console.log('formatTxParams Call type 0:', value);
+
+      // Extract 'section', 'method', and 'args' from the value
+      let callSection, callMethod, callArgs;
+
+      if (value.method && value.section && value.args) {
+        // Value has the expected format
+        callSection = value.section.toLowerCase();
+        callMethod = value.method;
+        callArgs = value.args;
+        console.log('formatTxParams Call details 1a:', callSection, callMethod, callArgs);
+      } else if (typeof value === 'object') {
+        console.log('formatTxParams Call type is an object 1b:', value);
+
+        callSection = Object.keys(value)[0]; 
+        const methodCalls = value[callSection];
+        if (Array.isArray(methodCalls) && methodCalls.length > 0) {
+          const methodCall = methodCalls[0];
+          callMethod = Object.keys(methodCall)[0]; 
+          callArgs = methodCall; 
+          console.log('formatTxParams Call details 1c:', callSection, callMethod, callArgs);
+        } else {
+          console.log('formatTxParams Call type is an object 1d:', value);
+          callMethod = Object.keys(value[callSection])[0]; 
+          callArgs = value[callSection][callMethod]; 
+        }
+      }
+
+      // we need to make sure callSection is to lower case
+      callSection = callSection.toLowerCase();
+
+      console.log('formatTxParams Call details 2:', callSection, callMethod, callArgs);
+
+      if (!callSection || !callMethod) {
+        throw new Error('Invalid Call parameter: missing section or method');
+      }
+
+      if (!api.tx[callSection] || !api.tx[callSection][callMethod]) {
+        throw new Error(`Invalid pallet or method: ${callSection}.${callMethod}`);
+      }
+
+      // Get method metadata
+      const callMethodMeta = api.tx[callSection][callMethod];
+
+      const callMethodArgsDef = callMethodMeta.meta.args;
+      console.log('formatTxParams Call method arguments 3:', callMethodArgsDef.toHuman());
+
+      console.log('formatTxParams Call method metadata 4:', callMethodMeta.meta.toHuman());
+
+      // Prepare arguments in correct order
+      const callMethodArgs = callMethodArgsDef.map(argDef => {
+        const argName = argDef.name.toString();
+
+          const argNameSnakeCase = this.toSnakeCase(argName);
+        console.log('formatTxParams Call argument 5a:', argName);
+        const argType = argDef.type.toString();
+        console.log('formatTxParams Call argument 5b:', argType);
+        const argValue = callArgs[argNameSnakeCase];
+        console.log('formatTxParams Call argument 5c:', argValue);
+
+        console.log('formatTxParams Call argument 5d:', argName, argType, argValue);
+
+        if (argValue === undefined) {
+          throw new Error(`Missing argument '${argName}' for method '${callSection}.${callMethod}'`);
+        }
+
+        return api.registry.createType(argType, argValue);
+      });
+
+      // Construct the Call object
+      const call = api.tx[callSection][callMethod](...callMethodArgs);
+      console.log('Constructed Call:', call.toHex());
+
+      return call;
+    }
+    console.log('formatTxParams paramType:', paramType, value);
+    // Create the parameter using the appropriate type from the registry
+    return api.registry.createType(paramType, value);
   });
 }
+
+/**
+ * Formats parameters according to their defined types in Substrate metadata.
+ */
+static formatTxBlinkParams(api: ApiPromise, method: any, params: any): any[] {
+  // with blink params they do not have keys, they just have values in the correct order. 
+  // so we just need to map the values to the correct type
+  return params.map((value, index) => {
+      const typeInfo = method.meta.args[index];
+      const paramType = typeInfo.type.toString();
+      return api.registry.createType(paramType, value);
+  });
+  // return params.arguments.map(arg => {
+  //     const key = Object.keys(arg)[0];
+  //     let value = Object.values(arg)[0];
+  //     const typeInfo = method.meta.args.find(a => a.name.toString() === key);
+  //     const paramType = typeInfo.type.toString();
+
+  //     // Handle optional types
+  //     if (paramType.startsWith('Option<')) {
+  //         if (value === "None") {
+  //             return null; // Convert "None" to null
+  //         } else if (value && typeof value === 'object' && 'Some' in value) {
+  //             value = value.Some; // Unwrap the value from Some
+  //         }
+  //     }
+  //     // Create the parameter using the appropriate type from the registry
+  //     return api.registry.createType(paramType, value);
+  // });
+}
+
 
 
   
@@ -216,16 +409,30 @@ private static formatParams(params: any): any[] {
     return atBlock; // Otherwise, it's already a block hash
   }
 
+  private static capitalizefirst_letter(input: string): string {
+      if (input.length === 0) return input; // Handle empty string
+      return input[0].toUpperCase() + input.slice(1);
  
+  }
 
     private static toCamelCase(str: string): string {
     return str
         .replace(/(_\w)/g, (match) => match[1].toUpperCase())
         .replace(/^([A-Z])/, (match) => match.toLowerCase());
 }
+
+private static toSnakeCase(str: string): string {
+  return str
+      .replace(/([a-z])([A-Z])/g, '$1_$2') 
+      .replace(/([A-Z])([A-Z][a-z])/g, '$1_$2') 
+      .toLowerCase();
+}
+
 }
 
 export default ChainRpcService;
+
+
 
 
   // static async executeChainTxRenderedMethod({ chainKey, palletName, methodName, params, signerAddress, signer }: MethodParams): Promise<any> {

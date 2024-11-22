@@ -2,11 +2,13 @@
 
 .wallet-info-page {
   padding: 50px 8px;
+  width: 50%;
+  min-width: 300px;
+  height: 100%;
 }
 
 .wallet-info-page__text {
   font-size: 20px;
-  line-height: 32px;
   font-weight: 500;
   padding-bottom: 16px;
 }
@@ -14,6 +16,12 @@
 .wallet-logo {
   margin-right: 8px;
   height: 40px !important;
+}
+
+.wallet-logo-small {
+  margin-right: 4px;
+  margin-left: 4px; 
+  height: 18px !important;
 }
 
 .wallet-title {
@@ -34,6 +42,13 @@
   color: white;
   text-decoration: none;
   border-radius: 7px;
+
+  &:hover {
+    background-color: $primary-color;
+    color: white;
+  }
+
+ 
 }
 
 .builder-btn .icon-and-text {
@@ -42,9 +57,45 @@
 }
 
 .builder-btn .icon-and-text > * {
-  margin-right: 8px; /* Adds space between the icon and the text */
+  margin-right: 8px; 
 }
 
-.builder-btn:hover {
-  background-color: #0056b3;
+
+.builder-btn {
+  margin-right: 8px;
+}
+
+.connected {
+  color: rgb(0, 163, 0);
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+
+.boxed-container {
+  width: 100%;
+  min-width: 300px;
+  height: 100%;
+  overflow: scroll;
+}
+
+.connected-box {
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 2px dashed #b5b5b5;
+  border-radius: 10px;
+}
+
+.wallet-summary {
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #c5c5c5;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.wallet-details {
+  // make this sit on the right side of the page we want the text underneath to wrap around it
+  
+
 }

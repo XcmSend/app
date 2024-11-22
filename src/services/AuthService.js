@@ -3,7 +3,7 @@ import axios from 'axios';
 import config from '../config';
 
 
-const API_URL = 'https://api.bagpipes.io'; 
+const API_URL = 'http://localhost:5005'; 
 
 class AuthService {
   constructor() {

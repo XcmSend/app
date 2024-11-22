@@ -58,77 +58,142 @@
         console.log('initializeDefaultValues - initialize initializeDefaultValues, path:', field, path, fromType);
         let defaultValue;
         switch (field.type) {
-            case 'variant':
-                console.log('initializeDefaultValues - initialize initializeDefaultValues variant 1:', field, path);
-                const defaultVariant = field.variants[0];
-                if (defaultVariant.fields.length === 0) {
-                    // No subfields, initialize as a simple string value
-                    defaultValue = defaultVariant.name;
-                } else {
-                    console.log('initializeDefaultValues - initialize initializeDefaultValues variant 2:', field, path);
-                    // Check the type of the first subfield to determine structure
-                    const firstSubFieldType = defaultVariant.fields[0].resolvedType.type;
-                    if (firstSubFieldType === 'composite') {
-                        // Initialize as an object with subfields
-                        defaultValue = {
-                            [defaultVariant.name]: {}
-                        };
-                        defaultVariant.fields.forEach(subField => {
-                            defaultValue[defaultVariant.name][subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'composite');
+          case 'variant':
+            const defaultVariant = field.variants[0];
+            const variantName = defaultVariant.name || `variant${defaultVariant.index}`;
+      
+            if (defaultVariant.fields.length === 0) {
+              defaultValue = variantName;
+            } else if (
+              defaultVariant.fields.length > 1 &&
+              defaultVariant.fields.every(field => !field.name)
+            ) {
+              defaultValue = [];
+              defaultVariant.fields.forEach((subField, index) => {
+                const subFieldValue = initializeDefaultValues(
+                  subField.resolvedType,
+                  `${path}[${index}]`,
+                  'variant'
+                );
+                defaultValue.push(subFieldValue);
+              });
+              defaultValue = { [variantName]: defaultValue };
+            } else if (
+              defaultVariant.fields.length === 1 &&
+              !defaultVariant.fields[0].name
+            ) {
+              const subField = defaultVariant.fields[0];
+              const subFieldValue = initializeDefaultValues(
+                subField.resolvedType,
+                path,
+                'variant'
+              );
+              defaultValue = { [variantName]: subFieldValue };
+            } else {
+              defaultValue = { [variantName]: {} };
+              defaultVariant.fields.forEach((subField) => {
+                const subFieldName = subField.name || 'value';
+                defaultValue[variantName][subFieldName] = initializeDefaultValues(
+                  subField.resolvedType,
+                  `${path}.${subFieldName}`,
+                  'variant'
+                );
+              });
+            }
+            break;
+              
+                  case 'composite':
+                    if (
+                      field.fields &&
+                      field.fields.length === 1 &&
+                      field.fields[0].typeId === '1'
+                    ) {
+                      // Handle Array[32] of U8 specifically
+                      defaultValue = '0x'; // Default value for an array of U8
+                    } else if (
+                      field.fields &&
+                      field.fields.length === 1 &&
+                      !field.fields[0].name
+                    ) {
+                      // Composite with single unnamed field, flatten the structure
+                      defaultValue = initializeDefaultValues(
+                        field.fields[0].resolvedType,
+                        path,
+                        field.fields[0].resolvedType.type
+                      );
+                    } else {
+                      defaultValue = {};
+                      if (field.fields) {
+                        field.fields.forEach((subField) => {
+                          const subFieldName = subField.name || 'value';
+                          defaultValue[subFieldName] = initializeDefaultValues(
+                            subField.resolvedType,
+                            `${path}.${subFieldName}`,
+                            subField.resolvedType.type
+                          );
                         });
-                    } else if (firstSubFieldType === 'variant') {
-                        // we need to initialize the variant as an array
-                        // defaultValue = [];
-                        console.log('variant initializeDefaultValues - initialize initializeDefaultValues variant 3:', defaultValue, path);
-
-                        // Initialize as an array with each element being an object representing a variant
-                        defaultValue = defaultVariant.fields.map(subField => {
-                             console.log('initializeDefaultValues - initialize initializeDefaultValues variant 4:', subField, path);
-                            return {
-                                [subField.name]: initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'variant')
-                            };
-                        });
+                      }
                     }
-                }
-                break;
+                    break;
 
             case 'input':
                 console.log('initializeDefaultValues - initialize initializeDefaultValues input:', path);
-                defaultValue = "0";
+                if (['u8', 'u32', 'u64', 'i32', 'i64', 'u128'].includes(field.typeName)) {
+                    defaultValue = '0';
+                } else if (field.typeName === 'Bytes') {
+                    defaultValue = '0x';
+                } else {
+                    defaultValue = '0';
+                }                
+                
                 break;
+
 
             case 'variantField': 
             
                 console.log('initializeDefaultValues - initialize initializeDefaultValues variantField:', path);
             
-            case 'composite':
-                console.log('initializeDefaultValues - initialize composite 01 initializeDefaultValues composite:', { field, path, fromType });
-                defaultValue = {};
-                if (field.fields) {
-                    console.log('initializeDefaultValues - initialize composite 02 initializeDefaultValues composite field.fields:', field.fields, fromType);
-                    field.fields.forEach(subField => {
-                        console.log('initializeDefaultValues - initialize composite 02a initializeDefaultValues composite subField:', subField, fromType);
-                        // if subfield is a sequence then initialize it as an array
-                        if (subField.resolvedType.type === 'sequence') {
-                            defaultValue = [];
-                            console.log(`initializeDefaultValues - initialize composite ${field.type} 03a sequence initializeDefaultValues composite defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
-                        } else if (subField.resolvedType.type === 'composite') {
-                        defaultValue[subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'composite');
-                        console.log(`initializeDefaultValues - initialize ${field.type} 03b initializeDefaultValues composite defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
-                        } else if (subField.resolvedType.type === 'variant') {
+            // case 'composite':
+            //     console.log('initializeDefaultValues - initialize composite 01 initializeDefaultValues composite:', { field, path, fromType });
 
-                            console.log(`initializeDefaultValues - initialize ${field.type} 03a initializeDefaultValues variant defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
-                            defaultValue[subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'variant');
-                            // add something here
-                            console.log(`initializeDefaultValues - initialize ${field.type} 03b initializeDefaultValues variant defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
-                        } else if (subField.resolvedType.type === 'input') {
-                            defaultValue[subField.name] =  initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'input');
-                        } else {
-                            defaultValue[subField.name] =  initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, subField.resolvedType.type);
-                        }
-                    });
-                }
-                break;
+            //     if (
+            //         field.fields &&
+            //         field.fields.length > 1 &&
+            //         field.fields[0].typeId === '1'
+            //     ) {
+            //         console.log('initializeDefaultValues - composite with typeId=1 detected');
+            //         // Handle Array[32] of U8 specifically
+            //         defaultValue = '0x'; // Default value for an array of U8
+            //     } else {
+            //         defaultValue = {};
+
+            //         if (field.fields) {
+            //             console.log('initializeDefaultValues - initialize composite 02 initializeDefaultValues composite field.fields:', field.fields, fromType);
+            //             field.fields.forEach(subField => {
+            //                 console.log('initializeDefaultValues - initialize composite 02a initializeDefaultValues composite subField:', subField, fromType);
+            //                 // if subfield is a sequence then initialize it as an array
+            //                 if (subField.resolvedType.type === 'sequence') {
+            //                     defaultValue = [];
+            //                     console.log(`initializeDefaultValues - initialize composite ${field.type} 03a sequence initializeDefaultValues composite defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+            //                 } else if (subField.resolvedType.type === 'composite') {
+            //                 defaultValue[subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'composite');
+            //                 console.log(`initializeDefaultValues - initialize ${field.type} 03b initializeDefaultValues composite defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+            //                 } else if (subField.resolvedType.type === 'variant') {
+
+            //                     console.log(`initializeDefaultValues - initialize ${field.type} 03a initializeDefaultValues variant defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+            //                     defaultValue[subField.name] = initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'variant');
+            //                     // add something here
+            //                     console.log(`initializeDefaultValues - initialize ${field.type} 03b initializeDefaultValues variant defaultValue:`, subField, defaultValue, `${path}.${subField.name}`, fromType);
+            //                 } else if (subField.resolvedType.type === 'input') {
+            //                     defaultValue[subField.name] =  initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, 'input');
+            //                 } else {
+            //                     defaultValue[subField.name] =  initializeDefaultValues(subField.resolvedType, `${path}.${subField.name}`, subField.resolvedType.type);
+            //                 }
+            //             });
+            //         }
+            //     }
+            
+            //     break;
 
             case 'sequence':
                 // sequence is an array of objects
@@ -151,114 +216,95 @@
     };
 
 
-    export const generatePath = (base, segment, type, from, isParentVariantAndAllSiblings, index) => {
+    export const generatePath = (base, segment, type, from, shouldFieldsBeArray, index) => {
         console.log(`generatePath -  ${type} 0. generatePath ${type} base, segment, type:`, base, segment, type, from);
     
+
+        let basePath = Array.isArray(base) ? base : base ? [base] : [];
+
+
         // If the segment is undefined or empty, decide how to handle based on the type
-        if (segment === undefined || segment === null || segment === "") {
-            console.log('Missing or empty segment', { base, segment, type });
-            switch (type) {
-                case 'input':
-                    // For input, the path should not be modified; return base
-                    return base;
-                case 'variant':
-                    console.log(`generatePath -  ${type} 0a. generatePath variant base, segment, type no segment:`, base, segment, type, isParentVariantAndAllSiblings, index);
-                    if (isParentVariantAndAllSiblings) {
-                        const r = base?  `${base}[${index}]` : `[${index}]`;
-                        console.log(`generatePath -  ${type} 0a. generatePath variant base, segment, type result:`, { r, base, segment, type, isParentVariantAndAllSiblings, index });
-                        return r
-                    } else {
-                        return base;
-
-                    }
-                    // return isParentVariantAndAllSiblings ? `${base}[${index}]` : base;
-                case 'sequence':
-                case 'array':
-                    // For sequences and arrays, append empty brackets to suggest possible dynamic addition later
-                    return base ? `${base}[]` : "[]";
-                case 'initialBase':
-                    // For initialBase, if segment is empty, do not modify the base into an array
-                    return base;
-                default:
-                    // For other types where segment is not relevant, return just the base
-                    return base;
+    // If the segment is undefined or empty, decide how to handle based on the type
+    if (!segment) {
+      if (type === 'variant' && shouldFieldsBeArray && index !== undefined) {
+          // Use index for array elements
+          return [...basePath, index];
+      } else {
+          // Skip adding undefined or empty segment
+          return basePath;
+      }
+  }
+    
+    console.log('Missing or empty segment', { base, segment, type });
+    // For cases where segment is not empty
+    switch (type) {
+        case 'variant':
+            if (shouldFieldsBeArray) {
+                console.log(`generatePath - ${type} 1. generatePath ${type} shouldFieldsBeArray:`, base, segment, type, from, shouldFieldsBeArray, index);
+                return [...basePath, `${segment}[${index}]`];
+            } else {
+                console.log(`generatePath - ${type} 2a. generatePath ${type} shouldFieldsBeArray:`, base, segment, type, from, shouldFieldsBeArray, index);
+                return [...basePath, segment];
             }
+        case 'input':
+        case 'composite':
+        case 'sequenceField':
+        case 'variantField':
+            return [...basePath, segment];
+        default:
+            return [...basePath, segment];
+    }
+};
+
+
+
+// utils.js
+export const determineInitialIndex = (existingFieldData, variants) => {
+    // Safety Check: Ensure variants is defined and is an array
+    if (!Array.isArray(variants) || variants.length === 0) {
+        console.warn('determineInitialIndex: variants is undefined or empty', { existingFieldData, variants });
+        return undefined;
+    }
+
+    if (!existingFieldData) {
+        // Prefer a variant that isn't 'null'
+        const preferredVariants = variants.filter(variant => variant.name !== 'null');
+        const preferredVariant = preferredVariants.length > 0 ? preferredVariants[0] : variants[0];
+        const index = preferredVariant.index;
+        console.log('determineInitialIndex - default variant index:', index);
+        return index; // Default or fallback value
+    }
+
+    if (typeof existingFieldData === 'string') {
+        console.log('determineInitialIndex - existingFieldData (string):', existingFieldData);
+        // Assuming existingFieldData is the name of the variant
+        const r = variants.findIndex(variant => variant.name === existingFieldData);
+        if (r === -1) {
+            console.warn(`determineInitialIndex: Variant with name "${existingFieldData}" not found. Falling back to default.`);
+            return variants[0].index;
         }
-    
-        // For cases where segment is not empty
-        switch (type) {
-            case 'variant':
-                console.log(`generatePath -  ${type} 0a. generatePath variant base, segment, type:`, { base, segment, type, isParentVariantAndAllSiblings, index });
-                if (isParentVariantAndAllSiblings) {
-                    // If all siblings are variants, include the index in the path
-                    if (base) {
-                        return `${base}.${segment}[${index}]`;  // Use dot notation to combine base and segment, then append index
-                    } else {
-                        return `${segment}[${index}]`;  // If no base, start directly with segment and index
-                    }
-                } else {
-                    // If not all siblings are variants, return the standard path without indexing
-                    return base ? `${base}.${segment}` : segment;
-                }
-
-            case 'composite':
-            case 'variantField':
-                // Standard handling using dot notation if base is present
-                const result = base ? `${base}.${segment}` : segment;
-                console.log(`generatePath -  ${type} 0b. generatePath composite result:`, result);
-                return result;
-            case 'input':
-                // Input fields do not need modification of path; return base
-                return base;
-            case 'sequence':
-            case 'array':
-            case 'tuple':
-                // Handle as an index into an array or tuple
-                return `${base}[${segment}]`;
-            case 'initialBase':
-                // For initialBase, create an array notation only when base is provided
-                const r = base ? `${base}[${segment}]` : `[${segment}]`;
-                console.log(`RecursiveFieldRenderer -  ${type} 0c. generatePath initialBase r:`, r);
-                return r;
-            default:
-                // Fallback for unexpected types
-                return `${base}.${segment}`;
+        const s = variants[r].index;
+        console.log('determineInitialIndex - found variant index (string):', s);
+        return s;
+    } else if (typeof existingFieldData === 'object') {
+        const keys = Object.keys(existingFieldData);
+        if (keys.length === 0) {
+            console.warn('determineInitialIndex: existingFieldData is an empty object', { existingFieldData });
+            return variants[0].index;
         }
-    };
+        const firstKeyName = keys[0]; // Get the first key
+        console.log('determineInitialIndex - firstKeyName:', firstKeyName);
 
-
-
-
-  export   const determineInitialIndex = (existingFieldData, variants) => {
-        if (!existingFieldData) {
-            const r = variants[0].index;
-            console.log('RecursiveFieldRenderer - variant 2a. determineInitialIndex r:', r);
-            return r; // default or fallback value
-
+        const r = variants.findIndex(variant => variant.name === firstKeyName);
+        if (r === -1) {
+            console.warn(`determineInitialIndex: Variant with name "${firstKeyName}" not found. Falling back to default.`);
+            return variants[0].index;
         }
-    
-        if (typeof existingFieldData === 'string') {
-            console.log('RecursiveFieldRenderer - variant 2a. determineInitialIndex existingFieldData:', existingFieldData);
-            // Assuming existingFieldData is the name of the variant
-            const r = variants?.findIndex(variant => variant.name === existingFieldData);
-            const s = variants[r]?.index
+        const s = variants[r].index;
+        console.log('determineInitialIndex - found variant index (object):', s);
+        return s;
+    }
 
-            console.log('RecursiveFieldRenderer - variant 2d. determineInitialIndex r string:',s, r, existingFieldData);
-            return s;
-        } else if (typeof existingFieldData === 'object') {
-            // If it's an object, we assume it might have a key that corresponds to a variant name
-     
-            const firstKeyName = Object.keys(existingFieldData)[0]; // Get the first key
-
-            console.log('RecursiveFieldRenderer - variant 2c. determineInitialIndex firstKeyName:', firstKeyName, existingFieldData, variants );
-            // i think we need to convert firstKetName to an integer
-            const r = variants.findIndex(variant => variant.name === firstKeyName);
-            const s = variants[r]?.index
-            
-            console.log('RecursiveFieldRenderer - variant 2d. determineInitialIndex r:', s, r, firstKeyName, existingFieldData);
-        
-            return s;
-        }
-    
-        return ''; // fallback if data type is unexpected
-    };
+    console.warn('determineInitialIndex: Unexpected type for existingFieldData:', typeof existingFieldData);
+    return ''; // Fallback for unexpected data types
+};

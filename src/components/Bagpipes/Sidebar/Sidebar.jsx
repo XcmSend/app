@@ -57,14 +57,14 @@ const Sidebar = () => {
           </Link>
         </div>
 
-                {/* Blinks 
+                {/* Blinks  */}
                 <div className="sidebar-item">
-          <Link to="/blinks">
+          <Link to="/blink-builder">
             <BlinkIcon fillColor='#757575' />
             {isExpanded && <span className="sidebar-text">Blinks</span>}
           </Link>
         </div>
- */}
+
         {/* Pages */}
         <div className="sidebar-item">
           <Link to="/pages">

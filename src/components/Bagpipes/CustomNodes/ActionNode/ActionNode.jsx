@@ -7,8 +7,9 @@ import { query_contract } from '../../../../Chains/DraftTx/DraftInk';
 import SwapSVG from '/swap.svg';
 import xTransferSVG from '/xTransfer.svg';
 import RemarkSVG from '/remark.svg';
-import ScheduleTransferSVG from '/clock.svg';
 import VoteSVG from '/vote.svg';
+import ScheduleTransferSVG from '/clock.svg';
+
 import DelegateSVG from '/delegate.svg';
 import InkSVG from '/ink.svg';
 import StakeSVG from '/stake.svg';
@@ -73,14 +74,14 @@ export default function ActionNode({ children, data, isConnectable }) {
 
   const assetInFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetInNodeId);
-   console.log('ActionNode assetInFormData inside useMemo:', nodeData?.formData);
-    return nodeData?.formData;
+   console.log('ActionNode assetInFormData inside useMemo:', nodeData);
+    return nodeData;
   }, [assetInNodeId, nodes]);
   
   const assetOutFormData = useMemo(() => {
     const nodeData = nodes.find(node => node.id === assetOutNodeId);
-     console.log('ActionNode assetOutFormData inside useMemo:', nodeData?.formData);
-    return nodeData?.formData;
+     console.log('ActionNode assetInFormData assetOutFormData inside useMemo:', nodeData);
+    return nodeData;
   }, [assetOutNodeId, nodes]);
   const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -88,8 +89,9 @@ export default function ActionNode({ children, data, isConnectable }) {
   const getActionImage = () => {
     if (formState.action === 'swap') return SwapSVG;
     if (formState.action === 'xTransfer') return xTransferSVG;
-    if (formState.action === 'ScheduleTransfer') return ScheduleTransferSVG; 
     if (formState.action === "remark") return RemarkSVG;
+    if (formState.action === 'ScheduleTransfer') return ScheduleTransferSVG; 
+
     if (formState.action === "Remark") return RemarkSVG;
     if (formState.action === "stake") return StakeSVG;
     if (formState.action === "delegate") return DelegateSVG;
@@ -205,29 +207,20 @@ export default function ActionNode({ children, data, isConnectable }) {
     }
 };
 
-    useEffect(() => {
-      if (!selectedNodeId || !selectedNodeId.startsWith('action_')) return;
-      // console.log('[ActionNode] active node:', selectedNodeId);
+useEffect(() => {
+  if (!nodeId || !nodeId.startsWith('action_')) return;
 
-      const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
-      // console.log('ActionNode scenario edges:', scenarios[activeScenarioId]?.diagramData?.edges);
-      // console.log('ActionNode Ordered List:', orderedList);
+  const orderedList = getOrderedList(scenarios[activeScenarioId]?.diagramData?.edges);
+  const currentIndex = orderedList.indexOf(nodeId);
 
-      const currentIndex = orderedList.indexOf(selectedNodeId);
-      // console.log('ActionNode Current Index:', currentIndex);
+  if (currentIndex === -1) return;
 
-      if (currentIndex === -1) return;
+  const assetInNodeId = orderedList[currentIndex - 1];
+  const assetOutNodeId = orderedList[currentIndex + 1];
 
-      const assetInNodeId = orderedList[currentIndex - 1];
-
-      const assetOutNodeId = orderedList[currentIndex + 1];
-      // console.log('[ActionNode] assetInNodeId:', assetInNodeId);
-      // console.log('[ActionNode] assetOutNodeId:', assetOutNodeId);
-
-        
-        setAssetInNodeId(assetInNodeId);
-        setAssetOutNodeId(assetOutNodeId);
-    }, [selectedNodeId, scenarios]);
+  setAssetInNodeId(assetInNodeId);
+  setAssetOutNodeId(assetOutNodeId);
+}, [nodeId, scenarios]);
 
   
     // This effect will only run once when the component mounts
@@ -290,9 +283,9 @@ function get_next_node() {
   const previousNode = currentNodeIndex > 0 ? nodes[currentNodeIndex + 1] : null;
   const previousNodeFormData = previousNode ? previousNode.formData : null;
   return previousNodeFormData;
-}
+}  
 
-  
+
 // store the system remark message
   const setRemark = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -317,9 +310,8 @@ function get_next_node() {
 
 
   };
-
-
   const setDateSchedule = (value) => {
+    console.log(`setDateSchedule called`);
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
     console.log(`currentNodeFormData: `, currentNodeFormData);
     const currentActionData = currentNodeFormData.actionData || {};
@@ -337,7 +329,6 @@ function get_next_node() {
   console.log(`ScheduleTransfer wrote updated data: `, updatedActionData);
 
   };
-
 
   const setDelegateConviction = (value) => {
     const currentNodeFormData = scenarios[activeScenarioId]?.diagramData?.nodes?.find(node => node.id === nodeId)?.formData;
@@ -596,7 +587,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
       action: value
     }));
 
-    console.log(`[handleDropdownClick] formState:`, formState);
+    
     // Create action data based on the selected value
     const newActionData = convertFormStateToActionType(
         { ...formState, action: value }, 
@@ -705,6 +696,14 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           </select>
 </div>
 )}
+    
+    {formState && formState.action === 'ScheduleTransfer' && (
+
+<div className="in-node-border rounded m-2 p-2 ">Schedule a XCM asset tranfer on date: 
+<input required min={new Date().toISOString().split('T')[0]}   onChange={(newValue) => setDateSchedule(newValue)}  type="datetime-local" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
+</div>
+)}
+    
      {formState && formState.action === 'stake' && (
 
 <div className="in-node-border rounded m-2 p-2 ">Stake dot to a nomination pool
@@ -719,15 +718,6 @@ console.log('previousNodeFormData: ', previousNodeFormData);
             <input  onChange={(newValue) => setRemark(newValue)}  type="text" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
             </div>
       )}
-
-
-{formState && formState.action === 'ScheduleTransfer' && (
-
-<div className="in-node-border rounded m-2 p-2 ">Schedule a XCM asset tranfer on date: 
-<input required min={new Date().toISOString().split('T')[0]}   onChange={(newValue) => setDateSchedule(newValue)}  type="datetime-local" id="contact-name"  placeholder="Message" className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline" />
-</div>
-)}
-
 
 {formState && formState.action === 'ink' && (
 
@@ -798,7 +788,7 @@ console.log('previousNodeFormData: ', previousNodeFormData);
           <div className="small-spinner"></div>
         ) : (
           sellPriceInfoMap[nodeId] ? (
-            <PriceInfo sourceInfo={assetInFormData} targetInfo={assetOutFormData} priceInfo={sellPriceInfoMap[nodeId]} />
+<PriceInfo sourceInfo={currentActionData.source} targetInfo={currentActionData.target} priceInfo={sellPriceInfoMap[nodeId]} />
           ) : (
             // Placeholder for when no price info is available
             <div className="in-node-border rounded m-2 p-2 ">Swaps</div>

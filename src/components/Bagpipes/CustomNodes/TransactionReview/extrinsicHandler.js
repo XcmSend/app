@@ -1,12 +1,13 @@
-import { delegate_polkadot, stake_to_dot_pool, paseo2pop, paseo2assethub, assethub2paseo, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, hydraDxToParachain, turing2mangata, generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
+import { delegate_polkadot, stake_to_dot_pool, schedule_task, dotToHydraDx, polkadot_vote, moon2polkadot,  generic_system_remark, moon2parachain, moon2hydra2, hydra2moonbeam, interlay2moonbeam, polkadot2moonbeam, assethub2moonbeam, turing2moonriver, moonriver2turing, mangata2turing, polkadot_assethub_to_assetHub_kusama, turing2mangata, generic_kusama_to_parachain, assethub2ethereum, assethub_to_hydra, hydradx_to_polkadot, hydradx_to_assethub, roc2assethub, polkadot_to_assethub, interlay2assethub, assethub2interlay, assethub_to_polkadot } from "../../../../Chains/DraftTx/DraftxTransferTx";
 import { getTokenDecimalsByAssetName, get_moonbeam_asset_decimals, getTokenDecimalsByChainName, get_hydradx_asset_symbol_decimals } from "../../../../Chains/Helpers/AssetHelper";
 import toast from "react-hot-toast";
 import { isEthereumAddress } from '@polkadot/util-crypto';
-import { schedule_task } from "../../../../Chains/DraftTx/DraftxTransferTx";
+
 import { hydradx_omnipool_sell } from "../../../../Chains/DraftTx/DraftSwapTx";
 import { listChains } from "../../../../Chains/ChainsInfo";
 import { account } from "@polkadot/api-derive/balances";
 import { evm } from "@polkadot/types/interfaces/definitions";
+
 
 export async function extrinsicHandler(actionType, formData) {
     console.log(`extrinsicHandler:`, actionType, formData);
@@ -36,6 +37,54 @@ export async function extrinsicHandler(actionType, formData) {
             throw new Error("Unsupported action type.");
         }
 };
+
+
+async function handleScheduleTransfer(formdata) {
+    const source = formdata.source;
+    const target = formdata.target;
+
+    console.log(`[handleScheduleTransfer] formdata:`, formdata);
+    if (!source.chain == "turing") {
+        throw new Error("You can only schedule xcm transfers from Turing");
+    }
+
+    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
+
+    // Adjust the source amount according to the token decimals
+    const submittableAmount = source.amount * (10 ** tokenDecimals);
+
+      // Define a map for each xTransfer action
+      const ScheduleTransferActions = {
+       
+        'turing:moonriver': () => {
+             if (!isEthereumAddress(target.address)) { //  evm account check
+                throw new Error("Only allowed to send to ethereum addresses when sending to moonriver");
+            };
+            return turing2moonriver(target.address, submittableAmount);
+        },
+
+        'turing:mangatax': () => {
+            return  turing2mangata(submittableAmount, target.address) ;
+        }
+    };
+
+    const action = ScheduleTransferActions[`${source.chain}:${target.chain}`];
+    console.log(`action is: `, action);
+
+    if (action) {
+        console.log(`action got!`);
+        const datumstring = formdata.extra + ':00Z'; // example input: 2024-10-22T16:20
+        console.log(`schedule_task with datumstring: `, datumstring);
+       const tx  = await action();
+        return schedule_task(tx, datumstring);
+    } else {
+        console.log("Unsupported ScheduleTransfer direction.");
+        toast("Action data is empty. Did you fetch?");
+        
+        throw new Error("Unsupported ScheduleTransfer direction.");
+    }
+
+}
 
 function handleStake(formdata) {
     console.log(`handlestake: `, formdata);
@@ -95,55 +144,6 @@ function handleRemark(formData) {
 }
 
 
-
-async function handleScheduleTransfer(formdata) {
-    const source = formdata.source;
-    const target = formdata.target;
-
-    console.log(`[handleScheduleTransfer] formdata:`, formdata);
-    if (!source.chain == "turing") {
-        throw new Error("You can only schedule xcm transfers from Turing");
-    }
-
-    const tokenDecimals = getTokenDecimalsByChainName(source.chain);
-
-    // Adjust the source amount according to the token decimals
-    const submittableAmount = source.amount * (10 ** tokenDecimals);
-
-      // Define a map for each xTransfer action
-      const ScheduleTransferActions = {
-       
-        'turing:moonriver': () => {
-             if (!isEthereumAddress(target.address)) { //  evm account check
-                throw new Error("Only allowed to send to ethereum addresses when sending to moonriver");
-            };
-            return turing2moonriver(target.address, submittableAmount);
-        },
-
-        'turing:mangatax': () => {
-            return  turing2mangata(submittableAmount, target.address) ;
-        }
-    };
-
-    const action = ScheduleTransferActions[`${source.chain}:${target.chain}`];
-    console.log(`action is: `, action);
-
-    if (action) {
-        console.log(`action got!`);
-        const datumstring = formdata.extra + ':00Z'; // example input: 2024-10-22T16:20
-        console.log(`schedule_task with datumstring: `, datumstring);
-       const tx  = await action();
-        return schedule_task(tx, datumstring);
-    } else {
-        console.log("Unsupported ScheduleTransfer direction.");
-        toast("Action data is empty. Did you fetch?");
-        
-        throw new Error("Unsupported ScheduleTransfer direction.");
-    }
-
-}
-
-
 function handlexTransfer(formData) {
     console.log("handlexTransfer Handling xTransfer...");
     const chains = listChains();
@@ -187,7 +187,6 @@ function handlexTransfer(formData) {
             };
             return polkadot2moonbeam(submittableAmount, target.address);
         },
-        
 
 
         'assetHub:ethereum': () => {
@@ -284,18 +283,6 @@ function handlexTransfer(formData) {
             console.log("handlexTransfer forAssetHub to Interlay...", tetherAmount);
             return assethub2interlay(source.assetId, tetherAmount, target.address);
         },
-
-        'paseo:paseo_assethub': () => {
-            return paseo2assethub(submittableAmount, target.address)
-        },
-        'paseo_assethub:paseo': () => {
-            return assethub2paseo(submittableAmount, target.address);
-        },
-        'paseo:paseo_pop': () => {
-            return paseo2pop(submittableAmount, target.address);
-        },
-
-
 /**/
         'moonriver:turing': () => {
         //    if not address is evm, break 
