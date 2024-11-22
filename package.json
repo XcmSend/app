@@ -18,7 +18,6 @@
     "format": "npx prettier --write 'src/*/*/*.ts' && npx prettier --write 'src/*.ts'",
     "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "install": "npm install -f",
     "papi:dotonly": "bun papi add -n polkadot custompolkadot",
     "papi:generate": "npx papi add dot -n polkadot && npx papi",
     "postinstall": "papi"
