@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import threadbagInstance from './AxiosService'
 import config from "../config";
 
+import { compressString } from '../components/Bagpipes/TemplateFeatures/compress';
+
 class ScenarioService {
     constructor() {
         this.csrfToken = null;
@@ -232,16 +234,22 @@ class ScenarioService {
     async startPersistScenario(scenarioId) {
         try {
             console.log('startPersistScenario', scenarioId);
-
+            let diagramdata = useAppStore.getState().scenarios[scenarioId]?.diagramData;
+            const compressed_link = await compressString(JSON.stringify(diagramdata));
             const response = await axios.post(`${config.threadbagUrl}/job/start`, {
-                id: scenarioId
+                id: compressed_link
             }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
 
-
+            if (!response.data.success) {
+                toast.error(response.data.result || 'Could not start job');
+                throw Error("could not start scenario");
+            } else {
+                toast.success(`Scenarion Persistance worker started`);
+            }
 
            // const response = await threadbagInstance.post('/job/start', { id: scenarioId });
             console.log('Server response:', response.data);
@@ -262,6 +270,13 @@ class ScenarioService {
                 }
             });
             console.log('Server response:', response.data);
+            if (!response.data.success) {
+                toast.error(response.data.result || 'Could not start job');
+                throw Error("could not stop scenario");
+            } else {
+                toast.success(`Scenario worker stopped`);
+            }
+
             return response.data;
         } catch (error) {
             console.error(`Failed to persist scenario ${scenarioId}:`, error);
