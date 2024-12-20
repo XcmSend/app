@@ -230,6 +230,11 @@ class ScenarioService {
         }
     }
     
+    async get_api_scenario_id(scenarioId) {
+        let diagramdata = useAppStore.getState().scenarios[scenarioId]?.diagramData;
+        const compressed_link = await compressString(JSON.stringify(diagramdata));
+        return compressed_link;
+    }
 
     async startPersistScenario(scenarioId) {
         try {
@@ -284,13 +289,35 @@ class ScenarioService {
         }
     }
 
+    async fetchPersistedScenarioMempool(scenarioId) {
+        try {
+            const response = await threadbagInstance.post(
+                `/scenario/tx`, {
+                     id: scenarioId 
+                    }, {
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }}
+            );
+            console.log('Server response:', response.data);
+            return JSON.stringify(response.data);
+        } catch (error) {
+            console.error(`Failed to get logs for scenario ${scenarioId}:`, error);
+            throw error;
+        }
+    }
+
     async fetchPersistedScenarioLogs(scenarioId) {
         try {
             const response = await threadbagInstance.post(
-                `/scenario/worker/logs`, { id: scenarioId }, { withCredentials: true }
+                `/scenario/worker/logs`, { id: scenarioId },
+                 {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }}
             );
             console.log('Server response:', response.data);
-            return response.data;
+            return JSON.stringify(response.data);
         } catch (error) {
             console.error(`Failed to get logs for scenario ${scenarioId}:`, error);
             throw error;
